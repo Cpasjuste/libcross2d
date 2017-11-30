@@ -16,11 +16,13 @@ SDL2Texture::SDL2Texture(Renderer *r, const char *p) : Texture(r, p) {
     tex = SDL_CreateTextureFromSurface(((SDL2Renderer *) renderer)->sdl_renderer, temp);
     if (!tex) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture: %s\n", SDL_GetError());
+        SDL_FreeSurface(temp);
     } else {
         SDL_QueryTexture(tex, nullptr, nullptr, &width, &height);
     }
 
     SDL_FreeSurface(temp);
+    available = true;
 }
 
 SDL2Texture::SDL2Texture(Renderer *r, int w, int h) : Texture(r, w, h) {
@@ -31,9 +33,9 @@ SDL2Texture::SDL2Texture(Renderer *r, int w, int h) : Texture(r, w, h) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture: %s\n", SDL_GetError());
     } else {
         SDL_QueryTexture(tex, nullptr, nullptr, &width, &height);
+        available = true;
     }
 }
-
 
 void SDL2Texture::Draw(int x, int y, int w, int h, float rotation) {
     SDL_Rect rect = {x, y, w, h};

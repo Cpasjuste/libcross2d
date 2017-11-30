@@ -34,6 +34,7 @@ PSP2Texture::PSP2Texture(Renderer *r, const char *p) : Texture(r, p) {
     }
     width = vita2d_texture_get_width(tex);
     height = vita2d_texture_get_height(tex);
+    available = true;
 }
 
 PSP2Texture::PSP2Texture(Renderer *r, int w, int h) : Texture(r, w, h) {
@@ -46,6 +47,7 @@ PSP2Texture::PSP2Texture(Renderer *r, int w, int h) : Texture(r, w, h) {
     }
     //width = vita2d_texture_get_width(tex);
     //height = vita2d_texture_get_height(tex);
+    available = true;
 }
 
 

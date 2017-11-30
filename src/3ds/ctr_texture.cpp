@@ -58,6 +58,7 @@ CTRTexture::CTRTexture(Renderer *r, const char *path) : Texture(r, path) {
 
     TileSoft();
     SetFiltering(TEXTURE_FILTER_POINT);
+    available = true;
 }
 
 CTRTexture::CTRTexture(Renderer *r, int w, int h, GPU_TEXCOLOR format) : Texture(r, w, h) {
@@ -80,6 +81,7 @@ CTRTexture::CTRTexture(Renderer *r, int w, int h, GPU_TEXCOLOR format) : Texture
     }
 
     SetFiltering(TEXTURE_FILTER_POINT);
+    available = true;
 }
 
 void CTRTexture::Draw(int x, int y, int w, int h, float r) {

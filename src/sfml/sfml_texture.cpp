@@ -13,6 +13,7 @@ SFMLTexture::SFMLTexture(Renderer *r, const char *path) : Texture(r, path) {
         height = texture.getSize().y;
         sprite.setTexture(texture);
         pixels = new sf::Uint8[width * height * 2];
+        available = true;
     } else {
         printf("Couldn't create texture: %s\n", path);
     }
@@ -23,11 +24,11 @@ SFMLTexture::SFMLTexture(Renderer *r, int w, int h) : Texture(r, w, h) {
     if (texture.create((uint) w, (uint) h)) {
         pixels = new sf::Uint8[width * height * 2];
         sprite.setTexture(texture);
+        available = true;
     } else {
         printf("Couldn't create texture\n");
     }
 }
-
 
 void SFMLTexture::Draw(int x, int y, int w, int h, float rotation) {
 

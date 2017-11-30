@@ -11,6 +11,7 @@
 #include "skeleton/input.h"
 #include "skeleton/audio.h"
 #include "skeleton/timer.h"
+#include "skeleton/io.h"
 
 #ifdef __PSP2__
 
@@ -25,6 +26,7 @@
 #define C2DFont PSP2Font
 #define C2DInput PSP2Input
 #define C2DAudio PSP2Audio
+#define C2DIo PSP2Io
 
 #elif __3DS__
 
@@ -41,12 +43,14 @@
 #define C2DFont CTRFont
 #define C2DInput CTRInput
 #define C2DAudio CTRAudio
+#define C2DIo POSIXIo
 
 #elif __NX__
 
 #include "nx/nx_renderer.h"
 #include "nx/nx_font.h"
 #define C2DRenderer NXRenderer
+#define C2DIo NXIo
 
 #elif __SDL2__
 
@@ -60,6 +64,7 @@
 #define C2DFont SDL2Font
 #define C2DInput SDL2Input
 #define C2DAudio SDL2Audio
+#define C2DIo POSIXIo
 
 #elif __SFML__
 
@@ -74,6 +79,7 @@
 #define C2DFont SFMLFont
 #define C2DInput SFMLInput
 #define C2DAudio SDL2Audio
+#define C2DIo POSIXIo
 
 #endif
 

@@ -31,6 +31,7 @@ public:
     void Draw(int x, int y);
     Rect Draw(const Rect &rect, bool fit = true);
 
+    bool available = false;
     int width = 0;
     int height = 0;
     char path[512];
