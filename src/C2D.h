@@ -24,8 +24,8 @@
 #define C2DRenderer PSP2Renderer
 #define C2DTexture PSP2Texture
 #define C2DFont PSP2Font
-#define C2DInput PSP2Input
-#define C2DAudio PSP2Audio
+#define C2DInput SDL2Input
+#define C2DAudio SDL2Audio
 #define C2DIo PSP2Io
 
 #elif __3DS__
