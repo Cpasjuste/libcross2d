@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
-if (NOT CMAKE_SYSTEM_NAME)
-    set(CMAKE_SYSTEM_NAME "Generic")
-endif (NOT CMAKE_SYSTEM_NAME)
+set(CMAKE_SYSTEM_NAME "Generic")
 
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support" OFF)
@@ -14,73 +12,12 @@ option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_RPI "Build with RPI support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
 
-if (BUILD_PSP2)
-    set(VITASDK $ENV{VITASDK})
-    set(CMAKE_SYSTEM_PROCESSOR "armv7-a")
-    set(CMAKE_C_COMPILER "${VITASDK}/bin/arm-vita-eabi-gcc")
-    set(CMAKE_CXX_COMPILER "${VITASDK}/bin/arm-vita-eabi-g++")
-    set(CMAKE_ASM_COMPILER "${VITASDK}/bin/arm-vita-eabi-g++")
-    set(CMAKE_AR "${VITASDK}/bin/arm-vita-eabi-ar")
-    set(CMAKE_RANLIB "${VITASDK}/bin/arm-vita-eabi-ranlib")
-    set(CMAKE_C_FLAGS "-Wl,-q" CACHE STRING "C flags")
-    execute_process(COMMAND "date" "+%Y.%m.%d" OUTPUT_VARIABLE BUILD_DATE OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(TITLE_ID "CROSS2D00")
-elseif (BUILD_PS3)
-    set(PS3DEV /usr/local/ps3dev)
-    set(PSL1GHT ${PS3DEV})
-    set(ENV{PSL1GHT} ${PSL1GHT})
-    set(CMAKE_SYSTEM_PROCESSOR "powerpc64")
-    set(CMAKE_C_COMPILER "${PSL1GHT}/ppu/bin/powerpc64-ps3-elf-gcc")
-    set(CMAKE_CXX_COMPILER "${PSL1GHT}/ppu/bin/powerpc64-ps3-elf-g++")
-    set(CMAKE_ASM_COMPILER "${PSL1GHT}/ppu/bin/powerpc64-ps3-elf-gcc")
-    set(CMAKE_AR "${PSL1GHT}/ppu/bin/powerpc64-ps3-elf-ar")
-    set(CMAKE_RANLIB "${PSL1GHT}/ppu/bin/powerpc64-ps3-elf-ranlib")
-    set(CMAKE_C_FLAGS "-mcpu=cell" CACHE STRING "C flags")
-    set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=gnu++11 -fpermissive" CACHE STRING "C++ flags")
-    set(CMAKE_FIND_ROOT_PATH ${PSL1GHT}/ppu ${PSL1GHT}/portlibs/ppu)
-    set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM ONLY)
-    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-elseif (BUILD_3DS)
-    set(DEVKITPRO $ENV{DEVKITPRO})
-    set(CMAKE_SYSTEM_PROCESSOR "armv6k")
-    set(CMAKE_C_COMPILER "${DEVKITPRO}/devkitARM/bin/arm-none-eabi-gcc")
-    set(CMAKE_CXX_COMPILER "${DEVKITPRO}/devkitARM/bin/arm-none-eabi-g++")
-    set(CMAKE_ASM_COMPILER "${DEVKITPRO}/devkitARM/bin/arm-none-eabi-as")
-    set(CMAKE_AR "${DEVKITPRO}/devkitARM/bin/arm-none-eabi-gcc-ar" CACHE STRING "")
-    set(CMAKE_RANLIB "${DEVKITPRO}/devkitARM/bin/arm-none-eabi-gcc-ranlib" CACHE STRING "")
-    set(CMAKE_C_FLAGS "-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft -mword-relocations" CACHE STRING "C flags")
-    set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fpermissive -std=gnu++11 -fno-rtti -fno-exceptions" CACHE STRING "C++ flags")
-    set(CMAKE_FIND_ROOT_PATH ${DEVKITPRO} ${DEVKITPRO}/devkitARM ${DEVKITPRO}/libctru ${DEVKITPRO}/portlibs/3ds ${DEVKITPRO}/portlibs/armv6k)
-    set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-    set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
-    set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Shared libs not available")
-elseif (BUILD_NX)
-    set(DEVKITPRO $ENV{DEVKITPRO})
-    set(CMAKE_SYSTEM_PROCESSOR "armv8-a")
-    set(CMAKE_C_COMPILER "${DEVKITPRO}/devkitA64/bin/aarch64-none-elf-gcc")
-    set(CMAKE_CXX_COMPILER "${DEVKITPRO}/devkitA64/bin/aarch64-none-elf-g++")
-    set(CMAKE_ASM_COMPILER "${DEVKITPRO}/devkitA64/bin/aarch64-none-elf-as")
-    set(CMAKE_AR "${DEVKITPRO}/devkitA64/bin/aarch64-none-elf-gcc-ar" CACHE STRING "")
-    set(CMAKE_RANLIB "${DEVKITPRO}/devkitA64/bin/aarch64-none-elf-gcc-ranlib" CACHE STRING "")
-    set(CMAKE_C_FLAGS "-march=armv8-a -mtp=soft -fPIE -ffast-math -ffunction-sections -fdata-sections" CACHE STRING "C flags")
-    set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fpermissive -fno-rtti -fno-exceptions -std=gnu++11" CACHE STRING "C++ flags")
-    set(CMAKE_FIND_ROOT_PATH ${DEVKITPRO} ${DEVKITPRO}/devkitA64 ${DEVKITPRO}/portlibs/armv8-a)
-    set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-    set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
-    set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Shared libs not available")
-elseif (BUILD_RPI)
-    set(RPISDK "/usr/local/rpi-tools")
-    set(CMAKE_SYSTEM_PROCESSOR "armv7-a")
-    set(CMAKE_C_COMPILER "${RPISDK}/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf-gcc")
-    set(CMAKE_CXX_COMPILER "${RPISDK}/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf-g++")
-    set(CMAKE_ASM_COMPILER "${RPISDK}/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf-g++")
-    set(CMAKE_C_FLAGS "-I${RPISDK}/sysroot/include" CACHE STRING "C flags")
-endif (BUILD_PSP2)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(BUILD_DEBUG true CACHE BOOL "Debug build")
+endif ()
+
+# setup toolchain
+include(Toolchain.cmake)
 
 project(cross2d)
 
@@ -132,13 +69,12 @@ elseif (BUILD_PS3)
             src/sdl2/*.c*
             src/posix/*.c*
             )
-    list(APPEND FLAGS -O3 -D__SDL2__)
+    list(APPEND FLAGS -O3 -D__SDL2__ -D__PS3__)
     #####################
     # 3DS PLATORM
     #####################
 elseif (BUILD_3DS)
     # shader
-    #include(src/3ds/cmake/Tools3DS.cmake)
     #set(SHADER_AS picasso)
     #add_shbin_library(shaders.3ds src/3ds/vshader.v.pica)
     set(PLATFORM_DIRS
@@ -156,6 +92,7 @@ elseif (BUILD_3DS)
             src/3ds/vshaders.v.o
             )
     list(APPEND FLAGS -O3 -DARM11 -D_3DS -D__3DS__
+            -D__CITRO3D__
             -ffunction-sections -fomit-frame-pointer
             )
     #####################
@@ -221,9 +158,29 @@ add_dependencies(${PROJECT_NAME}.sdl2 ${PROJECT_NAME})
 #####################
 add_executable(${PROJECT_NAME}.ps3 src/main.cpp)
 target_compile_options(${PROJECT_NAME}.ps3 PRIVATE ${FLAGS})
+target_include_directories(${PROJECT_NAME}.ps3 PUBLIC ${CROSS2D_DIR})
+target_include_directories(${PROJECT_NAME}.ps3 PRIVATE ${PLATFORM_DIRS})
 target_link_libraries(${PROJECT_NAME}.ps3
-        cross2d SDL2 SDL2_image SDL2_ttf z)
+        cross2d
+        ${PSL1GHT}/portlibs/ppu/lib/libSDL2.a
+        ${PSL1GHT}/portlibs/ppu/lib/libSDL2_image.a
+        ${PSL1GHT}/portlibs/ppu/lib/libSDL2_ttf.a
+        ${PSL1GHT}/portlibs/ppu/lib/libfreetype.a
+        ${PSL1GHT}/portlibs/ppu/lib/libpng.a
+        ${PSL1GHT}/portlibs/ppu/lib/libtiff.a
+        ${PSL1GHT}/portlibs/ppu/lib/libjpeg.a
+        ${PSL1GHT}/ppu/lib/libgcm_sys.a
+        ${PSL1GHT}/ppu/lib/librsx.a
+        ${PSL1GHT}/ppu/lib/libsysutil.a
+        ${PSL1GHT}/ppu/lib/libio.a
+        ${PSL1GHT}/ppu/lib/libaudio.a
+        ${PSL1GHT}/portlibs/ppu/lib/libz.a
+        )
 add_dependencies(${PROJECT_NAME}.ps3 ${PROJECT_NAME})
+add_custom_target(${PROJECT_NAME}.ps3.elf
+        DEPENDS ${PROJECT_NAME}.ps3
+        COMMAND ${PSL1GHT}/bin/sprxlinker ${PROJECT_NAME}.ps3
+        )
 
 #####################
 # SFML (unix) target
@@ -261,22 +218,23 @@ add_custom_target(${PROJECT_NAME}.psp2.vpk
 #####################
 # CTR (3DS) target
 #####################
-add_executable(${PROJECT_NAME}.3ds src/main.cpp)
-target_compile_options(${PROJECT_NAME}.3ds PRIVATE ${FLAGS})
-target_include_directories(${PROJECT_NAME}.3ds PUBLIC ${CROSS2D_DIR})
-target_include_directories(${PROJECT_NAME}.3ds PRIVATE ${PLATFORM_DIRS})
-target_link_libraries(${PROJECT_NAME}.3ds
-        cross2d
-        ${DEVKITPRO}/portlibs/3ds/lib/libSDL2.a
-        ${DEVKITPRO}/portlibs/armv6k/lib/libpng.a
-        ${DEVKITPRO}/portlibs/armv6k/lib/libz.a
-        ${DEVKITPRO}/libctru/lib/libcitro3d.a
-        ${DEVKITPRO}/libctru/lib/libctru.a
-        m)
-set_target_properties(${PROJECT_NAME}.3ds PROPERTIES LINK_FLAGS "-specs=3dsx.specs")
-add_dependencies(${PROJECT_NAME}.3ds ${PROJECT_NAME})
-include(src/3ds/cmake/Tools3DS.cmake)
-add_3dsx_target(${PROJECT_NAME}.3ds NO_SMDH)
+if (BUILD_3DS)
+    add_executable(${PROJECT_NAME}.3ds src/main.cpp)
+    target_compile_options(${PROJECT_NAME}.3ds PRIVATE ${FLAGS})
+    target_include_directories(${PROJECT_NAME}.3ds PUBLIC ${CROSS2D_DIR})
+    target_include_directories(${PROJECT_NAME}.3ds PRIVATE ${PLATFORM_DIRS})
+    target_link_libraries(${PROJECT_NAME}.3ds
+            cross2d
+            ${DEVKITPRO}/portlibs/3ds/lib/libSDL2.a
+            ${DEVKITPRO}/portlibs/armv6k/lib/libpng.a
+            ${DEVKITPRO}/portlibs/armv6k/lib/libz.a
+            ${DEVKITPRO}/libctru/lib/libcitro3d.a
+            ${DEVKITPRO}/libctru/lib/libctru.a
+            m)
+    set_target_properties(${PROJECT_NAME}.3ds PROPERTIES LINK_FLAGS "-specs=3dsx.specs")
+    add_dependencies(${PROJECT_NAME}.3ds ${PROJECT_NAME})
+    add_3dsx_target(${PROJECT_NAME}.3ds NO_SMDH)
+endif (BUILD_3DS)
 
 #####################
 # NX (SWITCH) target

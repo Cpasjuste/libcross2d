@@ -21,14 +21,16 @@ SDL2Renderer::SDL2Renderer(int w, int h) : Renderer(w, h) {
     }
 
     window = SDL_CreateWindow(
-            "SDL2 GUI",
-            SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            w, h, flags);
+            "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);
 
     if (window == nullptr) {
-        printf("Couldn't create window: %s\n", SDL_GetError());
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
-        return;
+        window = SDL_CreateWindow(
+                "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, 0);
+        if (window == nullptr) {
+            printf("Couldn't create window: %s\n", SDL_GetError());
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
+            return;
+        }
     }
 
     sdl_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);

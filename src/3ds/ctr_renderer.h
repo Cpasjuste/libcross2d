@@ -26,10 +26,11 @@ public:
 
     void StartDrawing(bool vertexColor);
 
+    C3D_RenderTarget *target;
+
 private:
 
     bool drawing_started = false;
-    C3D_RenderTarget *target;
     int uloc_projection;
     C3D_Mtx mtx_projection;
     DVLB_s *vshader_dvlb;

@@ -4,18 +4,16 @@
 
 #include <citro3d.h>
 #include "ctr_renderer.h"
-#include "ctr_font.h"
-#include "ctr_texture.h"
 
+#ifdef __CITRO3D__
 #define CLEAR_COLOR 0x000000FF
-
 #define DISPLAY_TRANSFER_FLAGS \
     (GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
     GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
     GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
-
 extern const u8 vshader_shbin[];
 extern const u32 vshader_shbin_size;
+#endif
 
 //////////
 // INIT //
@@ -24,10 +22,12 @@ CTRRenderer::CTRRenderer(int w, int h) : Renderer(w, h) {
 
     osSetSpeedupEnable(true);
 
+#ifdef __CITRO3D__
     gfxInitDefault();
-    C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
+    gfxSet3D(false);
     consoleInit(GFX_BOTTOM, NULL);
 
+    C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
     // Initialize the render target
     target = C3D_RenderTargetCreate(h, w, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
     C3D_RenderTargetSetClear(target, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
@@ -49,7 +49,12 @@ CTRRenderer::CTRRenderer(int w, int h) : Renderer(w, h) {
 
     // Configure depth test to overwrite pixels with the same depth (needed to draw overlapping sprites)
     C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
-
+#else
+    gfxInit(GSP_RGB565_OES, GSP_RGB565_OES, false);
+    gfxSetDoubleBuffering(GFX_TOP, false);
+    gfxSet3D(false);
+    consoleInit(GFX_BOTTOM, NULL);
+#endif
     this->shaders = new Shaders("");
 }
 //////////
@@ -63,6 +68,7 @@ void CTRRenderer::DrawLine(int x0, int y0, int x1, int y1, const Color &c) {
     float b = (float) c.b / 255.0f;
     float a = (float) c.a / 255.0f;
 
+#ifdef __CITRO3D__
     float dx = x1 - x0;
     float dy = y1 - y0;
     float nx = -dy;
@@ -87,6 +93,9 @@ void CTRRenderer::DrawLine(int x0, int y0, int x1, int y1, const Color &c) {
     C3D_ImmSendAttrib(x1 - nx, y1 - ny, 0.5f, 0.0f);
     C3D_ImmSendAttrib(r, g, b, a);
     C3D_ImmDrawEnd();
+#else
+
+#endif
 }
 
 void CTRRenderer::DrawRect(const Rect &rect, const Color &c, bool fill) {
@@ -96,6 +105,7 @@ void CTRRenderer::DrawRect(const Rect &rect, const Color &c, bool fill) {
     float b = (float) c.b / 255.0f;
     float a = (float) c.a / 255.0f;
 
+#ifdef __CITRO3D__
     if (fill) {
         StartDrawing(true);
 
@@ -115,6 +125,8 @@ void CTRRenderer::DrawRect(const Rect &rect, const Color &c, bool fill) {
         DrawLine(rect.x, rect.y + rect.h, rect.x + rect.w, rect.y + rect.h, c); // bottom
         DrawLine(rect.x + rect.w, rect.y, rect.x + rect.w, rect.y + rect.h, c); // right
     }
+#else
+#endif
 }
 
 void CTRRenderer::Clear() {
@@ -123,6 +135,7 @@ void CTRRenderer::Clear() {
 
 void CTRRenderer::StartDrawing(bool vertexColor) {
 
+#ifdef __CITRO3D__
     if (!drawing_started) {
         C3D_FrameBegin(0);
         C3D_FrameDrawOn(target);
@@ -140,14 +153,23 @@ void CTRRenderer::StartDrawing(bool vertexColor) {
     AttrInfo_Init(attrInfo);
     AttrInfo_AddLoader(attrInfo, 0, GPU_FLOAT, 3); // v0=position
     AttrInfo_AddLoader(attrInfo, 1, GPU_FLOAT, vertexColor ? 4 : 2); // v1=texcoord or color
+#else
+
+#endif
 }
 
 void CTRRenderer::Flip() {
 
+#ifdef __CITRO3D__
     if (drawing_started) {
         C3D_FrameEnd(0);
         drawing_started = false;
     }
+#else
+    gfxFlushBuffers();
+    gfxSwapBuffers();
+    gspWaitForVBlank();
+#endif
 }
 
 void CTRRenderer::Delay(unsigned int ms) {
@@ -158,9 +180,11 @@ void CTRRenderer::Delay(unsigned int ms) {
 
 CTRRenderer::~CTRRenderer() {
 
+#ifdef __CITRO3D__
     shaderProgramFree(&program);
     DVLB_Free(vshader_dvlb);
-
+    C3D_RenderTargetDelete(target);
     C3D_Fini();
+#endif
     gfxExit();
 }

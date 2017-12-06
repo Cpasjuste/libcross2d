@@ -8,6 +8,7 @@
 
 CTRFont::CTRFont(Renderer *r, const char *p, int s) : Font(r, p, s) {
 
+#ifdef __CITRO3D__
     Result res = fontEnsureMapped();
     if (R_FAILED(res)) {
         printf("fontEnsureMapped: %08lX\n", res);
@@ -38,15 +39,21 @@ CTRFont::CTRFont(Renderer *r, const char *p, int s) : Font(r, p, s) {
 
     // Create the text vertex array
     textVtxArray = (textVertex_s *) linearAlloc(sizeof(textVertex_s) * TEXT_VTX_ARRAY_COUNT);
+#else
+
+#endif
+
 }
 
 void CTRFont::AddTextVertex(float vx, float vy, float tx, float ty) {
+#ifdef __CITRO3D__
     textVertex_s *vtx = &textVtxArray[textVtxArrayPos++];
     vtx->position[0] = vx;
     vtx->position[1] = vy;
     vtx->position[2] = 0.5f;
     vtx->texcoord[0] = tx;
     vtx->texcoord[1] = ty;
+#endif
 }
 
 void CTRFont::Draw(int x, int y, const char *fmt, ...) {
@@ -58,6 +65,7 @@ void CTRFont::Draw(int x, int y, const char *fmt, ...) {
     vsnprintf(msg, MAX_PATH, fmt, args);
     va_end(args);
 
+#ifdef __CITRO3D__
     ssize_t units;
     uint32_t code;
 
@@ -126,6 +134,9 @@ void CTRFont::Draw(int x, int y, const char *fmt, ...) {
 
         }
     } while (code > 0);
+#else
+
+#endif
 }
 
 int CTRFont::GetWidth(const char *fmt, ...) {
@@ -137,6 +148,7 @@ int CTRFont::GetWidth(const char *fmt, ...) {
     vsnprintf(msg, MAX_PATH, fmt, args);
     va_end(args);
 
+#ifdef __CITRO3D__
     ssize_t units;
     uint32_t code;
 
@@ -160,17 +172,29 @@ int CTRFont::GetWidth(const char *fmt, ...) {
     } while (code > 0);
 
     return width;
+#else
+    return 0;
+#endif
+
 }
 
 int CTRFont::GetHeight(const char *fmt, ...) {
 
+#ifdef __CITRO3D__
     return (int) ((float) fontGetInfo()->height * (scaling / 2.0f));
+#else
+    return 0;
+#endif
 }
 
 CTRFont::~CTRFont() {
 
+#ifdef __CITRO3D__
     if (glyphSheets != NULL) {
         free(glyphSheets);
         glyphSheets = NULL;
     }
+#else
+
+#endif
 }

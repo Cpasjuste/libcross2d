@@ -21,6 +21,21 @@ int main() {
     // texture
     Texture *texture = (Texture *) new C2DTexture(renderer, TEX_PATH);
 
+    /*
+    Texture *texture = (Texture *) new C2DTexture(renderer, 384, 224);
+    FILE *pFile;
+    pFile = fopen("/frame.bin", "rb");
+    if (pFile == NULL) {
+        printf("File error\n");
+    }
+    unsigned char *buffer;
+    int pitch;
+    texture->Lock(Rect(), (void **) &buffer, &pitch);
+    fread(buffer, 1, 384 * 224 * 2, pFile);
+    fclose(pFile);
+    texture->Unlock();
+    */
+
     while (true) {
 
         Input::Player player = input->Update(0)[0];
@@ -81,8 +96,7 @@ int main() {
         rect.w = 100;
         font->Draw(rect, WHITE, false, true, "HELLO WORLD");
 
-        //texture->Draw(32, 32, texture->width / 2, texture->height / 2);
-        texture->Draw(0, 0);
+        texture->Draw(32, 32, texture->width / 2, texture->height / 2);
 
         renderer->Flip();
     }

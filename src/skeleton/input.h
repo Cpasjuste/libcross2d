@@ -60,7 +60,7 @@ public:
 
     explicit Input(Renderer *renderer);
 
-    virtual ~Input() = default;;
+    virtual ~Input() {};
 
     virtual Player *Update(int rotate) { return players; }; // to implement
     virtual int GetButton(int player) { return -1; }; // to implement

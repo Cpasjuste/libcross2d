@@ -38,8 +38,9 @@ SDL2Texture::SDL2Texture(Renderer *r, int w, int h) : Texture(r, w, h) {
 }
 
 void SDL2Texture::Draw(int x, int y, int w, int h, float rotation) {
-    SDL_Rect rect = {x, y, w, h};
-    SDL_RenderCopyEx(((SDL2Renderer *) renderer)->sdl_renderer, tex, NULL, &rect, rotation, NULL, SDL_FLIP_NONE);
+    SDL_Rect src = {0, 0, width, height};
+    SDL_Rect dst = {x, y, w, h};
+    SDL_RenderCopyEx(((SDL2Renderer *) renderer)->sdl_renderer, tex, &src, &dst, rotation, NULL, SDL_FLIP_NONE);
 }
 
 int SDL2Texture::Lock(const Rect &rect, void **data, int *pitch) {

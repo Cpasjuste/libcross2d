@@ -8,8 +8,12 @@ SDL2Font::SDL2Font(Renderer *r, const char *p, int s) : Font(r, p, s) {
 
     font = FC_CreateFont();
     if (font != nullptr) {
-        FC_LoadFont(font, ((SDL2Renderer *) renderer)->sdl_renderer, path, (Uint32) size,
-                    FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL);
+        if (!FC_LoadFont(font, ((SDL2Renderer *) renderer)->sdl_renderer, path, (Uint32) size,
+                         FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL)) {
+            printf("SDL2Font: FC_LoadFont failed\n");
+        }
+    } else {
+        printf("SDL2Font: FC_CreateFont failed\n");
     }
 }
 
