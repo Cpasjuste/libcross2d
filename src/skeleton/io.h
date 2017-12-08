@@ -28,7 +28,7 @@ public:
 #include "posix/posix_io.h"
 #elif __NX__
 #include "nx/nx_io.h"
-#elif __SDL2__
+#elif __SDL2__ || __SDL1__
 #include "posix/posix_io.h"
 #elif __SFML__
 #include "posix/posix_io.h"
