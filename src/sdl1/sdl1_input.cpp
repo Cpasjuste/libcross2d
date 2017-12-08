@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include "sdl1_input.h"
+#include <SDL/SDL_keyboard.h>
 
 static int key_id[KEY_COUNT]{
         Input::Key::KEY_UP,
@@ -282,7 +283,11 @@ void SDL1Input::process_buttons(Input::Player &player, int rotate) {
 
 void SDL1Input::process_keyboard(Input::Player &player, int rotate) {
 
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+    const Uint8 *keys = SDL_GetKeyboardState(NULL);
+#else
     const Uint8 *keys = SDL_GetKeyState(NULL);
+#endif
 
     for (int i = 0; i < KEY_COUNT; i++) {
         if (keys[keyboard.mapping[i]]) {

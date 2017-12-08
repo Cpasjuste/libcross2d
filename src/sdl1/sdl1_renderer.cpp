@@ -10,7 +10,7 @@
 //////////
 SDL1Renderer::SDL1Renderer(int w, int h) : Renderer(w, h) {
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+    if (SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
         printf("Couldn't init SDL: %s\n", SDL_GetError());
         return;
     }
@@ -60,6 +60,7 @@ void SDL1Renderer::Clear() {
 }
 
 void SDL1Renderer::Flip() {
+
     SDL_Flip(screen);
 }
 

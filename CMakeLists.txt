@@ -6,9 +6,9 @@ set(CMAKE_SYSTEM_NAME "Generic")
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support" OFF)
 option(BUILD_SDL2 "Build with SDL2 support" OFF)
-option(BUILD_SDL1 "Build with SDL1 support" ON)
+option(BUILD_SDL1 "Build with SDL1 support" OFF)
 option(BUILD_PSP2 "Build with PSP2 support" OFF)
-option(BUILD_PS3 "Build with PS3 support" OFF)
+option(BUILD_PS3 "Build with PS3 support" ON)
 option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_RPI "Build with RPI support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
@@ -61,16 +61,16 @@ if (BUILD_PSP2)
     #####################
 elseif (BUILD_PS3)
     set(PLATFORM_DIRS
-            src/sdl2
+            src/sdl1
             src/posix
             ${PSL1GHT}/ppu/include
             ${PSL1GHT}/portlibs/ppu/include
             )
     file(GLOB PLATFORM_SRC
-            src/sdl2/*.c*
+            src/sdl1/*.c*
             src/posix/*.c*
             )
-    list(APPEND FLAGS -O3 -D__SDL2__ -D__PS3__)
+    list(APPEND FLAGS -O3 -D__SDL1__ -D__PS3__)
     #####################
     # 3DS PLATORM
     #####################
@@ -135,7 +135,7 @@ elseif (BUILD_SDL1)
             src/sdl1/*.c*
             src/posix/*.c*
             )
-    list(APPEND FLAGS -O3 -D__SDL1__ -DSDL_DRAW_BPP=2)
+    list(APPEND FLAGS -O3 -D__SDL1__)
     #####################
     # SFML PLATORM
     #####################
@@ -185,9 +185,10 @@ target_include_directories(${PROJECT_NAME}.ps3 PUBLIC ${CROSS2D_DIR})
 target_include_directories(${PROJECT_NAME}.ps3 PRIVATE ${PLATFORM_DIRS})
 target_link_libraries(${PROJECT_NAME}.ps3
         cross2d
-        ${PSL1GHT}/portlibs/ppu/lib/libSDL2.a
-        ${PSL1GHT}/portlibs/ppu/lib/libSDL2_image.a
-        ${PSL1GHT}/portlibs/ppu/lib/libSDL2_ttf.a
+        ${PSL1GHT}/portlibs/ppu/lib/libSDL_image.a
+        ${PSL1GHT}/portlibs/ppu/lib/libSDL.a
+        ${PSL1GHT}/portlibs/ppu/lib/libSDL_gfx.a
+        ${PSL1GHT}/portlibs/ppu/lib/libSDL_ttf.a
         ${PSL1GHT}/portlibs/ppu/lib/libfreetype.a
         ${PSL1GHT}/portlibs/ppu/lib/libpng.a
         ${PSL1GHT}/portlibs/ppu/lib/libtiff.a
