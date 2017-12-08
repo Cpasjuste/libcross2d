@@ -73,6 +73,7 @@ int main() {
         renderer->DrawLine(0, rect.h / 2, rect.w, rect.h / 2); // X
         renderer->DrawLine(rect.w / 2, 0, rect.w / 2, rect.h); // Y
 
+        /*
         // top middle text
         font->Draw(rect.w / 2, 0, "HELLO WORLD");
 
@@ -95,8 +96,9 @@ int main() {
         rect.y = 0;
         rect.w = 100;
         font->Draw(rect, WHITE, false, true, "HELLO WORLD");
+        */
 
-        texture->Draw(32, 32, texture->width / 2, texture->height / 2);
+        texture->Draw(0, 0, texture->width, texture->height);
 
         renderer->Flip();
     }
