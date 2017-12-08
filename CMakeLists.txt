@@ -6,6 +6,7 @@ set(CMAKE_SYSTEM_NAME "Generic")
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support" OFF)
 option(BUILD_SDL2 "Build with SDL2 support" OFF)
+option(BUILD_SDL1 "Build with SDL1 support" ON)
 option(BUILD_PSP2 "Build with PSP2 support" OFF)
 option(BUILD_PS3 "Build with PS3 support" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
@@ -123,6 +124,19 @@ elseif (BUILD_SDL2)
             )
     list(APPEND FLAGS -O3 -D__SDL2__)
     #####################
+    # SDL1 PLATORM
+    #####################
+elseif (BUILD_SDL1)
+    set(PLATFORM_DIRS
+            src/sdl1
+            src/posix
+            )
+    file(GLOB PLATFORM_SRC
+            src/sdl1/*.c*
+            src/posix/*.c*
+            )
+    list(APPEND FLAGS -O3 -D__SDL1__ -DSDL_DRAW_BPP=2)
+    #####################
     # SFML PLATORM
     #####################
 elseif (BUILD_SFML)
@@ -152,6 +166,15 @@ target_compile_options(${PROJECT_NAME}.sdl2 PRIVATE ${FLAGS})
 target_link_libraries(${PROJECT_NAME}.sdl2
         cross2d SDL2 SDL2_image SDL2_ttf z)
 add_dependencies(${PROJECT_NAME}.sdl2 ${PROJECT_NAME})
+
+#####################
+# SDL1 (unix) target
+#####################
+add_executable(${PROJECT_NAME}.sdl1 src/main.cpp)
+target_compile_options(${PROJECT_NAME}.sdl1 PRIVATE ${FLAGS})
+target_link_libraries(${PROJECT_NAME}.sdl1
+        cross2d SDL SDL_image SDL_gfx SDL_ttf z)
+add_dependencies(${PROJECT_NAME}.sdl1 ${PROJECT_NAME})
 
 #####################
 # PS3 target

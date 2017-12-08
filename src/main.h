@@ -58,7 +58,7 @@ int KEYS[]{
         82, 81, 80, 79, 89, 90, 91, 92, 93, 94, 41, 40, 0 // QUIT
 };
 
-#elif __SDL2__
+#elif __SDL2__ || __SDL1__
 
 #define SCR_W 960
 #define SCR_H 544

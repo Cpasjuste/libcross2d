@@ -66,6 +66,20 @@
 #define C2DAudio SDL2Audio
 #define C2DIo POSIXIo
 
+#elif __SDL1__
+
+#include "sdl1/sdl1_renderer.h"
+#include "sdl1/sdl1_font.h"
+#include "sdl1/sdl1_input.h"
+#include "sdl1/sdl1_audio.h"
+
+#define C2DRenderer SDL1Renderer
+#define C2DTexture SDL1Texture
+#define C2DFont SDL1Font
+#define C2DInput SDL1Input
+#define C2DAudio SDL1Audio
+#define C2DIo POSIXIo
+
 #elif __SFML__
 
 #include "sfml/sfml_renderer.h"
