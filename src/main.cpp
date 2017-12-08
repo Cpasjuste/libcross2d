@@ -48,6 +48,7 @@ int main() {
 
         renderer->Clear();
 
+        /*
         // window
         Rect rect = {0, 0, renderer->width - 1, renderer->height - 1};
         renderer->DrawRect(rect, ORANGE, false);
@@ -95,8 +96,9 @@ int main() {
         rect.y = 0;
         rect.w = 100;
         font->Draw(rect, WHITE, false, true, "HELLO WORLD");
+        */
 
-        texture->Draw(32, 32, texture->width, texture->height, 60);
+        texture->Draw(32, 32, texture->width, texture->height);
 
         renderer->Flip();
     }

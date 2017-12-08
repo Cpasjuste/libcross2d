@@ -9,6 +9,7 @@ option(BUILD_SDL2 "Build with SDL2 support" OFF)
 option(BUILD_SDL1 "Build with SDL1 support" OFF)
 option(BUILD_PSP2 "Build with PSP2 support" OFF)
 option(BUILD_PS3 "Build with PS3 support" OFF)
+option(BUILD_PS3_SDL2 "Build with PS3 (SDL2) support" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_RPI "Build with RPI support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
@@ -63,14 +64,58 @@ elseif (BUILD_PS3)
     set(PLATFORM_DIRS
             src/sdl1
             src/posix
-            ${PSL1GHT}/ppu/include
-            ${PSL1GHT}/portlibs/ppu/include
             )
     file(GLOB PLATFORM_SRC
             src/sdl1/*.c*
             src/posix/*.c*
             )
-    list(APPEND FLAGS -O3 -D__SDL1__ -D__PS3__)
+    set(PLATFORM_LIBS
+            ${PSL1GHT}/portlibs/ppu/lib/libSDL_image.a
+            ${PSL1GHT}/portlibs/ppu/lib/libSDL.a
+            ${PSL1GHT}/portlibs/ppu/lib/libSDL_gfx.a
+            ${PSL1GHT}/portlibs/ppu/lib/libSDL_ttf.a
+            ${PSL1GHT}/portlibs/ppu/lib/libfreetype.a
+            ${PSL1GHT}/portlibs/ppu/lib/libpng.a
+            ${PSL1GHT}/portlibs/ppu/lib/libtiff.a
+            ${PSL1GHT}/portlibs/ppu/lib/libjpeg.a
+            ${PSL1GHT}/ppu/lib/libgcm_sys.a
+            ${PSL1GHT}/ppu/lib/librsx.a
+            ${PSL1GHT}/ppu/lib/libsysutil.a
+            ${PSL1GHT}/ppu/lib/libio.a
+            ${PSL1GHT}/ppu/lib/libaudio.a
+            ${PSL1GHT}/portlibs/ppu/lib/libz.a
+            )
+    list(APPEND FLAGS
+            -O3 -D__SDL1__ -D__PS3__
+            )
+elseif (BUILD_PS3_SDL2)
+    set(PLATFORM_DIRS
+            src/sdl2
+            src/posix
+            )
+    file(GLOB PLATFORM_SRC
+            src/sdl2/*.c*
+            src/posix/*.c*
+            )
+    set(PLATFORM_LIBS
+            ${PSL1GHT}/portlibs/ppu/lib/libSDL2_image.a
+            ${PSL1GHT}/portlibs/ppu/lib/libSDL2.a
+            ${PSL1GHT}/portlibs/ppu/lib/libSDL2_gfx.a
+            ${PSL1GHT}/portlibs/ppu/lib/libSDL2_ttf.a
+            ${PSL1GHT}/portlibs/ppu/lib/libfreetype.a
+            ${PSL1GHT}/portlibs/ppu/lib/libpng.a
+            ${PSL1GHT}/portlibs/ppu/lib/libtiff.a
+            ${PSL1GHT}/portlibs/ppu/lib/libjpeg.a
+            ${PSL1GHT}/ppu/lib/libgcm_sys.a
+            ${PSL1GHT}/ppu/lib/librsx.a
+            ${PSL1GHT}/ppu/lib/libsysutil.a
+            ${PSL1GHT}/ppu/lib/libio.a
+            ${PSL1GHT}/ppu/lib/libaudio.a
+            ${PSL1GHT}/portlibs/ppu/lib/libz.a
+            )
+    list(APPEND FLAGS
+            -O3 -D__SDL2__ -D__PS3__
+            )
     #####################
     # 3DS PLATORM
     #####################
@@ -183,23 +228,7 @@ add_executable(${PROJECT_NAME}.ps3 src/main.cpp)
 target_compile_options(${PROJECT_NAME}.ps3 PRIVATE ${FLAGS})
 target_include_directories(${PROJECT_NAME}.ps3 PUBLIC ${CROSS2D_DIR})
 target_include_directories(${PROJECT_NAME}.ps3 PRIVATE ${PLATFORM_DIRS})
-target_link_libraries(${PROJECT_NAME}.ps3
-        cross2d
-        ${PSL1GHT}/portlibs/ppu/lib/libSDL_image.a
-        ${PSL1GHT}/portlibs/ppu/lib/libSDL.a
-        ${PSL1GHT}/portlibs/ppu/lib/libSDL_gfx.a
-        ${PSL1GHT}/portlibs/ppu/lib/libSDL_ttf.a
-        ${PSL1GHT}/portlibs/ppu/lib/libfreetype.a
-        ${PSL1GHT}/portlibs/ppu/lib/libpng.a
-        ${PSL1GHT}/portlibs/ppu/lib/libtiff.a
-        ${PSL1GHT}/portlibs/ppu/lib/libjpeg.a
-        ${PSL1GHT}/ppu/lib/libgcm_sys.a
-        ${PSL1GHT}/ppu/lib/librsx.a
-        ${PSL1GHT}/ppu/lib/libsysutil.a
-        ${PSL1GHT}/ppu/lib/libio.a
-        ${PSL1GHT}/ppu/lib/libaudio.a
-        ${PSL1GHT}/portlibs/ppu/lib/libz.a
-        )
+target_link_libraries(${PROJECT_NAME}.ps3 cross2d ${PLATFORM_LIBS})
 add_dependencies(${PROJECT_NAME}.ps3 ${PROJECT_NAME})
 add_custom_target(${PROJECT_NAME}.ps3.elf
         DEPENDS ${PROJECT_NAME}.ps3
