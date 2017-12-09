@@ -24,7 +24,7 @@ int main() {
     /*
     Texture *texture = (Texture *) new C2DTexture(renderer, 384, 224);
     FILE *pFile;
-    pFile = fopen("/home/cpasjuste/dev/frame.bin", "rb");
+    pFile = fopen("/dev_hdd0/frame.bin", "rb");
     if (pFile == NULL) {
         printf("File error\n");
     }
@@ -69,8 +69,6 @@ int main() {
         renderer->DrawLine(0, rect.h / 2, rect.w, rect.h / 2); // X
         renderer->DrawLine(rect.w / 2, 0, rect.w / 2, rect.h); // Y
 
-
-        /*
         // top middle text
         font->Draw(rect.w / 2, 0, "HELLO WORLD");
 
@@ -84,7 +82,7 @@ int main() {
         r.h = font->GetHeight("HELLO WORLD");
         r.x -= r.w / 2;
         r.y -= r.h / 2;
-        renderer->DrawRect(r, RED, false);
+        renderer->DrawRect(r, C2D_COL_RED, false);
         font->Draw(r, C2D_COL_ORANGE, true, true, "HELLO WORLD SCALED");
         font->scaling = 1;
 
@@ -95,7 +93,7 @@ int main() {
         font->Draw(rect, C2D_COL_WHITE, false, true, "HELLO WORLD");
 
         texture->Draw(32, 32, texture->width, texture->height);
-        */
+
 
         renderer->Flip();
     }

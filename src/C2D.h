@@ -80,6 +80,21 @@
 #define C2DAudio SDL1Audio
 #define C2DIo POSIXIo
 
+#elif __TINY3D__
+
+#include "ps3/tiny3d_renderer.h"
+#include "ps3/tiny3d_texture.h"
+#include "sdl1/sdl1_font.h"
+#include "sdl1/sdl1_input.h"
+#include "sdl1/sdl1_audio.h"
+
+#define C2DRenderer TINY3DRenderer
+#define C2DTexture TINY3DTexture
+#define C2DFont Font
+#define C2DInput Input
+#define C2DAudio Audio
+#define C2DIo POSIXIo
+
 #elif __SFML__
 
 #include "sfml/sfml_renderer.h"

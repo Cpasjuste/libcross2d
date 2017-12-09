@@ -8,8 +8,9 @@ option(BUILD_SFML "Build with SFML support" OFF)
 option(BUILD_SDL2 "Build with SDL2 support" OFF)
 option(BUILD_SDL1 "Build with SDL1 support" OFF)
 option(BUILD_PSP2 "Build with PSP2 support" OFF)
-option(BUILD_PS3 "Build with PS3 support" ON)
+option(BUILD_PS3 "Build with PS3 (SDL1) support" OFF)
 option(BUILD_PS3_SDL2 "Build with PS3 (SDL2) support" OFF)
+option(BUILD_PS3_TINY3D "Build with PS3 (TINY3D) support" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_RPI "Build with RPI support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
@@ -87,6 +88,33 @@ elseif (BUILD_PS3)
             )
     list(APPEND FLAGS
             -O3 -D__SDL1__ -D__PS3__
+            )
+elseif (BUILD_PS3_TINY3D)
+    set(PLATFORM_DIRS
+            src/ps3
+            src/posix
+            )
+    file(GLOB PLATFORM_SRC
+            src/ps3/*.c*
+            src/posix/*.c*
+            )
+    set(PLATFORM_LIBS
+            ${PSL1GHT}/portlibs/ppu/lib/libtiny3d.a
+            ${PSL1GHT}/portlibs/ppu/lib/libfreetype.a
+            ${PSL1GHT}/portlibs/ppu/lib/libpng.a
+            ${PSL1GHT}/portlibs/ppu/lib/libtiff.a
+            ${PSL1GHT}/portlibs/ppu/lib/libjpeg.a
+            ${PSL1GHT}/ppu/lib/libgcm_sys.a
+            ${PSL1GHT}/ppu/lib/librsx.a
+            ${PSL1GHT}/ppu/lib/libsysutil.a
+            ${PSL1GHT}/ppu/lib/libsysmodule.a
+            ${PSL1GHT}/ppu/lib/libpngdec.a
+            ${PSL1GHT}/ppu/lib/libio.a
+            ${PSL1GHT}/ppu/lib/libaudio.a
+            ${PSL1GHT}/portlibs/ppu/lib/libz.a
+            )
+    list(APPEND FLAGS
+            -O3 -D__TINY3D__ -D__PS3__
             )
 elseif (BUILD_PS3_SDL2)
     set(PLATFORM_DIRS
