@@ -40,40 +40,37 @@ int main() {
 
         Input::Player player = input->Update(0)[0];
         if (player.state) {
-            if (player.state & EV_QUIT)
+            if (player.state & EV_QUIT) {
                 break;
+            }
             //printf("state: %i\n", player.state);
             renderer->Delay(100);
         }
 
         renderer->Clear();
 
-        /*
         // window
         Rect rect = {0, 0, renderer->width - 1, renderer->height - 1};
-        renderer->DrawRect(rect, ORANGE, false);
-
-        // inside rect
-        rect.x += 1;
-        rect.y += 1;
-        rect.w -= 2;
-        rect.h -= 2;
-        renderer->DrawRect(rect, GRAY_LIGHT);
+        renderer->DrawRect(rect, C2D_COL_ORANGE, false);
 
         // inside "inside rect"
-        rect.x += 1;
-        rect.y += 1;
-        rect.w -= 2;
-        rect.h -= 2;
-        renderer->DrawRect(rect, GREEN, false);
+        rect.Scale(-1);
+        renderer->DrawRect(rect, C2D_COL_GREEN, false);
 
         // "inside rect" inside border
-        renderer->DrawBorder(rect, ORANGE);
+        rect.Scale(-1);
+        renderer->DrawRect(rect, C2D_COL_ORANGE, false);
+
+        // inside/background rect
+        rect.Scale(-1);
+        renderer->DrawRect(rect, C2D_COL_GRAY_LIGHT);
 
         // screen centers
         renderer->DrawLine(0, rect.h / 2, rect.w, rect.h / 2); // X
         renderer->DrawLine(rect.w / 2, 0, rect.w / 2, rect.h); // Y
 
+
+        /*
         // top middle text
         font->Draw(rect.w / 2, 0, "HELLO WORLD");
 
@@ -88,17 +85,17 @@ int main() {
         r.x -= r.w / 2;
         r.y -= r.h / 2;
         renderer->DrawRect(r, RED, false);
-        font->Draw(r, ORANGE, true, true, "HELLO WORLD SCALED");
+        font->Draw(r, C2D_COL_ORANGE, true, true, "HELLO WORLD SCALED");
         font->scaling = 1;
 
         // y centered and truncated text
         rect.x = 0;
         rect.y = 0;
         rect.w = 100;
-        font->Draw(rect, WHITE, false, true, "HELLO WORLD");
-        */
+        font->Draw(rect, C2D_COL_WHITE, false, true, "HELLO WORLD");
 
         texture->Draw(32, 32, texture->width, texture->height);
+        */
 
         renderer->Flip();
     }

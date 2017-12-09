@@ -36,8 +36,6 @@ public:
     virtual void DrawRect(const Rect &rect, const Color &color, bool fill = true) {};  // to implement
     void DrawRect(int x, int y, int w, int h, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool fill = true);
 
-    void DrawBorder(const Rect &rect, const Color &color, bool inside = true);
-
     virtual void Clip(const Rect &rect) {};  // to implement
 
     virtual void Clear() {};  // to implement

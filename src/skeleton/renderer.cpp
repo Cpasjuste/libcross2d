@@ -7,7 +7,7 @@
 Renderer::Renderer(int w, int h) {
     width = w;
     height = h;
-    color = BLACK;
+    color = C2D_COL_BLACK;
 }
 
 Renderer::~Renderer() {
@@ -23,13 +23,3 @@ void Renderer::DrawRect(int x, int y, int w, int h, uint8_t r, uint8_t g, uint8_
     DrawRect(rect, color, fill);
 }
 
-void Renderer::DrawBorder(const Rect &rect, const Color &c, bool inside) {
-
-    Rect r{rect.x, rect.y, rect.w, rect.h};
-
-    if (inside) {
-        r = {rect.x + 1, rect.y + 1, rect.w - 2, rect.h - 2};
-    }
-
-    DrawRect(r, c, false);
-}

@@ -10,6 +10,13 @@ struct Rect {
     int y;
     int w;
     int h;
+
+    void Scale(int size) {
+        x -= size;
+        y -= size;
+        w += size * 2;
+        h += size * 2;
+    }
 };
 
 #endif //_RECT_H_
