@@ -7,8 +7,8 @@
 
 #include <skeleton/renderer.h>
 #include <pngdec/pngdec.h>
-#include <tiny3d.h>
 #include <ppu-lv2.h>
+#include "tiny3d.h"
 
 class TINY3DTexture : Texture {
 

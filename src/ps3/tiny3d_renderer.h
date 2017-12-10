@@ -26,6 +26,9 @@ public:
 
     virtual void SetShader(int shader);
 
+private:
+    bool clear = false;
+
 };
 
 #endif //TINY3D_RENDERER_H

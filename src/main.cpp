@@ -22,6 +22,7 @@ int main() {
     Texture *texture = (Texture *) new C2DTexture(renderer, TEX_PATH);
 
     /*
+    // test for fba rgb565 framebuffer (little endian)
     Texture *texture = (Texture *) new C2DTexture(renderer, 384, 224);
     FILE *pFile;
     pFile = fopen("/dev_hdd0/frame.bin", "rb");

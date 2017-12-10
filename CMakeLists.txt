@@ -8,9 +8,7 @@ option(BUILD_SFML "Build with SFML support" OFF)
 option(BUILD_SDL2 "Build with SDL2 support" OFF)
 option(BUILD_SDL1 "Build with SDL1 support" OFF)
 option(BUILD_PSP2 "Build with PSP2 support" OFF)
-option(BUILD_PS3 "Build with PS3 (SDL1) support" OFF)
-option(BUILD_PS3_SDL2 "Build with PS3 (SDL2) support" OFF)
-option(BUILD_PS3_TINY3D "Build with PS3 (TINY3D) support" OFF)
+option(BUILD_PS3 "Build with PS3 support" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_RPI "Build with RPI support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
@@ -63,43 +61,18 @@ if (BUILD_PSP2)
     #####################
 elseif (BUILD_PS3)
     set(PLATFORM_DIRS
-            src/sdl1
-            src/posix
-            )
-    file(GLOB PLATFORM_SRC
-            src/sdl1/*.c*
-            src/posix/*.c*
-            )
-    set(PLATFORM_LIBS
-            ${PSL1GHT}/portlibs/ppu/lib/libSDL_image.a
-            ${PSL1GHT}/portlibs/ppu/lib/libSDL.a
-            ${PSL1GHT}/portlibs/ppu/lib/libSDL_gfx.a
-            ${PSL1GHT}/portlibs/ppu/lib/libSDL_ttf.a
-            ${PSL1GHT}/portlibs/ppu/lib/libfreetype.a
-            ${PSL1GHT}/portlibs/ppu/lib/libpng.a
-            ${PSL1GHT}/portlibs/ppu/lib/libtiff.a
-            ${PSL1GHT}/portlibs/ppu/lib/libjpeg.a
-            ${PSL1GHT}/ppu/lib/libgcm_sys.a
-            ${PSL1GHT}/ppu/lib/librsx.a
-            ${PSL1GHT}/ppu/lib/libsysutil.a
-            ${PSL1GHT}/ppu/lib/libio.a
-            ${PSL1GHT}/ppu/lib/libaudio.a
-            ${PSL1GHT}/portlibs/ppu/lib/libz.a
-            )
-    list(APPEND FLAGS
-            -O3 -D__SDL1__ -D__PS3__
-            )
-elseif (BUILD_PS3_TINY3D)
-    set(PLATFORM_DIRS
             src/ps3
+            src/ps3/tiny3d/source
+            src/ps3/tiny3d/include
             src/posix
             )
     file(GLOB PLATFORM_SRC
             src/ps3/*.c*
+            src/ps3/tiny3d/source/*.c*
+            src/ps3/tiny3d/source/*.S*
             src/posix/*.c*
             )
     set(PLATFORM_LIBS
-            ${PSL1GHT}/portlibs/ppu/lib/libtiny3d.a
             ${PSL1GHT}/portlibs/ppu/lib/libfreetype.a
             ${PSL1GHT}/portlibs/ppu/lib/libpng.a
             ${PSL1GHT}/portlibs/ppu/lib/libtiff.a
@@ -115,34 +88,6 @@ elseif (BUILD_PS3_TINY3D)
             )
     list(APPEND FLAGS
             -O3 -D__TINY3D__ -D__PS3__
-            )
-elseif (BUILD_PS3_SDL2)
-    set(PLATFORM_DIRS
-            src/sdl2
-            src/posix
-            )
-    file(GLOB PLATFORM_SRC
-            src/sdl2/*.c*
-            src/posix/*.c*
-            )
-    set(PLATFORM_LIBS
-            ${PSL1GHT}/portlibs/ppu/lib/libSDL2_image.a
-            ${PSL1GHT}/portlibs/ppu/lib/libSDL2.a
-            ${PSL1GHT}/portlibs/ppu/lib/libSDL2_gfx.a
-            ${PSL1GHT}/portlibs/ppu/lib/libSDL2_ttf.a
-            ${PSL1GHT}/portlibs/ppu/lib/libfreetype.a
-            ${PSL1GHT}/portlibs/ppu/lib/libpng.a
-            ${PSL1GHT}/portlibs/ppu/lib/libtiff.a
-            ${PSL1GHT}/portlibs/ppu/lib/libjpeg.a
-            ${PSL1GHT}/ppu/lib/libgcm_sys.a
-            ${PSL1GHT}/ppu/lib/librsx.a
-            ${PSL1GHT}/ppu/lib/libsysutil.a
-            ${PSL1GHT}/ppu/lib/libio.a
-            ${PSL1GHT}/ppu/lib/libaudio.a
-            ${PSL1GHT}/portlibs/ppu/lib/libz.a
-            )
-    list(APPEND FLAGS
-            -O3 -D__SDL2__ -D__PS3__
             )
     #####################
     # 3DS PLATORM

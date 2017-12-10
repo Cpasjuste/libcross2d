@@ -4,6 +4,7 @@
 
 #include <C2D.h>
 #include <pngdec/pngdec.h>
+#include <rsx/mm.h>
 
 TINY3DTexture::TINY3DTexture(Renderer *r, const char *p) : Texture(r, p) {
 
@@ -51,6 +52,8 @@ TINY3DTexture::TINY3DTexture(Renderer *r, int w, int h) : Texture(r, w, h) {
     pitch = width * bpp;
     size = width * height * bpp;
 
+    printf("TINY3DTexture: %ix%i, bpp=%i, pitch=%i, size=%i\n", width, height, bpp, pitch, size);
+
     pixels = (u32 *) tiny3d_AllocTexture((u32) size);
     if (!pixels) {
         printf("Could not allocated TINY3DTexture\n");
@@ -62,6 +65,10 @@ TINY3DTexture::TINY3DTexture(Renderer *r, int w, int h) : Texture(r, w, h) {
 }
 
 void TINY3DTexture::Draw(int x, int y, int w, int h, float rotation) {
+
+    if (!pixels) {
+        return;;
+    }
 
     tiny3d_SetTexture(0, offset, width, height, pitch, fmt, TEXTURE_LINEAR);
 
@@ -105,8 +112,6 @@ int TINY3DTexture::Lock(const Rect &rect, void **data, int *_pitch) {
 }
 
 void TINY3DTexture::Unlock() {
-
-
 }
 
 void TINY3DTexture::SetFiltering(int filter) {
@@ -115,6 +120,6 @@ void TINY3DTexture::SetFiltering(int filter) {
 TINY3DTexture::~TINY3DTexture() {
 
     if (pixels) {
-        tiny3d_FreeTexture(pixels);
+        rsxFree(pixels);
     }
 }

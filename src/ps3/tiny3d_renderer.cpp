@@ -3,9 +3,9 @@
 //
 
 #include <C2D.h>
-#include <tiny3d.h>
 #include <unistd.h>
 #include <sysmodule/sysmodule.h>
+#include "tiny3d.h"
 
 //////////
 // INIT //
@@ -83,7 +83,7 @@ void TINY3DRenderer::DrawRect(const Rect &rect, const Color &c, bool fill) {
 void TINY3DRenderer::Clear() {
 
     tiny3d_Clear(color.ToARGB(), TINY3D_CLEAR_ALL);
-
+    clear = true;
 }
 
 void TINY3DRenderer::Flip() {
@@ -101,6 +101,13 @@ void TINY3DRenderer::Flip() {
                      (blend_func) (TINY3D_BLEND_RGB_FUNC_ADD | TINY3D_BLEND_ALPHA_FUNC_ADD));
 
     tiny3d_Project2D();
+
+    // needs to be called
+    if (!clear) {
+        tiny3d_Clear(color.ToARGB(), TINY3D_CLEAR_ALL);
+    } else {
+        clear = false;
+    }
 }
 
 void TINY3DRenderer::Delay(unsigned int ms) {
