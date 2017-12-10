@@ -8,7 +8,10 @@
 TINY3DTexture::TINY3DTexture(Renderer *r, const char *p) : Texture(r, p) {
 
     pngData png;
-    pngLoadFromFile(path, &png);
+    if (pngLoadFromFile(path, &png)) {
+        printf("Could not create texture: pngLoadFromFile\n");
+        return;
+    }
 
     width = png.width;
     height = png.height;
@@ -30,7 +33,7 @@ TINY3DTexture::TINY3DTexture(Renderer *r, const char *p) : Texture(r, p) {
 
     pixels = (u32 *) tiny3d_AllocTexture((u32) size);
     if (!pixels) {
-        printf("Could not allocated TINY3DTexture\n");
+        printf("Could not create texture: tiny3d_AllocTexture\n");
     }
 
     memcpy(pixels, png.bmp_out, (size_t) size);

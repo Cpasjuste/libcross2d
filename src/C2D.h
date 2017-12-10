@@ -37,6 +37,7 @@
 #include "3ds/ctr_font.h"
 #include "3ds/ctr_input.h"
 #include "sdl2/sdl2_audio.h"
+#include "posix/posix_io.h"
 
 #define C2DRenderer CTRRenderer
 #define C2DTexture CTRTexture
@@ -58,6 +59,7 @@
 #include "sdl2/sdl2_font.h"
 #include "sdl2/sdl2_input.h"
 #include "sdl2/sdl2_audio.h"
+#include "posix/posix_io.h"
 
 #define C2DRenderer SDL2Renderer
 #define C2DTexture SDL2Texture
@@ -72,6 +74,7 @@
 #include "sdl1/sdl1_font.h"
 #include "sdl1/sdl1_input.h"
 #include "sdl1/sdl1_audio.h"
+#include "posix/posix_io.h"
 
 #define C2DRenderer SDL1Renderer
 #define C2DTexture SDL1Texture
@@ -87,6 +90,7 @@
 #include "sdl1/sdl1_font.h"
 #include "sdl1/sdl1_input.h"
 #include "sdl1/sdl1_audio.h"
+#include "posix/posix_io.h"
 
 #define C2DRenderer TINY3DRenderer
 #define C2DTexture TINY3DTexture
@@ -102,6 +106,7 @@
 #include "sfml/sfml_font.h"
 #include "sfml/sfml_input.h"
 #include "sdl2/sdl2_audio.h"
+#include "posix/posix_io.h"
 
 #define C2DRenderer SFMLRenderer
 #define C2DTexture SFMLTexture
