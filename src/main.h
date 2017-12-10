@@ -48,8 +48,8 @@ int KEYS[]{
 
 #elif __PS3__
 
-#define SCR_W 1280
-#define SCR_H 720
+#define SCR_W 1280  // doesn't matter, virtual resolution used
+#define SCR_H 720   // doesn't matter, virtual resolution used
 #define FONT_PATH   "/dev_hdd0/default.ttf"
 #define TEX_PATH    "/dev_hdd0/title.png"
 int KEYS[]{
