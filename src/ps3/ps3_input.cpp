@@ -4,7 +4,9 @@
 
 #include <cmath>
 #include <cstdio>
-#include "ps3_input.h"
+
+#include <C2D.h>
+#include <io/pad.h>
 
 static int key_id[KEY_COUNT]{
         Input::Key::KEY_UP,
@@ -25,33 +27,26 @@ static int key_id[KEY_COUNT]{
 
 PS3Input::PS3Input(Renderer *r) : Input(r) {
 
-    // TODO:
-    /*
-    if (SDL_WasInit(SDL_INIT_JOYSTICK) == 0) {
-        printf("PS3Input: SDL_INIT_JOYSTICK\n");
-        SDL_InitSubSystem(SDL_INIT_JOYSTICK);
-    }
+    ioPadInit(7);
 
-    int joystick_count = SDL_NumJoysticks();
-    if (joystick_count > 4) {
-        joystick_count = 4;
-    }
-    printf("%d Joystick(s) Found\n", joystick_count);
+    padInfo padinfo;
+    ioPadGetInfo(&padinfo);
 
-    if (joystick_count > 0) {
-        for (int i = 0; i < joystick_count; i++) {
-            printf("Joystick: %i\n", i);
-            players[i].data = SDL_JoystickOpen(i);
-            players[i].id = i;
-            players[i].enabled = true;
-            printf("Name: %s\n", SDL_JoystickName(i));
-            printf("Hats %d\n", SDL_JoystickNumHats((SDL_Joystick *) players[i].data));
-            printf("Buttons %d\n", SDL_JoystickNumButtons((SDL_Joystick *) players[i].data));
-            printf("Axis %d\n", SDL_JoystickNumAxes((SDL_Joystick *) players[i].data));
+    int count = 0;
+    for (int i = 0; i < MAX_PADS; i++) {
+
+        if (count > 3) {
+            break;
         }
-    } else {
-        // allow keyboard mapping to player1
-        players[0].enabled = true;
+
+        if (padinfo.status[i]) {
+            //players[count].data = SDL_JoystickOpen(i);
+            players[count].id = i;
+            players[count].enabled = true;
+            printf("Joystick %u:\r\nVendor ID: %hx\r\nProduct ID: %hx\r\nStatus: %hhu\r\n",
+                   i, padinfo.vendor_id[i], padinfo.product_id[i], padinfo.status[i]);
+            count++;
+        }
     }
 
     for (int i = 0; i < PLAYER_COUNT; i++) {
@@ -63,7 +58,6 @@ PS3Input::PS3Input(Renderer *r) : Input(r) {
     for (int i = 0; i < KEY_COUNT; i++) {
         keyboard.mapping[i] = 0;
     }
-    */
 }
 
 PS3Input::~PS3Input() {
@@ -72,42 +66,29 @@ PS3Input::~PS3Input() {
         players[i].enabled = false;
     }
 
-    /*
-    if (SDL_WasInit(SDL_INIT_JOYSTICK)) {
-        SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
-    }
-    */
+    ioPadEnd();
 }
 
 int PS3Input::GetButton(int player) {
 
-    /*
-    SDL_Event event = {};
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_JOYBUTTONDOWN) {
-            return event.jbutton.button;
+    padInfo padinfo;
+    padData paddata;
+
+    ioPadGetInfo(&padinfo);
+    if (padinfo.status[players[player].id]) {
+        ioPadGetData((u32) players[player].id, &paddata);
+        for (int i = 0; i < MAX_PAD_CODES; i++) {
+            if (paddata.button[i]) {
+                printf("btn: %i\n", i);
+                return i;
+            }
         }
     }
-    */
+
     return -1;
 }
 
 Input::Player *PS3Input::Update(int rotate) {
-
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-        players[i].state = 0;
-    }
-
-    // TODO:
-    /*
-    SDL_Event event = {};
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT) {
-            players[0].state |= EV_QUIT;
-            return players;
-        }
-    }
-    */
 
     for (int i = 0; i < PLAYER_COUNT; i++) {
 
@@ -115,18 +96,30 @@ Input::Player *PS3Input::Update(int rotate) {
             continue;
         }
 
-        // hat
-        process_hat(players[i], rotate);
+        players[i].state = 0;
+
+        padInfo padinfo;
+        ioPadGetInfo(&padinfo);
+        if (!padinfo.status[players[i].id]) {
+            return players;
+        }
+
+        padData paddata;
+        ioPadGetData((u32) players[i].id, &paddata);
+        if (paddata.len < 8) {
+            return players;
+        }
+
+        players[i].data = &paddata;
 
         // sticks
         process_axis(players[i], rotate);
 
         // buttons
         process_buttons(players[i], rotate);
-    }
 
-    // keyboard
-    process_keyboard(players[0], rotate);
+        players[i].data = 0;
+    }
 
     return players;
 }
@@ -218,55 +211,19 @@ void PS3Input::process_axis(Input::Player &player, int rotate) {
     } // end for
 }
 
-void PS3Input::process_hat(Input::Player &player, int rotate) {
-
-    if (!player.enabled || !player.data) {
-        return;
-    }
-
-    /*
-    int value = SDL_JoystickGetHat((SDL_Joystick *) player.data, 0);
-
-    if (value == SDL_HAT_UP
-        || value == SDL_HAT_LEFTUP
-        || value == SDL_HAT_RIGHTUP) {
-        player.state |= (rotate == 1) ? Input::Key::KEY_RIGHT : (rotate == 3) ? Input::Key::KEY_LEFT
-                                                                              : Input::Key::KEY_UP;
-    }
-    if (value == SDL_HAT_DOWN
-        || value == SDL_HAT_LEFTDOWN
-        || value == SDL_HAT_RIGHTDOWN) {
-        player.state |= (rotate == 1) ? Input::Key::KEY_LEFT : (rotate == 3) ? Input::Key::KEY_RIGHT
-                                                                             : Input::Key::KEY_DOWN;
-    }
-    if (value == SDL_HAT_LEFT
-        || value == SDL_HAT_LEFTDOWN
-        || value == SDL_HAT_LEFTUP) {
-        player.state |= (rotate == 1) ? Input::Key::KEY_UP : (rotate == 3) ? Input::Key::KEY_DOWN
-                                                                           : Input::Key::KEY_LEFT;
-    }
-    if (value == SDL_HAT_RIGHT
-        || value == SDL_HAT_RIGHTDOWN
-        || value == SDL_HAT_RIGHTUP) {
-        player.state |= (rotate == 1) ? Input::Key::KEY_DOWN : (rotate == 3) ? Input::Key::KEY_UP
-                                                                             : Input::Key::KEY_RIGHT;
-    }
-    */
-}
-
 void PS3Input::process_buttons(Input::Player &player, int rotate) {
 
     if (!player.enabled || !player.data) {
         return;
     }
 
+    padData *pad = (padData *) player.data;
+
     for (int i = 0; i < KEY_COUNT; i++) {
 
         int mapping = player.mapping[i];
 
-        //TODO:
-        if(0) {
-        //if (SDL_JoystickGetButton((SDL_Joystick *) player.data, mapping)) {
+        if (pad->button[mapping]) {
             if (rotate && key_id[i] == Input::Key::KEY_UP) {
                 if (rotate == 1) {
                     player.state |= Input::Key::KEY_RIGHT;

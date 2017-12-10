@@ -8,7 +8,7 @@
 #include <skeleton/renderer.h>
 #include <pngdec/pngdec.h>
 #include <ppu-lv2.h>
-#include "tiny3d.h"
+#include "ps3/tiny3d/include/tiny3d.h"
 
 class TINY3DTexture : Texture {
 

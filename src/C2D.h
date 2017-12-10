@@ -160,26 +160,26 @@
 #define KEY_JOY_AXIS_RX         4
 #define KEY_JOY_AXIS_RY         5
 
-#elif __TINY3D__
+#elif __PS3__
 
 #include "ps3/tiny3d_renderer.h"
 #include "ps3/tiny3d_texture.h"
-#include "sdl1/sdl1_font.h"
-#include "sdl1/sdl1_input.h"
-#include "sdl1/sdl1_audio.h"
+#include "ps3/ps3_input.h"
+#include "font.h"
+#include "audio.h"
 #include "posix/posix_io.h"
 
 #define C2DRenderer TINY3DRenderer
 #define C2DTexture TINY3DTexture
 #define C2DFont Font
-#define C2DInput Input
+#define C2DInput PS3Input
 #define C2DAudio Audio
 #define C2DIo POSIXIo
 
-#define KEY_JOY_UP_DEFAULT      3  // use hat
-#define KEY_JOY_DOWN_DEFAULT    1  // use hat
-#define KEY_JOY_LEFT_DEFAULT    0  // use hat
-#define KEY_JOY_RIGHT_DEFAULT   2  // use hat
+#define KEY_JOY_UP_DEFAULT      3
+#define KEY_JOY_DOWN_DEFAULT    1
+#define KEY_JOY_LEFT_DEFAULT    0
+#define KEY_JOY_RIGHT_DEFAULT   2
 #define KEY_JOY_FIRE1_DEFAULT   9
 #define KEY_JOY_FIRE2_DEFAULT   10
 #define KEY_JOY_FIRE3_DEFAULT   8

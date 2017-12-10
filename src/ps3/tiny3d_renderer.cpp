@@ -5,12 +5,21 @@
 #include <C2D.h>
 #include <unistd.h>
 #include <sysmodule/sysmodule.h>
+#include <cmath>
 #include "tiny3d.h"
+
+static void quit() {
+
+    sysModuleUnload(SYSMODULE_PNGDEC);
+    exit(0);
+}
 
 //////////
 // INIT //
 //////////
 TINY3DRenderer::TINY3DRenderer(int w, int h) : Renderer(w, h) {
+
+    atexit(quit);
 
     sysModuleLoad(SYSMODULE_PNGDEC);
 
@@ -35,7 +44,7 @@ void TINY3DRenderer::DrawLine(int x0, int y0, int x1, int y1, const Color &c) {
     float dy = y1 - y0;
     float nx = -dy;
     float ny = dx;
-    float len = sqrt(nx * nx + ny * ny);
+    float len = std::sqrt(nx * nx + ny * ny);
 
     if (len > 0) {
         nx /= len;

@@ -13,7 +13,7 @@ int main() {
 
     // input
     Input *input = (Input *) new C2DInput(renderer);
-    input->SetKeyboardMapping(KEYS);
+    input->SetJoystickMapping(0, KEYS, 3);
 
     // font
     Font *font = (Font *) new C2DFont(renderer, FONT_PATH, 20);
@@ -44,7 +44,7 @@ int main() {
             if (player.state & EV_QUIT) {
                 break;
             }
-            //printf("state: %i\n", player.state);
+            printf("state: %i\n", player.state);
             renderer->Delay(100);
         }
 

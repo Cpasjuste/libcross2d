@@ -87,7 +87,7 @@ elseif (BUILD_PS3)
             ${PSL1GHT}/portlibs/ppu/lib/libz.a
             )
     list(APPEND FLAGS
-            -O3 -D__TINY3D__ -D__PS3__
+            -O3 -D__PS3__
             )
     #####################
     # 3DS PLATORM

@@ -53,9 +53,8 @@ int KEYS[]{
 #define FONT_PATH   "/dev_hdd0/default.ttf"
 #define TEX_PATH    "/dev_hdd0/title.png"
 int KEYS[]{
-        // SDL_Scancode
         // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
-        82, 81, 80, 79, 89, 90, 91, 92, 93, 94, 41, 40, 0 // QUIT
+        3, 1, 0, 2, 7, 4, 9, 8, 10, 11, 13, 12, 0 // QUIT
 };
 
 #elif __SDL2__ || __SDL1__
