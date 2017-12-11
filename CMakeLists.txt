@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_SYSTEM_NAME "Generic")
+enable_language(ASM)
 
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support" OFF)
@@ -87,7 +88,7 @@ elseif (BUILD_PS3)
             ${PSL1GHT}/portlibs/ppu/lib/libz.a
             )
     list(APPEND FLAGS
-            -O3 -D__PS3__
+            -O2 -D__PS3__
             )
     #####################
     # 3DS PLATORM

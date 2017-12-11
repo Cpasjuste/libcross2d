@@ -6,6 +6,20 @@
 
 #include "main.h"
 
+void print_keys(unsigned int state) {
+
+    printf("state: %i ", state);
+    if (state & Input::Key::KEY_DOWN)
+        printf(" - DOWN");
+    if (state & Input::Key::KEY_UP)
+        printf(" - UP");
+    if (state & Input::Key::KEY_LEFT)
+        printf(" - LEFT");
+    if (state & Input::Key::KEY_RIGHT)
+        printf(" - RIGHT");
+    printf("\n");
+}
+
 int main() {
 
     // renderer
@@ -13,7 +27,8 @@ int main() {
 
     // input
     Input *input = (Input *) new C2DInput(renderer);
-    input->SetJoystickMapping(0, KEYS, 3);
+    input->SetJoystickMapping(0, KEYS, 2000);
+    //input->SetKeyboardMapping(KEYS);
 
     // font
     Font *font = (Font *) new C2DFont(renderer, FONT_PATH, 20);
@@ -44,7 +59,7 @@ int main() {
             if (player.state & EV_QUIT) {
                 break;
             }
-            printf("state: %i\n", player.state);
+            print_keys(player.state);
             renderer->Delay(100);
         }
 
@@ -94,7 +109,6 @@ int main() {
         font->Draw(rect, C2D_COL_WHITE, false, true, "HELLO WORLD");
 
         texture->Draw(32, 32, texture->width, texture->height);
-
 
         renderer->Flip();
     }

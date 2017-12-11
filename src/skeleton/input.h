@@ -41,7 +41,7 @@ public:
     };
 
     struct Player {
-        int mapping[KEY_COUNT]{};
+        int mapping[KEY_COUNT];
         Axis lx{0, 0};
         Axis ly{1, 0};
         Axis rx{2, 0};

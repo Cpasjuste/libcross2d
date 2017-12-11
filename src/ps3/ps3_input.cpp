@@ -25,6 +25,37 @@ static int key_id[KEY_COUNT]{
         Input::Key::KEY_MENU2
 };
 
+// Map analog inputs to -32768 -> 32767, from xerpi ?
+// https://github.com/Cpasjuste/SDL/blob/master/src/joystick/vita/SDL_sysjoystick.c
+static int analog_map[256];
+typedef struct {
+    int x;
+    int y;
+} point;
+/* 4 points define the bezier-curve. */
+static point a = {0, 0};
+static point b = {50, 0};
+static point c = {78, 32767};
+static point d = {128, 32767};
+
+/* simple linear interpolation between two points */
+static inline void lerp(point *dest, point *a, point *b, float t) {
+    dest->x = (int) (a->x + (b->x - a->x) * t);
+    dest->y = (int) (a->y + (b->y - a->y) * t);
+}
+
+/* evaluate a point on a bezier-curve. t goes from 0 to 1.0 */
+static int calc_bezier_y(float t) {
+    point ab, bc, cd, abbc, bccd, dest;
+    lerp(&ab, &a, &b, t);           /* point between a and b */
+    lerp(&bc, &b, &c, t);           /* point between b and c */
+    lerp(&cd, &c, &d, t);           /* point between c and d */
+    lerp(&abbc, &ab, &bc, t);       /* point between ab and bc */
+    lerp(&bccd, &bc, &cd, t);       /* point between bc and cd */
+    lerp(&dest, &abbc, &bccd, t);   /* point on the bezier-curve */
+    return dest.y;
+}
+
 PS3Input::PS3Input(Renderer *r) : Input(r) {
 
     ioPadInit(7);
@@ -58,6 +89,12 @@ PS3Input::PS3Input(Renderer *r) : Input(r) {
     for (int i = 0; i < KEY_COUNT; i++) {
         keyboard.mapping[i] = 0;
     }
+
+    for (int i = 0; i < 128; i++) {
+        float t = (float) i / 127.0f;
+        analog_map[i + 128] = calc_bezier_y(t);
+        analog_map[127 - i] = -1 * analog_map[i + 128];
+    }
 }
 
 PS3Input::~PS3Input() {
@@ -72,14 +109,20 @@ PS3Input::~PS3Input() {
 int PS3Input::GetButton(int player) {
 
     padInfo padinfo;
-    padData paddata;
+    padData pad;
 
     ioPadGetInfo(&padinfo);
     if (padinfo.status[players[player].id]) {
-        ioPadGetData((u32) players[player].id, &paddata);
-        for (int i = 0; i < MAX_PAD_CODES; i++) {
-            if (paddata.button[i]) {
-                printf("btn: %i\n", i);
+        ioPadGetData((u32) players[player].id, &pad);
+
+        unsigned int btns[16] =
+                {pad.BTN_LEFT, pad.BTN_DOWN, pad.BTN_RIGHT, pad.BTN_UP,
+                 pad.BTN_START, pad.BTN_R3, pad.BTN_L3, pad.BTN_SELECT,
+                 pad.BTN_SQUARE, pad.BTN_CROSS, pad.BTN_CIRCLE, pad.BTN_TRIANGLE,
+                 pad.BTN_R1, pad.BTN_L1, pad.BTN_R2, pad.BTN_L2};
+
+        for (int i = 0; i < 16; i++) {
+            if (btns[i]) {
                 return i;
             }
         }
@@ -138,21 +181,23 @@ void PS3Input::process_axis(Input::Player &player, int rotate) {
     Axis *currentStickYAxis = nullptr;
     float slope = 0.414214f; // tangent of 22.5 degrees for size of angular zones
 
+    padData *pad = (padData *) player.data;
+
     for (int i = 0; i <= 1; i++) {
 
         if (i == 0) {
             // left stick
             currentStickXAxis = &(player.lx);
             currentStickYAxis = &(player.ly);
+            analogX = analog_map[pad->ANA_L_H];
+            analogY = analog_map[pad->ANA_L_V];
         } else {
             // right stick
             currentStickXAxis = &(player.rx);
             currentStickYAxis = &(player.ry);
+            analogX = analog_map[pad->ANA_R_H];
+            analogY = analog_map[pad->ANA_R_V];
         }
-
-        // TODO:
-        //analogX = (float) (SDL_JoystickGetAxis((SDL_Joystick *) player.data, currentStickXAxis->id));
-        //analogY = (float) (SDL_JoystickGetAxis((SDL_Joystick *) player.data, currentStickYAxis->id));
 
         //radial and scaled deadzone
         //http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
@@ -219,11 +264,18 @@ void PS3Input::process_buttons(Input::Player &player, int rotate) {
 
     padData *pad = (padData *) player.data;
 
+    unsigned int btns[16] =
+            {pad->BTN_LEFT, pad->BTN_DOWN, pad->BTN_RIGHT, pad->BTN_UP,
+             pad->BTN_START, pad->BTN_R3, pad->BTN_L3, pad->BTN_SELECT,
+             pad->BTN_SQUARE, pad->BTN_CROSS, pad->BTN_CIRCLE, pad->BTN_TRIANGLE,
+             pad->BTN_R1, pad->BTN_L1, pad->BTN_R2, pad->BTN_L2};
+
     for (int i = 0; i < KEY_COUNT; i++) {
 
         int mapping = player.mapping[i];
 
-        if (pad->button[mapping]) {
+        if (mapping >= 0 && mapping < 16 && btns[mapping]) {
+
             if (rotate && key_id[i] == Input::Key::KEY_UP) {
                 if (rotate == 1) {
                     player.state |= Input::Key::KEY_RIGHT;

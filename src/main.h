@@ -53,8 +53,20 @@ int KEYS[]{
 #define FONT_PATH   "/dev_hdd0/default.ttf"
 #define TEX_PATH    "/dev_hdd0/title.png"
 int KEYS[]{
-        // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
-        3, 1, 0, 2, 7, 4, 9, 8, 10, 11, 13, 12, 0 // QUIT
+        3,  // UP
+        1,  // DOWN
+        0,  // LEFT
+        2,  // RIGHT
+        7,  // COINS (SELECT)
+        4,  // START
+        9,  // FIRE1
+        8,  // FIRE2
+        10, // FIRE3
+        11, // FIRE4
+        13, // FIRE5
+        12, // FIRE6
+        7,  // MENU1
+        4   // MENU2
 };
 
 #elif __SDL2__ || __SDL1__

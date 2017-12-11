@@ -17,8 +17,8 @@ public:
     virtual int GetButton(int player);
 
 private:
-    virtual void process_axis(Input::Player& player, int rotate);
-    virtual void process_buttons(Input::Player &player, int rotate);
+    void process_axis(Input::Player& player, int rotate);
+    void process_buttons(Input::Player &player, int rotate);
 
 };
 
