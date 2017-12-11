@@ -86,27 +86,27 @@ int main() {
         renderer->DrawLine(rect.w / 2, 0, rect.w / 2, rect.h); // Y
 
         // top middle text
-        font->Draw(rect.w / 2, 0, "HELLO WORLD");
+        font->Draw(rect.w / 2, 0, "Hello World");
 
         // top left text
-        font->Draw(0, 0, "HELLO WORLD");
+        font->Draw(0, 0, "Hello World");
 
         // centered text
         Rect r = {rect.w / 2, rect.h / 2, 0, 0};
         font->scaling = 2;
-        r.w = font->GetWidth("HELLO WORLD");
-        r.h = font->GetHeight("HELLO WORLD");
+        r.w = font->GetWidth("Hello World");
+        r.h = font->GetHeight("Hello World");
         r.x -= r.w / 2;
         r.y -= r.h / 2;
         renderer->DrawRect(r, C2D_COL_RED, false);
-        font->Draw(r, C2D_COL_ORANGE, true, true, "HELLO WORLD SCALED");
+        font->Draw(r, C2D_COL_ORANGE, true, true, "Hello World Scaled");
         font->scaling = 1;
 
         // y centered and truncated text
         rect.x = 0;
         rect.y = 0;
         rect.w = 100;
-        font->Draw(rect, C2D_COL_WHITE, false, true, "HELLO WORLD");
+        font->Draw(rect, C2D_COL_WHITE, false, true, "Hello World");
 
         texture->Draw(32, 32, texture->width, texture->height);
 

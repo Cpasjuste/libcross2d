@@ -3,15 +3,22 @@
 //
 
 #include <C2D.h>
-#include <unistd.h>
-#include <sysmodule/sysmodule.h>
 #include <cmath>
-#include "tiny3d.h"
+#include <sysutil/sysutil.h>
+#include <sysmodule/sysmodule.h>
 
 static void quit() {
 
     sysModuleUnload(SYSMODULE_PNGDEC);
     exit(0);
+}
+
+static void eventHandle(u64 status, u64 param, void *userdata) {
+    (void) param;
+    (void) userdata;
+    if (status == SYSUTIL_EXIT_GAME) {
+        exit(0);
+    }
 }
 
 //////////
@@ -22,6 +29,7 @@ TINY3DRenderer::TINY3DRenderer(int w, int h) : Renderer(w, h) {
     atexit(quit);
 
     sysModuleLoad(SYSMODULE_PNGDEC);
+    sysUtilRegisterCallback(SYSUTIL_EVENT_SLOT0, eventHandle, NULL);
 
     tiny3d_Init(1024 * 1024);
 
@@ -93,11 +101,6 @@ void TINY3DRenderer::Clear() {
 
     tiny3d_Clear(color.ToARGB(), TINY3D_CLEAR_ALL);
     clear = true;
-}
-
-void TINY3DRenderer::Flip() {
-
-    tiny3d_Flip();
 
     // Enable alpha Test
     tiny3d_AlphaTest(1, 0x10, TINY3D_ALPHA_FUNC_GEQUAL);
@@ -110,10 +113,15 @@ void TINY3DRenderer::Flip() {
                      (blend_func) (TINY3D_BLEND_RGB_FUNC_ADD | TINY3D_BLEND_ALPHA_FUNC_ADD));
 
     tiny3d_Project2D();
+}
+
+void TINY3DRenderer::Flip() {
+
+    tiny3d_Flip();
 
     // needs to be called
     if (!clear) {
-        tiny3d_Clear(color.ToARGB(), TINY3D_CLEAR_ALL);
+        Clear();
     } else {
         clear = false;
     }

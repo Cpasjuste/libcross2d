@@ -164,14 +164,14 @@
 
 #include "ps3/tiny3d_renderer.h"
 #include "ps3/tiny3d_texture.h"
+#include "ps3/tiny3d_font.h"
 #include "ps3/ps3_input.h"
-#include "font.h"
 #include "audio.h"
 #include "posix/posix_io.h"
 
 #define C2DRenderer TINY3DRenderer
 #define C2DTexture TINY3DTexture
-#define C2DFont Font
+#define C2DFont TINY3DFont
 #define C2DInput PS3Input
 #define C2DAudio Audio
 #define C2DIo POSIXIo
