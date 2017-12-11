@@ -4,7 +4,7 @@
 
 #include <malloc.h>
 #include <SDL/SDL.h>
-#include "sdl1_audio.h"
+#include "ps3_audio.h"
 
 static bool use_mutex = false;
 
@@ -50,19 +50,28 @@ static void write_buffer(unsigned char *data, int len) {
     }
 }
 
+static SDL_AudioCVT cvt;
+
 static void read_buffer(void *unused, unsigned char *data, int len) {
 
     if (use_mutex) {
         SDL_LockMutex(sound_mutex);
     }
 
+    if (cvt.buf == NULL) {
+        cvt.len = len;
+        cvt.buf = (Uint8 *) SDL_malloc(cvt.len * cvt.len_mult);//buffer_sdl + buf_read_pos;
+    }
+
     if (buffered_bytes >= len) {
         if (buf_read_pos + len <= buf_size) {
-            memcpy(data, buffer_sdl + buf_read_pos, len);
+            memcpy(cvt.buf, buffer_sdl + buf_read_pos, len);
+            SDL_ConvertAudio(&cvt);
+            memcpy(data, cvt.buf, cvt.len_cvt);
         } else {
-            int tail = buf_size - buf_read_pos;
-            memcpy(data, buffer_sdl + buf_read_pos, tail);
-            memcpy(data + tail, buffer_sdl, len - tail);
+            //int tail = buf_size - buf_read_pos;
+            //memcpy(data, buffer_sdl + buf_read_pos, tail);
+            //memcpy(data + tail, buffer_sdl, len - tail);
         }
         buf_read_pos = (buf_read_pos + len) % buf_size;
         buffered_bytes -= len;
@@ -74,7 +83,7 @@ static void read_buffer(void *unused, unsigned char *data, int len) {
     }
 }
 
-SDL1Audio::SDL1Audio(int freq, int fps) : Audio(freq, fps) {
+PS3Audio::PS3Audio(int freq, int fps) : Audio(freq, fps) {
 
     if (!available) {
         return;
@@ -94,6 +103,9 @@ SDL1Audio::SDL1Audio(int freq, int fps) : Audio(freq, fps) {
     buf_read_pos = 0;
     buf_write_pos = 0;
 
+    SDL_BuildAudioCVT(&cvt, AUDIO_S16, 2, 48000, AUDIO_F32MSB, 2, 48000);
+    cvt.buf = NULL;
+
     aspec.format = AUDIO_S16;
     aspec.freq = freq;
     aspec.channels = (Uint8) channels;
@@ -102,13 +114,13 @@ SDL1Audio::SDL1Audio(int freq, int fps) : Audio(freq, fps) {
     aspec.userdata = NULL;
 
     if (SDL_InitSubSystem(SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE)) {
-        printf("SDL1Audio: Initialize failed: %s.\n", SDL_GetError());
+        printf("PS3Audio: Initialize failed: %s.\n", SDL_GetError());
         available = false;
         return;
     }
 
     if (SDL_OpenAudio(&aspec, &obtained) < 0) {
-        printf("SDL1Audio: Unable to open audio: %s\n", SDL_GetError());
+        printf("PS3Audio: Unable to open audio: %s\n", SDL_GetError());
         available = false;
         return;
     }
@@ -116,18 +128,18 @@ SDL1Audio::SDL1Audio(int freq, int fps) : Audio(freq, fps) {
     if (use_mutex) {
         sound_mutex = SDL_CreateMutex();
         sound_cv = SDL_CreateCond();
-        printf("SDL1Audio: using mutexes for synchro\n");
+        printf("PS3Audio: using mutexes for synchro\n");
     }
 
-    printf("SDL1Audio: format %d (wanted: %d)\n", obtained.format, aspec.format);
-    printf("SDL1Audio: frequency %d (wanted: %d)\n", obtained.freq, aspec.freq);
-    printf("SDL1Audio: samples %d (wanted: %d)\n", obtained.samples, aspec.samples);
-    printf("SDL1Audio: channels %d (wanted: %d)\n", obtained.channels, aspec.channels);
+    printf("PS3Audio: format %d (wanted: %d)\n", obtained.format, aspec.format);
+    printf("PS3Audio: frequency %d (wanted: %d)\n", obtained.freq, aspec.freq);
+    printf("PS3Audio: samples %d (wanted: %d)\n", obtained.samples, aspec.samples);
+    printf("PS3Audio: channels %d (wanted: %d)\n", obtained.channels, aspec.channels);
 
     SDL_PauseAudio(0);
 }
 
-SDL1Audio::~SDL1Audio() {
+PS3Audio::~PS3Audio() {
 
     if (!available) {
         return;
@@ -153,7 +165,7 @@ SDL1Audio::~SDL1Audio() {
     }
 }
 
-void SDL1Audio::Play() {
+void PS3Audio::Play() {
 
     if (!available) {
         return;
@@ -163,7 +175,7 @@ void SDL1Audio::Play() {
 
 }
 
-void SDL1Audio::Pause(int pause) {
+void PS3Audio::Pause(int pause) {
 
     if (!available) {
         return;

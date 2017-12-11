@@ -9,7 +9,7 @@ option(BUILD_SFML "Build with SFML support" OFF)
 option(BUILD_SDL2 "Build with SDL2 support" OFF)
 option(BUILD_SDL1 "Build with SDL1 support" OFF)
 option(BUILD_PSP2 "Build with PSP2 support" OFF)
-option(BUILD_PS3 "Build with PS3 support" ON)
+option(BUILD_PS3 "Build with PS3 support" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_RPI "Build with RPI support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
@@ -89,7 +89,7 @@ elseif (BUILD_PS3)
             ${PSL1GHT}/portlibs/ppu/lib/libz.a
             )
     list(APPEND FLAGS
-            -O2 -D__PS3__
+            -O3 -D__PS3__
             )
     #####################
     # 3DS PLATORM
