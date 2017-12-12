@@ -9,14 +9,15 @@
 
 static void quit() {
 
+    sysUtilUnregisterCallback(SYSUTIL_EVENT_SLOT0);
     sysModuleUnload(SYSMODULE_PNGDEC);
-    exit(0);
 }
 
 static void eventHandle(u64 status, u64 param, void *userdata) {
     (void) param;
     (void) userdata;
-    if (status == SYSUTIL_EXIT_GAME) {
+    if (status == SYSUTIL_EXIT_GAME
+            || status == SYSUTIL_MENU_OPEN) {
         exit(0);
     }
 }
@@ -125,6 +126,8 @@ void TINY3DRenderer::Flip() {
     } else {
         clear = false;
     }
+
+    sysUtilCheckCallback();
 }
 
 void TINY3DRenderer::Delay(unsigned int ms) {

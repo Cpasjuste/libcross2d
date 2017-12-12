@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_SYSTEM_NAME "Generic")
 enable_language(ASM)
@@ -61,6 +61,8 @@ if (BUILD_PSP2)
     # PS3 PLATORM
     #####################
 elseif (BUILD_PS3)
+    set(CMAKE_C_FLAGS_RELEASE "-O2")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O2")
     set(PLATFORM_DIRS
             src/ps3
             src/ps3/tiny3d/source
@@ -88,9 +90,7 @@ elseif (BUILD_PS3)
             ${PSL1GHT}/ppu/lib/libaudio.a
             ${PSL1GHT}/portlibs/ppu/lib/libz.a
             )
-    list(APPEND FLAGS
-            -O3 -D__PS3__
-            )
+    list(APPEND FLAGS -D__PS3__)
     #####################
     # 3DS PLATORM
     #####################

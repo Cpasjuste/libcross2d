@@ -4,6 +4,7 @@
 
 #include <malloc.h>
 #include <SDL/SDL.h>
+#include <audio/audio.h>
 #include "ps3_audio.h"
 
 static bool use_mutex = false;
@@ -19,16 +20,19 @@ static SDL_cond *sound_cv;
 
 static void write_buffer(unsigned char *data, int len) {
 
+    printf("write_buffer: len: %i\n", len);
+
     if (use_mutex) {
         SDL_LockMutex(sound_mutex);
     } else {
-        SDL_LockAudio();
+        //SDL_LockAudio();
     }
 
     for (int i = 0; i < len; i += 4) {
         if (!use_mutex) {
             if (buffered_bytes == buf_size) {
-                //printf("audio drop: write_pos=%i - buffered=%i (write_len=%i)\n", buf_write_pos, buffered_bytes, len);
+                printf("audio drop: write_pos=%i - buffered=%i (write_len=%i)\n",
+                       buf_write_pos, buffered_bytes, len);
                 break; // drop samples
             }
         } else {
@@ -46,7 +50,7 @@ static void write_buffer(unsigned char *data, int len) {
         SDL_CondSignal(sound_cv);
         SDL_UnlockMutex(sound_mutex);
     } else {
-        SDL_UnlockAudio();
+        //SDL_UnlockAudio();
     }
 }
 
@@ -58,24 +62,37 @@ static void read_buffer(void *unused, unsigned char *data, int len) {
         SDL_LockMutex(sound_mutex);
     }
 
-    if (cvt.buf == NULL) {
-        cvt.len = len;
-        cvt.buf = (Uint8 *) SDL_malloc(cvt.len * cvt.len_mult);//buffer_sdl + buf_read_pos;
-    }
+    //if (buffered_bytes >= len) {
 
-    if (buffered_bytes >= len) {
+        printf("read_buffer: len: %i\n", len);
+
         if (buf_read_pos + len <= buf_size) {
+            /*
+            cvt.len = len;
             memcpy(cvt.buf, buffer_sdl + buf_read_pos, len);
-            SDL_ConvertAudio(&cvt);
-            memcpy(data, cvt.buf, cvt.len_cvt);
+            int res = SDL_ConvertAudio(&cvt);
+            printf("SDL_ConvertAudio1: %i\n", res);
+            memcpy(data, cvt.buf, (size_t) ((double) cvt.len * cvt.len_ratio));
+            */
+            memcpy(data, buffer_sdl + buf_read_pos, len);
         } else {
-            //int tail = buf_size - buf_read_pos;
-            //memcpy(data, buffer_sdl + buf_read_pos, tail);
-            //memcpy(data + tail, buffer_sdl, len - tail);
+            int tail = buf_size - buf_read_pos;
+            memcpy(data, buffer_sdl + buf_read_pos, tail);
+            memcpy(data + tail, buffer_sdl, len - tail);
+            /*
+            int tail = buf_size - buf_read_pos;
+            cvt.len = tail + (len - tail);
+            memcpy(cvt.buf, buffer_sdl + buf_read_pos, tail);
+            memcpy(cvt.buf + tail, buffer_sdl, len - tail);
+            int res = SDL_ConvertAudio(&cvt);
+            printf("SDL_ConvertAudio2: %i\n", res);
+            memcpy(data, cvt.buf, (size_t) ((double) cvt.len * cvt.len_ratio));
+            */
         }
+
         buf_read_pos = (buf_read_pos + len) % buf_size;
         buffered_bytes -= len;
-    }
+    //}
 
     if (use_mutex) {
         SDL_CondSignal(sound_cv);
@@ -93,18 +110,16 @@ PS3Audio::PS3Audio(int freq, int fps) : Audio(freq, fps) {
     SDL_AudioSpec aspec, obtained;
 
     // Find the value which is slighly bigger than buffer_len*2
-    for (sample_size = 512; sample_size < (buffer_len * 2); sample_size <<= 1);
-    sample_size /= 4; // fix audio delay
-    buf_size = sample_size * channels * 2 * 8;
+    //for (sample_size = 512; sample_size < (buffer_len * 2); sample_size <<= 1);
+    //sample_size /= 4; // fix audio delay
+    sample_size = AUDIO_BLOCK_SAMPLES;
+    buf_size = sample_size * channels * sizeof(float) * 8;
     buffer_sdl = (unsigned char *) malloc((size_t) buf_size);
     memset(buffer_sdl, 0, (size_t) buf_size);
 
     buffered_bytes = 0;
     buf_read_pos = 0;
     buf_write_pos = 0;
-
-    SDL_BuildAudioCVT(&cvt, AUDIO_S16, 2, 48000, AUDIO_F32MSB, 2, 48000);
-    cvt.buf = NULL;
 
     aspec.format = AUDIO_S16;
     aspec.freq = freq;
@@ -131,10 +146,16 @@ PS3Audio::PS3Audio(int freq, int fps) : Audio(freq, fps) {
         printf("PS3Audio: using mutexes for synchro\n");
     }
 
-    printf("PS3Audio: format %d (wanted: %d)\n", obtained.format, aspec.format);
+    printf("PS3Audio: format %d (wanted: %d, %d)\n", obtained.format, aspec.format, AUDIO_F32MSB);
     printf("PS3Audio: frequency %d (wanted: %d)\n", obtained.freq, aspec.freq);
     printf("PS3Audio: samples %d (wanted: %d)\n", obtained.samples, aspec.samples);
     printf("PS3Audio: channels %d (wanted: %d)\n", obtained.channels, aspec.channels);
+
+    int res = SDL_BuildAudioCVT(&cvt, AUDIO_S16, 2, 48000, AUDIO_F32MSB, 2, 48000);
+    printf("SDL_BuildAudioCVT: %i, needed: %i, len_mult: %i, len_ratio: %lf\n",
+           res, cvt.needed, cvt.len_mult, cvt.len_ratio);
+    //cvt.buf = NULL;
+    cvt.buf = (Uint8 *) SDL_malloc((size_t) ((double) buf_size * cvt.len_ratio));
 
     SDL_PauseAudio(0);
 }
