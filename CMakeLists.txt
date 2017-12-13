@@ -24,15 +24,16 @@ include(Toolchain.cmake)
 project(cross2d)
 
 # flags
-set(FLAGS)
+set(FLAGS -Wall)
 
 ##############
 # CROSS2D
 ##############
-set(CROSS2D_DIR src src/skeleton)
+set(CROSS2D_DIR include)
 set(CROSS2D_SRC
-        src/skeleton/widget.cpp
-        src/skeleton/renderer.cpp
+        source/skeleton/widget.cpp
+        source/skeleton/renderer.cpp
+        source/skeleton/rectangle.cpp
         )
 #file(GLOB CROSS2D_SRC src/skeleton/*.c*)
 
@@ -52,8 +53,8 @@ if (BUILD_PSP2)
     file(GLOB PLATFORM_SRC
             src/psp2/*.c*
             src/psp2/libvita2d/source/*.c
-            src/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
-            src/sdl2/sdl2_input.cpp # TODO: get rid of sdl2, use sdl2 input for now
+            source/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
+            source/sdl2/sdl2_input.cpp # TODO: get rid of sdl2, use sdl2 input for now
             src/psp2/libvita2d/shader/compiled/*.o
             src/psp2/vita-shader-collection/lib/*.o
             )
@@ -112,9 +113,9 @@ elseif (BUILD_3DS)
     file(GLOB PLATFORM_SRC
             src/3ds/*.c*
             src/posix/*.c*
-            src/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
+            source/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
             # TODO: fix that crap...
-            src/3ds/vshaders.v.o
+            source/3ds/vshaders.v.o
             )
     list(APPEND FLAGS -O3 -DARM11 -D_3DS -D__3DS__
             -D__CITRO3D__
@@ -139,13 +140,14 @@ elseif (BUILD_NX)
     #####################
 elseif (BUILD_SDL2)
     set(PLATFORM_DIRS
-            src/sdl2
-            src/posix
+            source/sdl2
+            source/posix
             )
     file(GLOB PLATFORM_SRC
             #src/sdl2/*.c*
-            src/sdl2/sdl2_renderer.cpp
-            src/posix/*.c*
+            source/sdl2/sdl2_renderer.cpp
+            source/sdl2/sdl2_rectangle.cpp
+            source/posix/*.c*
             )
     list(APPEND FLAGS -O3 -D__SDL2__)
     #####################
@@ -172,7 +174,7 @@ elseif (BUILD_SFML)
     file(GLOB PLATFORM_SRC
             src/sfml/*.c*
             src/posix/*.c*
-            src/sdl2/sdl2_audio.cpp #TODO: get rid of sdl2, use sdl2 audio for now
+            source/sdl2/sdl2_audio.cpp #TODO: get rid of sdl2, use sdl2 audio for now
             )
     list(APPEND FLAGS -O3 -D__SFML__)
 endif (BUILD_PSP2)
@@ -186,7 +188,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE ${FLAGS})
 #####################
 # SDL2 (unix) target
 #####################
-add_executable(${PROJECT_NAME}.sdl2 src/main.cpp)
+add_executable(${PROJECT_NAME}.sdl2 test/main.cpp)
 target_compile_options(${PROJECT_NAME}.sdl2 PRIVATE ${FLAGS})
 target_link_libraries(${PROJECT_NAME}.sdl2
         cross2d SDL2 SDL2_image SDL2_ttf z)
@@ -195,7 +197,7 @@ add_dependencies(${PROJECT_NAME}.sdl2 ${PROJECT_NAME})
 #####################
 # SDL1 (unix) target
 #####################
-add_executable(${PROJECT_NAME}.sdl1 src/main.cpp)
+add_executable(${PROJECT_NAME}.sdl1 test/main.cpp)
 target_compile_options(${PROJECT_NAME}.sdl1 PRIVATE ${FLAGS})
 target_link_libraries(${PROJECT_NAME}.sdl1
         cross2d SDL SDL_image SDL_gfx SDL_ttf z)
@@ -204,7 +206,7 @@ add_dependencies(${PROJECT_NAME}.sdl1 ${PROJECT_NAME})
 #####################
 # PS3 target
 #####################
-add_executable(${PROJECT_NAME}.ps3 src/main.cpp)
+add_executable(${PROJECT_NAME}.ps3 test/main.cpp)
 target_compile_options(${PROJECT_NAME}.ps3 PRIVATE ${FLAGS})
 target_include_directories(${PROJECT_NAME}.ps3 PUBLIC ${CROSS2D_DIR})
 target_include_directories(${PROJECT_NAME}.ps3 PRIVATE ${PLATFORM_DIRS})
@@ -218,7 +220,7 @@ add_custom_target(${PROJECT_NAME}.ps3.elf
 #####################
 # SFML (unix) target
 #####################
-add_executable(${PROJECT_NAME}.sfml src/main.cpp)
+add_executable(${PROJECT_NAME}.sfml test/main.cpp)
 target_compile_options(${PROJECT_NAME}.sfml PRIVATE ${FLAGS})
 target_link_libraries(${PROJECT_NAME}.sfml
         cross2d SDL2 sfml-graphics sfml-window sfml-system GL png z)
@@ -227,7 +229,7 @@ add_dependencies(${PROJECT_NAME}.sfml ${PROJECT_NAME})
 #####################
 # PSP2 (vita) target
 #####################
-add_executable(${PROJECT_NAME}.psp2 src/main.cpp)
+add_executable(${PROJECT_NAME}.psp2 test/main.cpp)
 target_compile_options(${PROJECT_NAME}.psp2 PRIVATE ${FLAGS})
 target_link_libraries(${PROJECT_NAME}.psp2
         cross2d SDL2
@@ -244,7 +246,7 @@ add_custom_target(${PROJECT_NAME}.psp2.vpk
         COMMAND ${VITASDK}/bin/vita-elf-create ${PROJECT_NAME}.psp2 ${PROJECT_NAME}.velf
         COMMAND ${VITASDK}/bin/vita-make-fself -c ${PROJECT_NAME}.velf vpk/eboot.bin
         COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID=${TITLE_ID} "${PROJECT_NAME}" vpk/sce_sys/param.sfo
-        COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/src/res/* vpk/
+        COMMAND cp -r res/* vpk/
         COMMAND cd vpk && zip -r ../${PROJECT_NAME}-${BUILD_DATE}.vpk . && cd ..
         )
 
@@ -252,7 +254,7 @@ add_custom_target(${PROJECT_NAME}.psp2.vpk
 # CTR (3DS) target
 #####################
 if (BUILD_3DS)
-    add_executable(${PROJECT_NAME}.3ds src/main.cpp)
+    add_executable(${PROJECT_NAME}.3ds test/main.cpp)
     target_compile_options(${PROJECT_NAME}.3ds PRIVATE ${FLAGS})
     target_include_directories(${PROJECT_NAME}.3ds PUBLIC ${CROSS2D_DIR})
     target_include_directories(${PROJECT_NAME}.3ds PRIVATE ${PLATFORM_DIRS})
@@ -272,7 +274,7 @@ endif (BUILD_3DS)
 #####################
 # NX (SWITCH) target
 #####################
-add_executable(${PROJECT_NAME}.nx src/main.cpp)
+add_executable(${PROJECT_NAME}.nx test/main.cpp)
 target_compile_options(${PROJECT_NAME}.nx PRIVATE ${FLAGS} -I${DEVKITPRO}/libnx/include)
 target_link_libraries(${PROJECT_NAME}.nx
         cross2d
