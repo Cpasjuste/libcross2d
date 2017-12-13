@@ -11,7 +11,7 @@ using namespace C2D;
 int main() {
 
 
-    Renderer *renderer = new C2DRenderer(0, 0, 800, 600);
+    Renderer *renderer = new C2DRenderer(0, 0, SCR_W, SCR_H);
 
     C2DRectangle *mainRect = new C2DRectangle(32, 32, 400, 300, 0, C2D_COL_BLUE);
     C2DRectangle *childRect = new C2DRectangle(32, 32, 200, 150, 0, C2D_COL_RED);
@@ -24,6 +24,10 @@ int main() {
         if (i == 5) {
             delete (childRect);
         }
+
+        mainRect->SetRect(
+                mainRect->GetRect().x + (i * 10), mainRect->GetRect().y + (i * 10),
+                mainRect->GetRect().w - (i * 10), mainRect->GetRect().h - (i * 10));
 
         renderer->Draw();
         renderer->Delay(500);

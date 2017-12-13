@@ -52,6 +52,13 @@ void Widget::SetRect(int posX, int posY, int width, int height) {
     rect.y = posY;
     rect.w = width;
     rect.h = height;
+
+    if (rect.w < 0) {
+        rect.w = 0;
+    }
+    if (rect.h < 0) {
+        rect.h = 0;
+    }
 }
 
 float Widget::GetRotation() {
