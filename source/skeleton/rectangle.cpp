@@ -8,10 +8,12 @@
 
 using namespace C2D;
 
-Rectangle::Rectangle(
-        int posX, int posY, int width, int height,
-        float rotation, const Color &color, bool fill)
-        : Widget(posX, posY, width, height, rotation, color) {
+Rectangle::Rectangle(int x, int y, int w, int h,
+                     const Color &color,
+                     int center,
+                     float rot,
+                     bool fill)
+        : Widget(x, y, w, h, color, center, rot) {
 
     this->fill = fill;
 

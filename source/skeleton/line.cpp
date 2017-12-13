@@ -7,8 +7,11 @@
 
 using namespace C2D;
 
-Line::Line(int x1, int x2, int y1, int y2, float rotation, const Color &color)
-        : Widget(x1, x2, y1, y2, rotation, color) {
+Line::Line(int x1, int y1, int x2, int y2,
+           const Color &color,
+           int center,
+           float rot)
+        : Widget(x1, x2, y1, y2, color, center, rot) {
 
     printf("Line(%p): x:%i, y:%i, w:%i, h:%i\n",
            this, rect.x, rect.y, rect.w, rect.h);

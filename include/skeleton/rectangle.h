@@ -13,8 +13,10 @@ namespace C2D {
 
     public:
 
-        Rectangle(int posX = 0, int posY = 0, int width = 0, int height = 0,
-                  float rotation = 0, const Color &color = C2D_COL_BLACK,
+        Rectangle(int x = 0, int y = 0, int w = 0, int h = 0,
+                  const Color &color = C2D_COL_BLACK,
+                  int center = C2D_CENTER_TOP_LEFT,
+                  float rot = 0,
                   bool fill = true);
 
         virtual ~Rectangle();

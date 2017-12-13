@@ -7,13 +7,16 @@
 
 using namespace C2D;
 
-Widget::Widget(int posX, int posY, int width, int height,
-               float rotation, const Color &color) {
+Widget::Widget(int x, int y, int w, int h,
+               const Color &color,
+               int center,
+               float rot) {
 
     renderer = C2DMainRenderer;
-    SetRect(posX, posY, width, height);
-    SetRotation(rotation);
+    SetRect(x, y, w, h);
+    SetRotation(rot);
     SetColor(color);
+    SetCenter(center);
 
     printf("Widget(%p): x:%i, y:%i, w:%i, h:%i\n",
            this, rect.x, rect.y, rect.w, rect.h);
@@ -43,13 +46,8 @@ void Widget::Update() {
     }
 
     if (parent) {
-        //rect_abs.x += parent->rect.x;
-        //rect_abs.y += parent->rect.y;
-        rect_abs.x += parent->center ?
-                      parent->rect_abs.x - parent->rect.w / 2 : parent->rect_abs.x;
-        rect_abs.y += parent->center ?
-                      parent->rect_abs.y - parent->rect.h / 2 : parent->rect_abs.y;
-
+        rect_abs.x += parent->rect_abs.x;
+        rect_abs.y += parent->rect_abs.y;
         rect_abs.w *= parent->scaleX;
         rect_abs.h *= parent->scaleY;
     }
