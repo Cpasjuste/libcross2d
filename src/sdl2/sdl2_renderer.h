@@ -9,33 +9,29 @@
 
 #include "skeleton/renderer.h"
 
-#include "sdl2/sdl2_font.h"
-#include "sdl2/sdl2_texture.h"
-#include "sdl2/sdl2_fontcache.h"
+//#include "sdl2/sdl2_font.h"
+//#include "sdl2/sdl2_texture.h"
+//#include "sdl2/sdl2_fontcache.h"
 
-class SDL2Renderer : Renderer {
+namespace C2D {
 
-public:
-    SDL2Renderer(int w, int h);
+    class SDL2Renderer : public Renderer {
 
-    virtual ~SDL2Renderer();
+    public:
+        SDL2Renderer();
 
-    virtual void DrawLine(int x1, int y1, int x2, int y2, const Color &color);
+        ~SDL2Renderer();
 
-    virtual void DrawRect(const Rect &rect, const Color &color, bool fill);
+        void Draw();
 
-    virtual void Clip(const Rect &rect);
+        void Delay(unsigned int ms);
 
-    virtual void Clear();
+        void SetShader(int shader);
 
-    virtual void Flip();
-
-    virtual void Delay(unsigned int ms);
-
-    virtual void SetShader(int shader);
-
-    SDL_Window *window = nullptr;
-    SDL_Renderer *sdl_renderer = nullptr;
-};
+    private:
+        SDL_Window *window = nullptr;
+        SDL_Renderer *sdl_renderer = nullptr;
+    };
+}
 
 #endif //SDL2_RENDERER_H

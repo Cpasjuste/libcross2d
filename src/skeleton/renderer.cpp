@@ -4,15 +4,25 @@
 
 #include "renderer.h"
 
-Renderer::Renderer(int w, int h) {
-    width = w;
-    height = h;
-    color = C2D_COL_BLACK;
+using namespace C2D;
+
+C2D::Renderer::Renderer() {
+
+    printf("Renderer(%p)\n", this);
+    renderer = this;
+    shaders = nullptr;
 }
 
-Renderer::~Renderer() {
+void Renderer::Draw() {
+    printf("Renderer(%p): Draw\n", this);
+    Widget::Draw();
 }
 
+C2D::Renderer::~Renderer() {
+    printf("~Renderer(%p)\n", this);
+}
+
+/*
 void Renderer::DrawLine(int x1, int y1, int x2, int y2) {
     DrawLine(x1, y1, x2, y2, color);
 }
@@ -22,4 +32,4 @@ void Renderer::DrawRect(int x, int y, int w, int h, uint8_t r, uint8_t g, uint8_
     Color color{r, g, b, a};
     DrawRect(rect, color, fill);
 }
-
+*/

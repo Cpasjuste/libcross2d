@@ -4,9 +4,10 @@
 
 #include "renderer.h"
 
-Texture::Texture(Renderer *r, const char *p) {
+using namespace C2D;
 
-    renderer = r;
+Texture::Texture(const char *p) : Widget( 0, 0, 0, 0) {
+
     strncpy(path, p, 512);
 }
 

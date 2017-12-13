@@ -6,6 +6,28 @@
 
 #include "main.h"
 
+using namespace C2D;
+
+int main() {
+
+
+    SDL2Renderer *renderer = new SDL2Renderer();
+
+    Widget *w = new Widget();
+    renderer->Add(w);
+
+    renderer->Draw();
+
+    delete(w);
+
+    renderer->Draw();
+
+    delete(renderer);
+
+    return 0;
+}
+
+#if 0
 void print_keys(unsigned int state) {
 
     printf("state: %i ", state);
@@ -118,3 +140,4 @@ int main() {
     delete (texture);
     delete (renderer);
 }
+#endif

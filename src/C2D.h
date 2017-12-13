@@ -7,9 +7,9 @@
 
 #include "skeleton/renderer.h"
 #include "skeleton/texture.h"
-#include "skeleton/font.h"
-#include "skeleton/input.h"
-#include "skeleton/audio.h"
+//#include "skeleton/font.h"
+//#include "skeleton/input.h"
+//#include "skeleton/audio.h"
 #include "skeleton/timer.h"
 #include "skeleton/io.h"
 
@@ -95,9 +95,9 @@
 #elif __SDL2__
 
 #include "sdl2/sdl2_renderer.h"
-#include "sdl2/sdl2_font.h"
-#include "sdl2/sdl2_input.h"
-#include "sdl2/sdl2_audio.h"
+//#include "sdl2/sdl2_font.h"
+//#include "sdl2/sdl2_input.h"
+//#include "sdl2/sdl2_audio.h"
 #include "posix/posix_io.h"
 
 #define C2DRenderer SDL2Renderer

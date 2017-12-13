@@ -6,7 +6,7 @@ enable_language(ASM)
 
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support" OFF)
-option(BUILD_SDL2 "Build with SDL2 support" OFF)
+option(BUILD_SDL2 "Build with SDL2 support" ON)
 option(BUILD_SDL1 "Build with SDL1 support" OFF)
 option(BUILD_PSP2 "Build with PSP2 support" OFF)
 option(BUILD_PS3 "Build with PS3 support" OFF)
@@ -30,7 +30,11 @@ set(FLAGS)
 # CROSS2D
 ##############
 set(CROSS2D_DIR src src/skeleton)
-file(GLOB CROSS2D_SRC src/skeleton/*.c*)
+set(CROSS2D_SRC
+        src/skeleton/widget.cpp
+        src/skeleton/renderer.cpp
+        )
+#file(GLOB CROSS2D_SRC src/skeleton/*.c*)
 
 #####################
 # PLATORM SPECIFIC
@@ -139,7 +143,8 @@ elseif (BUILD_SDL2)
             src/posix
             )
     file(GLOB PLATFORM_SRC
-            src/sdl2/*.c*
+            #src/sdl2/*.c*
+            src/sdl2/sdl2_renderer.cpp
             src/posix/*.c*
             )
     list(APPEND FLAGS -O3 -D__SDL2__)

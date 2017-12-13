@@ -6,8 +6,6 @@
 #define _FONT_H_
 
 #include "renderer.h"
-#include "rect.h"
-#include "color.h"
 
 class Renderer;
 

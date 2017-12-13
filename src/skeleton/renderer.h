@@ -10,44 +10,40 @@
 #include <cstdarg>
 #include <cstdio>
 
-#include "font.h"
-#include "texture.h"
+#include "widget.h"
+//#include "font.h"
+//#include "texture.h"
 #include "shaders.h"
-#include "rect.h"
-#include "color.h"
 
 #ifndef MAX_PATH
 #define MAX_PATH 512
 #endif
 
-class Renderer {
+namespace C2D {
 
-public:
+    class Renderer : public Widget {
 
-    Renderer(int w, int h);
+    public:
 
-    virtual ~Renderer();
+        Renderer();
 
-    virtual void SetShader(int shader) {};  // to implement
+        virtual ~Renderer();
 
-    void DrawLine(int x1, int y1, int x2, int y2);
+        /*
+        void DrawLine(int x1, int y1, int x2, int y2);
+        virtual void DrawLine(int x1, int y1, int x2, int y2, const Color &color) {};  // to implement
+        virtual void DrawRect(const Rect &rect, const Color &color, bool fill = true) {};  // to implement
+        void DrawRect(int x, int y, int w, int h, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool fill = true);
+        */
 
-    virtual void DrawLine(int x1, int y1, int x2, int y2, const Color &color) {};  // to implement
-    virtual void DrawRect(const Rect &rect, const Color &color, bool fill = true) {};  // to implement
-    void DrawRect(int x, int y, int w, int h, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool fill = true);
+        virtual void Draw();                    // to implement
+        virtual void SetShader(int shader) {};  // to implement
+        virtual void Delay(unsigned int ms) {}; // to implement
 
-    virtual void Clip(const Rect &rect) {};  // to implement
+    protected:
 
-    virtual void Clear() {};  // to implement
-    virtual void Flip() {};  // to implement
-
-    virtual void Delay(unsigned int ms) {};  // to implement
-
-    int width;
-    int height;
-    Color color;
-    Shaders *shaders;
-};
-
+        Shaders *shaders;
+    };
+}
 
 #endif //_RENDERER_H_
