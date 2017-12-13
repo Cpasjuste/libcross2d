@@ -34,6 +34,7 @@ set(CROSS2D_SRC
         source/skeleton/widget.cpp
         source/skeleton/renderer.cpp
         source/skeleton/rectangle.cpp
+        source/skeleton/line.cpp
         )
 #file(GLOB CROSS2D_SRC src/skeleton/*.c*)
 
@@ -146,7 +147,6 @@ elseif (BUILD_SDL2)
     file(GLOB PLATFORM_SRC
             #src/sdl2/*.c*
             source/sdl2/sdl2_renderer.cpp
-            source/sdl2/sdl2_rectangle.cpp
             source/posix/*.c*
             )
     list(APPEND FLAGS -O3 -D__SDL2__)

@@ -14,11 +14,14 @@ namespace C2D {
     public:
 
         Rectangle(int posX = 0, int posY = 0, int width = 0, int height = 0,
-                  float rotation = 0, const Color &color = C2D_COL_BLACK);
+                  float rotation = 0, const Color &color = C2D_COL_BLACK,
+                  bool fill = true);
 
         virtual ~Rectangle();
 
         virtual void Draw();
+
+        bool fill = true;
 
     };
 }

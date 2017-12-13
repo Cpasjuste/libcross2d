@@ -8,6 +8,9 @@
 #define C2D_VISIBILITY_VISIBLE  0
 #define C2D_VISIBILITY_HIDDEN   1
 
+#define C2D_CENTER_TOP_LEFT     0
+#define C2D_CENTER_MIDDLE       1
+
 #include <cstdint>
 #include <vector>
 
@@ -33,9 +36,13 @@ namespace C2D {
         // position
         Rect GetRect();
 
+        Rect GetRectAbs();
+
         void SetRect(const Rect &rect);
 
         void SetRect(int posX, int posY, int width = 0, int height = 0);
+
+        void Move(int deltaX, int deltaY);
 
         // rotation
         float GetRotation();
@@ -54,12 +61,27 @@ namespace C2D {
 
         void Scale(int pixels);
 
+        // center
+        int GetCenter();
+
+        void SetCenter(int center);
+
+        // visibility
+        int GetVisibility();
+
+        void SetVisibility(int visibility);
+
     protected:
 
+        void Update();
+
         Rect rect;
-        float rotation;
-        float scaling;
-        Color color;
+        Rect rect_abs;
+        float rotation = 0;
+        float scaleX = 1;
+        float scaleY = 1;
+        Color color = C2D_COL_BLACK;
+        int center = C2D_CENTER_TOP_LEFT;
         int visibility = C2D_VISIBILITY_VISIBLE;
         bool available = true;
 

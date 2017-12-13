@@ -12,29 +12,50 @@ Renderer::Renderer(int x, int y, int w, int h)
         : Widget(x, y, w, h) {
 
     C2DMainRenderer = this;
+    renderer = C2DMainRenderer;
     shaders = new Shaders("");
 
     printf("Renderer(%p): x:%i, y:%i, w:%i, h:%i\n",
            this, rect.x, rect.y, rect.w, rect.h);
 }
 
-void Renderer::Draw() {
-    printf("Renderer(%p): Draw\n", this);
+void Renderer::DrawLine(Line *line) {
+
+    printf("Renderer(%p): DrawLine\n", this);
+}
+
+void Renderer::DrawRectangle(Rectangle *rectangle) {
+
+    printf("Renderer(%p): DrawRectangle\n", this);
+}
+
+void Renderer::Clear() {
+
+    ((Renderer *) renderer)->Clear();
+}
+
+void Renderer::Flip() {
+
+    printf("Renderer(%p): Flip\n", this);
+
+    // clear
+    ((Renderer *) renderer)->Clear();
+
+    // update (this) widget position/scaling
+    Widget::Update();
+
+    // call base class (draw childs)
     Widget::Draw();
+}
+
+void Renderer::SetShader(int shader) {
+
+}
+
+void Renderer::Delay(unsigned int ms) {
+
 }
 
 Renderer::~Renderer() {
     printf("~Renderer(%p)\n", this);
 }
-
-/*
-void Renderer::DrawLine(int x1, int y1, int x2, int y2) {
-    DrawLine(x1, y1, x2, y2, color);
-}
-
-void Renderer::DrawRect(int x, int y, int w, int h, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool fill) {
-    Rect rect{x, y, w, h};
-    Color color{r, g, b, a};
-    DrawRect(rect, color, fill);
-}
-*/

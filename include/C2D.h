@@ -7,6 +7,7 @@
 
 #include "skeleton/renderer.h"
 #include "skeleton/rectangle.h"
+#include "skeleton/line.h"
 #include "skeleton/texture.h"
 //#include "skeleton/font.h"
 //#include "skeleton/input.h"
@@ -98,14 +99,12 @@ extern C2D::Renderer *C2DMainRenderer;
 #elif __SDL2__
 
 #include "sdl2/sdl2_renderer.h"
-#include "sdl2/sdl2_rectangle.h"
 //#include "sdl2/sdl2_font.h"
 //#include "sdl2/sdl2_input.h"
 //#include "sdl2/sdl2_audio.h"
 #include "posix/posix_io.h"
 
 #define C2DRenderer SDL2Renderer
-#define C2DRectangle SDL2Rectangle
 #define C2DTexture SDL2Texture
 #define C2DFont SDL2Font
 #define C2DInput SDL2Input

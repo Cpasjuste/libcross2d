@@ -13,23 +13,36 @@ int main() {
 
     Renderer *renderer = new C2DRenderer(0, 0, SCR_W, SCR_H);
 
-    C2DRectangle *mainRect = new C2DRectangle(32, 32, 400, 300, 0, C2D_COL_BLUE);
-    C2DRectangle *childRect = new C2DRectangle(32, 32, 200, 150, 0, C2D_COL_RED);
+    Rectangle *mainRect = new Rectangle(100, 100, 200, 200, 0, C2D_COL_BLUE);
+    //mainRect->SetCenter(C2D_CENTER_MIDDLE);
+
+    Rectangle *childRect = new Rectangle(50, 50, 100, 100, 0, C2D_COL_RED);
+    //childRect->SetCenter(C2D_CENTER_MIDDLE);
+
+    //Rect r = childRect->GetRect();
+    //Line *line = new Line(r.x, r.y, r.x + r.w, r.y + r.h, 0, C2D_COL_GREEN);
+    //childRect->Add(line);
+
     mainRect->Add(childRect);
 
     renderer->Add(mainRect);
 
     for (int i = 0; i < 10; i++) {
 
+        //mainRect->SetScaling(mainRect->GetScaling() - 0.1f);
+        //mainRect->Move(5, 0);
+
+        /*
         if (i == 5) {
-            delete (childRect);
+            //delete (childRect);
         }
 
         mainRect->SetRect(
                 mainRect->GetRect().x + (i * 10), mainRect->GetRect().y + (i * 10),
                 mainRect->GetRect().w - (i * 10), mainRect->GetRect().h - (i * 10));
+        */
 
-        renderer->Draw();
+        renderer->Flip();
         renderer->Delay(500);
     }
 
