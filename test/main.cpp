@@ -13,24 +13,29 @@ int main() {
 
     Renderer *renderer = new C2DRenderer(0, 0, SCR_W, SCR_H);
 
-    Rectangle *mainRect = new Rectangle(100, 100, 200, 200, C2D_COL_BLUE, C2D_CENTER_MIDDLE);
+    Rectangle *mainRect = new Rectangle(2, 2, 200, 200, C2D_COL_BLUE, C2D_ORIGIN_TOP_LEFT);
 
-    Rectangle *childRect = new Rectangle(100, 100, 100, 100, C2D_COL_RED, C2D_CENTER_MIDDLE);
-    mainRect->Add(childRect);
+    //Rectangle *childRect = new Rectangle(10, 10, 100, 100, C2D_COL_YELLOW, C2D_PIVOT_CENTER);
+    //mainRect->Add(childRect);
 
-    //Rect r = childRect->GetRect();
-    //Line *line = new Line(r.x, r.y, r.x + r.w, r.y + r.h, 0, C2D_COL_GREEN);
-    //childRect->Add(line);
+    //Rectangle *childRect2 = new Rectangle(50, 50, 50, 50, C2D_COL_RED, C2D_PIVOT_CENTER);
+    //childRect->Add(childRect2);
 
-    mainRect->Add(childRect);
+    //Line *line = new Line(0, 0, 50, 50, C2D_COL_GREEN, C2D_PIVOT_TOP_LEFT);
+    //childRect2->Add(line);
+
+    //Line *line2 = new Line(350, 350, 450, 450, C2D_COL_GREEN, C2D_CENTER_TOP_LEFT);
+    //childRect2->Add(line2);
 
     renderer->Add(mainRect);
+    //renderer->Add(line);
 
     for (int i = 0; i < 10; i++) {
 
         if (i > 0) {
-            mainRect->SetScaling(mainRect->GetScaling() - 0.1f);
-            //mainRect->Move(5, 0);
+            Vec2 scale = mainRect->GetScaling();
+            mainRect->SetScaling({scale.x - 0.1f, scale.y - 0.1f});
+            //mainRect->Move(50, 0);
         }
 
         /*

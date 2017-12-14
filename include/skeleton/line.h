@@ -13,14 +13,18 @@ namespace C2D {
 
     public:
 
-        Line(int x1 = 0, int x2 = 0, int y1 = 0, int y2 = 0,
+        Line(int x1 = 0, int y1 = 0, int x2 = 0, int y2 = 0,
              const Color &color = C2D_COL_BLACK,
-             int center = C2D_CENTER_TOP_LEFT,
+             int center = C2D_ORIGIN_TOP_LEFT,
              float rot = 0);
 
         virtual ~Line();
 
         virtual void Draw();
+
+    protected:
+
+        virtual void Update();
 
     };
 }

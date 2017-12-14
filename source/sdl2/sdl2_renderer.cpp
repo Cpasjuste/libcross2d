@@ -41,7 +41,7 @@ SDL2Renderer::SDL2Renderer(int x, int y, int w, int h)
     }
 
     printf("SDL2Renderer(%p): x:%i, y:%i, w:%i, h:%i\n",
-           this, rect.x, rect.y, rect.w, rect.h);
+           this, (int) rect.x, (int) rect.y, (int) rect.w, (int) rect.h);
 }
 
 void SDL2Renderer::DrawLine(Line *line) {
@@ -59,9 +59,10 @@ void SDL2Renderer::DrawLine(Line *line) {
     }
     SDL_SetRenderDrawColor(sdl_renderer, c.r, c.g, c.b, c.a);
 
-    // draw
-    Rect r = line->GetRect();
-    SDL_RenderDrawLine(sdl_renderer, r.x, r.y, r.w, r.h);
+    // draw with world/absolute positions (GetRectWorld)
+    // x = x1, y = y1, w = x2; h = y2
+    Vec4 r = line->GetRectWorld();
+    SDL_RenderDrawLine(sdl_renderer, (int) r.x, (int) r.y, (int) r.w, (int) r.h);
 
     // reset color
     if (c.a < 255) {
@@ -85,9 +86,9 @@ void SDL2Renderer::DrawRectangle(Rectangle *rectangle) {
     }
     SDL_SetRenderDrawColor(sdl_renderer, c.r, c.g, c.b, c.a);
 
-    // draw
-    Rect r = rectangle->GetRectAbs();
-    SDL_Rect r_sdl = {r.x, r.y, r.w, r.h};
+    // draw with world/absolute positions (GetRectWorld)
+    Vec4 r = rectangle->GetRectWorld();
+    SDL_Rect r_sdl = {(int) r.x, (int) r.y, (int) r.w, (int) r.h};
     if (rectangle->fill) {
         SDL_RenderFillRect(sdl_renderer, &r_sdl);
     } else {

@@ -16,10 +16,10 @@ Widget::Widget(int x, int y, int w, int h,
     SetRect(x, y, w, h);
     SetRotation(rot);
     SetColor(color);
-    SetCenter(center);
+    SetOrigin(center);
 
     printf("Widget(%p): x:%i, y:%i, w:%i, h:%i\n",
-           this, rect.x, rect.y, rect.w, rect.h);
+           this, (int) rect.x, (int) rect.y, (int) rect.w, (int) rect.h);
 }
 
 void Widget::Add(Widget *widget) {
@@ -35,22 +35,69 @@ void Widget::Update() {
 
     printf("Widget(%p): Update\n", this);
 
-    rect_abs.x = center ? rect.x - rect.w / 2 : rect.x;
-    rect_abs.y = center ? rect.y - rect.h / 2 : rect.y;
-    rect_abs.w = (int) ((float) rect.w * scaleX);
-    rect_abs.h = (int) ((float) rect.h * scaleY);
 
-    if (center && (scaleX != 1 || scaleY != 1)) {
-        rect_abs.x += (rect.w - rect_abs.w) / 2;
-        rect_abs.y += (rect.h - rect_abs.h) / 2;
+    float angle  = -rotation * 3.141592654f / 180.f;
+    float cosine = static_cast<float>(std::cos(angle));
+    float sine   = static_cast<float>(std::sin(angle));
+    float sxc    = scale.x * cosine;
+    float syc    = scale.y * cosine;
+    float sxs    = scale.x * sine;
+    float sys    = scale.y * sine;
+    float tx     = -origin.x * sxc - origin.y * sys + rect.x;
+    float ty     =  origin.x * sxs - origin.y * syc + rect.y;
+
+    rect_world.x = rect_local.x;
+    rect_world.y = rect_local.y;
+    rect_world.w = rect_local.w;
+    rect_world.h = rect_local.h;
+
+    /*
+    switch (pivot) {
+
+        case C2D_PIVOT_TOP_LEFT:
+            rect_local.x = rect.x;
+            rect_local.y = rect.y;
+            rect_local.x += (rect_local.x - rect.x) * scale.x;
+            rect_local.y += (rect_local.y - rect.y) * scale.y;
+            break;
+
+        case C2D_PIVOT_CENTER:
+            rect_local.x = rect.x - rect.w / 2;
+            rect_local.y = rect.y - rect.h / 2;
+            rect_local.x += (rect_local.x + rect.w / 2) * scale.x;
+            rect_local.y += (rect_local.y + rect.h / 2) * scale.y;
+            break;
+
+        case C2D_PIVOT_BOTTOM_RIGHT:
+            rect_local.x = rect.x - rect.w / 2;
+            rect_local.y = rect.y - rect.h / 2;
+            rect_local.x += (rect_local.x - rect.x) * scale.x;
+            rect_local.y += (rect_local.y - rect.y) * scale.y;
+            break;
+
+        default:
+            break;
     }
+
+    rect_local.w = rect.w * scale.x;
+    rect_local.h = rect.h * scale.y;
 
     if (parent) {
-        rect_abs.x += parent->rect_abs.x;
-        rect_abs.y += parent->rect_abs.y;
-        rect_abs.w *= parent->scaleX;
-        rect_abs.h *= parent->scaleY;
+        rect_local.x *= parent->scale.x;
+        rect_local.y *= parent->scale.y;
+        rect_local.w *= parent->scale.x;
+        rect_local.h *= parent->scale.y;
+        rect_world.x = rect_local.x + parent->rect_world.x;
+        rect_world.y = rect_local.y + parent->rect_world.y;
+        rect_world.w = rect_local.w;
+        rect_world.h = rect_local.h;
+    } else {
+        rect_world.x = rect_local.x;
+        rect_world.y = rect_local.y;
+        rect_world.w = rect_local.w;
+        rect_world.h = rect_local.h;
     }
+    */
 }
 
 void Widget::Draw() {
@@ -63,29 +110,34 @@ void Widget::Draw() {
     }
 }
 
-Rect Widget::GetRect() {
+Vec4 Widget::GetRect() {
 
     return rect;
 }
 
-Rect Widget::GetRectAbs() {
+Vec4 Widget::GetRectWorld() {
 
-    return rect_abs;
+    return rect_world;
 }
 
-void Widget::SetRect(const Rect &rect) {
+Vec4 Widget::GetRectLocal() {
 
-    SetRect(rect.x, rect.y,
-            rect.w < 0 ? 0 : rect.w,
-            rect.h < 0 ? 0 : rect.h);
+    return rect_local;
 }
 
-void Widget::SetRect(int posX, int posY, int width, int height) {
+void Widget::SetRect(const Vec4 &rect) {
 
-    rect.x = posX;
-    rect.y = posY;
-    rect.w = width < 0 ? 0 : width;
-    rect.h = height < 0 ? 0 : height;
+    SetRect((int) rect.x, (int) rect.y,
+            rect.w < 0 ? 0 : (int) rect.w,
+            rect.h < 0 ? 0 : (int) rect.h);
+}
+
+void Widget::SetRect(int x, int y, int w, int h) {
+
+    rect.x = x;
+    rect.y = y;
+    rect.w = w < 0 ? 0 : w;
+    rect.h = h < 0 ? 0 : h;
 }
 
 void Widget::Move(int deltaX, int deltaY) {
@@ -113,14 +165,13 @@ void Widget::SetColor(const Color &color) {
     this->color = color;
 }
 
-float Widget::GetScaling() {
+Vec2 Widget::GetScaling() {
 
-    return scaleX;
+    return scale;
 }
 
-void Widget::SetScaling(float s) {
-    scaleX = s;
-    scaleY = s;
+void Widget::SetScaling(const Vec2 &scaling) {
+    scale = scaling;
 }
 
 void Widget::Scale(int pixels) {
@@ -131,14 +182,41 @@ void Widget::Scale(int pixels) {
     rect.h += pixels * 2;
 }
 
-int Widget::GetCenter() {
+Vec2 Widget::GetOrigin() {
 
-    return center;
+    return origin;
 }
 
-void Widget::SetCenter(int center) {
+void Widget::SetOrigin(const Vec2 &origin) {
 
-    this->center = center;
+    this->origin = origin;
+}
+
+void Widget::SetOrigin(int pivotMode) {
+
+    switch (pivotMode) {
+
+        case C2D_ORIGIN_TOP_RIGHT:
+            SetOrigin({0, 0});
+            break;
+
+        case C2D_ORIGIN_CENTER:
+            SetOrigin({rect.w / 2, rect.h / 2});
+            break;
+
+        case C2D_ORIGIN_BOTTOM_LEFT:
+            SetOrigin({0, rect.h});
+            break;
+
+        case C2D_ORIGIN_BOTTOM_RIGHT:
+            SetOrigin({rect.w, rect.h});
+            break;
+
+        case C2D_ORIGIN_TOP_LEFT:
+        default:
+            SetOrigin({0, 0});
+            break;
+    }
 }
 
 int Widget::GetVisibility() {

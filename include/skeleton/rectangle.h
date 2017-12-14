@@ -15,7 +15,7 @@ namespace C2D {
 
         Rectangle(int x = 0, int y = 0, int w = 0, int h = 0,
                   const Color &color = C2D_COL_BLACK,
-                  int center = C2D_CENTER_TOP_LEFT,
+                  int center = C2D_ORIGIN_TOP_LEFT,
                   float rot = 0,
                   bool fill = true);
 

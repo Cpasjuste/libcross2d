@@ -16,7 +16,7 @@ Renderer::Renderer(int x, int y, int w, int h)
     shaders = new Shaders("");
 
     printf("Renderer(%p): x:%i, y:%i, w:%i, h:%i\n",
-           this, rect.x, rect.y, rect.w, rect.h);
+           this, (int) rect.x, (int) rect.y, (int) rect.w, (int) rect.h);
 }
 
 void Renderer::DrawLine(Line *line) {

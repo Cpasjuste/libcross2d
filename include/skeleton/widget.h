@@ -8,14 +8,18 @@
 #define C2D_VISIBILITY_VISIBLE  0
 #define C2D_VISIBILITY_HIDDEN   1
 
-#define C2D_CENTER_TOP_LEFT     0
-#define C2D_CENTER_MIDDLE       1
+#define C2D_ORIGIN_TOP_LEFT     0
+#define C2D_ORIGIN_TOP_RIGHT    1
+#define C2D_ORIGIN_CENTER       2
+#define C2D_ORIGIN_BOTTOM_LEFT  3
+#define C2D_ORIGIN_BOTTOM_RIGHT 4
+
 
 #include <cstdint>
 #include <vector>
 
 #include "color.h"
-#include "rect.h"
+#include "vector.h"
 
 namespace C2D {
 
@@ -25,7 +29,7 @@ namespace C2D {
 
         Widget(int x = 0, int y = 0, int w = 0, int h = 0,
                const Color &color = C2D_COL_BLACK,
-               int center = C2D_CENTER_TOP_LEFT,
+               int center = C2D_ORIGIN_TOP_LEFT,
                float rot = 0);
 
         virtual ~Widget();
@@ -36,15 +40,17 @@ namespace C2D {
         void Add(Widget *widget);
 
         // position
-        Rect GetRect();
+        Vec4 GetRect();
 
-        Rect GetRectAbs();
+        Vec4 GetRectWorld();
 
-        void SetRect(const Rect &rect);
+        Vec4 GetRectLocal();
 
-        void SetRect(int posX, int posY, int width = 0, int height = 0);
+        void SetRect(const Vec4 &rect);
 
-        void Move(int deltaX, int deltaY);
+        void SetRect(int x, int y, int w = 0, int h = 0);
+
+        void Move(int x, int y);
 
         // rotation
         float GetRotation();
@@ -57,16 +63,18 @@ namespace C2D {
         void SetColor(const Color &color);
 
         // scaling
-        float GetScaling();
+        Vec2 GetScaling();
 
-        void SetScaling(float scaling);
+        void SetScaling(const Vec2 &scaling);
 
         void Scale(int pixels);
 
-        // center
-        int GetCenter();
+        // origin
+        Vec2 GetOrigin();
 
-        void SetCenter(int center);
+        void SetOrigin(int pivotMode);
+
+        void SetOrigin(const Vec2 &origin);
 
         // visibility
         int GetVisibility();
@@ -75,15 +83,15 @@ namespace C2D {
 
     protected:
 
-        void Update();
+        virtual void Update();
 
-        Rect rect;
-        Rect rect_abs;
+        Vec4 rect;
+        Vec4 rect_world;
+        Vec4 rect_local;
         float rotation = 0;
-        float scaleX = 1;
-        float scaleY = 1;
+        Vec2 scale = {1, 1};
+        Vec2 origin = {0, 0};
         Color color = C2D_COL_BLACK;
-        int center = C2D_CENTER_TOP_LEFT;
         int visibility = C2D_VISIBILITY_VISIBLE;
         bool available = true;
 

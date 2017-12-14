@@ -4,7 +4,6 @@
 
 #include <cstdio>
 #include "skeleton/renderer.h"
-#include "skeleton/rectangle.h"
 
 using namespace C2D;
 
@@ -18,7 +17,7 @@ Rectangle::Rectangle(int x, int y, int w, int h,
     this->fill = fill;
 
     printf("Rectangle(%p): x:%i, y:%i, w:%i, h:%i\n",
-           this, rect.x, rect.y, rect.w, rect.h);
+           this, (int) rect.x, (int) rect.y, (int) rect.w, (int) rect.h);
 }
 
 void Rectangle::Draw() {
