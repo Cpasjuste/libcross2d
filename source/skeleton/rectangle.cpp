@@ -16,22 +16,20 @@ Rectangle::Rectangle(int x, int y, int w, int h,
 
     this->fill = fill;
 
-    printf("Rectangle(%p): x:%i, y:%i, w:%i, h:%i\n",
-           this, (int) rect.x, (int) rect.y, (int) rect.w, (int) rect.h);
+    printf("Rectangle(%p): x:%i, y:%i, w:%i, h:%i\n", this,
+           (int) rect_origin.x, (int) rect_origin.y,
+           (int) rect_origin.w, (int) rect_origin.h);
 }
 
-void Rectangle::Draw() {
+void Rectangle::draw(Renderer *renderer) {
 
     printf("Rectangle(%p): Draw\n", this);
 
-    // update (this) widget position/scaling
-    Widget::Update();
-
     // draw
-    ((Renderer *) renderer)->DrawRectangle(this);
+    renderer->DrawRectangle(this);
 
     // call base class (draw childs)
-    Widget::Draw();
+    Widget::draw(renderer);
 }
 
 Rectangle::~Rectangle() {

@@ -27,8 +27,6 @@ namespace C2D {
 
         void DrawRectangle(Rectangle *rectangle);
 
-        void Clear();
-
         void Flip();
 
         void Delay(unsigned int ms);

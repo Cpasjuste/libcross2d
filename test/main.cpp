@@ -13,10 +13,10 @@ int main() {
 
     Renderer *renderer = new C2DRenderer(0, 0, SCR_W, SCR_H);
 
-    Rectangle *mainRect = new Rectangle(2, 2, 200, 200, C2D_COL_BLUE, C2D_ORIGIN_TOP_LEFT);
+    Rectangle *mainRect = new Rectangle(200, 200, 200, 200, C2D_COL_BLUE, C2D_ORIGIN_CENTER);
 
-    //Rectangle *childRect = new Rectangle(10, 10, 100, 100, C2D_COL_YELLOW, C2D_PIVOT_CENTER);
-    //mainRect->Add(childRect);
+    Rectangle *childRect = new Rectangle(100, 100, 100, 100, C2D_COL_YELLOW, C2D_ORIGIN_CENTER);
+    mainRect->add(childRect);
 
     //Rectangle *childRect2 = new Rectangle(50, 50, 50, 50, C2D_COL_RED, C2D_PIVOT_CENTER);
     //childRect->Add(childRect2);
@@ -27,15 +27,16 @@ int main() {
     //Line *line2 = new Line(350, 350, 450, 450, C2D_COL_GREEN, C2D_CENTER_TOP_LEFT);
     //childRect2->Add(line2);
 
-    renderer->Add(mainRect);
+    renderer->add(mainRect);
     //renderer->Add(line);
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 5; i++) {
 
         if (i > 0) {
-            Vec2 scale = mainRect->GetScaling();
-            mainRect->SetScaling({scale.x - 0.1f, scale.y - 0.1f});
-            //mainRect->Move(50, 0);
+            Vec2 scale = mainRect->getScaling();
+            mainRect->setScaling({scale.x - 0.1f, scale.y - 0.1f});
+            //mainRect->move(50, 0);
+            //mainRect->rotate(5);
         }
 
         /*

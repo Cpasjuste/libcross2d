@@ -11,12 +11,11 @@ Renderer *C2DMainRenderer;
 Renderer::Renderer(int x, int y, int w, int h)
         : Widget(x, y, w, h) {
 
-    C2DMainRenderer = this;
-    renderer = C2DMainRenderer;
     shaders = new Shaders("");
 
-    printf("Renderer(%p): x:%i, y:%i, w:%i, h:%i\n",
-           this, (int) rect.x, (int) rect.y, (int) rect.w, (int) rect.h);
+    printf("Renderer(%p): x:%i, y:%i, w:%i, h:%i\n", this,
+           (int) rect_origin.x, (int) rect_origin.y,
+           (int) rect_origin.w, (int) rect_origin.h);
 }
 
 void Renderer::DrawLine(Line *line) {
@@ -29,23 +28,24 @@ void Renderer::DrawRectangle(Rectangle *rectangle) {
     printf("Renderer(%p): DrawRectangle\n", this);
 }
 
+/*
 void Renderer::Clear() {
 
     ((Renderer *) renderer)->Clear();
 }
+*/
 
 void Renderer::Flip() {
 
     printf("Renderer(%p): Flip\n", this);
 
     // clear
-    ((Renderer *) renderer)->Clear();
-
+    //((Renderer *) renderer)->Clear();
     // update (this) widget position/scaling
-    Widget::Update();
+    //Widget::Update();
 
     // call base class (draw childs)
-    Widget::Draw();
+    Widget::draw(this);
 }
 
 void Renderer::SetShader(int shader) {

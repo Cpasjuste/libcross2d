@@ -23,6 +23,8 @@
 
 namespace C2D {
 
+    class Renderer;
+
     class Widget {
 
     public:
@@ -32,72 +34,86 @@ namespace C2D {
                int center = C2D_ORIGIN_TOP_LEFT,
                float rot = 0);
 
+        Widget(const Vec4 &rect = {0, 0, 0, 0},
+               const Color &color = C2D_COL_BLACK,
+               int center = C2D_ORIGIN_TOP_LEFT,
+               float rot = 0);
+
         virtual ~Widget();
 
-        virtual void Draw();
-
         // Childs
-        void Add(Widget *widget);
+        void add(Widget *widget);
 
         // position
-        Vec4 GetRect();
+        Vec4 getRect();
 
-        Vec4 GetRectWorld();
+        Vec4 getRectWorld();
 
-        Vec4 GetRectLocal();
+        void setRect(const Vec4 &rect);
 
-        void SetRect(const Vec4 &rect);
+        void setRect(int x, int y, int w = 0, int h = 0);
 
-        void SetRect(int x, int y, int w = 0, int h = 0);
-
-        void Move(int x, int y);
+        void move(int x, int y);
 
         // rotation
-        float GetRotation();
+        float getRotation();
 
-        void SetRotation(float rotation);
+        void setRotation(float rotation);
+
+        void rotate(float rotation);
 
         // color
-        Color GetColor();
+        Color getColor();
 
-        void SetColor(const Color &color);
+        void setColor(const Color &color);
 
         // scaling
-        Vec2 GetScaling();
+        Vec2 getScaling();
 
-        void SetScaling(const Vec2 &scaling);
+        void setScaling(const Vec2 &scaling);
 
-        void Scale(int pixels);
+        void scale(int pixels);
 
         // origin
-        Vec2 GetOrigin();
+        Vec2 getOrigin();
 
-        void SetOrigin(int pivotMode);
+        void setOrigin(int pivotMode);
 
-        void SetOrigin(const Vec2 &origin);
+        void setOrigin(const Vec2 &origin);
 
         // visibility
-        int GetVisibility();
+        int getVisibility();
 
-        void SetVisibility(int visibility);
+        void setVisibility(int visibility);
 
     protected:
 
-        virtual void Update();
+        virtual void draw(Renderer *renderer);
 
-        Vec4 rect;
+        void Update();
+
+        Vec4 rect_origin;
+        Vec4 rect_origin_translated;
         Vec4 rect_world;
-        Vec4 rect_local;
+
         float rotation = 0;
-        Vec2 scale = {1, 1};
+        float rotation_world = 0;
+
+        Vec2 scaling = {1, 1};
+        Vec2 scaling_world = {1, 1};
+
         Vec2 origin = {0, 0};
         Color color = C2D_COL_BLACK;
         int visibility = C2D_VISIBILITY_VISIBLE;
         bool available = true;
 
-        Widget *renderer;
+        //Widget *renderer;
         Widget *parent;
         std::vector<Widget *> childs;
+
+    private:
+        bool update_matrix = false;
+
     };
 }
 

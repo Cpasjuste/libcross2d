@@ -2,6 +2,7 @@
 // Created by cpasjuste on 12/12/17.
 //
 
+#include <cmath>
 #include <cstdio>
 #include "C2D.h"
 
@@ -12,219 +13,260 @@ Widget::Widget(int x, int y, int w, int h,
                int center,
                float rot) {
 
-    renderer = C2DMainRenderer;
-    SetRect(x, y, w, h);
-    SetRotation(rot);
-    SetColor(color);
-    SetOrigin(center);
+    setRect(x, y, w, h);
+    setRotation(rot);
+    setColor(color);
+    setOrigin(center);
+
+    printf("Widget(%p): x:%i, y:%i, w:%i, h:%i\n", this,
+           (int) rect_origin.x, (int) rect_origin.y,
+           (int) rect_origin.w, (int) rect_origin.h);
+}
+
+Widget::Widget(const Vec4 &rect, const Color &color, int center, float rot) {
+
+    setRect((int) rect.x, (int) rect.y, (int) rect.w, (int) rect.h);
+    setRotation(rot);
+    setColor(color);
+    setOrigin(center);
 
     printf("Widget(%p): x:%i, y:%i, w:%i, h:%i\n",
            this, (int) rect.x, (int) rect.y, (int) rect.w, (int) rect.h);
 }
 
-void Widget::Add(Widget *widget) {
+void Widget::add(Widget *widget) {
 
     if (widget) {
-        printf("Widget(%p): Add(%p), renderer=%p\n", this, widget, renderer);
+        printf("Widget(%p): add(%p)\n", this, widget);
         widget->parent = this;
         childs.push_back(widget);
     }
+}
+
+static Vec2 transform(const Vec2 &vec, const Vec2 &origin, const Vec2 &scaling) {
+
+    float angle = 0;
+    float cosine = std::cos(angle);
+    float sine = std::sin(angle);
+    float sxc = scaling.x * cosine;
+    float syc = scaling.y * cosine;
+    float sxs = scaling.x * sine;
+    float sys = scaling.y * sine;
+    float tx = -origin.x * sxc - origin.y * sys + vec.x;
+    float ty = origin.x * sxs - origin.y * syc + vec.y;
+
+    return {tx, ty};
 }
 
 void Widget::Update() {
 
     printf("Widget(%p): Update\n", this);
 
+    //if (update_matrix) {
 
-    float angle  = -rotation * 3.141592654f / 180.f;
-    float cosine = static_cast<float>(std::cos(angle));
-    float sine   = static_cast<float>(std::sin(angle));
-    float sxc    = scale.x * cosine;
-    float syc    = scale.y * cosine;
-    float sxs    = scale.x * sine;
-    float sys    = scale.y * sine;
-    float tx     = -origin.x * sxc - origin.y * sys + rect.x;
-    float ty     =  origin.x * sxs - origin.y * syc + rect.y;
-
-    rect_world.x = rect_local.x;
-    rect_world.y = rect_local.y;
-    rect_world.w = rect_local.w;
-    rect_world.h = rect_local.h;
-
-    /*
-    switch (pivot) {
-
-        case C2D_PIVOT_TOP_LEFT:
-            rect_local.x = rect.x;
-            rect_local.y = rect.y;
-            rect_local.x += (rect_local.x - rect.x) * scale.x;
-            rect_local.y += (rect_local.y - rect.y) * scale.y;
-            break;
-
-        case C2D_PIVOT_CENTER:
-            rect_local.x = rect.x - rect.w / 2;
-            rect_local.y = rect.y - rect.h / 2;
-            rect_local.x += (rect_local.x + rect.w / 2) * scale.x;
-            rect_local.y += (rect_local.y + rect.h / 2) * scale.y;
-            break;
-
-        case C2D_PIVOT_BOTTOM_RIGHT:
-            rect_local.x = rect.x - rect.w / 2;
-            rect_local.y = rect.y - rect.h / 2;
-            rect_local.x += (rect_local.x - rect.x) * scale.x;
-            rect_local.y += (rect_local.y - rect.y) * scale.y;
-            break;
-
-        default:
-            break;
+    scaling_world = scaling;
+    if (parent) {
+        scaling_world.x *= parent->scaling_world.x;
+        scaling_world.y *= parent->scaling_world.y;
     }
 
-    rect_local.w = rect.w * scale.x;
-    rect_local.h = rect.h * scale.y;
+    Vec2 trans = transform({rect_origin.x, rect_origin.y}, origin, scaling_world);
+    rect_origin_translated.x = rect_world.x = trans.x;
+    rect_origin_translated.y = rect_world.y = trans.y;
+    rect_origin_translated.w = rect_world.w = rect_origin.w * scaling_world.x;
+    rect_origin_translated.h = rect_world.h = rect_origin.h * scaling_world.y;
 
     if (parent) {
-        rect_local.x *= parent->scale.x;
-        rect_local.y *= parent->scale.y;
-        rect_local.w *= parent->scale.x;
-        rect_local.h *= parent->scale.y;
-        rect_world.x = rect_local.x + parent->rect_world.x;
-        rect_world.y = rect_local.y + parent->rect_world.y;
-        rect_world.w = rect_local.w;
-        rect_world.h = rect_local.h;
-    } else {
-        rect_world.x = rect_local.x;
-        rect_world.y = rect_local.y;
-        rect_world.w = rect_local.w;
-        rect_world.h = rect_local.h;
+
+        Vec2 trans2 = transform({parent->rect_world.x, parent->rect_world.y}, parent->origin, parent->scaling);
+        rect_world.x += trans2.x - rigin.w;
+        rect_world.y += trans2.y - rect_origin.h;
+        rect_world.w *= scaling_world.x;
+        rect_world.h *= scaling_world.y;
+
+        //rect_world.x += (parent->rect_world.x + parent->rect_origin_translated.x) * scaling_world.x;
+        //rect_world.y += (parent->rect_world.y + parent->rect_origin_translated.y) * scaling_world.y;
+
+        /*
+        Vec2 trans2 = transform({parent->rect_world.x, parent->rect_world.y}, parent->origin,  parent->scaling);
+        rect_world.x += trans2.x;
+        rect_world.y += trans2.y;
+        rect_world.w *= scaling_world.x;
+        rect_world.h *= scaling_world.y;
+        */
+    }
+
+    //rect_world = rect_origin_translated;
+
+
+    update_matrix = false;
+    //}
+
+
+    /*
+    rect_world.x = transform(this).x;
+    rect_world.y = transform(this).y;
+    rect_world.w = rect.w * scaling.x;
+    rect_world.h = rect.h * scaling.y;
+
+    if (parent) {
+        rect_world.w *= parent->scaling.x;
+        rect_world.h *= parent->scaling.y;
+        rect_world.x += parent->rect_world.x + parent->scaling.x * (origin.x);
+        rect_world.y += parent->rect_world.y + parent->scaling.y * (origin.y);
     }
     */
 }
 
-void Widget::Draw() {
+void Widget::draw(Renderer *renderer) {
 
     printf("Widget(%p): Draw\n", this);
+
+    // update this widget position
+    Update();
+
     for (Widget *widget : childs) {
         if (widget->visibility == C2D_VISIBILITY_VISIBLE) {
-            widget->Draw();
+            widget->draw(renderer);
         }
     }
 }
 
-Vec4 Widget::GetRect() {
+Vec4 Widget::getRect() {
 
-    return rect;
+    return rect_origin;
 }
 
-Vec4 Widget::GetRectWorld() {
+Vec4 Widget::getRectWorld() {
 
     return rect_world;
 }
 
-Vec4 Widget::GetRectLocal() {
+void Widget::setRect(const Vec4 &rect) {
 
-    return rect_local;
-}
-
-void Widget::SetRect(const Vec4 &rect) {
-
-    SetRect((int) rect.x, (int) rect.y,
+    setRect((int) rect.x, (int) rect.y,
             rect.w < 0 ? 0 : (int) rect.w,
             rect.h < 0 ? 0 : (int) rect.h);
+
+    update_matrix = true;
 }
 
-void Widget::SetRect(int x, int y, int w, int h) {
+void Widget::setRect(int x, int y, int w, int h) {
 
-    rect.x = x;
-    rect.y = y;
-    rect.w = w < 0 ? 0 : w;
-    rect.h = h < 0 ? 0 : h;
+    rect_origin.x = x;
+    rect_origin.y = y;
+    rect_origin.w = w < 0 ? 0 : w;
+    rect_origin.h = h < 0 ? 0 : h;
+
+    update_matrix = true;
 }
 
-void Widget::Move(int deltaX, int deltaY) {
+void Widget::move(int deltaX, int deltaY) {
 
-    rect.x += deltaX;
-    rect.y += deltaY;
+    rect_origin.x += deltaX;
+    rect_origin.y += deltaY;
+
+    update_matrix = true;
 }
 
-float Widget::GetRotation() {
+float Widget::getRotation() {
 
     return rotation;
 }
 
-void Widget::SetRotation(float rot) {
+void Widget::setRotation(float rot) {
 
     rotation = rot;
+
+    update_matrix = true;
 }
 
-Color Widget::GetColor() {
+void Widget::rotate(float rot) {
+
+    rotation += rot;
+
+    update_matrix = true;
+}
+
+Color Widget::getColor() {
+
     return color;
 }
 
-void Widget::SetColor(const Color &color) {
+void Widget::setColor(const Color &color) {
 
     this->color = color;
 }
 
-Vec2 Widget::GetScaling() {
+Vec2 Widget::getScaling() {
 
-    return scale;
+    return scaling;
 }
 
-void Widget::SetScaling(const Vec2 &scaling) {
-    scale = scaling;
+void Widget::setScaling(const Vec2 &scaling) {
+
+    this->scaling = scaling;
+
+    update_matrix = true;
 }
 
-void Widget::Scale(int pixels) {
+void Widget::scale(int pixels) {
 
-    rect.x -= pixels;
-    rect.y -= pixels;
-    rect.w += pixels * 2;
-    rect.h += pixels * 2;
+    rect_origin.x -= pixels;
+    rect_origin.y -= pixels;
+    rect_origin.w += pixels * 2;
+    rect_origin.h += pixels * 2;
+
+    update_matrix = true;
 }
 
-Vec2 Widget::GetOrigin() {
+Vec2 Widget::getOrigin() {
 
     return origin;
 }
 
-void Widget::SetOrigin(const Vec2 &origin) {
+void Widget::setOrigin(const Vec2 &origin) {
 
     this->origin = origin;
+
+    update_matrix = true;
 }
 
-void Widget::SetOrigin(int pivotMode) {
+void Widget::setOrigin(int pivotMode) {
 
     switch (pivotMode) {
 
         case C2D_ORIGIN_TOP_RIGHT:
-            SetOrigin({0, 0});
+            setOrigin({rect_origin.w, 0});
             break;
 
         case C2D_ORIGIN_CENTER:
-            SetOrigin({rect.w / 2, rect.h / 2});
+            setOrigin({rect_origin.w / 2, rect_origin.h / 2});
             break;
 
         case C2D_ORIGIN_BOTTOM_LEFT:
-            SetOrigin({0, rect.h});
+            setOrigin({0, rect_origin.h});
             break;
 
         case C2D_ORIGIN_BOTTOM_RIGHT:
-            SetOrigin({rect.w, rect.h});
+            setOrigin({rect_origin.w, rect_origin.h});
             break;
 
         case C2D_ORIGIN_TOP_LEFT:
         default:
-            SetOrigin({0, 0});
+            setOrigin({0, 0});
             break;
     }
+
+    update_matrix = true;
 }
 
-int Widget::GetVisibility() {
+int Widget::getVisibility() {
 
     return visibility;
 }
 
-void Widget::SetVisibility(int visibility) {
+void Widget::setVisibility(int visibility) {
 
     this->visibility = visibility;
 }

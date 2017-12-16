@@ -13,15 +13,16 @@ Line::Line(int x1, int y1, int x2, int y2,
            float rot)
         : Widget(x1, y1, x2, y2, color, center, rot) {
 
-    printf("Line(%p): x:%i, y:%i, w:%i, h:%i\n",
-           this, (int) rect.x, (int) rect.y, (int) rect.w, (int) rect.h);
+    printf("Line(%p): x:%i, y:%i, w:%i, h:%i\n", this,
+           (int) rect_origin.x, (int) rect_origin.y,
+           (int) rect_origin.w, (int) rect_origin.h);
 }
 
+/*
 void Line::Update() {
 
     printf("Line(%p): Update\n", this);
 
-    /*
     rect_local.x = pivot == C2D_PIVOT_CENTER ? rect.x - rect.w / 2 : rect.x;
     rect_local.y = pivot == C2D_PIVOT_CENTER ? rect.y - rect.h / 2 : rect.y;
     rect_local.w = pivot == C2D_PIVOT_CENTER ? rect.w - rect.x / 2 : rect.w;
@@ -42,21 +43,18 @@ void Line::Update() {
         rect_world.w = rect_local.w;
         rect_world.h = rect_local.h;
     }
-    */
 }
+*/
 
-void Line::Draw() {
+void Line::draw(Renderer *renderer) {
 
     printf("Line(%p): Draw\n", this);
 
-    // update (this) widget position/scaling
-    Line::Update();
-
     // draw
-    ((Renderer *) renderer)->DrawLine(this);
+    renderer->DrawLine(this);
 
     // call base class (draw childs)
-    Widget::Draw();
+    Widget::draw(renderer);
 }
 
 Line::~Line() {

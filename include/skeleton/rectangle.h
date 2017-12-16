@@ -21,9 +21,11 @@ namespace C2D {
 
         virtual ~Rectangle();
 
-        virtual void Draw();
-
         bool fill = true;
+
+    private:
+
+        virtual void draw(Renderer *renderer);
 
     };
 }

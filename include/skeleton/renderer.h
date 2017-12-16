@@ -36,7 +36,7 @@ namespace C2D {
 
         virtual void DrawLine(Line *line);
 
-        virtual void Clear();
+        //virtual void Clear();
 
         virtual void Flip();
 
