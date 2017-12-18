@@ -12,7 +12,7 @@
 
 #include "widget.h"
 #include "rectangle.h"
-#include "line.h"
+//#include "line.h"
 
 //#include "font.h"
 //#include "texture.h"
@@ -22,21 +22,17 @@
 #define MAX_PATH 512
 #endif
 
-namespace C2D {
+namespace c2d {
 
     class Renderer : public Widget {
 
     public:
 
-        Renderer(int x = 0, int y = 0, int w = 0, int h = 0);
+        Renderer(const Vector2f &size = Vector2f(0, 0));
 
         virtual ~Renderer();
 
-        virtual void DrawRectangle(Rectangle *rectangle);
-
-        virtual void DrawLine(Line *line);
-
-        //virtual void Clear();
+        virtual void DrawRectangle(const FloatRect &rect, const Color &color) {};
 
         virtual void Flip();
 

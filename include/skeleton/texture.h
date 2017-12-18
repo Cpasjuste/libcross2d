@@ -10,11 +10,9 @@
 #define C2D_TEXTURE_FILTER_POINT    0
 #define C2D_TEXTURE_FILTER_LINEAR   1
 
-namespace C2D {
+namespace c2d {
 
     class Renderer;
-
-    class Rect;
 
     class Texture : Widget {
 
@@ -29,7 +27,7 @@ namespace C2D {
 
         //virtual void Draw(int x, int y, int w, int h, float rotation) {};
 
-        virtual int Lock(const Rect &rect, void **pixels, int *pitch) { return 0; };
+        virtual int Lock(const FloatRect &rect, void **pixels, int *pitch) { return 0; };
 
         virtual void Unlock() {};
 

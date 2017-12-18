@@ -2,7 +2,7 @@
 // Created by cpasjuste on 01/12/16.
 //
 
-#include "../../include/C2D.h"
+#include "c2d.h"
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_rotozoom.h>
 

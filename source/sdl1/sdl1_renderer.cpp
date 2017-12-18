@@ -2,7 +2,7 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#include "../../include/C2D.h"
+#include "c2d.h"
 #include <SDL/SDL_gfxPrimitives.h>
 
 //////////

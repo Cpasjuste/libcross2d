@@ -2,7 +2,7 @@
 // Created by cpasjuste on 01/12/16.
 //
 
-#include "../../include/C2D.h"
+#include "c2d.h"
 #include "../../include/sfml/sfml_font.h"
 
 SFMLFont::SFMLFont(Renderer *r, const char *p, int s) : Font(r, p, s) {

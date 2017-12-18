@@ -2,7 +2,7 @@
 // Created by cpasjuste on 13/01/17.
 //
 
-#include "../../include/C2D.h"
+#include "c2d.h"
 
 Input::Input(Renderer *r) : keyboard() {
 

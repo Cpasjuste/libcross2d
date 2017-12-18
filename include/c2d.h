@@ -6,16 +6,14 @@
 #define _C2D_H_
 
 #include "skeleton/renderer.h"
-#include "skeleton/rectangle.h"
-#include "skeleton/line.h"
+//#include "skeleton/rectangle.h"
+//#include "skeleton/line.h"
 #include "skeleton/texture.h"
 //#include "skeleton/font.h"
 //#include "skeleton/input.h"
 //#include "skeleton/audio.h"
 #include "skeleton/timer.h"
 #include "skeleton/io.h"
-
-extern C2D::Renderer *C2DMainRenderer;
 
 #ifdef __PSP2__
 

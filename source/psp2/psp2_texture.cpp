@@ -4,7 +4,7 @@
 
 #include <cstring>
 #include <cstdio>
-#include "../../include/C2D.h"
+#include "c2d.h"
 #include "../../include/psp2/psp2_texture.h"
 
 #ifdef __PSP2_DEBUG__

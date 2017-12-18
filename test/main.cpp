@@ -2,52 +2,41 @@
 // Created by cpasjuste on 08/12/16.
 //
 
-#include "C2D.h"
-
+#include "c2d.h"
 #include "main.h"
 
-using namespace C2D;
+using namespace c2d;
 
 int main() {
 
 
-    Renderer *renderer = new C2DRenderer(0, 0, SCR_W, SCR_H);
+    Renderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
+    renderer->setFillColor(Color::Black);
 
-    Rectangle *mainRect = new Rectangle(200, 200, 200, 200, C2D_COL_BLUE, C2D_ORIGIN_CENTER);
+    Rectangle *w = new Rectangle(Vector2f(200, 200));
+    w->setFillColor(Color::White);
+    w->setOrigin(100, 100);
+    w->setPosition(200, 200);
+    //w->move(100, 100);
+    //w->rotate(10);
+    //w->scale(2, 2);
 
-    Rectangle *childRect = new Rectangle(100, 100, 100, 100, C2D_COL_YELLOW, C2D_ORIGIN_CENTER);
-    mainRect->add(childRect);
+    Rectangle *w2 = new Rectangle(Vector2f(100, 100));
+    w2->setFillColor(Color::Red);
+    w2->setOrigin(100, 100);
+    w2->setPosition(200, 200);
 
-    //Rectangle *childRect2 = new Rectangle(50, 50, 50, 50, C2D_COL_RED, C2D_PIVOT_CENTER);
-    //childRect->Add(childRect2);
+    w->add(w2);
 
-    //Line *line = new Line(0, 0, 50, 50, C2D_COL_GREEN, C2D_PIVOT_TOP_LEFT);
-    //childRect2->Add(line);
-
-    //Line *line2 = new Line(350, 350, 450, 450, C2D_COL_GREEN, C2D_CENTER_TOP_LEFT);
-    //childRect2->Add(line2);
-
-    renderer->add(mainRect);
-    //renderer->Add(line);
+    renderer->add(w);
 
     for (int i = 0; i < 5; i++) {
 
         if (i > 0) {
-            Vec2 scale = mainRect->getScaling();
-            mainRect->setScaling({scale.x - 0.1f, scale.y - 0.1f});
-            //mainRect->move(50, 0);
-            //mainRect->rotate(5);
+            w->move(20, 0);
+            Vector2f scale = w->getScale();
+            w->scale(scale.x - 0.1f, scale.y - 0.1f);
         }
-
-        /*
-        if (i == 5) {
-            //delete (childRect);
-        }
-
-        mainRect->SetRect(
-                mainRect->GetRect().x + (i * 10), mainRect->GetRect().y + (i * 10),
-                mainRect->GetRect().w - (i * 10), mainRect->GetRect().h - (i * 10));
-        */
 
         renderer->Flip();
         renderer->Delay(500);

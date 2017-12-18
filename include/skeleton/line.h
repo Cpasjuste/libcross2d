@@ -20,9 +20,12 @@ namespace C2D {
 
         virtual ~Line();
 
+        virtual void Draw();
+
     protected:
 
-        virtual void draw(Renderer *renderer);
+        virtual void Update();
+
     };
 }
 

@@ -8,21 +8,19 @@
 using namespace C2D;
 
 Line::Line(int x1, int y1, int x2, int y2,
-           const Color &color,
-           int center,
-           float rot)
+           const Color &color, int center, float rot)
         : Widget(x1, y1, x2, y2, color, center, rot) {
 
-    printf("Line(%p): x:%i, y:%i, w:%i, h:%i\n", this,
-           (int) rect_origin.x, (int) rect_origin.y,
-           (int) rect_origin.w, (int) rect_origin.h);
+    printf("Line(%p): x:%i, y:%i, w:%i, h:%i\n",
+           this, (int) localBounds[0].x, (int) localBounds[0].y,
+           GetWidth(), GetHeight());
 }
 
-/*
 void Line::Update() {
 
     printf("Line(%p): Update\n", this);
 
+    /*
     rect_local.x = pivot == C2D_PIVOT_CENTER ? rect.x - rect.w / 2 : rect.x;
     rect_local.y = pivot == C2D_PIVOT_CENTER ? rect.y - rect.h / 2 : rect.y;
     rect_local.w = pivot == C2D_PIVOT_CENTER ? rect.w - rect.x / 2 : rect.w;
@@ -36,25 +34,29 @@ void Line::Update() {
         rect_world.x = rect_local.x + parent->GetRectWorld().x;
         rect_world.y = rect_local.y + parent->GetRectWorld().y;
         rect_world.w = rect_local.w + parent->GetRectWorld().x;
-        rect_world.h = rect_local.h + parent->GetRectWorld().y;
+        rect_world.h = rect_local.h + parent->GetWorldRect().y;
     } else {
         rect_world.x = rect_local.x;
         rect_world.y = rect_local.y;
         rect_world.w = rect_local.w;
         rect_world.h = rect_local.h;
     }
+    */
 }
-*/
 
-void Line::draw(Renderer *renderer) {
+void Line::Draw() {
 
     printf("Line(%p): Draw\n", this);
 
+    // update (this) widget position/scaling
+    // Line::Update();
+    Widget::Update();
+
     // draw
-    renderer->DrawLine(this);
+    ((Renderer *) renderer)->DrawLine(this);
 
     // call base class (draw childs)
-    Widget::draw(renderer);
+    Widget::Draw();
 }
 
 Line::~Line() {

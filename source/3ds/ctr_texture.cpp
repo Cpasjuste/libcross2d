@@ -2,7 +2,7 @@
 // Created by cpasjuste on 01/12/16.
 //
 
-#include "../../include/C2D.h"
+#include "c2d.h"
 #include "../../include/3ds/ctr_png.h"
 
 #ifdef __CITRO3D__

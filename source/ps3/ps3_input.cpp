@@ -5,7 +5,7 @@
 #include <cmath>
 #include <cstdio>
 
-#include "../../include/C2D.h"
+#include "c2d.h"
 #include <io/pad.h>
 
 static int key_id[KEY_COUNT]{

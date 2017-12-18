@@ -2,7 +2,7 @@
 // Created by cpasjuste on 01/12/16.
 //
 
-#include "../../include/C2D.h"
+#include "c2d.h"
 
 PSP2Font::PSP2Font(Renderer *r, const char *path, int size) : Font(r, path, size) {
     this->size = size;

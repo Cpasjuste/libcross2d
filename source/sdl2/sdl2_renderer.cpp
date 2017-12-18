@@ -2,12 +2,11 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#include "C2D.h"
+#include "c2d.h"
 
-using namespace C2D;
+using namespace c2d;
 
-SDL2Renderer::SDL2Renderer(int x, int y, int w, int h)
-        : Renderer(x, y, w, h) {
+SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
 
     if ((SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
         printf("Couldn't init sdl: %s\n", SDL_GetError());
@@ -16,16 +15,18 @@ SDL2Renderer::SDL2Renderer(int x, int y, int w, int h)
     }
 
     Uint32 flags = SDL_WINDOW_OPENGL;
-    if (!rect_origin.w || !rect_origin.h) { // force fullscreen if window size == 0
+    if (!getSize().x || !getSize().y) { // force fullscreen if window size == 0
         flags |= SDL_WINDOW_FULLSCREEN;
     }
 
     window = SDL_CreateWindow(
-            "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, rect_origin.w, rect_origin.h, flags);
+            "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+            getSize().x, getSize().y, flags);
 
     if (window == nullptr) {
         window = SDL_CreateWindow(
-                "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, rect_origin.w, rect_origin.h, 0);
+                "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                getSize().x, getSize().y, 0);
         if (window == nullptr) {
             printf("Couldn't create window: %s\n", SDL_GetError());
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
@@ -40,11 +41,10 @@ SDL2Renderer::SDL2Renderer(int x, int y, int w, int h)
         return;
     }
 
-    printf("SDL2Renderer(%p): x:%i, y:%i, w:%i, h:%i\n", this,
-           (int) rect_origin.x, (int) rect_origin.y,
-           (int) rect_origin.w, (int) rect_origin.h);
+    printf("SDL2Renderer(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }
 
+/*
 void SDL2Renderer::DrawLine(Line *line) {
 
     if (!line || line->getVisibility() == C2D_VISIBILITY_HIDDEN) {
@@ -54,16 +54,19 @@ void SDL2Renderer::DrawLine(Line *line) {
     printf("SDL2Renderer(%p): DrawLine(%p)\n", this, line);
 
     // set color
-    Color c = line->getColor();
+    Color c = line->GetColor();
     if (c.a < 255) {
         SDL_SetRenderDrawBlendMode(sdl_renderer, SDL_BLENDMODE_BLEND);
     }
     SDL_SetRenderDrawColor(sdl_renderer, c.r, c.g, c.b, c.a);
 
-    // draw with world/absolute positions (GetRectWorld)
+    // draw with world/absolute positions (GetWorldRect)
     // x = x1, y = y1, w = x2; h = y2
-    Vec4 r = line->getRectWorld();
-    SDL_RenderDrawLine(sdl_renderer, (int) r.x, (int) r.y, (int) r.w, (int) r.h);
+    //Vec4 r = line->GetRect();
+    std::vector<Vec2> bounds = line->GetLocalBounds();
+    SDL_RenderDrawLine(sdl_renderer,
+                       (int) bounds[0].x, (int) bounds[0].y,
+                       (int) bounds[1].x, (int) bounds[1].y);
 
     // reset color
     if (c.a < 255) {
@@ -71,45 +74,61 @@ void SDL2Renderer::DrawLine(Line *line) {
     }
     SDL_SetRenderDrawColor(sdl_renderer, color.r, color.g, color.b, color.a);
 }
+*/
 
-void SDL2Renderer::DrawRectangle(Rectangle *rectangle) {
+void SDL2Renderer::DrawRectangle(const FloatRect &rect, const Color &c) {
 
-    if (!rectangle || rectangle->getVisibility() == C2D_VISIBILITY_HIDDEN) {
-        return;
-    }
-
-    printf("SDL2Renderer(%p): DrawRectangle(%p)\n", this, rectangle);
+    //printf("SDL2Renderer(%p): DrawRectangle(%p)\n", this, rectangle);
 
     // set color
-    Color c = rectangle->getColor();
     if (c.a < 255) {
         SDL_SetRenderDrawBlendMode(sdl_renderer, SDL_BLENDMODE_BLEND);
     }
     SDL_SetRenderDrawColor(sdl_renderer, c.r, c.g, c.b, c.a);
 
-    // draw with world/absolute positions (GetRectWorld)
-    Vec4 r = rectangle->getRectWorld();
-    SDL_Rect r_sdl = {(int) r.x, (int) r.y, (int) r.w, (int) r.h};
-    if (rectangle->fill) {
-        SDL_RenderFillRect(sdl_renderer, &r_sdl);
-    } else {
-        SDL_RenderDrawRect(sdl_renderer, &r_sdl);
-    }
+    printf("SDL2Renderer(%p): DrawRectangle(): x:%i, y:%i, w:%i, h:%i\n",
+           this,
+           (int) rect.top,
+           (int) rect.left,
+           (int) rect.width,
+           (int) rect.height);
+
+    SDL_Rect r_sdl = {
+            (int) rect.top,
+            (int) rect.left,
+            (int) rect.width,
+            (int) rect.height};
+
+    // if (rectangle->fill) {
+    SDL_RenderFillRect(sdl_renderer, &r_sdl);
+    // } else {
+    //     SDL_RenderDrawRect(sdl_renderer, &r_sdl);
+    // }
 
     // reset color
     if (c.a < 255) {
         SDL_SetRenderDrawBlendMode(sdl_renderer, SDL_BLENDMODE_NONE);
     }
-    SDL_SetRenderDrawColor(sdl_renderer, color.r, color.g, color.b, color.a);
+    SDL_SetRenderDrawColor(sdl_renderer,
+                           getFillColor().r,
+                           getFillColor().g,
+                           getFillColor().b,
+                           getFillColor().a);
 }
 
 void SDL2Renderer::Flip() {
 
     printf("SDL2Renderer(%p): Flip\n", this);
 
+    // Clear
     // clear screen
-    SDL_SetRenderDrawColor(sdl_renderer, color.r, color.g, color.b, color.a);
+    SDL_SetRenderDrawColor(sdl_renderer,
+                           getFillColor().r,
+                           getFillColor().g,
+                           getFillColor().b,
+                           getFillColor().a);
     SDL_RenderClear(sdl_renderer);
+
 
     // call base class (draw childs)
     Renderer::Flip();

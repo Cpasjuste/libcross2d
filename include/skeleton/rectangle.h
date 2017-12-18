@@ -7,25 +7,19 @@
 
 #include "widget.h"
 
-namespace C2D {
+namespace c2d {
 
     class Rectangle : public Widget {
 
     public:
 
-        Rectangle(int x = 0, int y = 0, int w = 0, int h = 0,
-                  const Color &color = C2D_COL_BLACK,
-                  int center = C2D_ORIGIN_TOP_LEFT,
-                  float rot = 0,
-                  bool fill = true);
+        Rectangle(const Vector2f &size = Vector2f(0, 0), bool fill = true);
 
         virtual ~Rectangle();
 
+        virtual void draw(Renderer *renderer, const Transform &transform);
+
         bool fill = true;
-
-    private:
-
-        virtual void draw(Renderer *renderer);
 
     };
 }

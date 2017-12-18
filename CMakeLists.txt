@@ -34,7 +34,14 @@ set(CROSS2D_SRC
         source/skeleton/widget.cpp
         source/skeleton/renderer.cpp
         source/skeleton/rectangle.cpp
-        source/skeleton/line.cpp
+        #source/skeleton/line.cpp
+        source/skeleton/c2d_sfml/Shape.cpp
+        source/skeleton/c2d_sfml/Color.cpp
+        source/skeleton/c2d_sfml/Transform.cpp
+        source/skeleton/c2d_sfml/Transformable.cpp
+        source/skeleton/c2d_sfml/Vertex.cpp
+        source/skeleton/c2d_sfml/VertexArray.cpp
+        source/skeleton/c2d_sfml/RectangleShape.cpp
         )
 #file(GLOB CROSS2D_SRC src/skeleton/*.c*)
 

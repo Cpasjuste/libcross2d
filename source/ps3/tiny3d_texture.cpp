@@ -2,7 +2,7 @@
 // Created by cpasjuste on 01/12/16.
 //
 
-#include "../../include/C2D.h"
+#include "c2d.h"
 #include <pngdec/pngdec.h>
 #include <rsx/mm.h>
 

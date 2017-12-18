@@ -2,7 +2,7 @@
 // Created by cpasjuste on 01/12/16.
 //
 
-#include "../../include/C2D.h"
+#include "c2d.h"
 #include <SDL2/SDL_image.h>
 
 SDL2Texture::SDL2Texture(Renderer *r, const char *p) : Texture(r, p) {

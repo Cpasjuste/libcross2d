@@ -13,19 +13,17 @@
 //#include "sdl2/sdl2_texture.h"
 //#include "sdl2/sdl2_fontcache.h"
 
-namespace C2D {
+namespace c2d {
 
     class SDL2Renderer : public Renderer {
 
     public:
 
-        SDL2Renderer(int x = 0, int y = 0, int w = 0, int h = 0);
+        SDL2Renderer(const Vector2f &size = Vector2f(0, 0));
 
         ~SDL2Renderer();
 
-        void DrawLine(Line *line);
-
-        void DrawRectangle(Rectangle *rectangle);
+        void DrawRectangle(const FloatRect &rect, const Color &color);
 
         void Flip();
 

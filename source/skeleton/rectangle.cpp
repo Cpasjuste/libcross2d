@@ -5,31 +5,30 @@
 #include <cstdio>
 #include "skeleton/renderer.h"
 
-using namespace C2D;
+using namespace c2d;
 
-Rectangle::Rectangle(int x, int y, int w, int h,
-                     const Color &color,
-                     int center,
-                     float rot,
-                     bool fill)
-        : Widget(x, y, w, h, color, center, rot) {
+Rectangle::Rectangle(const Vector2f &size, bool fill) : Widget(size) {
 
     this->fill = fill;
 
-    printf("Rectangle(%p): x:%i, y:%i, w:%i, h:%i\n", this,
-           (int) rect_origin.x, (int) rect_origin.y,
-           (int) rect_origin.w, (int) rect_origin.h);
+    printf("Rectangle(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }
 
-void Rectangle::draw(Renderer *renderer) {
+void Rectangle::draw(Renderer *renderer, const Transform &transform) {
 
-    printf("Rectangle(%p): Draw\n", this);
+    printf("Rectangle(%p): draw\n", this);
+
+    // update (this) widget position/scaling
+    // Widget::Update();
 
     // draw
-    renderer->DrawRectangle(this);
+
+    //sf::Transform combinedTransform = transform * getTransform();
+    FloatRect combined = transform.transformRect(getGlobalBounds());
+    renderer->DrawRectangle(combined, getFillColor());
 
     // call base class (draw childs)
-    Widget::draw(renderer);
+    Widget::draw(renderer, transform);
 }
 
 Rectangle::~Rectangle() {
