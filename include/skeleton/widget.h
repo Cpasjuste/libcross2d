@@ -8,13 +8,6 @@
 #define C2D_VISIBILITY_VISIBLE  0
 #define C2D_VISIBILITY_HIDDEN   1
 
-#define C2D_ORIGIN_TOP_LEFT     0
-#define C2D_ORIGIN_TOP_RIGHT    1
-#define C2D_ORIGIN_CENTER       2
-#define C2D_ORIGIN_BOTTOM_LEFT  3
-#define C2D_ORIGIN_BOTTOM_RIGHT 4
-
-
 #include <cstdint>
 #include <vector>
 
@@ -28,11 +21,13 @@ namespace c2d {
 
     public:
 
+        Widget(const FloatRect &rect);
+
         Widget(const Vector2f &size = Vector2f(0, 0));
 
         virtual ~Widget();
 
-        virtual void draw(Renderer *renderer, const Transform &transform);
+        virtual void draw(const Transform &transform);
 
         // Childs
         void add(Widget *widget);

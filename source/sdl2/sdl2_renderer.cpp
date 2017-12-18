@@ -21,12 +21,12 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
 
     window = SDL_CreateWindow(
             "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            getSize().x, getSize().y, flags);
+            (int) getSize().x, (int) getSize().y, flags);
 
     if (window == nullptr) {
         window = SDL_CreateWindow(
                 "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                getSize().x, getSize().y, 0);
+                (int) getSize().x, (int) getSize().y, 0);
         if (window == nullptr) {
             printf("Couldn't create window: %s\n", SDL_GetError());
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
@@ -40,6 +40,14 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create renderer: %s\n", SDL_GetError());
         return;
     }
+
+    // sdl2 doesn't support rect rotation, create a texture for that
+    draw_tex = new SDL2Texture(Vector2f(32, 32));
+    void *pixels;
+    int pitch;
+    draw_tex->lock(FloatRect(), &pixels, &pitch);
+    memset(pixels, 255, (size_t) 32 * pitch);
+    draw_tex->unlock();
 
     printf("SDL2Renderer(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }
@@ -76,51 +84,69 @@ void SDL2Renderer::DrawLine(Line *line) {
 }
 */
 
-void SDL2Renderer::DrawRectangle(const FloatRect &rect, const Color &c) {
+void SDL2Renderer::drawRectangle(const Rectangle &rectangle, const Transform &parentTransform) {
 
-    //printf("SDL2Renderer(%p): DrawRectangle(%p)\n", this, rectangle);
+    printf("SDL2Renderer(%p): drawRectangle()\n", this);
 
     // set color
-    if (c.a < 255) {
-        SDL_SetRenderDrawBlendMode(sdl_renderer, SDL_BLENDMODE_BLEND);
+    if (rectangle.getFillColor().a < 255) {
+        SDL_SetTextureBlendMode(draw_tex->tex, SDL_BLENDMODE_BLEND);
+        SDL_SetTextureAlphaMod(draw_tex->tex, rectangle.getFillColor().a);
     }
-    SDL_SetRenderDrawColor(sdl_renderer, c.r, c.g, c.b, c.a);
 
-    printf("SDL2Renderer(%p): DrawRectangle(): x:%i, y:%i, w:%i, h:%i\n",
-           this,
-           (int) rect.top,
-           (int) rect.left,
-           (int) rect.width,
-           (int) rect.height);
+    SDL_SetTextureColorMod(draw_tex->tex,
+                           rectangle.getFillColor().r,
+                           rectangle.getFillColor().g,
+                           rectangle.getFillColor().b);
 
-    SDL_Rect r_sdl = {
-            (int) rect.top,
-            (int) rect.left,
-            (int) rect.width,
-            (int) rect.height};
+    // set transform
+    FloatRect trans = parentTransform.transformRect(rectangle.getGlobalBounds());
+    SDL_Rect rect = {
+            (int) trans.top,
+            (int) trans.left,
+            (int) trans.width,
+            (int) trans.height};
 
+    // float rotation = parentTransform.getMatrix()
     // if (rectangle->fill) {
-    SDL_RenderFillRect(sdl_renderer, &r_sdl);
+    SDL_RenderCopyEx(sdl_renderer, draw_tex->tex, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
+    //SDL_RenderFillRect(sdl_renderer, &r_sdl);
     // } else {
     //     SDL_RenderDrawRect(sdl_renderer, &r_sdl);
     // }
 
     // reset color
-    if (c.a < 255) {
-        SDL_SetRenderDrawBlendMode(sdl_renderer, SDL_BLENDMODE_NONE);
+    if (rectangle.getFillColor().a < 255) {
+        SDL_SetTextureBlendMode(draw_tex->tex, SDL_BLENDMODE_NONE);
     }
-    SDL_SetRenderDrawColor(sdl_renderer,
-                           getFillColor().r,
-                           getFillColor().g,
-                           getFillColor().b,
-                           getFillColor().a);
 }
 
-void SDL2Renderer::Flip() {
+void SDL2Renderer::drawTexture(const Texture &texture, const Transform &parentTransform) {
 
-    printf("SDL2Renderer(%p): Flip\n", this);
+    printf("SDL2Renderer(%p): drawTexture()\n", this);
 
-    // Clear
+    SDL_Rect src = {
+            texture.getTextureRect().top,
+            texture.getTextureRect().left,
+            texture.getTextureRect().width,
+            texture.getTextureRect().height
+    };
+
+    FloatRect trans = parentTransform.transformRect(texture.getGlobalBounds());
+    SDL_Rect dst = {
+            (int) trans.top,
+            (int) trans.left,
+            (int) trans.width,
+            (int) trans.height
+    };
+
+    SDL_RenderCopyEx(sdl_renderer, ((SDL2Texture *) &texture)->tex, &src, &dst, 0, NULL, SDL_FLIP_NONE);
+}
+
+void SDL2Renderer::flip() {
+
+    printf("SDL2Renderer(%p): flip\n", this);
+
     // clear screen
     SDL_SetRenderDrawColor(sdl_renderer,
                            getFillColor().r,
@@ -129,19 +155,18 @@ void SDL2Renderer::Flip() {
                            getFillColor().a);
     SDL_RenderClear(sdl_renderer);
 
-
     // call base class (draw childs)
-    Renderer::Flip();
+    Renderer::flip();
 
     // flip
     SDL_RenderPresent(sdl_renderer);
 }
 
-void SDL2Renderer::SetShader(int shader) {
+void SDL2Renderer::setShader(int shader) {
     // TODO
 }
 
-void SDL2Renderer::Delay(unsigned int ms) {
+void SDL2Renderer::delay(unsigned int ms) {
 
     SDL_Delay(ms);
 }
@@ -149,6 +174,7 @@ void SDL2Renderer::Delay(unsigned int ms) {
 SDL2Renderer::~SDL2Renderer() {
 
     printf("~SDL2Renderer\n");
+    delete (draw_tex);
     SDL_DestroyRenderer(sdl_renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

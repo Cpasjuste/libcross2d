@@ -97,7 +97,6 @@ namespace c2d {
         m_inverseTransformNeedUpdate = true;
     }
 
-
 ////////////////////////////////////////////////////////////
     void Transformable::setOrigin(const Vector2f &origin) {
         setOrigin(origin.x, origin.y);

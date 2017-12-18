@@ -13,9 +13,8 @@
 #include "widget.h"
 #include "rectangle.h"
 //#include "line.h"
-
 //#include "font.h"
-//#include "texture.h"
+#include "texture.h"
 #include "shaders.h"
 
 #ifndef MAX_PATH
@@ -32,13 +31,15 @@ namespace c2d {
 
         virtual ~Renderer();
 
-        virtual void DrawRectangle(const FloatRect &rect, const Color &color) {};
+        virtual void drawRectangle(const Rectangle &rectangle, const Transform &parentTransform) {};
 
-        virtual void Flip();
+        virtual void drawTexture(const Texture &texture, const Transform &parentTransform) {};
 
-        virtual void SetShader(int shader);
+        virtual void flip();
 
-        virtual void Delay(unsigned int ms);
+        virtual void delay(unsigned int ms);
+
+        virtual void setShader(int shader);
 
     protected:
 

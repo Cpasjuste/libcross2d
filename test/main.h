@@ -73,8 +73,8 @@ int KEYS[]{
 
 #define SCR_W 960
 #define SCR_H 544
-#define FONT_PATH   "../src/res/default.ttf"
-#define TEX_PATH    "../src/res/title.png"
+#define FONT_PATH   "../res/default.ttf"
+#define TEX_PATH    "../res/title.png"
 int KEYS[]{
         // SDL_Scancode
         // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT

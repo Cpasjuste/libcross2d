@@ -5,27 +5,28 @@
 #ifndef _SDL2_TEXTURE_H_
 #define _SDL2_TEXTURE_H_
 
-#include "../skeleton/renderer.h"
+#include "skeleton/renderer.h"
 
-class SDL2Texture : Texture {
+namespace c2d {
 
-public:
-    SDL2Texture(Renderer *renderer, const char *path);
+    class SDL2Texture : public Texture {
 
-    SDL2Texture(Renderer *renderer, int w, int h);
+    public:
 
-    ~SDL2Texture();
+        SDL2Texture(const char *path);
 
-    void Draw(int x, int y, int w, int h, float rotation);
+        SDL2Texture(const Vector2f &size = Vector2f(0, 0));
 
-    int Lock(const Rect &rect, void **pixels, int *pitch);
+        ~SDL2Texture();
 
-    void Unlock();
+        int lock(const FloatRect &rect, void **pixels, int *pitch);
 
-    void SetFiltering(int filter);
+        void unlock();
 
-private:
-    SDL_Texture *tex = nullptr;
-};
+        void setFiltering(int filter);
+
+        SDL_Texture *tex = nullptr;
+    };
+}
 
 #endif //_SDL2_TEXTURE_H_

@@ -9,22 +9,18 @@ using namespace c2d;
 
 int main() {
 
-
     Renderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
-    renderer->setFillColor(Color::Black);
 
-    Rectangle *w = new Rectangle(Vector2f(200, 200));
+    //Texture *w = new SDL2Texture(TEX_PATH);
+
+    Rectangle *w = new Rectangle(FloatRect(100, 100, 200, 200));
     w->setFillColor(Color::White);
-    w->setOrigin(100, 100);
+    w->setOriginCenter();
     w->setPosition(200, 200);
-    //w->move(100, 100);
-    //w->rotate(10);
-    //w->scale(2, 2);
 
     Rectangle *w2 = new Rectangle(Vector2f(100, 100));
     w2->setFillColor(Color::Red);
-    w2->setOrigin(100, 100);
-    w2->setPosition(200, 200);
+    w2->setOriginTopLeft();
 
     w->add(w2);
 
@@ -33,13 +29,26 @@ int main() {
     for (int i = 0; i < 5; i++) {
 
         if (i > 0) {
-            w->move(20, 0);
-            Vector2f scale = w->getScale();
-            w->scale(scale.x - 0.1f, scale.y - 0.1f);
+            //w->move(20, 0);
+            w->setScale(w->getScale().x - 0.1f, w->getScale().y - 0.1f);
+            //printf("SCALE: %f %f\n", w->getScale().x, w->getScale().y);
+            //w->rotate(5);
+
+            printf("%f %f %f %f %f %f %f %f %f\n",
+                   w->getTransform().getMatrix()[0],
+                   w->getTransform().getMatrix()[1],
+                   w->getTransform().getMatrix()[2],
+                   w->getTransform().getMatrix()[3],
+                   w->getTransform().getMatrix()[4],
+                   w->getTransform().getMatrix()[5],
+                   w->getTransform().getMatrix()[6],
+                   w->getTransform().getMatrix()[7],
+                   w->getTransform().getMatrix()[8]
+            );
         }
 
-        renderer->Flip();
-        renderer->Delay(500);
+        renderer->flip();
+        renderer->delay(500);
     }
 
     delete (renderer);
@@ -88,10 +97,10 @@ int main() {
     }
     unsigned char *buffer;
     int pitch;
-    texture->Lock(Rect(), (void **) &buffer, &pitch);
+    texture->lock(Rect(), (void **) &buffer, &pitch);
     fread(buffer, 1, 384 * 224 * 2, pFile);
     fclose(pFile);
-    texture->Unlock();
+    texture->unlock();
     */
 
     while (true) {

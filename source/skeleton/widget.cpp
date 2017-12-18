@@ -7,6 +7,14 @@
 
 using namespace c2d;
 
+Widget::Widget(const FloatRect &rect) : RectangleShape() {
+
+    setPosition(rect.left, rect.top);
+    setSize(Vector2f(rect.width, rect.height));
+
+    printf("Widget(%p):\n", this);
+}
+
 Widget::Widget(const Vector2f &size) : RectangleShape(size) {
 
     printf("Widget(%p):\n", this);
@@ -21,13 +29,13 @@ void Widget::add(Widget *widget) {
     }
 }
 
-void Widget::draw(Renderer *renderer, const Transform &transform) {
+void Widget::draw(const Transform &transform) {
 
     //printf("Widget(%p): draw\n", this);
     for (Widget *widget : childs) {
         if (widget->visibility == C2D_VISIBILITY_VISIBLE) {
             Transform combinedTransform = transform * getTransform();
-            widget->draw(renderer, combinedTransform);
+            widget->draw(combinedTransform);
         }
     }
 }

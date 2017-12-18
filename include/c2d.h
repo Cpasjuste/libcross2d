@@ -15,6 +15,9 @@
 #include "skeleton/timer.h"
 #include "skeleton/io.h"
 
+// for static access
+extern c2d::Renderer *c2d_renderer;
+
 #ifdef __PSP2__
 
 #include "psp2/psp2_renderer.h"
@@ -97,6 +100,7 @@
 #elif __SDL2__
 
 #include "sdl2/sdl2_renderer.h"
+#include "sdl2/sdl2_texture.h"
 //#include "sdl2/sdl2_font.h"
 //#include "sdl2/sdl2_input.h"
 //#include "sdl2/sdl2_audio.h"

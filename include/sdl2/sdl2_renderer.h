@@ -8,6 +8,7 @@
 #include <SDL2/SDL.h>
 
 #include "skeleton/renderer.h"
+#include "sdl2/sdl2_texture.h"
 
 //#include "sdl2/sdl2_font.h"
 //#include "sdl2/sdl2_texture.h"
@@ -23,18 +24,20 @@ namespace c2d {
 
         ~SDL2Renderer();
 
-        void DrawRectangle(const FloatRect &rect, const Color &color);
+        void drawRectangle(const Rectangle &rectangle, const Transform &parentTransform);
 
-        void Flip();
+        void drawTexture(const Texture &texture, const Transform &parentTransform);
 
-        void Delay(unsigned int ms);
+        void flip();
 
-        void SetShader(int shader);
+        void delay(unsigned int ms);
 
-    private:
+        void setShader(int shader);
 
+        //private:
         SDL_Window *window = nullptr;
         SDL_Renderer *sdl_renderer = nullptr;
+        SDL2Texture *draw_tex;
     };
 }
 

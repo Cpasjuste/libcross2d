@@ -31,7 +31,7 @@
 #include "Vertex.hpp"
 #include "PrimitiveType.hpp"
 #include "Rect.hpp"
-//#include "Drawable.hpp>
+
 #include <vector>
 
 
@@ -40,7 +40,7 @@ namespace c2d {
 /// \brief Define a set of one or more 2D primitives
 ///
 ////////////////////////////////////////////////////////////
-    class VertexArray /*: public Drawable*/
+    class VertexArray
     {
     public:
 

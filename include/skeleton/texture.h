@@ -12,37 +12,30 @@
 
 namespace c2d {
 
-    class Renderer;
-
-    class Texture : Widget {
+    class Texture : public Widget {
 
     public:
 
         // START - to implement, device specific code
-        Texture(Renderer *renderer, const char *path);
+        Texture(const char *path);
 
-        Texture(Renderer *renderer, int w, int h);
+        Texture(const Vector2f &size = Vector2f(0, 0));
 
-        virtual ~Texture() {};
+        virtual ~Texture();
 
-        //virtual void Draw(int x, int y, int w, int h, float rotation) {};
+        virtual int lock(const FloatRect &rect, void **pixels, int *pitch) { return 0; };
 
-        virtual int Lock(const FloatRect &rect, void **pixels, int *pitch) { return 0; };
+        virtual void unlock() {};
 
-        virtual void Unlock() {};
-
-        virtual void SetFiltering(int filter) {};
+        virtual void setFiltering(int filter) {};
         // END - to implement, device specific code
 
-        //void Draw(int x, int y, int w, int h);
-        //void Draw(int x, int y);
-        //Rect Draw(const Rect &rect, bool fit = true);
-
-        //bool available = false;
-        //int width = 0;
-        //int height = 0;
         char path[512];
-        //Renderer *renderer;
+
+    private:
+
+        virtual void draw(const Transform &transform);
+
     };
 }
 

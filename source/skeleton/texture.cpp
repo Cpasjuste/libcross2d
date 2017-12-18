@@ -2,50 +2,31 @@
 // Created by cpasjuste on 29/11/17.
 //
 
-#include "../../include/skeleton/renderer.h"
+#include <c2d.h>
 
-using namespace C2D;
+using namespace c2d;
 
-Texture::Texture(const char *p) : Widget( 0, 0, 0, 0) {
+Texture::Texture(const char *p) : Widget(Vector2f(0, 0)) {
 
     strncpy(path, p, 512);
 }
 
-Texture::Texture(Renderer *r, int w, int h) {
+Texture::Texture(const Vector2f &size) : Widget(size) {
 
-    renderer = r;
-    width = w;
-    height = h;
+    this->setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
 }
 
-void Texture::Draw(int x, int y, int w, int h) {
-    Draw(x, y, w, h, 0);
+void Texture::draw(const Transform &transform) {
+
+    printf("Texture(%p): draw\n", this);
+
+    // draw texture from renderer
+    c2d_renderer->drawTexture(*this, transform);
+
+    // call base class (draw childs)
+    Widget::draw(transform);
 }
 
-void Texture::Draw(int x, int y) {
-    Draw(x, y, width, height);
+Texture::~Texture() {
+    printf("~Texture(%p)\n", this);
 }
-
-Rect Texture::Draw(const Rect &rect, bool fit) {
-
-    Rect scale;
-    if (fit) {
-        scale = {rect.x, rect.y, rect.w, rect.h};
-        scale.w = (int) (((float) width * ((float) rect.h) / (float) height));
-    } else {
-        scale = {rect.x, rect.y, width, height};
-    }
-
-    if (scale.w > rect.w) {
-        scale.h = (int) (((float) rect.w * ((float) height) / (float) width));
-        scale.w = rect.w;
-    }
-
-    scale.x += (rect.w - scale.w) / 2;
-    scale.y += (rect.h - scale.h) / 2;
-
-    Draw(scale.x, scale.y, scale.w, scale.h, 0);
-
-    return scale;
-}
-

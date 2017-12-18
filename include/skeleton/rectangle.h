@@ -13,14 +13,15 @@ namespace c2d {
 
     public:
 
-        Rectangle(const Vector2f &size = Vector2f(0, 0), bool fill = true);
+        Rectangle(const FloatRect &rect = FloatRect(0, 0, 0, 0));
+
+        Rectangle(const Vector2f &size = Vector2f(0, 0));
 
         virtual ~Rectangle();
 
-        virtual void draw(Renderer *renderer, const Transform &transform);
+    private:
 
-        bool fill = true;
-
+        virtual void draw(const Transform &parentTransform);
     };
 }
 

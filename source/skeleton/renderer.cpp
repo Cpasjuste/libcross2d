@@ -6,26 +6,30 @@
 
 using namespace c2d;
 
+Renderer *c2d_renderer;
+
 Renderer::Renderer(const Vector2f &size) : Widget(size) {
 
+    c2d_renderer = this;
+    setFillColor(Color::Black);
     shaders = new Shaders("");
 
     printf("Renderer(%p)\n", this);
 }
 
-void Renderer::Flip() {
+void Renderer::flip() {
 
-    printf("Renderer(%p): Flip\n", this);
+    printf("Renderer(%p): flip\n", this);
 
     // call base class (draw childs)
-    Widget::draw(this, getTransform());
+    Widget::draw(getTransform());
 }
 
-void Renderer::SetShader(int shader) {
+void Renderer::setShader(int shader) {
 
 }
 
-void Renderer::Delay(unsigned int ms) {
+void Renderer::delay(unsigned int ms) {
 
 }
 
