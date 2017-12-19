@@ -29,13 +29,16 @@ void Widget::add(Widget *widget) {
     }
 }
 
-void Widget::draw(const Transform &transform) {
+void Widget::draw(const Transform &transform, const Vector2f &scaling) {
 
-    //printf("Widget(%p): draw\n", this);
+    printf("Widget(%p): draw\n", this);
+
+    Transform combinedTransform = transform * getTransform();
+    Vector2f combinedScaling = {scaling.x * getScale().x, scaling.y * getScale().y};
+
     for (Widget *widget : childs) {
         if (widget->visibility == C2D_VISIBILITY_VISIBLE) {
-            Transform combinedTransform = transform * getTransform();
-            widget->draw(combinedTransform);
+            widget->draw(combinedTransform, combinedScaling);
         }
     }
 }

@@ -22,7 +22,7 @@ void Renderer::flip() {
     printf("Renderer(%p): flip\n", this);
 
     // call base class (draw childs)
-    Widget::draw(getTransform());
+    Widget::draw(getTransform(), getScale());
 }
 
 void Renderer::setShader(int shader) {

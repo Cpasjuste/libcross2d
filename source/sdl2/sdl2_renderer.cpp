@@ -84,7 +84,8 @@ void SDL2Renderer::DrawLine(Line *line) {
 }
 */
 
-void SDL2Renderer::drawRectangle(const Rectangle &rectangle, const Transform &parentTransform) {
+void
+SDL2Renderer::drawRectangle(const Rectangle &rectangle, const Transform &parentTransform, const Vector2f &scaling) {
 
     printf("SDL2Renderer(%p): drawRectangle()\n", this);
 
@@ -100,12 +101,14 @@ void SDL2Renderer::drawRectangle(const Rectangle &rectangle, const Transform &pa
                            rectangle.getFillColor().b);
 
     // set transform
-    FloatRect trans = parentTransform.transformRect(rectangle.getGlobalBounds());
+    //FloatRect trans = parentTransform.transformRect(rectangle.getGlobalBounds());
+    Vector2f pos = parentTransform.transformPoint(rectangle.getPosition() - rectangle.getOrigin());
     SDL_Rect rect = {
-            (int) trans.top,
-            (int) trans.left,
-            (int) trans.width,
-            (int) trans.height};
+            (int) pos.x,
+            (int) pos.y,
+            (int) (rectangle.getSize().x * scaling.x),
+            (int) (rectangle.getSize().y * scaling.y)
+    };
 
     // float rotation = parentTransform.getMatrix()
     // if (rectangle->fill) {
@@ -121,7 +124,7 @@ void SDL2Renderer::drawRectangle(const Rectangle &rectangle, const Transform &pa
     }
 }
 
-void SDL2Renderer::drawTexture(const Texture &texture, const Transform &parentTransform) {
+void SDL2Renderer::drawTexture(const Texture &texture, const Transform &parentTransform, const Vector2f &scaling) {
 
     printf("SDL2Renderer(%p): drawTexture()\n", this);
 

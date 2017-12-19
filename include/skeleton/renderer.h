@@ -31,9 +31,10 @@ namespace c2d {
 
         virtual ~Renderer();
 
-        virtual void drawRectangle(const Rectangle &rectangle, const Transform &parentTransform) {};
+        virtual void
+        drawRectangle(const Rectangle &rectangle, const Transform &parentTransform, const Vector2f &scaling) {};
 
-        virtual void drawTexture(const Texture &texture, const Transform &parentTransform) {};
+        virtual void drawTexture(const Texture &texture, const Transform &parentTransform, const Vector2f &scaling) {};
 
         virtual void flip();
 

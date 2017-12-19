@@ -13,14 +13,13 @@ int main() {
 
     //Texture *w = new SDL2Texture(TEX_PATH);
 
-    Rectangle *w = new Rectangle(FloatRect(100, 100, 200, 200));
-    w->setFillColor(Color::White);
+    Rectangle *w = new Rectangle(FloatRect(200, 200, 200, 200));
+    w->setFillColor(Color::Yellow);
     w->setOriginCenter();
-    w->setPosition(200, 200);
 
-    Rectangle *w2 = new Rectangle(Vector2f(100, 100));
+    Rectangle *w2 = new Rectangle(FloatRect(100, 100, 100, 100));
     w2->setFillColor(Color::Red);
-    w2->setOriginTopLeft();
+    w2->setOriginCenter();
 
     w->add(w2);
 
@@ -28,24 +27,26 @@ int main() {
 
     for (int i = 0; i < 5; i++) {
 
-        if (i > 0) {
-            //w->move(20, 0);
-            w->setScale(w->getScale().x - 0.1f, w->getScale().y - 0.1f);
-            //printf("SCALE: %f %f\n", w->getScale().x, w->getScale().y);
-            //w->rotate(5);
+        //if (i > 0) {
+        //w->move(20, 0);
+        w->setScale(w->getScale().x - 0.1f, w->getScale().y - 0.1f);
+        //printf("SCALE: %f %f\n", w->getScale().x, w->getScale().y);
+        //w->rotate(5);
 
-            printf("%f %f %f %f %f %f %f %f %f\n",
-                   w->getTransform().getMatrix()[0],
-                   w->getTransform().getMatrix()[1],
-                   w->getTransform().getMatrix()[2],
-                   w->getTransform().getMatrix()[3],
-                   w->getTransform().getMatrix()[4],
-                   w->getTransform().getMatrix()[5],
-                   w->getTransform().getMatrix()[6],
-                   w->getTransform().getMatrix()[7],
-                   w->getTransform().getMatrix()[8]
-            );
-        }
+        /*
+        printf("%f %f %f %f %f %f %f %f %f\n",
+               w->getTransform().getMatrix()[0],
+               w->getTransform().getMatrix()[1],
+               w->getTransform().getMatrix()[2],
+               w->getTransform().getMatrix()[3],
+               w->getTransform().getMatrix()[4],
+               w->getTransform().getMatrix()[5],
+               w->getTransform().getMatrix()[6],
+               w->getTransform().getMatrix()[7],
+               w->getTransform().getMatrix()[8]
+        );
+        */
+        //}
 
         renderer->flip();
         renderer->delay(500);

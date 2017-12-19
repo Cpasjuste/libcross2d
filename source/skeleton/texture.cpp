@@ -16,15 +16,15 @@ Texture::Texture(const Vector2f &size) : Widget(size) {
     this->setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
 }
 
-void Texture::draw(const Transform &transform) {
+void Texture::draw(const Transform &transform, const Vector2f &scaling) {
 
     printf("Texture(%p): draw\n", this);
 
     // draw texture from renderer
-    c2d_renderer->drawTexture(*this, transform);
+    c2d_renderer->drawTexture(*this, transform, scaling);
 
     // call base class (draw childs)
-    Widget::draw(transform);
+    Widget::draw(transform, scaling);
 }
 
 Texture::~Texture() {
