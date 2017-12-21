@@ -65,12 +65,16 @@ void PSP2Renderer::DrawLine(int x1, int y1, int x2, int y2, const Color &c) {
 }
 */
 
-void PSP2Renderer::drawRectangle(const Rectangle &rectangle, const Transform &transform) {
+static void drawRectangleInternal(
+        const Rectangle &rectangle,
+        const Transform &transform,
+        const Color &color) {
 
-    unsigned int color = RGBA8((unsigned int) rectangle.getFillColor().r,
-                               (unsigned int) rectangle.getFillColor().g,
-                               (unsigned int) rectangle.getFillColor().b,
-                               (unsigned int) rectangle.getFillColor().a);
+    unsigned int color_rgba =
+            RGBA8((unsigned int) color.r,
+                  (unsigned int) color.g,
+                  (unsigned int) color.b,
+                  (unsigned int) color.a);
 
     vita2d_color_vertex *vertices = (vita2d_color_vertex *) vita2d_pool_memalign(
             4 * sizeof(vita2d_color_vertex), // 4 vertices
@@ -80,31 +84,29 @@ void PSP2Renderer::drawRectangle(const Rectangle &rectangle, const Transform &tr
             4 * sizeof(uint16_t), // 4 indices
             sizeof(uint16_t));
 
-    Transform combined = transform * rectangle.getTransform();
-
-    Vector2f v0 = combined.transformPoint(rectangle.getPoint(0));
+    Vector2f v0 = transform.transformPoint(rectangle.getPoint(0));
     vertices[0].x = v0.x;
     vertices[0].y = v0.y;
     vertices[0].z = +0.5f;
-    vertices[0].color = color;
+    vertices[0].color = color_rgba;
 
-    Vector2f v1 = combined.transformPoint(rectangle.getPoint(1));
+    Vector2f v1 = transform.transformPoint(rectangle.getPoint(1));
     vertices[1].x = v1.x;
     vertices[1].y = v1.y;
     vertices[1].z = +0.5f;
-    vertices[1].color = color;
+    vertices[1].color = color_rgba;
 
-    Vector2f v2 = combined.transformPoint(rectangle.getPoint(3));
+    Vector2f v2 = transform.transformPoint(rectangle.getPoint(3));
     vertices[2].x = v2.x;
     vertices[2].y = v2.y;
     vertices[2].z = +0.5f;
-    vertices[2].color = color;
+    vertices[2].color = color_rgba;
 
-    Vector2f v3 = combined.transformPoint(rectangle.getPoint(2));
+    Vector2f v3 = transform.transformPoint(rectangle.getPoint(2));
     vertices[3].x = v3.x;
     vertices[3].y = v3.y;
     vertices[3].z = +0.5f;
-    vertices[3].color = color;
+    vertices[3].color = color_rgba;
 
     indices[0] = 0;
     indices[1] = 1;
@@ -120,6 +122,25 @@ void PSP2Renderer::drawRectangle(const Rectangle &rectangle, const Transform &tr
 
     sceGxmSetVertexStream(_vita2d_context, 0, vertices);
     sceGxmDraw(_vita2d_context, SCE_GXM_PRIMITIVE_TRIANGLE_STRIP, SCE_GXM_INDEX_FORMAT_U16, indices, 4);
+}
+
+void PSP2Renderer::drawRectangle(const Rectangle &rectangle, const Transform &transform) {
+
+    if (rectangle.getOutlineThickness() > 0) {
+        // TODO: too lazy, just draw two rect...
+        Transform combined = transform * rectangle.getTransform();
+        drawRectangleInternal(rectangle, combined, rectangle.getOutlineColor());
+
+        float scale_x = rectangle.getOutlineThickness() / rectangle.getSize().x;
+        float scale_y = rectangle.getOutlineThickness() / rectangle.getSize().y;
+        Rectangle r = rectangle;
+        r.setScale(rectangle.getScale().x - scale_x, rectangle.getScale().y - scale_y);
+        combined = transform * r.getTransform();
+        drawRectangleInternal(r, combined, rectangle.getFillColor());
+    } else {
+        Transform combined = transform * rectangle.getTransform();
+        drawRectangleInternal(rectangle, combined, rectangle.getFillColor());
+    }
 }
 
 void PSP2Renderer::drawTexture(const Texture &texture, const Transform &transform) {
