@@ -3,14 +3,9 @@
 //
 
 #include <cstring>
-#include <cstdio>
 #include <C2D.h>
-#include "psp2_texture.h"
 
 #ifdef __PSP2_DEBUG__
-
-#include <psp2/kernel/clib.h>
-
 #define printf sceClibPrintf
 #endif
 
@@ -32,6 +27,7 @@ PSP2Texture::PSP2Texture(Renderer *r, const char *p) : Texture(r, p) {
         printf("PSP2Texture: could not create texture from `%s`\n", path);
         return;
     }
+
     width = vita2d_texture_get_width(tex);
     height = vita2d_texture_get_height(tex);
     available = true;
@@ -41,15 +37,14 @@ PSP2Texture::PSP2Texture(Renderer *r, int w, int h) : Texture(r, w, h) {
 
     tex = vita2d_create_empty_texture_format(
             (unsigned int) w, (unsigned int) h, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
+
     if (!tex) {
         printf("PSP2Texture: couldn't create texture\n");
         return;
     }
-    //width = vita2d_texture_get_width(tex);
-    //height = vita2d_texture_get_height(tex);
+
     available = true;
 }
-
 
 void PSP2Texture::Draw(int x, int y, int w, int h, float rotation) {
 
@@ -67,8 +62,10 @@ void PSP2Texture::Draw(int x, int y, int w, int h, float rotation) {
 }
 
 int PSP2Texture::Lock(const Rect &rect, void **pixels, int *pitch) {
+
     *pixels = vita2d_texture_get_datap(tex);
     *pitch = vita2d_texture_get_stride(tex);
+
     return 0;
 }
 

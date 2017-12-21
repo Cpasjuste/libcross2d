@@ -35,9 +35,8 @@ void PSP2Font::Draw(int x, int y, const char *fmt, ...) {
 
     int height = GetHeight(msg);
     ((PSP2Renderer *) renderer)->StartDrawing();
-    vita2d_pgf_draw_text(((PSP2Font *) font)->font, x, y + height,
-                         (unsigned int) RGBA8(color.r, color.g,
-                                              color.b, color.a),
+    vita2d_pgf_draw_text(font, x, y + height,
+                         (unsigned int) RGBA8(color.r, color.g, color.b, color.a),
                          scaling, msg);
 }
 
