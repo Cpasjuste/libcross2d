@@ -5,10 +5,10 @@ set(CMAKE_SYSTEM_NAME "Generic")
 enable_language(ASM)
 
 # delete cmake cache folder before changing this options
-option(BUILD_SFML "Build with SFML support" ON)
+option(BUILD_SFML "Build with SFML support" OFF)
 option(BUILD_SDL2 "Build with SDL2 support" OFF)
 option(BUILD_SDL1 "Build with SDL1 support" OFF)
-option(BUILD_PSP2 "Build with PSP2 support" OFF)
+option(BUILD_PSP2 "Build with PSP2 support" ON)
 option(BUILD_PS3 "Build with PS3 support" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_RPI "Build with RPI support" OFF)
@@ -54,18 +54,21 @@ set(CROSS2D_SRC
 #####################
 if (BUILD_PSP2)
     set(PLATFORM_DIRS
-            src/psp2
-            src/psp2/libvita2d/include
-            src/psp2/vita-shader-collection/includes
+            source/psp2
+            source/psp2/libvita2d/include
+            source/psp2/vita-shader-collection/includes
             ${VITASDK}/arm-vita-eabi/include/freetype2
             )
     file(GLOB PLATFORM_SRC
-            src/psp2/*.c*
-            src/psp2/libvita2d/source/*.c
-            source/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
-            source/sdl2/sdl2_input.cpp # TODO: get rid of sdl2, use sdl2 input for now
-            src/psp2/libvita2d/shader/compiled/*.o
-            src/psp2/vita-shader-collection/lib/*.o
+            #source/psp2/*.c*
+            source/psp2/psp2_renderer.cpp
+            source/psp2/psp2_texture.cpp
+            source/psp2/psp2_shaders.cpp
+            source/psp2/libvita2d/source/*.c
+            #source/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
+            #source/sdl2/sdl2_input.cpp # TODO: get rid of sdl2, use sdl2 input for now
+            source/psp2/libvita2d/shader/compiled/*.o
+            source/psp2/vita-shader-collection/lib/*.o
             )
     list(APPEND FLAGS -Wl,-q -O3 -D__PSP2__)
     if (BUILD_DEBUG)
@@ -200,67 +203,77 @@ target_compile_options(${PROJECT_NAME} PRIVATE ${FLAGS})
 #####################
 # SDL2 (unix) target
 #####################
-add_executable(${PROJECT_NAME}.sdl2 test/main.cpp)
-target_compile_options(${PROJECT_NAME}.sdl2 PRIVATE ${FLAGS})
-target_link_libraries(${PROJECT_NAME}.sdl2
-        cross2d SDL2 SDL2_image SDL2_ttf z)
-add_dependencies(${PROJECT_NAME}.sdl2 ${PROJECT_NAME})
+if (BUILD_SDL2)
+    add_executable(${PROJECT_NAME}.sdl2 test/main.cpp)
+    target_compile_options(${PROJECT_NAME}.sdl2 PRIVATE ${FLAGS})
+    target_link_libraries(${PROJECT_NAME}.sdl2
+            cross2d SDL2 SDL2_image SDL2_ttf z)
+    add_dependencies(${PROJECT_NAME}.sdl2 ${PROJECT_NAME})
+endif (BUILD_SDL2)
 
 #####################
 # SDL1 (unix) target
 #####################
-add_executable(${PROJECT_NAME}.sdl1 test/main.cpp)
-target_compile_options(${PROJECT_NAME}.sdl1 PRIVATE ${FLAGS})
-target_link_libraries(${PROJECT_NAME}.sdl1
-        cross2d SDL SDL_image SDL_gfx SDL_ttf z)
-add_dependencies(${PROJECT_NAME}.sdl1 ${PROJECT_NAME})
+if (BUILD_SDL1)
+    add_executable(${PROJECT_NAME}.sdl1 test/main.cpp)
+    target_compile_options(${PROJECT_NAME}.sdl1 PRIVATE ${FLAGS})
+    target_link_libraries(${PROJECT_NAME}.sdl1
+            cross2d SDL SDL_image SDL_gfx SDL_ttf z)
+    add_dependencies(${PROJECT_NAME}.sdl1 ${PROJECT_NAME})
+endif (BUILD_SDL1)
 
 #####################
 # PS3 target
 #####################
-add_executable(${PROJECT_NAME}.ps3 test/main.cpp)
-target_compile_options(${PROJECT_NAME}.ps3 PRIVATE ${FLAGS})
-target_include_directories(${PROJECT_NAME}.ps3 PUBLIC ${CROSS2D_DIR})
-target_include_directories(${PROJECT_NAME}.ps3 PRIVATE ${PLATFORM_DIRS})
-target_link_libraries(${PROJECT_NAME}.ps3 cross2d ${PLATFORM_LIBS})
-add_dependencies(${PROJECT_NAME}.ps3 ${PROJECT_NAME})
-add_custom_target(${PROJECT_NAME}.ps3.elf
-        DEPENDS ${PROJECT_NAME}.ps3
-        COMMAND ${PSL1GHT}/bin/sprxlinker ${PROJECT_NAME}.ps3
-        )
+if (BUILD_PS3)
+    add_executable(${PROJECT_NAME}.ps3 test/main.cpp)
+    target_compile_options(${PROJECT_NAME}.ps3 PRIVATE ${FLAGS})
+    target_include_directories(${PROJECT_NAME}.ps3 PUBLIC ${CROSS2D_DIR})
+    target_include_directories(${PROJECT_NAME}.ps3 PRIVATE ${PLATFORM_DIRS})
+    target_link_libraries(${PROJECT_NAME}.ps3 cross2d ${PLATFORM_LIBS})
+    add_dependencies(${PROJECT_NAME}.ps3 ${PROJECT_NAME})
+    add_custom_target(${PROJECT_NAME}.ps3.elf
+            DEPENDS ${PROJECT_NAME}.ps3
+            COMMAND ${PSL1GHT}/bin/sprxlinker ${PROJECT_NAME}.ps3
+            )
+endif (BUILD_PS3)
 
 #####################
 # SFML (unix) target
 #####################
-add_executable(${PROJECT_NAME}.sfml test/main.cpp)
-target_compile_options(${PROJECT_NAME}.sfml PRIVATE ${FLAGS})
-target_link_libraries(${PROJECT_NAME}.sfml
-        cross2d SDL2 sfml-graphics sfml-window sfml-system GL png z)
-add_dependencies(${PROJECT_NAME}.sfml ${PROJECT_NAME})
+if (BUILD_SFML)
+    add_executable(${PROJECT_NAME}.sfml test/main.cpp)
+    target_compile_options(${PROJECT_NAME}.sfml PRIVATE ${FLAGS})
+    target_link_libraries(${PROJECT_NAME}.sfml
+            cross2d SDL2 sfml-graphics sfml-window sfml-system GL png z)
+    add_dependencies(${PROJECT_NAME}.sfml ${PROJECT_NAME})
+endif (BUILD_SFML)
 
 #####################
 # PSP2 (vita) target
 #####################
-add_executable(${PROJECT_NAME}.psp2 test/main.cpp)
-target_compile_options(${PROJECT_NAME}.psp2 PRIVATE ${FLAGS})
-target_link_libraries(${PROJECT_NAME}.psp2
-        cross2d SDL2
-        SceDisplay_stub SceGxm_stub SceSysmodule_stub
-        SceCtrl_stub ScePgf_stub SceNetCtl_stub
-        SceNet_stub ScePower_stub SceCommonDialog_stub
-        SceAudio_stub SceAppMgr_stub SceTouch_stub
-        stdc++ png jpeg z m c
-        )
-add_dependencies(${PROJECT_NAME}.psp2 ${PROJECT_NAME})
-add_custom_target(${PROJECT_NAME}.psp2.vpk
-        DEPENDS ${PROJECT_NAME}.psp2
-        COMMAND rm -rf vpk && mkdir -p vpk/sce_sys
-        COMMAND ${VITASDK}/bin/vita-elf-create ${PROJECT_NAME}.psp2 ${PROJECT_NAME}.velf
-        COMMAND ${VITASDK}/bin/vita-make-fself -c ${PROJECT_NAME}.velf vpk/eboot.bin
-        COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID=${TITLE_ID} "${PROJECT_NAME}" vpk/sce_sys/param.sfo
-        COMMAND cp -r res/* vpk/
-        COMMAND cd vpk && zip -r ../${PROJECT_NAME}-${BUILD_DATE}.vpk . && cd ..
-        )
+if (BUILD_PSP2)
+    add_executable(${PROJECT_NAME}.psp2 test/main.cpp)
+    target_compile_options(${PROJECT_NAME}.psp2 PRIVATE ${FLAGS})
+    target_link_libraries(${PROJECT_NAME}.psp2
+            cross2d SDL2 cross2d
+            SceDisplay_stub SceGxm_stub SceSysmodule_stub
+            SceCtrl_stub ScePgf_stub SceNetCtl_stub
+            SceNet_stub ScePower_stub SceCommonDialog_stub
+            SceAudio_stub SceAppMgr_stub SceTouch_stub
+            stdc++ png jpeg z m c
+            )
+    add_dependencies(${PROJECT_NAME}.psp2 ${PROJECT_NAME})
+    add_custom_target(${PROJECT_NAME}.psp2.vpk
+            DEPENDS ${PROJECT_NAME}.psp2
+            COMMAND rm -rf vpk && mkdir -p vpk/sce_sys
+            COMMAND ${VITASDK}/bin/vita-elf-create ${PROJECT_NAME}.psp2 ${PROJECT_NAME}.velf
+            COMMAND ${VITASDK}/bin/vita-make-fself -c ${PROJECT_NAME}.velf vpk/eboot.bin
+            COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID=${TITLE_ID} "${PROJECT_NAME}" vpk/sce_sys/param.sfo
+            COMMAND cp -r ../res/* vpk/
+            COMMAND cd vpk && zip -r ../${PROJECT_NAME}-${BUILD_DATE}.vpk . && cd ..
+            )
+endif (BUILD_PSP2)
 
 #####################
 # CTR (3DS) target
@@ -286,11 +299,13 @@ endif (BUILD_3DS)
 #####################
 # NX (SWITCH) target
 #####################
-add_executable(${PROJECT_NAME}.nx test/main.cpp)
-target_compile_options(${PROJECT_NAME}.nx PRIVATE ${FLAGS} -I${DEVKITPRO}/libnx/include)
-target_link_libraries(${PROJECT_NAME}.nx
-        cross2d
-        ${DEVKITPRO}/libnx/lib/libnx.a
-        m)
-set_target_properties(${PROJECT_NAME}.nx PROPERTIES LINK_FLAGS "-specs=switch.specs")
-add_dependencies(${PROJECT_NAME}.nx ${PROJECT_NAME})
+if (BUILD_NX)
+    add_executable(${PROJECT_NAME}.nx test/main.cpp)
+    target_compile_options(${PROJECT_NAME}.nx PRIVATE ${FLAGS} -I${DEVKITPRO}/libnx/include)
+    target_link_libraries(${PROJECT_NAME}.nx
+            cross2d
+            ${DEVKITPRO}/libnx/lib/libnx.a
+            m)
+    set_target_properties(${PROJECT_NAME}.nx PROPERTIES LINK_FLAGS "-specs=switch.specs")
+    add_dependencies(${PROJECT_NAME}.nx ${PROJECT_NAME})
+endif (BUILD_NX)

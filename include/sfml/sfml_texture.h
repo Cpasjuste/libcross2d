@@ -26,8 +26,7 @@ namespace c2d {
 
         void setFiltering(int filter);
 
-    private:
-
+        //private:
         sf::Sprite sprite;
         sf::Texture texture;
         sf::Uint8 *pixels = nullptr;

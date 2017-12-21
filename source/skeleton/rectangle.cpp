@@ -3,8 +3,7 @@
 //
 
 #include <cstdio>
-#include <c2d.h>
-#include "skeleton/renderer.h"
+#include "c2d.h"
 
 using namespace c2d;
 
@@ -18,14 +17,13 @@ Rectangle::Rectangle(const Vector2f &size) : Widget(size) {
     printf("Rectangle(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }
 
-void Rectangle::draw(const Transform &transform, const Vector2f &scaling) {
+void Rectangle::draw(const Transform &transform) {
 
     // draw rect from renderer
-    printf("Rectangle(%p): draw: scaling = %f\n", this, scaling.x);
-    c2d_renderer->drawRectangle(*this, transform, scaling);
+    c2d_renderer->drawRectangle(*this, transform);
 
     // call base class (draw childs)
-    Widget::draw(transform, scaling);
+    Widget::draw(transform);
 }
 
 Rectangle::~Rectangle() {

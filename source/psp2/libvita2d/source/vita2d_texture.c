@@ -78,7 +78,7 @@ vita2d_texture *vita2d_create_empty_texture_format(unsigned int w, unsigned int 
 	}
 
 	SceGxmColorFormat fmt =
-			format == SCE_GXM_COLOR_FORMAT_R5G6B5 ?
+			format == SCE_GXM_TEXTURE_FORMAT_R5G6B5 ?
 			SCE_GXM_COLOR_FORMAT_R5G6B5 : SCE_GXM_COLOR_FORMAT_A8B8G8R8;
 
 	int	err = sceGxmColorSurfaceInit(
@@ -236,11 +236,11 @@ void vita2d_texture_set_filters(vita2d_texture *texture, SceGxmTextureFilter min
 	sceGxmTextureSetMagFilter(&texture->gxm_tex, mag_filter);
 }
 
-static inline void set_texture_program()
+void vita2d_set_texture_program()
 {
 	sceGxmSetVertexProgram(_vita2d_context, _vita2d_selectedTexVertexProgram);
 	sceGxmSetFragmentProgram(_vita2d_context, _vita2d_selectedTexFragmentProgram);
-	
+
 }
 
 static inline void set_texture_tint_program()
@@ -266,12 +266,12 @@ void vita2d_texture_set_fragmentInput(vita2d_shader_input *input){
 	_vita2d_selectedFragmentInput = input;
 }
 
-static inline void set_texture_wvp_uniform(const vita2d_texture *texture)
+void vita2d_set_texture_wvp_uniform(const vita2d_texture *texture)
 {
 	if(_vita2d_selectedVertexInput){
-		
+
 		if(_vita2d_selectedVertexInput->texture_size>0){
-			
+
 			void *vertex_tex_buffer;
 			float *texture_size = vita2d_pool_memalign(
 				2 * sizeof(float), // RGBA
@@ -280,11 +280,11 @@ static inline void set_texture_wvp_uniform(const vita2d_texture *texture)
 			texture_size[1]=vita2d_texture_get_height(texture);
 			sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertex_tex_buffer);
 			sceGxmSetUniformDataF(vertex_tex_buffer, _vita2d_selectedVertexInput->texture_size, 0, 2, texture_size);
-		
+
 		}
-		
+
 		if(_vita2d_selectedVertexInput->video_size>0){
-			
+
 			void *vertex_tex_buffer;
 			float *video_size = vita2d_pool_memalign(
 				2 * sizeof(float), // RGBA
@@ -293,11 +293,11 @@ static inline void set_texture_wvp_uniform(const vita2d_texture *texture)
 			video_size[1]=vita2d_texture_get_height(texture);
 			sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertex_tex_buffer);
 			sceGxmSetUniformDataF(vertex_tex_buffer, _vita2d_selectedVertexInput->video_size, 0, 2, video_size);
-		
+
 		}
-		
+
 		if(_vita2d_selectedVertexInput->output_size>0){
-			
+
 			void *vertex_tex_buffer;
 			float *output_size = vita2d_pool_memalign(
 				2 * sizeof(float), // RGBA
@@ -306,15 +306,15 @@ static inline void set_texture_wvp_uniform(const vita2d_texture *texture)
 			output_size[1]=vita2d_texture_get_height(texture)*2;
 			sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertex_tex_buffer);
 			sceGxmSetUniformDataF(vertex_tex_buffer, _vita2d_selectedVertexInput->output_size, 0, 2, output_size);
-		
+
 		}
-		
+
 	}
-	
+
 	if(_vita2d_selectedFragmentInput){
-		
+
 		if(_vita2d_selectedFragmentInput->texture_size>0){
-			
+
 			void *fragment_tex_buffer;
 			float *texture_size = vita2d_pool_memalign(
 				2 * sizeof(float), // RGBA
@@ -323,11 +323,11 @@ static inline void set_texture_wvp_uniform(const vita2d_texture *texture)
 			texture_size[1]=vita2d_texture_get_height(texture);
 			sceGxmReserveFragmentDefaultUniformBuffer(_vita2d_context, &fragment_tex_buffer);
 			sceGxmSetUniformDataF(fragment_tex_buffer, _vita2d_selectedFragmentInput->texture_size, 0, 2, texture_size);
-		
+
 		}
-		
+
 		if(_vita2d_selectedFragmentInput->video_size>0){
-			
+
 			void *fragment_tex_buffer;
 			float *video_size = vita2d_pool_memalign(
 				2 * sizeof(float), // RGBA
@@ -336,11 +336,11 @@ static inline void set_texture_wvp_uniform(const vita2d_texture *texture)
 			video_size[1]=vita2d_texture_get_height(texture);
 			sceGxmReserveFragmentDefaultUniformBuffer(_vita2d_context, &fragment_tex_buffer);
 			sceGxmSetUniformDataF(fragment_tex_buffer, _vita2d_selectedFragmentInput->video_size, 0, 2, video_size);
-		
+
 		}
-		
+
 		if(_vita2d_selectedFragmentInput->output_size>0){
-			
+
 			void *fragment_tex_buffer;
 			float *output_size = vita2d_pool_memalign(
 				2 * sizeof(float), // RGBA
@@ -349,15 +349,15 @@ static inline void set_texture_wvp_uniform(const vita2d_texture *texture)
 			output_size[1]=vita2d_texture_get_height(texture)*2;
 			sceGxmReserveFragmentDefaultUniformBuffer(_vita2d_context, &fragment_tex_buffer);
 			sceGxmSetUniformDataF(fragment_tex_buffer, _vita2d_selectedFragmentInput->output_size, 0, 2, output_size);
-		
+
 		}
-		
+
 	}
-	
+
 	void *vertex_wvp_buffer;
 	sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertex_wvp_buffer);
 	sceGxmSetUniformDataF(vertex_wvp_buffer, _vita2d_selectedTexWvpParam, 0, 16, _vita2d_ortho_matrix);
-		
+
 }
 
 static inline void set_texture_tint_color_uniform(unsigned int color)
@@ -432,15 +432,15 @@ static inline void draw_texture_generic(const vita2d_texture *texture, float x, 
 
 void vita2d_draw_texture(const vita2d_texture *texture, float x, float y)
 {
-	set_texture_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_program();
+    vita2d_set_texture_wvp_uniform(texture);
 	draw_texture_generic(texture, x, y);
 }
 
 void vita2d_draw_texture_tint(const vita2d_texture *texture, float x, float y, unsigned int color)
 {
 	set_texture_tint_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_wvp_uniform(texture);
 	set_texture_tint_color_uniform(color);
 	draw_texture_generic(texture, x, y);
 }
@@ -525,15 +525,15 @@ static inline void draw_texture_rotate_hotspot_generic(const vita2d_texture *tex
 
 void vita2d_draw_texture_rotate_hotspot(const vita2d_texture *texture, float x, float y, float rad, float center_x, float center_y)
 {
-	set_texture_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_program();
+    vita2d_set_texture_wvp_uniform(texture);
 	draw_texture_rotate_hotspot_generic(texture, x, y, rad, center_x, center_y);
 }
 
 void vita2d_draw_texture_tint_rotate_hotspot(const vita2d_texture *texture, float x, float y, float rad, float center_x, float center_y, unsigned int color)
 {
 	set_texture_tint_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_wvp_uniform(texture);
 	set_texture_tint_color_uniform(color);
 	draw_texture_rotate_hotspot_generic(texture, x, y, rad, center_x, center_y);
 }
@@ -585,7 +585,7 @@ static inline void draw_texture_scale_generic(const vita2d_texture *texture, flo
 	indices[3] = 3;
 
 	if(_vita2d_selectedVertexInput && _vita2d_selectedVertexInput->output_size>0){
-		
+
 		void *vertex_tex_buffer;
 		float *output_size = vita2d_pool_memalign(
 			2 * sizeof(float), // RGBA
@@ -594,11 +594,11 @@ static inline void draw_texture_scale_generic(const vita2d_texture *texture, flo
 		output_size[1]=h;
 		sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertex_tex_buffer);
 		sceGxmSetUniformDataF(vertex_tex_buffer, _vita2d_selectedVertexInput->output_size, 0, 2, output_size);
-	
+
 	}
-	
+
 	if(_vita2d_selectedFragmentInput && _vita2d_selectedFragmentInput->output_size>0){
-		
+
 		void *fragment_tex_buffer;
 		float *output_size = vita2d_pool_memalign(
 			2 * sizeof(float), // RGBA
@@ -607,7 +607,7 @@ static inline void draw_texture_scale_generic(const vita2d_texture *texture, flo
 		output_size[1]=h;
 		sceGxmReserveFragmentDefaultUniformBuffer(_vita2d_context, &fragment_tex_buffer);
 		sceGxmSetUniformDataF(fragment_tex_buffer, _vita2d_selectedFragmentInput->output_size, 0, 2, output_size);
-	
+
 	}
 
 	// Set the texture to the TEXUNIT0
@@ -619,15 +619,15 @@ static inline void draw_texture_scale_generic(const vita2d_texture *texture, flo
 
 void vita2d_draw_texture_scale(const vita2d_texture *texture, float x, float y, float x_scale, float y_scale)
 {
-	set_texture_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_program();
+    vita2d_set_texture_wvp_uniform(texture);
 	draw_texture_scale_generic(texture, x, y, x_scale, y_scale);
 }
 
 void vita2d_draw_texture_tint_scale(const vita2d_texture *texture, float x, float y, float x_scale, float y_scale, unsigned int color)
 {
 	set_texture_tint_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_wvp_uniform(texture);
 	set_texture_tint_color_uniform(color);
 	draw_texture_scale_generic(texture, x, y, x_scale, y_scale);
 }
@@ -683,9 +683,9 @@ static inline void draw_texture_part_generic(const vita2d_texture *texture, floa
 	indices[1] = 1;
 	indices[2] = 2;
 	indices[3] = 3;
-	
+
 	if(_vita2d_selectedVertexInput && _vita2d_selectedVertexInput->output_size>0){
-		
+
 		void *vertex_tex_buffer;
 		float *output_size = vita2d_pool_memalign(
 			2 * sizeof(float), // RGBA
@@ -694,11 +694,11 @@ static inline void draw_texture_part_generic(const vita2d_texture *texture, floa
 		output_size[1]=tex_h;
 		sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertex_tex_buffer);
 		sceGxmSetUniformDataF(vertex_tex_buffer, _vita2d_selectedVertexInput->output_size, 0, 2, output_size);
-	
+
 	}
-	
+
 	if(_vita2d_selectedFragmentInput && _vita2d_selectedFragmentInput->output_size>0){
-		
+
 		void *fragment_tex_buffer;
 		float *output_size = vita2d_pool_memalign(
 			2 * sizeof(float), // RGBA
@@ -707,7 +707,7 @@ static inline void draw_texture_part_generic(const vita2d_texture *texture, floa
 		output_size[1]=tex_h;
 		sceGxmReserveFragmentDefaultUniformBuffer(_vita2d_context, &fragment_tex_buffer);
 		sceGxmSetUniformDataF(fragment_tex_buffer, _vita2d_selectedFragmentInput->output_size, 0, 2, output_size);
-	
+
 	}
 
 	// Set the texture to the TEXUNIT0
@@ -719,15 +719,15 @@ static inline void draw_texture_part_generic(const vita2d_texture *texture, floa
 
 void vita2d_draw_texture_part(const vita2d_texture *texture, float x, float y, float tex_x, float tex_y, float tex_w, float tex_h)
 {
-	set_texture_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_program();
+    vita2d_set_texture_wvp_uniform(texture);
 	draw_texture_part_generic(texture, x, y, tex_x, tex_y, tex_w, tex_h);
 }
 
 void vita2d_draw_texture_tint_part(const vita2d_texture *texture, float x, float y, float tex_x, float tex_y, float tex_w, float tex_h, unsigned int color)
 {
 	set_texture_tint_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_wvp_uniform(texture);
 	set_texture_tint_color_uniform(color);
 	draw_texture_part_generic(texture, x, y, tex_x, tex_y, tex_w, tex_h);
 }
@@ -785,9 +785,9 @@ static inline void draw_texture_part_scale_generic(const vita2d_texture *texture
 	indices[1] = 1;
 	indices[2] = 2;
 	indices[3] = 3;
-	
+
 	if(_vita2d_selectedVertexInput && _vita2d_selectedVertexInput->output_size>0){
-		
+
 		void *vertex_tex_buffer;
 		float *output_size = vita2d_pool_memalign(
 			2 * sizeof(float), // RGBA
@@ -796,11 +796,11 @@ static inline void draw_texture_part_scale_generic(const vita2d_texture *texture
 		output_size[1]=tex_h;
 		sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertex_tex_buffer);
 		sceGxmSetUniformDataF(vertex_tex_buffer, _vita2d_selectedVertexInput->output_size, 0, 2, output_size);
-	
+
 	}
-	
+
 	if(_vita2d_selectedFragmentInput && _vita2d_selectedFragmentInput->output_size>0){
-		
+
 		void *fragment_tex_buffer;
 		float *output_size = vita2d_pool_memalign(
 			2 * sizeof(float), // RGBA
@@ -809,7 +809,7 @@ static inline void draw_texture_part_scale_generic(const vita2d_texture *texture
 		output_size[1]=tex_h;
 		sceGxmReserveFragmentDefaultUniformBuffer(_vita2d_context, &fragment_tex_buffer);
 		sceGxmSetUniformDataF(fragment_tex_buffer, _vita2d_selectedFragmentInput->output_size, 0, 2, output_size);
-	
+
 	}
 
 	// Set the texture to the TEXUNIT0
@@ -821,15 +821,15 @@ static inline void draw_texture_part_scale_generic(const vita2d_texture *texture
 
 void vita2d_draw_texture_part_scale(const vita2d_texture *texture, float x, float y, float tex_x, float tex_y, float tex_w, float tex_h, float x_scale, float y_scale)
 {
-	set_texture_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_program();
+    vita2d_set_texture_wvp_uniform(texture);
 	draw_texture_part_scale_generic(texture, x, y, tex_x, tex_y, tex_w, tex_h, x_scale, y_scale);
 }
 
 void vita2d_draw_texture_tint_part_scale(const vita2d_texture *texture, float x, float y, float tex_x, float tex_y, float tex_w, float tex_h, float x_scale, float y_scale, unsigned int color)
 {
 	set_texture_tint_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_wvp_uniform(texture);
 	set_texture_tint_color_uniform(color);
 	draw_texture_part_scale_generic(texture, x, y, tex_x, tex_y, tex_w, tex_h, x_scale, y_scale);
 }
@@ -891,9 +891,9 @@ static inline void draw_texture_scale_rotate_hotspot_generic(const vita2d_textur
 	indices[1] = 1;
 	indices[2] = 2;
 	indices[3] = 3;
-	
+
 	if(_vita2d_selectedVertexInput && _vita2d_selectedVertexInput->output_size>0){
-		
+
 		void *vertex_tex_buffer;
 		float *output_size = vita2d_pool_memalign(
 			2 * sizeof(float), // RGBA
@@ -902,11 +902,11 @@ static inline void draw_texture_scale_rotate_hotspot_generic(const vita2d_textur
 		output_size[1]=h;
 		sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertex_tex_buffer);
 		sceGxmSetUniformDataF(vertex_tex_buffer, _vita2d_selectedVertexInput->output_size, 0, 2, output_size);
-	
+
 	}
-	
+
 	if(_vita2d_selectedFragmentInput && _vita2d_selectedFragmentInput->output_size>0){
-		
+
 		void *fragment_tex_buffer;
 		float *output_size = vita2d_pool_memalign(
 			2 * sizeof(float), // RGBA
@@ -915,7 +915,7 @@ static inline void draw_texture_scale_rotate_hotspot_generic(const vita2d_textur
 		output_size[1]=h;
 		sceGxmReserveFragmentDefaultUniformBuffer(_vita2d_context, &fragment_tex_buffer);
 		sceGxmSetUniformDataF(fragment_tex_buffer, _vita2d_selectedFragmentInput->output_size, 0, 2, output_size);
-	
+
 	}
 
 	// Set the texture to the TEXUNIT0
@@ -927,8 +927,8 @@ static inline void draw_texture_scale_rotate_hotspot_generic(const vita2d_textur
 
 void vita2d_draw_texture_scale_rotate_hotspot(const vita2d_texture *texture, float x, float y, float x_scale, float y_scale, float rad, float center_x, float center_y)
 {
-	set_texture_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_program();
+    vita2d_set_texture_wvp_uniform(texture);
 	draw_texture_scale_rotate_hotspot_generic(texture, x, y, x_scale, y_scale,
 		rad, center_x, center_y);
 }
@@ -943,7 +943,7 @@ void vita2d_draw_texture_scale_rotate(const vita2d_texture *texture, float x, fl
 void vita2d_draw_texture_tint_scale_rotate_hotspot(const vita2d_texture *texture, float x, float y, float x_scale, float y_scale, float rad, float center_x, float center_y, unsigned int color)
 {
 	set_texture_tint_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_wvp_uniform(texture);
 	set_texture_tint_color_uniform(color);
 	draw_texture_scale_rotate_hotspot_generic(texture, x, y, x_scale, y_scale,
 		rad, center_x, center_y);
@@ -1020,9 +1020,9 @@ static inline void draw_texture_part_scale_rotate_generic(const vita2d_texture *
 	indices[1] = 1;
 	indices[2] = 2;
 	indices[3] = 3;
-	
+
 	if(_vita2d_selectedVertexInput && _vita2d_selectedVertexInput->output_size>0){
-		
+
 		void *vertex_tex_buffer;
 		float *output_size = vita2d_pool_memalign(
 			2 * sizeof(float), // RGBA
@@ -1031,11 +1031,11 @@ static inline void draw_texture_part_scale_rotate_generic(const vita2d_texture *
 		output_size[1]=h_half * 2;
 		sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertex_tex_buffer);
 		sceGxmSetUniformDataF(vertex_tex_buffer, _vita2d_selectedVertexInput->output_size, 0, 2, output_size);
-	
+
 	}
-	
+
 	if(_vita2d_selectedFragmentInput && _vita2d_selectedFragmentInput->output_size>0){
-		
+
 		void *fragment_tex_buffer;
 		float *output_size = vita2d_pool_memalign(
 			2 * sizeof(float), // RGBA
@@ -1044,7 +1044,7 @@ static inline void draw_texture_part_scale_rotate_generic(const vita2d_texture *
 		output_size[1]=h_half * 2;
 		sceGxmReserveFragmentDefaultUniformBuffer(_vita2d_context, &fragment_tex_buffer);
 		sceGxmSetUniformDataF(fragment_tex_buffer, _vita2d_selectedFragmentInput->output_size, 0, 2, output_size);
-	
+
 	}
 
 	// Set the texture to the TEXUNIT0
@@ -1057,8 +1057,8 @@ static inline void draw_texture_part_scale_rotate_generic(const vita2d_texture *
 void vita2d_draw_texture_part_scale_rotate(const vita2d_texture *texture, float x, float y,
 	float tex_x, float tex_y, float tex_w, float tex_h, float x_scale, float y_scale, float rad)
 {
-	set_texture_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_program();
+    vita2d_set_texture_wvp_uniform(texture);
 	draw_texture_part_scale_rotate_generic(texture, x, y,
 		tex_x, tex_y, tex_w, tex_h, x_scale, y_scale, rad);
 }
@@ -1067,7 +1067,7 @@ void vita2d_draw_texture_part_tint_scale_rotate(const vita2d_texture *texture, f
 	float tex_x, float tex_y, float tex_w, float tex_h, float x_scale, float y_scale, float rad, unsigned int color)
 {
 	set_texture_tint_program();
-	set_texture_wvp_uniform(texture);
+    vita2d_set_texture_wvp_uniform(texture);
 	set_texture_tint_color_uniform(color);
 	draw_texture_part_scale_rotate_generic(texture, x, y,
 		tex_x, tex_y, tex_w, tex_h, x_scale, y_scale, rad);

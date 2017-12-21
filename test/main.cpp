@@ -10,26 +10,28 @@ using namespace c2d;
 int main() {
 
     Renderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
-    
-    Rectangle *w = new Rectangle(FloatRect(200, 200, 200, 200));
-    w->setFillColor(Color::Yellow);
-    w->setOriginCenter();
 
-    Rectangle *w2 = new Rectangle(FloatRect(100, 100, 100, 100));
-    w2->setFillColor(Color::Red);
-    w2->setOriginCenter();
+    Rectangle *rect = new Rectangle(FloatRect(200, 200, 400, 400));
+    rect->setOriginCenter();
+    rect->setFillColor(Color::Red);
+    rect->setOutlineColor(Color::Yellow);
+    rect->setOutlineThickness(4);
 
-    w->add(w2);
+    Texture *tex = new C2DTexture(TEX_PATH);
+    tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
+    tex->setOriginCenter();
+    rect->add(tex);
 
-    renderer->add(w);
+    renderer->add(rect);
 
     for (int i = 0; i < 5; i++) {
 
-        //if (i > 0) {
-        w->move(20, 0);
-        w->setScale(w->getScale().x - 0.1f, w->getScale().y - 0.1f);
-        //printf("SCALE: %f %f\n", w->getScale().x, w->getScale().y);
-        w->rotate(5);
+        if (i > 0) {
+
+            rect->move(32, 0);
+            rect->setScale(rect->getScale().x - 0.1f, rect->getScale().y - 0.1f);
+            rect->rotate(5);
+        }
 
         renderer->flip();
         renderer->delay(500);

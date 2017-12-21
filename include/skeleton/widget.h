@@ -27,7 +27,7 @@ namespace c2d {
 
         virtual ~Widget();
 
-        virtual void draw(const Transform &transform, const Vector2f &scaling);
+        virtual void draw(const Transform &transform);
 
         // Childs
         void add(Widget *widget);
@@ -36,6 +36,8 @@ namespace c2d {
         int getVisibility();
 
         void setVisibility(int visibility);
+
+        bool available = false;
 
     protected:
 

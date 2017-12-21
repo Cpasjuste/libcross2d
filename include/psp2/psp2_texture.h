@@ -5,25 +5,28 @@
 #ifndef _PSP2_TEXTURE_H_
 #define _PSP2_TEXTURE_H_
 
-#include "../skeleton/texture.h"
+#include "skeleton/texture.h"
 #include "vita2d.h"
 
-class PSP2Texture : Texture {
+namespace c2d {
 
-public:
-    PSP2Texture(Renderer *renderer, const char *path);
+    class PSP2Texture : public Texture {
 
-    PSP2Texture(Renderer *renderer, int w, int h);
+    public:
 
-    ~PSP2Texture();
+        PSP2Texture(const char *path);
 
-    void Draw(int x, int y, int w, int h, float rotation);
+        PSP2Texture(const Vector2f &size = Vector2f(0, 0));
 
-    int Lock(const Rect &rect, void **pixels, int *pitch);
+        ~PSP2Texture();
 
-    void SetFiltering(int filter);
+        int lock(const FloatRect &rect, void **pixels, int *pitch);
 
-    vita2d_texture *tex = nullptr;
-};
+        void setFiltering(int filter);
+
+        //private:
+        vita2d_texture *tex = nullptr;
+    };
+}
 
 #endif //_PSP2_TEXTURE_H_

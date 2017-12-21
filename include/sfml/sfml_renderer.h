@@ -19,9 +19,12 @@ namespace c2d {
 
         ~SFMLRenderer();
 
-        void drawRectangle(const Rectangle &rectangle, const Transform &transform, const Vector2f &scaling);
+        void drawRectangle(
+                const Rectangle &rectangle,
+                const Transform &transform);
 
-        void drawTexture(const Texture &texture, const Transform &transform, const Vector2f &scaling);
+        void drawTexture(const Texture &texture,
+                         const Transform &transform);
 
         void flip();
 

@@ -2,8 +2,8 @@
 // Created by cpasjuste on 27/01/17.
 //
 
-#include "psp2/libvita2d/include/vita2d.h"
-#include "../../include/psp2/psp2_shaders.h"
+#include "libvita2d/include/vita2d.h"
+#include "psp2/psp2_shaders.h"
 
 #include "lcd3x_v.h"
 #include "lcd3x_f.h"
@@ -51,6 +51,7 @@ PSP2Shaders::PSP2Shaders(const std::string &shadersPath) : Shaders(shadersPath) 
 }
 
 PSP2Shaders::~PSP2Shaders() {
+
     for (int i = 0; i < Count(); i++) {
         if (Get(i)->data != NULL) {
             vita2d_free_shader((vita2d_shader *) Get(i)->data);

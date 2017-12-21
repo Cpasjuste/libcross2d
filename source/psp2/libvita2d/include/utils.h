@@ -5,6 +5,10 @@
 #include <psp2/types.h>
 #include <psp2/kernel/sysmem.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Misc utils */
 #define ALIGN(x, a)	(((x) + ((a) - 1)) & ~((a) - 1))
 #define	UNUSED(a)	(void)(a)
@@ -45,6 +49,10 @@ void matrix_swap_xy(float *m);
 void matrix_init_orthographic(float *m, float left, float right, float bottom, float top, float near, float far);
 void matrix_init_frustum(float *m, float left, float right, float bottom, float top, float near, float far);
 void matrix_init_perspective(float *m, float fov, float aspect, float near, float far);
+
+#ifdef __cplusplus
+}
+#endif
 
 /* Text utils */
 

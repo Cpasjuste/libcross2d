@@ -5,39 +5,41 @@
 #ifndef _PSP2_RENDERER_H_
 #define _PSP2_RENDERER_H_
 
-#include "../skeleton/renderer.h"
+#include "skeleton/renderer.h"
 
-#ifdef __PSP2_DEBUG__
+//#ifdef __PSP2_DEBUG__
 #include <psp2/kernel/clib.h>
 #define printf sceClibPrintf
-#endif
+//#endif
 
-class PSP2Renderer : Renderer {
+namespace c2d {
 
-public:
-    PSP2Renderer(int w, int h);
+    class PSP2Renderer : public Renderer {
 
-    ~PSP2Renderer();
+    public:
 
-    void DrawLine(int x1, int y1, int x2, int y2, const Color &color);
+        PSP2Renderer(const Vector2f &size = Vector2f(0, 0));
 
-    void DrawRect(const Rect &rect, const Color &color, bool fill);
+        ~PSP2Renderer();
 
-    void Clip(const Rect &rect);
+        void drawRectangle(
+                const Rectangle &rectangle,
+                const Transform &transform);
 
-    void Clear();
+        void drawTexture(const Texture &texture,
+                         const Transform &transform);
 
-    void Flip();
+        void flip();
 
-    void Delay(unsigned int ms);
+        void delay(unsigned int ms);
 
-    void SetShader(int shader);
+        void setShader(int shader);
 
-    void StartDrawing();
+    private:
 
-private:
-
-    bool drawing_started = false;
-};
+        void startDrawing();
+        bool drawing_started = false;
+    };
+}
 
 #endif //_PSP2_RENDERER_H_

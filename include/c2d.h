@@ -22,15 +22,15 @@ extern c2d::Renderer *c2d_renderer;
 
 #include "psp2/psp2_renderer.h"
 #include "psp2/psp2_texture.h"
-#include "psp2/psp2_font.h"
-#include "sdl2/sdl2_input.h"
-#include "sdl2/sdl2_audio.h"
+//#include "psp2/psp2_font.h"
+//#include "sdl2/sdl2_input.h"
+//#include "sdl2/sdl2_audio.h"
 
 #define C2DRenderer PSP2Renderer
 #define C2DTexture PSP2Texture
-#define C2DFont PSP2Font
-#define C2DInput SDL2Input
-#define C2DAudio SDL2Audio
+//#define C2DFont PSP2Font
+//#define C2DInput SDL2Input
+//#define C2DAudio SDL2Audio
 #define C2DIo PSP2Io
 
 #define KEY_JOY_UP_DEFAULT      8
@@ -271,6 +271,5 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_KB_MENU2_DEFAULT   36
 #endif
 #endif
-
 
 #endif //_C2D_H_

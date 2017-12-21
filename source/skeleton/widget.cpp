@@ -29,16 +29,16 @@ void Widget::add(Widget *widget) {
     }
 }
 
-void Widget::draw(const Transform &transform, const Vector2f &scaling) {
+void Widget::draw(const Transform &transform) {
 
     printf("Widget(%p): draw\n", this);
 
     Transform combinedTransform = transform * getTransform();
-    Vector2f combinedScaling = {scaling.x * getScale().x, scaling.y * getScale().y};
 
-    for (Widget *widget : childs) {
-        if (widget->visibility == C2D_VISIBILITY_VISIBLE) {
-            widget->draw(combinedTransform, combinedScaling);
+    for (auto &child : childs) {
+        if (child->visibility == C2D_VISIBILITY_VISIBLE) {
+            //Transform combinedTransform = transform * child->getTransform();
+            child->draw(combinedTransform);
         }
     }
 }
@@ -56,10 +56,10 @@ void Widget::setVisibility(int visibility) {
 Widget::~Widget() {
 
     // delete childs
-    for (Widget *drawable : childs) {
-        if (drawable) {
-            printf("~Widget(%p): delete child(%p)\n", this, drawable);
-            delete (drawable);
+    for (auto &child : childs) {
+        if (child) {
+            printf("~Widget(%p): delete child(%p)\n", this, child);
+            delete (child);
         }
     }
 

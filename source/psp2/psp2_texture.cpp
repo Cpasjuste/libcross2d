@@ -5,7 +5,6 @@
 #include <cstring>
 #include <cstdio>
 #include "c2d.h"
-#include "../../include/psp2/psp2_texture.h"
 
 #ifdef __PSP2_DEBUG__
 
@@ -14,7 +13,9 @@
 #define printf sceClibPrintf
 #endif
 
-PSP2Texture::PSP2Texture(Renderer *r, const char *p) : Texture(r, p) {
+using namespace c2d;
+
+PSP2Texture::PSP2Texture(const char *p) : Texture(p) {
 
     char *ext = strrchr(path, '.');
     if (ext) {
@@ -32,25 +33,33 @@ PSP2Texture::PSP2Texture(Renderer *r, const char *p) : Texture(r, p) {
         printf("PSP2Texture: could not create texture from `%s`\n", path);
         return;
     }
-    width = vita2d_texture_get_width(tex);
-    height = vita2d_texture_get_height(tex);
+
+    int w = vita2d_texture_get_width(tex);
+    int h = vita2d_texture_get_height(tex);
+
+    setSize(Vector2f(w, h));
+    setTextureRect(IntRect(0, 0, w, h));
+
     available = true;
 }
 
-PSP2Texture::PSP2Texture(Renderer *r, int w, int h) : Texture(r, w, h) {
+PSP2Texture::PSP2Texture(const Vector2f &size) : Texture(size) {
 
     tex = vita2d_create_empty_texture_format(
-            (unsigned int) w, (unsigned int) h, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
+            (unsigned int) size.x, (unsigned int) size.y, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
+
     if (!tex) {
         printf("PSP2Texture: couldn't create texture\n");
         return;
     }
-    //width = vita2d_texture_get_width(tex);
-    //height = vita2d_texture_get_height(tex);
+
+    setSize(Vector2f(size.x, size.y));
+    setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
+
     available = true;
 }
 
-
+/*
 void PSP2Texture::Draw(int x, int y, int w, int h, float rotation) {
 
     if (tex) {
@@ -65,18 +74,21 @@ void PSP2Texture::Draw(int x, int y, int w, int h, float rotation) {
                                          sx, sy, rad);
     }
 }
+*/
 
-int PSP2Texture::Lock(const Rect &rect, void **pixels, int *pitch) {
+int PSP2Texture::lock(const FloatRect &rect, void **pixels, int *pitch) {
+
     *pixels = vita2d_texture_get_datap(tex);
     *pitch = vita2d_texture_get_stride(tex);
+
     return 0;
 }
 
-void PSP2Texture::SetFiltering(int filter) {
+void PSP2Texture::setFiltering(int filter) {
 
     vita2d_texture_set_filters(tex,
                                SCE_GXM_TEXTURE_FILTER_POINT,
-                               filter == TEXTURE_FILTER_POINT ?
+                               filter == C2D_TEXTURE_FILTER_POINT ?
                                SCE_GXM_TEXTURE_FILTER_POINT : SCE_GXM_TEXTURE_FILTER_LINEAR);
 }
 

@@ -10,7 +10,8 @@
 #define SCR_W 960
 #define SCR_H 544
 #define FONT_PATH   "app0:/default-20.pgf"
-#define TEX_PATH    "app0:/title.png"
+//#define TEX_PATH    "app0:/title.png"
+#define TEX_PATH    "ux0:/title.png"
 int KEYS[]{
         // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
         82, 81, 80, 79, 89, 90, 91, 92, 93, 94, 41, 40, 0 // KEY_QUIT
@@ -38,8 +39,8 @@ int KEYS[]{
 
 #define SCR_W 960
 #define SCR_H 544
-#define FONT_PATH   "../src/res/default.ttf"
-#define TEX_PATH    "../src/res/title.png"
+#define FONT_PATH   "../res/default.ttf"
+#define TEX_PATH    "../res/title.png"
 int KEYS[]{
         // SFML_Scancode
         // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT

@@ -12,7 +12,6 @@ Renderer::Renderer(const Vector2f &size) : Widget(size) {
 
     c2d_renderer = this;
     setFillColor(Color::Black);
-    shaders = new Shaders("");
 
     printf("Renderer(%p)\n", this);
 }
@@ -22,7 +21,7 @@ void Renderer::flip() {
     printf("Renderer(%p): flip\n", this);
 
     // call base class (draw childs)
-    Widget::draw(getTransform(), getScale());
+    Widget::draw(getTransform());
 }
 
 void Renderer::setShader(int shader) {
@@ -34,10 +33,6 @@ void Renderer::delay(unsigned int ms) {
 }
 
 Renderer::~Renderer() {
-
-    if (shaders) {
-        delete (shaders);
-    }
 
     printf("~Renderer(%p)\n", this);
 }

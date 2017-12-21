@@ -63,7 +63,7 @@ void SFMLRenderer::DrawLine(int x1, int y1, int x2, int y2, const Color &c) {
 }
 */
 
-void SFMLRenderer::drawRectangle(const Rectangle &rectangle, const Transform &transform, const Vector2f &scaling) {
+void SFMLRenderer::drawRectangle(const Rectangle &rectangle, const Transform &transform) {
 
     sf::RectangleShape rect((const sf::Vector2f &) rectangle.getSize());
     rect.setPosition((const sf::Vector2f &) rectangle.getPosition());
@@ -81,38 +81,38 @@ void SFMLRenderer::drawRectangle(const Rectangle &rectangle, const Transform &tr
     window.draw(rect, states);
 }
 
-void SFMLRenderer::drawTexture(const Texture &texture, const Transform &transform, const Vector2f &scaling) {
+void SFMLRenderer::drawTexture(const Texture &texture, const Transform &transform) {
 
-    /*
+    sf::Sprite sprite = ((SFMLTexture *) &texture)->sprite;
+    sprite.setPosition((const sf::Vector2f &) texture.getPosition());
+    sprite.setOrigin((const sf::Vector2f &) texture.getOrigin());
+    sprite.setScale((const sf::Vector2f &) texture.getScale());
+    sprite.setRotation(texture.getRotation());
+
+    sprite.setColor((const sf::Color &) texture.getFillColor());
+
     sf::RenderStates states;
-
-    // set sprite position
-    sprite.setPosition(x, y);
-
-    // set sprite scaling
-    float scaleX = (float) w / (float) width;
-    float scaleY = (float) h / (float) height;
-    sprite.setScale(scaleX, scaleY);
-
-    // set sprite rotation
-    sf::Transform transform;
-    transform.rotate(rotation, {(float) (x + w / 2), (float) (y + h / 2)});
-    states.transform = transform;
+    states.transform = ((sf::Transform &) transform);
 
     // set sprite shader
     sf::Shader *shader = (sf::Shader *) shaders->Get()->data;
     if (shader) {
-        shader->setUniform("Texture", texture);
-        shader->setUniform("MVPMatrix", sf::Glsl::Mat4(window.getView().getTransform().getMatrix()));
-        shader->setUniform("TextureSize", sf::Glsl::Vec2(width, height));
-        shader->setUniform("InputSize", sf::Glsl::Vec2(w, h));
-        shader->setUniform("OutputSize", sf::Glsl::Vec2(w, h));
+        shader->setUniform("Texture", (const sf::Texture &) texture);
+        shader->setUniform("MVPMatrix", sf::Glsl::Mat4(
+                window.getView().getTransform().getMatrix()));
+        shader->setUniform("TextureSize", sf::Glsl::Vec2(
+                texture.getTextureRect().width,
+                texture.getTextureRect().height));
+        shader->setUniform("InputSize", sf::Glsl::Vec2(
+                texture.getTextureRect().width,
+                texture.getTextureRect().height));
+        shader->setUniform("OutputSize", sf::Glsl::Vec2(
+                texture.getSize().x,
+                texture.getSize().y));
         states.shader = shader;
     }
 
-    // draw sprite
     window.draw(sprite, states);
-    */
 }
 
 void SFMLRenderer::flip() {
