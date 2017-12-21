@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_PRIMITIVETYPE_HPP
-#define SFML_PRIMITIVETYPE_HPP
+#ifndef C2D_PRIMITIVETYPE_HPP
+#define C2D_PRIMITIVETYPE_HPP
 
 namespace c2d {
 ////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ namespace c2d {
         TrianglesFan = TriangleFan    ///< \deprecated Use TriangleFan instead
     };
 
-} // namespace sf
+} // namespace c2d
 
 
-#endif // SFML_PRIMITIVETYPE_HPP
+#endif // C2D_PRIMITIVETYPE_HPP

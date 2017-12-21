@@ -5,8 +5,8 @@ set(CMAKE_SYSTEM_NAME "Generic")
 enable_language(ASM)
 
 # delete cmake cache folder before changing this options
-option(BUILD_SFML "Build with SFML support" OFF)
-option(BUILD_SDL2 "Build with SDL2 support" ON)
+option(BUILD_SFML "Build with SFML support" ON)
+option(BUILD_SDL2 "Build with SDL2 support" OFF)
 option(BUILD_SDL1 "Build with SDL1 support" OFF)
 option(BUILD_PSP2 "Build with PSP2 support" OFF)
 option(BUILD_PS3 "Build with PS3 support" OFF)
@@ -113,15 +113,15 @@ elseif (BUILD_3DS)
     #set(SHADER_AS picasso)
     #add_shbin_library(shaders.3ds src/3ds/vshader.v.pica)
     set(PLATFORM_DIRS
-            src/3ds
-            src/posix
+            source/3ds
+            source/posix
             ${DEVKITPRO}/libctru/include
             ${DEVKITPRO}/portlibs/3ds/include
             ${DEVKITPRO}/portlibs/armv6k/include
             )
     file(GLOB PLATFORM_SRC
-            src/3ds/*.c*
-            src/posix/*.c*
+            source/3ds/*.c*
+            source/posix/*.c*
             source/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
             # TODO: fix that crap...
             source/3ds/vshaders.v.o
@@ -135,11 +135,11 @@ elseif (BUILD_3DS)
     #####################
 elseif (BUILD_NX)
     set(PLATFORM_DIRS
-            src/nx
+            source/nx
             ${DEVKITPRO}/libnx/include
             )
     file(GLOB PLATFORM_SRC
-            src/nx/*.c*
+            source/nx/*.c*
             )
     list(APPEND FLAGS -D_NX -D__NX__
             -ffunction-sections -fomit-frame-pointer
@@ -164,12 +164,12 @@ elseif (BUILD_SDL2)
     #####################
 elseif (BUILD_SDL1)
     set(PLATFORM_DIRS
-            src/sdl1
-            src/posix
+            source/sdl1
+            source/posix
             )
     file(GLOB PLATFORM_SRC
-            src/sdl1/*.c*
-            src/posix/*.c*
+            source/sdl1/*.c*
+            source/posix/*.c*
             )
     list(APPEND FLAGS -O3 -D__SDL1__)
     #####################
@@ -177,13 +177,16 @@ elseif (BUILD_SDL1)
     #####################
 elseif (BUILD_SFML)
     set(PLATFORM_DIRS
-            src/sfml
-            src/posix
+            source/sfml
+            source/posix
             )
     file(GLOB PLATFORM_SRC
-            src/sfml/*.c*
-            src/posix/*.c*
-            source/sdl2/sdl2_audio.cpp #TODO: get rid of sdl2, use sdl2 audio for now
+            # source/sfml/*.c*
+            source/sfml/sfml_renderer.cpp
+            source/sfml/sfml_texture.cpp
+            source/sfml/sfml_shaders.cpp
+            source/posix/*.c*
+            # source/sdl2/sdl2_audio.cpp #TODO: get rid of sdl2, use sdl2 audio for now
             )
     list(APPEND FLAGS -O3 -D__SFML__)
 endif (BUILD_PSP2)

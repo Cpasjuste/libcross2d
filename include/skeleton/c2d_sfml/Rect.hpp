@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RECT_HPP
-#define SFML_RECT_HPP
+#ifndef C2D_RECT_HPP
+#define C2D_RECT_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -194,10 +194,10 @@ namespace c2d {
     typedef Rect<int> IntRect;
     typedef Rect<float> FloatRect;
 
-} // namespace sf
+} // namespace c2d
 
 
-#endif // SFML_RECT_HPP
+#endif // C2D_RECT_HPP
 
 
 ////////////////////////////////////////////////////////////

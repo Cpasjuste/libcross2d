@@ -5,30 +5,33 @@
 #ifndef _SFML_TEXTURE_H_
 #define _SFML_TEXTURE_H_
 
-#include "../skeleton/renderer.h"
+#include "skeleton/renderer.h"
 #include "sfml_renderer.h"
 
-class SFMLTexture : Texture {
+namespace c2d {
 
-public:
-    SFMLTexture(Renderer *renderer, const char *path);
+    class SFMLTexture : public Texture {
 
-    SFMLTexture(Renderer *renderer, int w, int h);
+    public:
 
-    ~SFMLTexture();
+        SFMLTexture(const char *path);
 
-    virtual void Draw(int x, int y, int w, int h, float rotation);
+        SFMLTexture(const Vector2f &size = Vector2f(0, 0));
 
-    virtual int Lock(const Rect &rect, void **pixels, int *pitch);
+        ~SFMLTexture();
 
-    virtual void Unlock();
+        int lock(const FloatRect &rect, void **pixels, int *pitch);
 
-    void SetFiltering(int filter);
+        void unlock();
 
-private:
-    sf::Sprite sprite;
-    sf::Texture texture;
-    sf::Uint8 *pixels = nullptr;
-};
+        void setFiltering(int filter);
+
+    private:
+
+        sf::Sprite sprite;
+        sf::Texture texture;
+        sf::Uint8 *pixels = nullptr;
+    };
+}
 
 #endif //_SFML_TEXTURE_H_

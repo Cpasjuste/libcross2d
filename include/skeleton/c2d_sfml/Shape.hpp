@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SHAPE_HPP
-#define SFML_SHAPE_HPP
+#ifndef C2D_SHAPE_HPP
+#define C2D_SHAPE_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -316,10 +316,10 @@ namespace c2d {
         FloatRect m_bounds;           ///< Bounding rectangle of the whole shape (outline + fill)
     };
 
-} // namespace sf
+} // namespace c2d
 
 
-#endif // SFML_SHAPE_HPP
+#endif // C2D_SHAPE_HPP
 
 
 ////////////////////////////////////////////////////////////

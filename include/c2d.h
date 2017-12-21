@@ -205,9 +205,9 @@ extern c2d::Renderer *c2d_renderer;
 
 #include "sfml/sfml_renderer.h"
 #include "sfml/sfml_texture.h"
-#include "sfml/sfml_font.h"
-#include "sfml/sfml_input.h"
-#include "sdl2/sdl2_audio.h"
+//#include "sfml/sfml_font.h"
+//#include "sfml/sfml_input.h"
+//#include "sdl2/sdl2_audio.h"
 #include "posix/posix_io.h"
 
 #define C2DRenderer SFMLRenderer

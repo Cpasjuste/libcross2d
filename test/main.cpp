@@ -10,9 +10,7 @@ using namespace c2d;
 int main() {
 
     Renderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
-
-    //Texture *w = new SDL2Texture(TEX_PATH);
-
+    
     Rectangle *w = new Rectangle(FloatRect(200, 200, 200, 200));
     w->setFillColor(Color::Yellow);
     w->setOriginCenter();
@@ -28,25 +26,10 @@ int main() {
     for (int i = 0; i < 5; i++) {
 
         //if (i > 0) {
-        //w->move(20, 0);
+        w->move(20, 0);
         w->setScale(w->getScale().x - 0.1f, w->getScale().y - 0.1f);
         //printf("SCALE: %f %f\n", w->getScale().x, w->getScale().y);
-        //w->rotate(5);
-
-        /*
-        printf("%f %f %f %f %f %f %f %f %f\n",
-               w->getTransform().getMatrix()[0],
-               w->getTransform().getMatrix()[1],
-               w->getTransform().getMatrix()[2],
-               w->getTransform().getMatrix()[3],
-               w->getTransform().getMatrix()[4],
-               w->getTransform().getMatrix()[5],
-               w->getTransform().getMatrix()[6],
-               w->getTransform().getMatrix()[7],
-               w->getTransform().getMatrix()[8]
-        );
-        */
-        //}
+        w->rotate(5);
 
         renderer->flip();
         renderer->delay(500);

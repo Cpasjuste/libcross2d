@@ -2,24 +2,24 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#include "GL/gl.h"
-#include "../../include/sfml/sfml_renderer.h"
-#include "../../include/sfml/sfml_font.h"
-#include "../../include/sfml/sfml_texture.h"
+#include <GL/gl.h>
+#include "c2d.h"
+
+using namespace c2d;
 
 //////////
 // INIT //
 //////////
-SFMLRenderer::SFMLRenderer(int w, int h, const std::string &shaderPath) : Renderer(w, h) {
+SFMLRenderer::SFMLRenderer(const Vector2f &size, const std::string &shaderPath) : Renderer(size) {
 
     sf::ContextSettings settings(16, 0, 0);
     mode = sf::VideoMode::getDesktopMode();
     sf::Uint32 style = sf::Style::Fullscreen;
 
     // windowed
-    if (w != 0 && h != 0) {
-        mode.width = (unsigned int) w;
-        mode.height = (unsigned int) h;
+    if (getSize().x != 0 && getSize().y != 0) {
+        mode.width = (unsigned int) getSize().x;
+        mode.height = (unsigned int) getSize().y;
         style = sf::Style::Default;
     }
 
@@ -32,19 +32,24 @@ SFMLRenderer::SFMLRenderer(int w, int h, const std::string &shaderPath) : Render
     const unsigned char *glslversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
     printf("SFMLRenderer: glslversion: %s\n", glslversion);
 
-    this->shaders = (Shaders *) new SFMLShaders(shaderPath);
+    if (shaders) {
+        delete (shaders);
+    }
+    shaders = (Shaders *) new SFMLShaders(shaderPath);
 }
 //////////
 // INIT //
 //////////
 
-void SFMLRenderer::SetShader(int index) {
+void SFMLRenderer::setShader(int index) {
+
     if (index == shaders->current || index >= shaders->Count()) {
         return;
     }
     shaders->current = index;
 }
 
+/*
 void SFMLRenderer::DrawLine(int x1, int y1, int x2, int y2, const Color &c) {
 
     sf::Color col(c.r, c.g, c.b, c.a);
@@ -56,39 +61,79 @@ void SFMLRenderer::DrawLine(int x1, int y1, int x2, int y2, const Color &c) {
 
     window.draw(line, 2, sf::Lines);
 }
+*/
 
-void SFMLRenderer::DrawRect(const Rect &rect, const Color &c, bool fill) {
+void SFMLRenderer::drawRectangle(const Rectangle &rectangle, const Transform &transform, const Vector2f &scaling) {
 
-    sf::Color col(c.r, c.g, c.b, c.a);
-    sf::RectangleShape rectangle(sf::Vector2f(rect.w - 2, rect.h - 2));
-    rectangle.setOutlineColor(col);
-    rectangle.setOutlineThickness(1);
-    rectangle.setPosition(rect.x + 1, rect.y + 1);
-    if (fill) {
-        rectangle.setFillColor(col);
-    } else {
-        rectangle.setFillColor(sf::Color(0, 0, 0, 0));
+    sf::RectangleShape rect((const sf::Vector2f &) rectangle.getSize());
+    rect.setPosition((const sf::Vector2f &) rectangle.getPosition());
+    rect.setOrigin((const sf::Vector2f &) rectangle.getOrigin());
+    rect.setScale((const sf::Vector2f &) rectangle.getScale());
+    rect.setRotation(rectangle.getRotation());
+
+    rect.setFillColor((const sf::Color &) rectangle.getFillColor());
+    rect.setOutlineColor((const sf::Color &) rectangle.getOutlineColor());
+    rect.setOutlineThickness(rectangle.getOutlineThickness());
+
+    sf::RenderStates states;
+    states.transform = ((sf::Transform &) transform);
+
+    window.draw(rect, states);
+}
+
+void SFMLRenderer::drawTexture(const Texture &texture, const Transform &transform, const Vector2f &scaling) {
+
+    /*
+    sf::RenderStates states;
+
+    // set sprite position
+    sprite.setPosition(x, y);
+
+    // set sprite scaling
+    float scaleX = (float) w / (float) width;
+    float scaleY = (float) h / (float) height;
+    sprite.setScale(scaleX, scaleY);
+
+    // set sprite rotation
+    sf::Transform transform;
+    transform.rotate(rotation, {(float) (x + w / 2), (float) (y + h / 2)});
+    states.transform = transform;
+
+    // set sprite shader
+    sf::Shader *shader = (sf::Shader *) shaders->Get()->data;
+    if (shader) {
+        shader->setUniform("Texture", texture);
+        shader->setUniform("MVPMatrix", sf::Glsl::Mat4(window.getView().getTransform().getMatrix()));
+        shader->setUniform("TextureSize", sf::Glsl::Vec2(width, height));
+        shader->setUniform("InputSize", sf::Glsl::Vec2(w, h));
+        shader->setUniform("OutputSize", sf::Glsl::Vec2(w, h));
+        states.shader = shader;
     }
-    window.draw(rectangle);
+
+    // draw sprite
+    window.draw(sprite, states);
+    */
 }
 
-void SFMLRenderer::Clip(const Rect &rect) {
-}
+void SFMLRenderer::flip() {
 
-void SFMLRenderer::Clear() {
-    window.clear(
-            sf::Color(color.r, color.g, color.b, color.a));
-}
+    // clear screen
+    window.clear((const sf::Color &) getFillColor());
 
-void SFMLRenderer::Flip() {
+    // call base class (draw childs)
+    Renderer::flip();
+
+    // flip
     window.display();
 }
 
-void SFMLRenderer::Delay(unsigned int ms) {
+void SFMLRenderer::delay(unsigned int ms) {
+
     sf::sleep(sf::milliseconds(ms));
 }
 
 SFMLRenderer::~SFMLRenderer() {
+
     delete (shaders);
     window.close();
 }

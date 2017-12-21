@@ -3,8 +3,8 @@
 //
 
 #include <SFML/Graphics/Shader.hpp>
-#include "../../include/posix/posix_io.h"
-#include "../../include/sfml/sfml_shaders.h"
+#include "posix/posix_io.h"
+#include "sfml/sfml_shaders.h"
 
 SFMLShaders::SFMLShaders(const std::string &shadersPath) : Shaders(shadersPath) {
 

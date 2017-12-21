@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RECTANGLESHAPE_HPP
-#define SFML_RECTANGLESHAPE_HPP
+#ifndef C2D_RECTANGLESHAPE_HPP
+#define C2D_RECTANGLESHAPE_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -121,10 +121,10 @@ namespace c2d {
         Vector2f m_size; ///< Size of the rectangle
     };
 
-} // namespace sf
+} // namespace c2d
 
 
-#endif // SFML_RECTANGLESHAPE_HPP
+#endif // C2D_RECTANGLESHAPE_HPP
 
 
 ////////////////////////////////////////////////////////////

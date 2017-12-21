@@ -5,33 +5,34 @@
 #ifndef SFML_RENDERER_H
 #define SFML_RENDERER_H
 
-#include "../skeleton/renderer.h"
-#include "sfml_shaders.h"
 #include <SFML/Graphics.hpp>
+#include "skeleton/renderer.h"
+#include "sfml_shaders.h"
 
-class SFMLRenderer : Renderer {
+namespace c2d {
 
-public:
-    SFMLRenderer(int w, int h, const std::string &shaderPath = "");
+    class SFMLRenderer : public Renderer {
 
-    virtual ~SFMLRenderer();
+    public:
 
-    virtual void DrawLine(int x1, int y1, int x2, int y2, const Color &color);
+        SFMLRenderer(const Vector2f &size = Vector2f(0, 0), const std::string &shaderPath = "");
 
-    virtual void DrawRect(const Rect &rect, const Color &color, bool fill);
+        ~SFMLRenderer();
 
-    virtual void Clip(const Rect &rect);
+        void drawRectangle(const Rectangle &rectangle, const Transform &transform, const Vector2f &scaling);
 
-    virtual void Clear();
+        void drawTexture(const Texture &texture, const Transform &transform, const Vector2f &scaling);
 
-    virtual void Flip();
+        void flip();
 
-    virtual void Delay(unsigned int ms);
+        void delay(unsigned int ms);
 
-    virtual void SetShader(int index);
+        void setShader(int index);
 
-    sf::RenderWindow window;
-    sf::VideoMode mode;
-};
+        //private:
+        sf::RenderWindow window;
+        sf::VideoMode mode;
+    };
+}
 
 #endif //SFML_RENDERER_H

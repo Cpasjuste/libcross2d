@@ -25,6 +25,7 @@ namespace c2d {
 
         void setFiltering(int filter);
 
+        //private:
         SDL_Texture *tex = nullptr;
     };
 }

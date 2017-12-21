@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_VECTOR3_HPP
-#define SFML_VECTOR3_HPP
+#ifndef C2D_VECTOR3_HPP
+#define C2D_VECTOR3_HPP
 
 
 namespace c2d {

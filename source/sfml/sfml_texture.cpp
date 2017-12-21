@@ -2,34 +2,36 @@
 // Created by cpasjuste on 01/12/16.
 //
 
-
 #include <GL/gl.h>
-#include "../../include/sfml/sfml_texture.h"
+#include "c2d.h"
 
-SFMLTexture::SFMLTexture(Renderer *r, const char *path) : Texture(r, path) {
+using namespace c2d;
+
+SFMLTexture::SFMLTexture(const char *path) : Texture(path) {
 
     if (texture.loadFromFile(path)) {
-        width = texture.getSize().x;
-        height = texture.getSize().y;
+        setSize(Vector2f(texture.getSize().x, texture.getSize().y));
+        setTextureRect(IntRect(0, 0, (int) getSize().x, (int) getSize().y));
         sprite.setTexture(texture);
-        pixels = new sf::Uint8[width * height * 2];
-        available = true;
+        pixels = new sf::Uint8[(int) getSize().x * (int) getSize().y * 2];
     } else {
         printf("Couldn't create texture: %s\n", path);
     }
 }
 
-SFMLTexture::SFMLTexture(Renderer *r, int w, int h) : Texture(r, w, h) {
+SFMLTexture::SFMLTexture(const Vector2f &size) : Texture(size) {
 
-    if (texture.create((uint) w, (uint) h)) {
-        pixels = new sf::Uint8[width * height * 2];
+    if (texture.create((uint) size.x, (uint) size.y)) {
+        setSize(Vector2f(texture.getSize().x, texture.getSize().y));
+        setTextureRect(IntRect(0, 0, (int) getSize().x, (int) getSize().y));
         sprite.setTexture(texture);
-        available = true;
+        pixels = new sf::Uint8[(int) getSize().x * (int) getSize().y * 2];
     } else {
         printf("Couldn't create texture\n");
     }
 }
 
+/*
 void SFMLTexture::Draw(int x, int y, int w, int h, float rotation) {
 
     sf::RenderStates states;
@@ -62,27 +64,33 @@ void SFMLTexture::Draw(int x, int y, int w, int h, float rotation) {
     // draw sprite
     rdr->window.draw(sprite, states);
 }
+*/
 
-int SFMLTexture::Lock(const Rect &rect, void **data, int *pitch) {
+int SFMLTexture::lock(const FloatRect &rect, void **data, int *pitch) {
+
     *data = pixels;
-    *pitch = width * 2;
+    *pitch = (int) (getSize().x * 2);
+
     return 0;
 }
 
-void SFMLTexture::Unlock() {
+void SFMLTexture::unlock() {
+
     GLint textureBinding;
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &textureBinding);
     sf::Texture::bind(&texture);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, (GLsizei) getSize().x, (GLsizei) getSize().y,
                     GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
     glBindTexture(GL_TEXTURE_2D, (GLuint) textureBinding);
 }
 
-void SFMLTexture::SetFiltering(int filter) {
+void SFMLTexture::setFiltering(int filter) {
+
     texture.setSmooth((bool) filter);
 }
 
 SFMLTexture::~SFMLTexture() {
+
     if (pixels) {
         delete (pixels);
     }

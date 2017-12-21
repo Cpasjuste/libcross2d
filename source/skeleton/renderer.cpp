@@ -34,5 +34,10 @@ void Renderer::delay(unsigned int ms) {
 }
 
 Renderer::~Renderer() {
+
+    if (shaders) {
+        delete (shaders);
+    }
+
     printf("~Renderer(%p)\n", this);
 }

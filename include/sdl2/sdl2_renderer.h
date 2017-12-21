@@ -24,9 +24,9 @@ namespace c2d {
 
         ~SDL2Renderer();
 
-        void drawRectangle(const Rectangle &rectangle, const Transform &parentTransform, const Vector2f &scaling);
+        void drawRectangle(const Rectangle &rectangle, const Transform &transform, const Vector2f &scaling);
 
-        void drawTexture(const Texture &texture, const Transform &parentTransfor, const Vector2f &scaling);
+        void drawTexture(const Texture &texture, const Transform &transform, const Vector2f &scaling);
 
         void flip();
 
