@@ -34,7 +34,7 @@ namespace c2d {
 
     private:
 
-        virtual void draw(const Transform &transform);
+        virtual void draw(Transform &transform);
 
     };
 }

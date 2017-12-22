@@ -2,61 +2,38 @@
 // Created by cpasjuste on 13/12/17.
 //
 
+#include <cmath>
 #include <cstdio>
-#include "skeleton/renderer.h"
+#include <c2d.h>
 
-using namespace C2D;
+using namespace c2d;
 
-Line::Line(int x1, int y1, int x2, int y2,
-           const Color &color, int center, float rot)
-        : Widget(x1, y1, x2, y2, color, center, rot) {
+Line::Line(const Vector2f &p1, const Vector2f &p2, float width) : Widget() {
 
-    printf("Line(%p): x:%i, y:%i, w:%i, h:%i\n",
-           this, (int) localBounds[0].x, (int) localBounds[0].y,
-           GetWidth(), GetHeight());
+    setPosition(p1);
+
+    float distance = (float) sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
+    setSize(Vector2f(distance, width));
+
+    float rotation = (float) (std::atan2(p2.y - p1.y, p2.x - p1.x) * (180 / 3.141593));
+    setRotation(rotation);
+
+    printf("Line(%p): %ix%i (r=%f)\n",
+           this, (int) getSize().x, (int) getSize().y, rotation);
 }
 
-void Line::Update() {
+std::size_t Line::getPointCount() const {
 
-    printf("Line(%p): Update\n", this);
-
-    /*
-    rect_local.x = pivot == C2D_PIVOT_CENTER ? rect.x - rect.w / 2 : rect.x;
-    rect_local.y = pivot == C2D_PIVOT_CENTER ? rect.y - rect.h / 2 : rect.y;
-    rect_local.w = pivot == C2D_PIVOT_CENTER ? rect.w - rect.x / 2 : rect.w;
-    rect_local.h = pivot == C2D_PIVOT_CENTER ? rect.h - rect.y / 2 : rect.h;
-
-    if (parent) {
-        rect_local.x *= parent->GetScaling().x;
-        rect_local.y *= parent->GetScaling().y;
-        rect_local.w *= parent->GetScaling().x;
-        rect_local.h *= parent->GetScaling().y;
-        rect_world.x = rect_local.x + parent->GetRectWorld().x;
-        rect_world.y = rect_local.y + parent->GetRectWorld().y;
-        rect_world.w = rect_local.w + parent->GetRectWorld().x;
-        rect_world.h = rect_local.h + parent->GetWorldRect().y;
-    } else {
-        rect_world.x = rect_local.x;
-        rect_world.y = rect_local.y;
-        rect_world.w = rect_local.w;
-        rect_world.h = rect_local.h;
-    }
-    */
+    return getSize().y > 1 ? 4 : 2;
 }
 
-void Line::Draw() {
+void Line::draw(Transform &transform) {
 
-    printf("Line(%p): Draw\n", this);
-
-    // update (this) widget position/scaling
-    // Line::Update();
-    Widget::Update();
-
-    // draw
-    ((Renderer *) renderer)->DrawLine(this);
+    // draw rect from renderer
+    c2d_renderer->drawRectangle((Rectangle &) *this, transform);
 
     // call base class (draw childs)
-    Widget::Draw();
+    Widget::draw(transform);
 }
 
 Line::~Line() {

@@ -12,7 +12,7 @@
 
 #include "widget.h"
 #include "rectangle.h"
-//#include "line.h"
+#include "line.h"
 //#include "font.h"
 #include "texture.h"
 #include "shaders.h"
@@ -31,13 +31,11 @@ namespace c2d {
 
         virtual ~Renderer();
 
-        virtual void drawRectangle(
-                const Rectangle &rectangle,
-                const Transform &transform) {};
+        virtual void drawLine(Line &line, Transform &transform) {};
 
-        virtual void drawTexture(
-                const Texture &texture,
-                const Transform &transform) {};
+        virtual void drawRectangle(Rectangle &rectangle, Transform &transform) {};
+
+        virtual void drawTexture(Texture &texture, Transform &transform) {};
 
         virtual void flip();
 

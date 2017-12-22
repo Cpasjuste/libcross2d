@@ -21,7 +21,8 @@ void Renderer::flip() {
     printf("Renderer(%p): flip\n", this);
 
     // call base class (draw childs)
-    Widget::draw(getTransform());
+    Transform trans = getTransform();
+    Widget::draw(trans);
 }
 
 void Renderer::setShader(int shader) {

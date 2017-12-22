@@ -29,7 +29,7 @@ void Widget::add(Widget *widget) {
     }
 }
 
-void Widget::draw(const Transform &transform) {
+void Widget::draw(Transform &transform) {
 
     printf("Widget(%p): draw\n", this);
 
@@ -37,7 +37,6 @@ void Widget::draw(const Transform &transform) {
 
     for (auto &child : childs) {
         if (child->visibility == C2D_VISIBILITY_VISIBLE) {
-            //Transform combinedTransform = transform * child->getTransform();
             child->draw(combinedTransform);
         }
     }

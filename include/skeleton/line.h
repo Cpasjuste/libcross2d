@@ -7,25 +7,23 @@
 
 #include "widget.h"
 
-namespace C2D {
+namespace c2d {
 
     class Line : public Widget {
 
     public:
 
-        Line(int x1 = 0, int y1 = 0, int x2 = 0, int y2 = 0,
-             const Color &color = C2D_COL_BLACK,
-             int center = C2D_ORIGIN_TOP_LEFT,
-             float rot = 0);
+        Line(const Vector2f &p1 = Vector2f(0, 0),
+             const Vector2f &p2 = Vector2f(0, 0),
+             float width = 1);
 
         virtual ~Line();
 
-        virtual void Draw();
+    private:
 
-    protected:
+        virtual void draw(Transform &transform);
 
-        virtual void Update();
-
+        std::size_t getPointCount() const;
     };
 }
 

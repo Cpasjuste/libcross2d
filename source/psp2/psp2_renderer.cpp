@@ -124,26 +124,27 @@ static void drawRectangleInternal(
     sceGxmDraw(_vita2d_context, SCE_GXM_PRIMITIVE_TRIANGLE_STRIP, SCE_GXM_INDEX_FORMAT_U16, indices, 4);
 }
 
-void PSP2Renderer::drawRectangle(const Rectangle &rectangle, const Transform &transform) {
+void PSP2Renderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
 
     if (rectangle.getOutlineThickness() > 0) {
         // TODO: too lazy, just draw two rect...
+        // draw outline rect
         Transform combined = transform * rectangle.getTransform();
         drawRectangleInternal(rectangle, combined, rectangle.getOutlineColor());
-
+        // draw fill rect
         float scale_x = rectangle.getOutlineThickness() / rectangle.getSize().x;
         float scale_y = rectangle.getOutlineThickness() / rectangle.getSize().y;
-        Rectangle r = rectangle;
-        r.setScale(rectangle.getScale().x - scale_x, rectangle.getScale().y - scale_y);
-        combined = transform * r.getTransform();
-        drawRectangleInternal(r, combined, rectangle.getFillColor());
+        rectangle.setScale(rectangle.getScale().x - scale_x, rectangle.getScale().y - scale_y);
+        combined = transform * rectangle.getTransform();
+        drawRectangleInternal(rectangle, combined, rectangle.getFillColor());
+        rectangle.setScale(rectangle.getScale().x + scale_x, rectangle.getScale().y + scale_y);
     } else {
         Transform combined = transform * rectangle.getTransform();
         drawRectangleInternal(rectangle, combined, rectangle.getFillColor());
     }
 }
 
-void PSP2Renderer::drawTexture(const Texture &texture, const Transform &transform) {
+void PSP2Renderer::drawTexture(Texture &texture, Transform &transform) {
 
     vita2d_set_texture_program();
     vita2d_set_texture_wvp_uniform(((PSP2Texture *) &texture)->tex);

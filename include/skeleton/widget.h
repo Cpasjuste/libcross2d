@@ -27,7 +27,7 @@ namespace c2d {
 
         virtual ~Widget();
 
-        virtual void draw(const Transform &transform);
+        virtual void draw(Transform &transform);
 
         // Childs
         void add(Widget *widget);

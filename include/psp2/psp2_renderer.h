@@ -9,6 +9,7 @@
 
 //#ifdef __PSP2_DEBUG__
 #include <psp2/kernel/clib.h>
+
 #define printf sceClibPrintf
 //#endif
 
@@ -22,12 +23,9 @@ namespace c2d {
 
         ~PSP2Renderer();
 
-        void drawRectangle(
-                const Rectangle &rectangle,
-                const Transform &transform);
+        void drawRectangle(Rectangle &rectangle, Transform &transform);
 
-        void drawTexture(const Texture &texture,
-                         const Transform &transform);
+        void drawTexture(Texture &texture, Transform &transform);
 
         void flip();
 
@@ -38,6 +36,7 @@ namespace c2d {
     private:
 
         void startDrawing();
+
         bool drawing_started = false;
     };
 }

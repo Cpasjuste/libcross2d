@@ -20,7 +20,7 @@ Texture::Texture(const Vector2f &size) : Widget(size) {
     this->setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
 }
 
-void Texture::draw(const Transform &transform) {
+void Texture::draw(Transform &transform) {
 
     // draw texture from renderer
     c2d_renderer->drawTexture(*this, transform);

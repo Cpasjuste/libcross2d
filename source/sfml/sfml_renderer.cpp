@@ -63,7 +63,7 @@ void SFMLRenderer::DrawLine(int x1, int y1, int x2, int y2, const Color &c) {
 }
 */
 
-void SFMLRenderer::drawRectangle(const Rectangle &rectangle, const Transform &transform) {
+void SFMLRenderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
 
     sf::RectangleShape rect((const sf::Vector2f &) rectangle.getSize());
     rect.setPosition((const sf::Vector2f &) rectangle.getPosition());
@@ -81,7 +81,7 @@ void SFMLRenderer::drawRectangle(const Rectangle &rectangle, const Transform &tr
     window.draw(rect, states);
 }
 
-void SFMLRenderer::drawTexture(const Texture &texture, const Transform &transform) {
+void SFMLRenderer::drawTexture(Texture &texture, Transform &transform) {
 
     sf::Sprite sprite = ((SFMLTexture *) &texture)->sprite;
     sprite.setPosition((const sf::Vector2f &) texture.getPosition());

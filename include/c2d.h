@@ -212,6 +212,8 @@ extern c2d::Renderer *c2d_renderer;
 
 #define C2DRenderer SFMLRenderer
 #define C2DTexture SFMLTexture
+#define C2DRectangle Rectangle
+#define C2DLine Line
 #define C2DFont SFMLFont
 #define C2DInput SFMLInput
 #define C2DAudio SDL2Audio

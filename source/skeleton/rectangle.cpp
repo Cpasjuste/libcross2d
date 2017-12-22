@@ -17,7 +17,7 @@ Rectangle::Rectangle(const Vector2f &size) : Widget(size) {
     printf("Rectangle(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }
 
-void Rectangle::draw(const Transform &transform) {
+void Rectangle::draw(Transform &transform) {
 
     // draw rect from renderer
     c2d_renderer->drawRectangle(*this, transform);

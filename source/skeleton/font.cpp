@@ -2,7 +2,7 @@
 // Created by cpasjuste on 29/11/17.
 //
 
-#include "../../include/skeleton/font.h"
+#include "skeleton/font.h"
 
 Font::Font(Renderer *r, const char *p, int s) {
 

@@ -11,16 +11,22 @@ int main() {
 
     Renderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
 
-    Rectangle *rect = new Rectangle(FloatRect(200, 200, 400, 400));
+    Rectangle *rect = new C2DRectangle(FloatRect(200, 200, 400, 400));
     rect->setOriginCenter();
     rect->setFillColor(Color::Red);
     rect->setOutlineColor(Color::Yellow);
-    rect->setOutlineThickness(4);
+    rect->setOutlineThickness(8);
 
     Texture *tex = new C2DTexture(TEX_PATH);
     tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
     tex->setOriginCenter();
     rect->add(tex);
+
+    Line *line = new C2DLine(rect->getPoint(0), rect->getPoint(2), 2);
+    line->setFillColor(Color::Blue);
+    line->setOutlineColor(Color::Green);
+    line->setOutlineThickness(1);
+    rect->add(line);
 
     renderer->add(rect);
 
