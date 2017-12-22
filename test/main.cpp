@@ -2,6 +2,8 @@
 // Created by cpasjuste on 08/12/16.
 //
 
+#include <skeleton/c2d_sfml/Font.hpp>
+#include <skeleton/c2d_sfml/Text.hpp>
 #include "c2d.h"
 #include "main.h"
 
@@ -11,6 +13,7 @@ int main() {
 
     Renderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
 
+    /*
     Rectangle *rect = new C2DRectangle(FloatRect(200, 200, 400, 400));
     rect->setOriginCenter();
     rect->setFillColor(Color::Red);
@@ -29,17 +32,43 @@ int main() {
     rect->add(line);
 
     renderer->add(rect);
+    */
+
+    Font font;
+    if (!font.loadFromFile(FONT_PATH)) {
+        printf("Can't load font\n");
+    }
+
+    Text text;
+    text.setPosition(100, 100);
+    text.setFont(font);
+    text.setString("Hello world");
+    text.setCharacterSize(24);
+    text.setFillColor(Color::Red);
 
     for (int i = 0; i < 5; i++) {
 
+        vita2d_start_drawing();
+        vita2d_set_clear_color(0xff000000);
+        vita2d_clear_screen();
+
+        text.draw(renderer);
+
+        vita2d_end_drawing();
+        vita2d_wait_rendering_done();
+        vita2d_swap_buffers();
+
+        /*
         if (i > 0) {
 
             rect->move(32, 0);
             rect->setScale(rect->getScale().x - 0.1f, rect->getScale().y - 0.1f);
             rect->rotate(5);
+
         }
 
         renderer->flip();
+         */
         renderer->delay(500);
     }
 

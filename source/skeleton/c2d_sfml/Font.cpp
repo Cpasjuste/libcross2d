@@ -609,7 +609,7 @@ namespace c2d {
             int pitch;
             FloatRect rect = {(float) x, (float) y, (float) w, (float) h};
             page.texture->lock(rect, &buffer, &pitch);
-            std::memcpy(buffer, &m_pixelBuffer, (size_t) (width * height * 4));
+            std::memcpy(buffer, &m_pixelBuffer[0], (size_t) (width * height * 4));
             page.texture->unlock();
         }
 

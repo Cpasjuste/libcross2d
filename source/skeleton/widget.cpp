@@ -12,12 +12,12 @@ Widget::Widget(const FloatRect &rect) : RectangleShape() {
     setPosition(rect.left, rect.top);
     setSize(Vector2f(rect.width, rect.height));
 
-    printf("Widget(%p):\n", this);
+    printf("Widget(%p)\n", this);
 }
 
 Widget::Widget(const Vector2f &size) : RectangleShape(size) {
 
-    printf("Widget(%p):\n", this);
+    printf("Widget(%p)\n", this);
 }
 
 void Widget::add(Widget *widget) {

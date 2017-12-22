@@ -46,6 +46,7 @@ set(CROSS2D_SRC
         source/skeleton/c2d_sfml/FileInputStream.cpp
         source/skeleton/c2d_sfml/Font.cpp
         source/skeleton/c2d_sfml/Text.cpp
+        source/skeleton/c2d_sfml/String.cpp
         )
 #file(GLOB CROSS2D_SRC src/skeleton/*.c*)
 
@@ -259,7 +260,7 @@ if (BUILD_PSP2)
     add_executable(${PROJECT_NAME}.psp2 test/main.cpp)
     target_compile_options(${PROJECT_NAME}.psp2 PRIVATE ${FLAGS})
     target_link_libraries(${PROJECT_NAME}.psp2
-            cross2d SDL2 cross2d
+            cross2d SDL2 cross2d freetype
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceCtrl_stub ScePgf_stub SceNetCtl_stub
             SceNet_stub ScePower_stub SceCommonDialog_stub

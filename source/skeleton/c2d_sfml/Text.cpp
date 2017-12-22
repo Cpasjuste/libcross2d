@@ -301,6 +301,25 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
+    void Text::draw(Renderer *render) {
+        if (m_font) {
+            ensureGeometryUpdate();
+
+            // Only draw the outline if there is something to draw
+
+            render->draw(m_vertices, getTransform(), (Texture &) m_font->getTexture(m_characterSize));
+            /*
+            if (m_outlineThickness != 0)
+                render->drawTexture(
+                        (Texture &) m_font->getTexture(m_characterSize),
+                        (Transform &) getTransform());
+            //target.draw(m_outlineVertices, states);
+
+            //target.draw(m_vertices, states);
+            */
+        }
+    }
+
     /*
     void Text::draw(RenderTarget &target, RenderStates states) const {
         if (m_font) {

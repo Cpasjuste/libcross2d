@@ -59,18 +59,22 @@ void PSP2Renderer::setShader(int index) {
     }
 }
 
-static void drawRectangleInternal(const VertexArray &vertices,
-                                  const Transform &transform) {
+void PSP2Renderer::draw(const VertexArray &vertices,
+                        const Transform &transform) {
 
     unsigned int count = vertices.getVertexCount();
+    //printf("draw: %i\n", count);
 
     vita2d_color_vertex *v2d_vertices =
             (vita2d_color_vertex *)
-                    vita2d_pool_memalign(count * sizeof(vita2d_color_vertex), sizeof(vita2d_color_vertex));
+                    vita2d_pool_memalign(
+                            count * sizeof(vita2d_color_vertex),
+                            sizeof(vita2d_color_vertex));
 
     uint16_t *v2d_indices =
             (uint16_t *)
-                    vita2d_pool_memalign(count * sizeof(uint16_t), sizeof(uint16_t));
+                    vita2d_pool_memalign(count * sizeof(uint16_t),
+                                         sizeof(uint16_t));
 
     for (unsigned int i = 0; i < count; i++) {
         Vector2f v = transform.transformPoint(vertices[i].position);
@@ -119,17 +123,12 @@ static void drawRectangleInternal(const VertexArray &vertices,
     sceGxmDraw(_vita2d_context, type, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, count);
 }
 
+void PSP2Renderer::draw(const VertexArray &vertices,
+                        const Transform &transform,
+                        const Texture &texture) {
 
-void PSP2Renderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
-
-    Transform combined = transform * rectangle.getTransform();
-    drawRectangleInternal(rectangle.getVertices(), combined);
-    if (rectangle.getOutlineThickness() > 0) {
-        drawRectangleInternal(rectangle.getOutlineVertices(), combined);
-    }
-}
-
-void PSP2Renderer::drawTexture(Texture &texture, Transform &transform) {
+    unsigned int count = vertices.getVertexCount();
+    //printf("draw: %i\n", count);
 
     if (texture.getFillColor() == Color::White) {
         vita2d_set_texture_program();
@@ -144,58 +143,72 @@ void PSP2Renderer::drawTexture(Texture &texture, Transform &transform) {
                       (unsigned int) texture.getFillColor().a));
     }
 
-    // draw
-    vita2d_texture_vertex *vertices = (vita2d_texture_vertex *) vita2d_pool_memalign(
-            4 * sizeof(vita2d_texture_vertex), // 4 vertices
-            sizeof(vita2d_texture_vertex));
+    vita2d_texture_vertex *v2d_vertices =
+            (vita2d_texture_vertex *) vita2d_pool_memalign(
+                    count * sizeof(vita2d_texture_vertex),
+                    sizeof(vita2d_texture_vertex));
 
-    uint16_t *indices = (uint16_t *) vita2d_pool_memalign(
-            4 * sizeof(uint16_t), // 4 indices
-            sizeof(uint16_t));
+    uint16_t *v2d_indices =
+            (uint16_t *)
+                    vita2d_pool_memalign(count * sizeof(uint16_t), sizeof(uint16_t));
 
-    Transform combined = transform * texture.getTransform();
+    for (unsigned int i = 0; i < count; i++) {
+        Vector2f v = transform.transformPoint(vertices[i].position);
 
-    Vector2f v0 = combined.transformPoint(texture.getPoint(0));
-    vertices[0].x = v0.x;
-    vertices[0].y = v0.y;
-    vertices[0].z = +0.5f;
-    vertices[0].w = 1.0f;
-    vertices[0].u = 0.0f;
-    vertices[0].v = 0.0f;
+        //printf("%f x %f\n", vertices[i].texCoords.x, vertices[i].texCoords.y);
+        v2d_vertices[i].x = v.x;
+        v2d_vertices[i].y = v.y;
+        v2d_vertices[i].z = +0.5f;
+        v2d_vertices[i].w = 1.0f;
+        v2d_vertices[i].u = vertices[i].texCoords.x / texture.getSize().x;
+        v2d_vertices[i].v = vertices[i].texCoords.y / texture.getSize().y;
 
-    Vector2f v1 = combined.transformPoint(texture.getPoint(1));
-    vertices[1].x = v1.x;
-    vertices[1].y = v1.y;
-    vertices[1].z = +0.5f;
-    vertices[1].w = 1.0f;
-    vertices[1].u = 1.0f;
-    vertices[1].v = 0.0f;
+        v2d_indices[i] = (uint16_t) i;
+    }
 
-    Vector2f v2 = combined.transformPoint(texture.getPoint(3));
-    vertices[2].x = v2.x;
-    vertices[2].y = v2.y;
-    vertices[2].z = +0.5f;
-    vertices[2].w = 1.0f;
-    vertices[2].u = 0.0f;
-    vertices[2].v = 1.0f;
+    SceGxmPrimitiveType type = SCE_GXM_PRIMITIVE_TRIANGLE_STRIP;
 
-    Vector2f v3 = combined.transformPoint(texture.getPoint(2));
-    vertices[3].x = v3.x;
-    vertices[3].y = v3.y;
-    vertices[3].z = +0.5f;
-    vertices[3].w = 1.0f;
-    vertices[3].u = 1.0f;
-    vertices[3].v = 1.0f;
+    switch (vertices.getPrimitiveType()) {
 
-    indices[0] = 0;
-    indices[1] = 1;
-    indices[2] = 2;
-    indices[3] = 3;
+        case PrimitiveType::Triangles:
+            type = SCE_GXM_PRIMITIVE_TRIANGLES;
+            break;
+
+        case PrimitiveType::Lines:
+            type = SCE_GXM_PRIMITIVE_LINES;
+            break;
+
+        case PrimitiveType::TriangleStrip:
+            type = SCE_GXM_PRIMITIVE_TRIANGLE_STRIP;
+            break;
+
+        case PrimitiveType::TriangleFan:
+            type = SCE_GXM_PRIMITIVE_TRIANGLE_FAN;
+            break;
+
+        default:
+            printf("PSP2Render::draw: unsupported primitive type\n");
+            break;
+    }
 
     sceGxmSetFragmentTexture(_vita2d_context, 0, &((PSP2Texture *) &texture)->tex->gxm_tex);
+    sceGxmSetVertexStream(_vita2d_context, 0, v2d_vertices);
+    sceGxmDraw(_vita2d_context, type, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, count);
+}
 
-    sceGxmSetVertexStream(_vita2d_context, 0, vertices);
-    sceGxmDraw(_vita2d_context, SCE_GXM_PRIMITIVE_TRIANGLE_STRIP, SCE_GXM_INDEX_FORMAT_U16, indices, 4);
+void PSP2Renderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
+
+    Transform combined = transform * rectangle.getTransform();
+    draw(rectangle.getVertices(), combined);
+    if (rectangle.getOutlineThickness() > 0) {
+        draw(rectangle.getOutlineVertices(), combined);
+    }
+}
+
+void PSP2Renderer::drawTexture(Texture &texture, Transform &transform) {
+
+    Transform combined = transform * texture.getTransform();
+    draw(texture.getVertices(), combined, texture);
 }
 
 void PSP2Renderer::flip() {

@@ -337,7 +337,7 @@ namespace c2d {
         ///
         ////////////////////////////////////////////////////////////
         FloatRect getGlobalBounds() const;
-
+        virtual void draw(Renderer *render);
     private:
 
         ////////////////////////////////////////////////////////////
@@ -349,6 +349,7 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         // TODO:
         //virtual void draw(RenderTarget& target, RenderStates states) const;
+        //virtual void draw(Renderer *render);
 
         ////////////////////////////////////////////////////////////
         /// \brief Make sure the text's geometry is updated
