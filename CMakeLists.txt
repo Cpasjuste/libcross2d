@@ -43,6 +43,9 @@ set(CROSS2D_SRC
         source/skeleton/c2d_sfml/Vertex.cpp
         source/skeleton/c2d_sfml/VertexArray.cpp
         source/skeleton/c2d_sfml/RectangleShape.cpp
+        source/skeleton/c2d_sfml/FileInputStream.cpp
+        source/skeleton/c2d_sfml/Font.cpp
+        source/skeleton/c2d_sfml/Text.cpp
         )
 #file(GLOB CROSS2D_SRC src/skeleton/*.c*)
 

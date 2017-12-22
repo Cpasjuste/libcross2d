@@ -31,6 +31,7 @@ namespace c2d {
         // END - to implement, device specific code
 
         char path[512];
+        int bpp = 4;
 
     private:
 

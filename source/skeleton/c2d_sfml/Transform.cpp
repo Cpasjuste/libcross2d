@@ -28,11 +28,9 @@
 #include "skeleton/c2d_sfml/Transform.hpp"
 #include <cmath>
 
-
 namespace c2d {
 ////////////////////////////////////////////////////////////
     const Transform Transform::Identity;
-
 
 ////////////////////////////////////////////////////////////
     Transform::Transform() {

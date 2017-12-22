@@ -28,7 +28,6 @@
 #include "skeleton/c2d_sfml/Shape.hpp"
 #include <cmath>
 
-
 namespace {
     // Compute the normal of a segment
     c2d::Vector2f computeNormal(const c2d::Vector2f &p1, const c2d::Vector2f &p2) {

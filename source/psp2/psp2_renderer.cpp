@@ -18,6 +18,8 @@ using namespace c2d;
 
 extern "C" {
 void vita2d_set_texture_program();
+void vita2d_set_texture_tint_program();
+void vita2_set_texture_tint_color_uniform(unsigned int color);
 void vita2d_set_texture_wvp_uniform(const vita2d_texture *texture);
 }
 
@@ -129,8 +131,18 @@ void PSP2Renderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
 
 void PSP2Renderer::drawTexture(Texture &texture, Transform &transform) {
 
-    vita2d_set_texture_program();
-    vita2d_set_texture_wvp_uniform(((PSP2Texture *) &texture)->tex);
+    if (texture.getFillColor() == Color::White) {
+        vita2d_set_texture_program();
+        vita2d_set_texture_wvp_uniform(((PSP2Texture *) &texture)->tex);
+    } else {
+        vita2d_set_texture_tint_program();
+        vita2d_set_texture_wvp_uniform(((PSP2Texture *) &texture)->tex);
+        vita2_set_texture_tint_color_uniform(
+                RGBA8((unsigned int) texture.getFillColor().r,
+                      (unsigned int) texture.getFillColor().g,
+                      (unsigned int) texture.getFillColor().b,
+                      (unsigned int) texture.getFillColor().a));
+    }
 
     // draw
     vita2d_texture_vertex *vertices = (vita2d_texture_vertex *) vita2d_pool_memalign(

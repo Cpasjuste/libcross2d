@@ -56,30 +56,17 @@ PSP2Texture::PSP2Texture(const Vector2f &size) : Texture(size) {
     setSize(Vector2f(size.x, size.y));
     setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
 
+    bpp = 2;
     available = true;
 }
 
-/*
-void PSP2Texture::Draw(int x, int y, int w, int h, float rotation) {
-
-    if (tex) {
-
-        float sx = (float) w / (float) width;
-        float sy = (float) h / (float) height;
-        ((PSP2Renderer *) renderer)->StartDrawing();
-
-        const float rad = rotation * 0.0174532925f;
-        vita2d_draw_texture_scale_rotate(tex,
-                                         x + w / 2, y + h / 2,
-                                         sx, sy, rad);
-    }
-}
-*/
-
 int PSP2Texture::lock(const FloatRect &rect, void **pixels, int *pitch) {
 
-    *pixels = vita2d_texture_get_datap(tex);
     *pitch = vita2d_texture_get_stride(tex);
+
+    *pixels = (void *) ((uint8_t *) vita2d_texture_get_datap(tex) +
+                        (int) rect.top * (*pitch) +
+                        (int) rect.left * bpp);
 
     return 0;
 }

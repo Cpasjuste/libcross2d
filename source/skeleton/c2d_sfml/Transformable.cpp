@@ -28,7 +28,6 @@
 #include "skeleton/c2d_sfml/Transformable.hpp"
 #include <cmath>
 
-
 namespace c2d {
 ////////////////////////////////////////////////////////////
     Transformable::Transformable() :
