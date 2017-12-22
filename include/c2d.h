@@ -28,6 +28,8 @@ extern c2d::Renderer *c2d_renderer;
 
 #define C2DRenderer PSP2Renderer
 #define C2DTexture PSP2Texture
+#define C2DRectangle Rectangle
+#define C2DLine Line
 //#define C2DFont PSP2Font
 //#define C2DInput SDL2Input
 //#define C2DAudio SDL2Audio

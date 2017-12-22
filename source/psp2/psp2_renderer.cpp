@@ -57,61 +57,31 @@ void PSP2Renderer::setShader(int index) {
     }
 }
 
-/*
-void PSP2Renderer::DrawLine(int x1, int y1, int x2, int y2, const Color &c) {
-    StartDrawing();
-    vita2d_draw_line(x1, y1, x2, y2,
-                     RGBA8(c.r, c.g, c.b, c.a));
-}
-*/
+static void drawRectangleInternal(const VertexArray &vertices,
+                                  const Transform &transform) {
 
-static void drawRectangleInternal(
-        const Rectangle &rectangle,
-        const Transform &transform,
-        const Color &color) {
+    unsigned int count = vertices.getVertexCount();
 
-    unsigned int color_rgba =
-            RGBA8((unsigned int) color.r,
-                  (unsigned int) color.g,
-                  (unsigned int) color.b,
-                  (unsigned int) color.a);
+    vita2d_color_vertex *v2d_vertices =
+            (vita2d_color_vertex *)
+                    vita2d_pool_memalign(count * sizeof(vita2d_color_vertex), sizeof(vita2d_color_vertex));
 
-    vita2d_color_vertex *vertices = (vita2d_color_vertex *) vita2d_pool_memalign(
-            4 * sizeof(vita2d_color_vertex), // 4 vertices
-            sizeof(vita2d_color_vertex));
+    uint16_t *v2d_indices =
+            (uint16_t *)
+                    vita2d_pool_memalign(count * sizeof(uint16_t), sizeof(uint16_t));
 
-    uint16_t *indices = (uint16_t *) vita2d_pool_memalign(
-            4 * sizeof(uint16_t), // 4 indices
-            sizeof(uint16_t));
-
-    Vector2f v0 = transform.transformPoint(rectangle.getPoint(0));
-    vertices[0].x = v0.x;
-    vertices[0].y = v0.y;
-    vertices[0].z = +0.5f;
-    vertices[0].color = color_rgba;
-
-    Vector2f v1 = transform.transformPoint(rectangle.getPoint(1));
-    vertices[1].x = v1.x;
-    vertices[1].y = v1.y;
-    vertices[1].z = +0.5f;
-    vertices[1].color = color_rgba;
-
-    Vector2f v2 = transform.transformPoint(rectangle.getPoint(3));
-    vertices[2].x = v2.x;
-    vertices[2].y = v2.y;
-    vertices[2].z = +0.5f;
-    vertices[2].color = color_rgba;
-
-    Vector2f v3 = transform.transformPoint(rectangle.getPoint(2));
-    vertices[3].x = v3.x;
-    vertices[3].y = v3.y;
-    vertices[3].z = +0.5f;
-    vertices[3].color = color_rgba;
-
-    indices[0] = 0;
-    indices[1] = 1;
-    indices[2] = 2;
-    indices[3] = 3;
+    for (unsigned int i = 0; i < count; i++) {
+        Vector2f v = transform.transformPoint(vertices[i].position);
+        v2d_vertices[i].x = v.x;
+        v2d_vertices[i].y = v.y;
+        v2d_vertices[i].z = +0.5f;
+        v2d_vertices[i].color =
+                RGBA8((unsigned int) vertices[i].color.r,
+                      (unsigned int) vertices[i].color.g,
+                      (unsigned int) vertices[i].color.b,
+                      (unsigned int) vertices[i].color.a);
+        v2d_indices[i] = (uint16_t) i;
+    }
 
     sceGxmSetVertexProgram(_vita2d_context, _vita2d_colorVertexProgram);
     sceGxmSetFragmentProgram(_vita2d_context, _vita2d_colorFragmentProgram);
@@ -120,27 +90,40 @@ static void drawRectangleInternal(
     sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertexDefaultBuffer);
     sceGxmSetUniformDataF(vertexDefaultBuffer, _vita2d_colorWvpParam, 0, 16, _vita2d_ortho_matrix);
 
-    sceGxmSetVertexStream(_vita2d_context, 0, vertices);
-    sceGxmDraw(_vita2d_context, SCE_GXM_PRIMITIVE_TRIANGLE_STRIP, SCE_GXM_INDEX_FORMAT_U16, indices, 4);
+    sceGxmSetVertexStream(_vita2d_context, 0, v2d_vertices);
+
+    SceGxmPrimitiveType type;
+
+    switch (vertices.getPrimitiveType()) {
+
+        case PrimitiveType::Triangles:
+            type = SCE_GXM_PRIMITIVE_TRIANGLES;
+            break;
+
+        case PrimitiveType::Lines:
+            type = SCE_GXM_PRIMITIVE_LINES;
+            break;
+
+        case PrimitiveType::TriangleStrip:
+            type = SCE_GXM_PRIMITIVE_TRIANGLE_STRIP;
+            break;
+
+        case PrimitiveType::TriangleFan:
+        default:
+            type = SCE_GXM_PRIMITIVE_TRIANGLE_FAN;
+            break;
+    }
+
+    sceGxmDraw(_vita2d_context, type, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, count);
 }
+
 
 void PSP2Renderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
 
+    Transform combined = transform * rectangle.getTransform();
+    drawRectangleInternal(rectangle.getVertices(), combined);
     if (rectangle.getOutlineThickness() > 0) {
-        // TODO: too lazy, just draw two rect...
-        // draw outline rect
-        Transform combined = transform * rectangle.getTransform();
-        drawRectangleInternal(rectangle, combined, rectangle.getOutlineColor());
-        // draw fill rect
-        float scale_x = rectangle.getOutlineThickness() / rectangle.getSize().x;
-        float scale_y = rectangle.getOutlineThickness() / rectangle.getSize().y;
-        rectangle.setScale(rectangle.getScale().x - scale_x, rectangle.getScale().y - scale_y);
-        combined = transform * rectangle.getTransform();
-        drawRectangleInternal(rectangle, combined, rectangle.getFillColor());
-        rectangle.setScale(rectangle.getScale().x + scale_x, rectangle.getScale().y + scale_y);
-    } else {
-        Transform combined = transform * rectangle.getTransform();
-        drawRectangleInternal(rectangle, combined, rectangle.getFillColor());
+        drawRectangleInternal(rectangle.getOutlineVertices(), combined);
     }
 }
 
@@ -197,7 +180,6 @@ void PSP2Renderer::drawTexture(Texture &texture, Transform &transform) {
     indices[2] = 2;
     indices[3] = 3;
 
-    // Set the texture to the TEXUNIT0
     sceGxmSetFragmentTexture(_vita2d_context, 0, &((PSP2Texture *) &texture)->tex->gxm_tex);
 
     sceGxmSetVertexStream(_vita2d_context, 0, vertices);

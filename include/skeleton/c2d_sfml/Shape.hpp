@@ -245,6 +245,10 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         FloatRect getGlobalBounds() const;
 
+        VertexArray getVertices() const;
+
+        VertexArray getOutlineVertices() const;
+
     protected:
 
         ////////////////////////////////////////////////////////////

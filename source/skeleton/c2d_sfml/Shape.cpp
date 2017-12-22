@@ -141,11 +141,18 @@ namespace c2d {
         return getTransform().transformRect(getLocalBounds());
     }
 
+    VertexArray Shape::getVertices() const {
+        return m_vertices;
+    }
+
+    VertexArray Shape::getOutlineVertices() const {
+        return m_outlineVertices;
+    }
 
 ////////////////////////////////////////////////////////////
     Shape::Shape() :
-            // TODO:
-            //m_texture(NULL),
+    // TODO:
+    //m_texture(NULL),
             m_textureRect(),
             m_fillColor(255, 255, 255),
             m_outlineColor(255, 255, 255),
