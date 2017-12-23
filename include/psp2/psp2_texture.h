@@ -16,7 +16,7 @@ namespace c2d {
 
         PSP2Texture(const char *path);
 
-        PSP2Texture(const Vector2f &size = Vector2f(0, 0));
+        PSP2Texture(const Vector2f &size = Vector2f(0, 0), int format = C2D_TEXTURE_FMT_RGBA8);
 
         ~PSP2Texture();
 

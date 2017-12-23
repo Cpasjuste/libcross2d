@@ -6,9 +6,10 @@
 #define _C2D_H_
 
 #include "skeleton/renderer.h"
-//#include "skeleton/rectangle.h"
-//#include "skeleton/line.h"
+#include "skeleton/rectangle.h"
+#include "skeleton/line.h"
 #include "skeleton/texture.h"
+#include "skeleton/text.h"
 //#include "skeleton/font.h"
 //#include "skeleton/input.h"
 //#include "skeleton/audio.h"

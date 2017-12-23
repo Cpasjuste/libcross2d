@@ -9,7 +9,7 @@
 
 namespace c2d {
 
-    class Line : public Widget {
+    class Line : public Widget, public RectangleShape {
 
     public:
 

@@ -24,7 +24,7 @@ include(Toolchain.cmake)
 project(cross2d)
 
 # flags
-set(FLAGS -Wall)
+set(FLAGS -Wall -Wno-strict-aliasing)
 
 ##############
 # CROSS2D
@@ -36,6 +36,7 @@ set(CROSS2D_SRC
         source/skeleton/rectangle.cpp
         source/skeleton/texture.cpp
         source/skeleton/line.cpp
+        source/skeleton/text.cpp
         source/skeleton/c2d_sfml/Shape.cpp
         source/skeleton/c2d_sfml/Color.cpp
         source/skeleton/c2d_sfml/Transform.cpp
@@ -45,7 +46,7 @@ set(CROSS2D_SRC
         source/skeleton/c2d_sfml/RectangleShape.cpp
         source/skeleton/c2d_sfml/FileInputStream.cpp
         source/skeleton/c2d_sfml/Font.cpp
-        source/skeleton/c2d_sfml/Text.cpp
+        source/skeleton/c2d_sfml/SFMLText.cpp
         source/skeleton/c2d_sfml/String.cpp
         )
 #file(GLOB CROSS2D_SRC src/skeleton/*.c*)

@@ -17,13 +17,11 @@ namespace c2d {
 
     class Renderer;
 
-    class Widget : public RectangleShape {
+    class Widget /*: public Transformable*/ {
 
     public:
 
-        Widget(const FloatRect &rect);
-
-        Widget(const Vector2f &size = Vector2f(0, 0));
+        Widget();
 
         virtual ~Widget();
 
@@ -44,6 +42,7 @@ namespace c2d {
         int visibility = C2D_VISIBILITY_VISIBLE;
 
         Widget *parent = NULL;
+        Transformable *thisTransform = NULL;
         std::vector<Widget *> childs;
     };
 }

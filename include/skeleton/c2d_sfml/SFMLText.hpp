@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef C2D_TEXT_HPP
-#define C2D_TEXT_HPP
+#ifndef C2D_SFMLTEXT_HPP
+#define C2D_SFMLTEXT_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -44,7 +44,7 @@ namespace c2d {
 /// \brief Graphical text that can be drawn to a render target
 ///
 ////////////////////////////////////////////////////////////
-    class Text : /*public Drawable,*/ public Transformable {
+    class SFMLText : /*public Drawable,*/ public Transformable {
     public:
 
         ////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ namespace c2d {
         /// Creates an empty text.
         ///
         ////////////////////////////////////////////////////////////
-        Text();
+        SFMLText();
 
         ////////////////////////////////////////////////////////////
         /// \brief Construct the text from a string, font and size
@@ -82,7 +82,7 @@ namespace c2d {
         /// \param characterSize  Base size of characters, in pixels
         ///
         ////////////////////////////////////////////////////////////
-        Text(const String &string, const Font &font, unsigned int characterSize = 30);
+        SFMLText(const String &string, const Font &font, unsigned int characterSize = 30);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the text's string
@@ -337,7 +337,19 @@ namespace c2d {
         ///
         ////////////////////////////////////////////////////////////
         FloatRect getGlobalBounds() const;
-        virtual void draw(Renderer *render);
+
+        virtual void draw(Renderer *render, const Transform &transform);
+
+        void setOriginTopLeft();
+
+        void setOriginTopRight();
+
+        void setOriginCenter();
+
+        void setOriginBottomLeft();
+
+        void setOriginBottomRight();
+
     private:
 
         ////////////////////////////////////////////////////////////

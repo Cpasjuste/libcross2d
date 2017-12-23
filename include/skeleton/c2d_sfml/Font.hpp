@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "c2d.h"
+//#include "c2d.h"
 //#include <SFML/Graphics/Export.hpp>
 #include "Glyph.hpp"
 //#include <SFML/Graphics/Texture.hpp>
@@ -41,6 +41,10 @@
 
 
 namespace c2d {
+
+    class Texture;
+    //class C2DTexture;
+    class Renderer;
     class InputStream;
 
 ////////////////////////////////////////////////////////////
@@ -289,7 +293,7 @@ namespace c2d {
             Page();
 
             GlyphTable glyphs;  ///< Table mapping code points to their corresponding glyph
-            C2DTexture *texture = NULL; ///< Texture containing the pixels of the glyphs
+            Texture *texture = NULL; ///< Texture containing the pixels of the glyphs
             unsigned int nextRow; ///< Y position of the next new row in the texture
             std::vector <Row> rows;    ///< List containing the position of all the existing rows
         };

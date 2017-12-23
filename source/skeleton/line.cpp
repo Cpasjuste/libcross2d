@@ -8,7 +8,7 @@
 
 using namespace c2d;
 
-Line::Line(const Vector2f &p1, const Vector2f &p2, float width) : Widget() {
+Line::Line(const Vector2f &p1, const Vector2f &p2, float width) : RectangleShape() {
 
     setPosition(p1);
 
@@ -20,6 +20,8 @@ Line::Line(const Vector2f &p1, const Vector2f &p2, float width) : Widget() {
 
     printf("Line(%p): %ix%i (r=%f)\n",
            this, (int) getSize().x, (int) getSize().y, rotation);
+
+    thisTransform = this;
 }
 
 std::size_t Line::getPointCount() const {

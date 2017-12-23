@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "c2d.h"
 #include "skeleton/c2d_sfml/Font.hpp"
 //#include <SFML/Graphics/GLCheck.hpp>
 #include "skeleton/c2d_sfml/InputStream.hpp"
@@ -576,19 +577,20 @@ namespace c2d {
             const Uint8 *pixels = bitmap.buffer;
             if (bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
                 // Pixels are 1 bit monochrome values
-                for (int y = padding; y < height - padding; ++y) {
-                    for (int x = padding; x < width - padding; ++x) {
+                for (unsigned int y = padding; y < height - padding; ++y) {
+                    for (unsigned int x = padding; x < width - padding; ++x) {
                         // The color channels remain white, just fill the alpha channel
-                        std::size_t index = x + y * width;
-                        m_pixelBuffer[index * 4 + 3] = ((pixels[(x - padding) / 8]) & (1 << (7 - ((x - padding) % 8))))
-                                                       ? 255 : 0;
+                        std::size_t index = static_cast<size_t>(x + y * width);
+                        m_pixelBuffer[index * 4 + 3] = static_cast<unsigned char>(((pixels[(x - padding) / 8]) &
+                                                                                   (1 << (7 - ((x - padding) % 8))))
+                                                                                  ? 255 : 0);
                     }
                     pixels += bitmap.pitch;
                 }
             } else {
                 // Pixels are 8 bits gray levels
-                for (int y = padding; y < height - padding; ++y) {
-                    for (int x = padding; x < width - padding; ++x) {
+                for (unsigned int y = padding; y < height - padding; ++y) {
+                    for (unsigned int x = padding; x < width - padding; ++x) {
                         // The color channels remain white, just fill the alpha channel
                         std::size_t index = x + y * width;
                         m_pixelBuffer[index * 4 + 3] = pixels[x - padding];
@@ -609,7 +611,19 @@ namespace c2d {
             int pitch;
             FloatRect rect = {(float) x, (float) y, (float) w, (float) h};
             page.texture->lock(rect, &buffer, &pitch);
-            std::memcpy(buffer, &m_pixelBuffer[0], (size_t) (width * height * 4));
+
+            int rows = height;
+            int srcStride = width * 4;
+            int dstStride = pitch;
+            const Uint8 *srcPixels = &m_pixelBuffer[0];
+            Uint8 *dstPixels = (Uint8 *) buffer;
+
+            for (int i = 0; i < rows; ++i) {
+                std::memcpy(dstPixels, srcPixels, srcStride);
+                srcPixels += srcStride;
+                dstPixels += dstStride;
+            }
+
             page.texture->unlock();
         }
 
@@ -667,8 +681,8 @@ namespace c2d {
                     if (page.texture != NULL) {
                         delete (page.texture);
                     }
-                    page.texture = new C2DTexture(Vector2f(textureWidth * 2, textureHeight * 2));
-
+                    page.texture = new C2DTexture(Vector2f(textureWidth * 2, textureHeight * 2), C2D_TEXTURE_FMT_RGBA8);
+                    page.texture->setFiltering(C2D_TEXTURE_FILTER_LINEAR);
                 } else {
                     // Oops, we've reached the maximum texture size...
                     printf("Failed to add a new character to the font: the maximum texture size has been reached\n");
@@ -740,8 +754,30 @@ namespace c2d {
         texture.loadFromImage(image);
         texture.setSmooth(true);
         */
-        texture = new C2DTexture(Vector2f(128, 128));
-        texture->setFillColor(Color(255, 255, 255, 0));
+
+        if (texture) {
+            delete (texture);
+        }
+
+        texture = new C2DTexture(Vector2f(128, 128), C2D_TEXTURE_FMT_RGBA8);
+        texture->setFiltering(C2D_TEXTURE_FILTER_LINEAR);
+
+        // init pixels
+        void *buffer;
+        int pitch;
+        FloatRect rect = {0, 0, texture->getSize().x, texture->getSize().y};
+        texture->lock(rect, &buffer, &pitch);
+        Uint8 *current = (Uint8 *) buffer;
+        Uint8 *end = current + (int) (texture->getSize().x * texture->getSize().y * 4);
+        while (current != end) {
+            (*current++) = 255;
+            (*current++) = 255;
+            (*current++) = 255;
+            (*current++) = 0;
+        }
+        texture->unlock();
+
+        texture->setFillColor(Color::White);
     }
 
 } // namespace sf

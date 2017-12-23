@@ -7,12 +7,17 @@
 
 using namespace c2d;
 
-Rectangle::Rectangle(const FloatRect &rect) : Widget(rect) {
+Rectangle::Rectangle(const FloatRect &rect) : RectangleShape() {
+
+    thisTransform = this;
+
+    setPosition(rect.left, rect.top);
+    setSize(Vector2f(rect.width, rect.height));
 
     printf("Rectangle(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }
 
-Rectangle::Rectangle(const Vector2f &size) : Widget(size) {
+Rectangle::Rectangle(const Vector2f &size) : RectangleShape(size) {
 
     printf("Rectangle(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }

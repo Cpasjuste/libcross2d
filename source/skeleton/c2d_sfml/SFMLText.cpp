@@ -25,7 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "skeleton/c2d_sfml/Text.hpp"
+#include "skeleton/c2d_sfml/SFMLText.hpp"
+#include "skeleton/renderer.h"
 //#include "skeleton/c2d_sfml/Texture.hpp"
 //#include <SFML/Graphics/RenderTarget.hpp>
 #include <cmath>
@@ -88,7 +89,7 @@ namespace {
 
 namespace c2d {
 ////////////////////////////////////////////////////////////
-    Text::Text() :
+    SFMLText::SFMLText() :
             m_string(),
             m_font(NULL),
             m_characterSize(30),
@@ -105,7 +106,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    Text::Text(const String &string, const Font &font, unsigned int characterSize) :
+    SFMLText::SFMLText(const String &string, const Font &font, unsigned int characterSize) :
             m_string(string),
             m_font(&font),
             m_characterSize(characterSize),
@@ -122,7 +123,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void Text::setString(const String &string) {
+    void SFMLText::setString(const String &string) {
         if (m_string != string) {
             m_string = string;
             m_geometryNeedUpdate = true;
@@ -131,7 +132,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void Text::setFont(const Font &font) {
+    void SFMLText::setFont(const Font &font) {
         if (m_font != &font) {
             m_font = &font;
             m_geometryNeedUpdate = true;
@@ -140,7 +141,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void Text::setCharacterSize(unsigned int size) {
+    void SFMLText::setCharacterSize(unsigned int size) {
         if (m_characterSize != size) {
             m_characterSize = size;
             m_geometryNeedUpdate = true;
@@ -149,7 +150,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void Text::setStyle(Uint32 style) {
+    void SFMLText::setStyle(Uint32 style) {
         if (m_style != style) {
             m_style = style;
             m_geometryNeedUpdate = true;
@@ -157,7 +158,7 @@ namespace c2d {
     }
 
 ////////////////////////////////////////////////////////////
-    void Text::setFillColor(const Color &color) {
+    void SFMLText::setFillColor(const Color &color) {
         if (color != m_fillColor) {
             m_fillColor = color;
 
@@ -172,7 +173,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void Text::setOutlineColor(const Color &color) {
+    void SFMLText::setOutlineColor(const Color &color) {
         if (color != m_outlineColor) {
             m_outlineColor = color;
 
@@ -187,7 +188,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void Text::setOutlineThickness(float thickness) {
+    void SFMLText::setOutlineThickness(float thickness) {
         if (thickness != m_outlineThickness) {
             m_outlineThickness = thickness;
             m_geometryNeedUpdate = true;
@@ -196,48 +197,48 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    const String &Text::getString() const {
+    const String &SFMLText::getString() const {
         return m_string;
     }
 
 
 ////////////////////////////////////////////////////////////
-    const Font *Text::getFont() const {
+    const Font *SFMLText::getFont() const {
         return m_font;
     }
 
 
 ////////////////////////////////////////////////////////////
-    unsigned int Text::getCharacterSize() const {
+    unsigned int SFMLText::getCharacterSize() const {
         return m_characterSize;
     }
 
 
 ////////////////////////////////////////////////////////////
-    Uint32 Text::getStyle() const {
+    Uint32 SFMLText::getStyle() const {
         return m_style;
     }
 
 ////////////////////////////////////////////////////////////
-    const Color &Text::getFillColor() const {
+    const Color &SFMLText::getFillColor() const {
         return m_fillColor;
     }
 
 
 ////////////////////////////////////////////////////////////
-    const Color &Text::getOutlineColor() const {
+    const Color &SFMLText::getOutlineColor() const {
         return m_outlineColor;
     }
 
 
 ////////////////////////////////////////////////////////////
-    float Text::getOutlineThickness() const {
+    float SFMLText::getOutlineThickness() const {
         return m_outlineThickness;
     }
 
 
 ////////////////////////////////////////////////////////////
-    Vector2f Text::findCharacterPos(std::size_t index) const {
+    Vector2f SFMLText::findCharacterPos(std::size_t index) const {
         // Make sure that we have a valid font
         if (!m_font)
             return Vector2f();
@@ -287,7 +288,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    FloatRect Text::getLocalBounds() const {
+    FloatRect SFMLText::getLocalBounds() const {
         ensureGeometryUpdate();
 
         return m_bounds;
@@ -295,50 +296,49 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    FloatRect Text::getGlobalBounds() const {
+    FloatRect SFMLText::getGlobalBounds() const {
         return getTransform().transformRect(getLocalBounds());
     }
 
 
+    void SFMLText::setOriginTopLeft() {
+        setOrigin(0, 0);
+    }
+
+    void SFMLText::setOriginTopRight() {
+        setOrigin(getLocalBounds().width, 0);
+    }
+
+    void SFMLText::setOriginCenter() {
+        setOrigin(getLocalBounds().width / 2, getLocalBounds().height / 2);
+    }
+
+    void SFMLText::setOriginBottomLeft() {
+        setOrigin(0, getLocalBounds().height);
+    }
+
+    void SFMLText::setOriginBottomRight() {
+        setOrigin(getLocalBounds().width, getLocalBounds().height);
+    }
+
 ////////////////////////////////////////////////////////////
-    void Text::draw(Renderer *render) {
+    void SFMLText::draw(Renderer *render, const Transform &transform) {
         if (m_font) {
+
             ensureGeometryUpdate();
 
+            Transform combined = transform * getTransform();
+
             // Only draw the outline if there is something to draw
-
-            render->draw(m_vertices, getTransform(), (Texture &) m_font->getTexture(m_characterSize));
-            /*
             if (m_outlineThickness != 0)
-                render->drawTexture(
-                        (Texture &) m_font->getTexture(m_characterSize),
-                        (Transform &) getTransform());
-            //target.draw(m_outlineVertices, states);
+                render->draw(m_outlineVertices, combined, (Texture &) m_font->getTexture(m_characterSize));
 
-            //target.draw(m_vertices, states);
-            */
+            render->draw(m_vertices, combined, (Texture &) m_font->getTexture(m_characterSize));
         }
     }
 
-    /*
-    void Text::draw(RenderTarget &target, RenderStates states) const {
-        if (m_font) {
-            ensureGeometryUpdate();
-
-            states.transform *= getTransform();
-            states.texture = &m_font->getTexture(m_characterSize);
-
-            // Only draw the outline if there is something to draw
-            if (m_outlineThickness != 0)
-                target.draw(m_outlineVertices, states);
-
-            target.draw(m_vertices, states);
-        }
-    }
-    */
-
 ////////////////////////////////////////////////////////////
-    void Text::ensureGeometryUpdate() const {
+    void SFMLText::ensureGeometryUpdate() const {
         // Do nothing, if geometry has not changed
         if (!m_geometryNeedUpdate)
             return;

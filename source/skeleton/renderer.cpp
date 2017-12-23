@@ -8,9 +8,11 @@ using namespace c2d;
 
 Renderer *c2d_renderer;
 
-Renderer::Renderer(const Vector2f &size) : Widget(size) {
+Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
 
+    thisTransform = this;
     c2d_renderer = this;
+
     setFillColor(Color::Black);
 
     printf("Renderer(%p)\n", this);

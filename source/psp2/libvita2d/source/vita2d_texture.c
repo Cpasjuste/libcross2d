@@ -393,28 +393,24 @@ static inline void draw_texture_generic(const vita2d_texture *texture, float x, 
 	vertices[0].x = x;
 	vertices[0].y = y;
 	vertices[0].z = +0.5f;
-	vertices[0].w = 1.0f;
 	vertices[0].u = 0.0f;
 	vertices[0].v = 0.0f;
 
 	vertices[1].x = x + w;
 	vertices[1].y = y;
 	vertices[1].z = +0.5f;
-	vertices[1].w = 1.0f;
 	vertices[1].u = 1.0f;
 	vertices[1].v = 0.0f;
 
 	vertices[2].x = x;
 	vertices[2].y = y + h;
 	vertices[2].z = +0.5f;
-	vertices[2].w = 1.0f;
 	vertices[2].u = 0.0f;
 	vertices[2].v = 1.0f;
 
 	vertices[3].x = x + w;
 	vertices[3].y = y + h;
 	vertices[3].z = +0.5f;
-	vertices[3].w = 1.0f;
 	vertices[3].u = 1.0f;
 	vertices[3].v = 1.0f;
 
@@ -476,28 +472,24 @@ static inline void draw_texture_rotate_hotspot_generic(const vita2d_texture *tex
 	vertices[0].x = -center_x;
 	vertices[0].y = -center_y;
 	vertices[0].z = +0.5f;
-	vertices[0].w = 1.0f;
 	vertices[0].u = 0.0f;
 	vertices[0].v = 0.0f;
 
 	vertices[1].x = w - center_x;
 	vertices[1].y = -center_y;
 	vertices[1].z = +0.5f;
-	vertices[1].w = 1.0f;
 	vertices[1].u = 1.0f;
 	vertices[1].v = 0.0f;
 
 	vertices[2].x = -center_x;
 	vertices[2].y = h - center_y;
 	vertices[2].z = +0.5f;
-	vertices[2].w = 1.0f;
 	vertices[2].u = 0.0f;
 	vertices[2].v = 1.0f;
 
 	vertices[3].x = w - center_x;
 	vertices[3].y = h - center_y;
 	vertices[3].z = +0.5f;
-	vertices[3].w = 1.0f;
 	vertices[3].u = 1.0f;
 	vertices[3].v = 1.0f;
 
@@ -554,27 +546,23 @@ static inline void draw_texture_scale_generic(const vita2d_texture *texture, flo
 	vertices[0].x = x;
 	vertices[0].y = y;
 	vertices[0].z = +0.5f;
-	vertices[0].w = 1.0f;
 	vertices[0].u = 0.0f;
 	vertices[0].v = 0.0f;
 
 	vertices[1].x = x + w;
 	vertices[1].y = y;
 	vertices[1].z = +0.5f;
-	vertices[1].w = 1.0f;
 	vertices[1].u = 1.0f;
 	vertices[1].v = 0.0f;
 
 	vertices[2].x = x;
 	vertices[2].y = y + h;
 	vertices[2].z = +0.5f;
-	vertices[2].w = 1.0f;
 	vertices[2].u = 0.0f;
 	vertices[2].v = 1.0f;
 
 	vertices[3].x = x + w;
 	vertices[3].y = y + h;
-	vertices[3].w = 1.0f;
 	vertices[3].z = +0.5f;
 	vertices[3].u = 1.0f;
 	vertices[3].v = 1.0f;
@@ -654,28 +642,24 @@ static inline void draw_texture_part_generic(const vita2d_texture *texture, floa
 	vertices[0].x = x;
 	vertices[0].y = y;
 	vertices[0].z = +0.5f;
-	vertices[0].w = 1.0f;
 	vertices[0].u = u0;
 	vertices[0].v = v0;
 
 	vertices[1].x = x + tex_w;
 	vertices[1].y = y;
 	vertices[1].z = +0.5f;
-	vertices[1].w = 1.0f;
 	vertices[1].u = u1;
 	vertices[1].v = v0;
 
 	vertices[2].x = x;
 	vertices[2].y = y + tex_h;
 	vertices[2].z = +0.5f;
-	vertices[2].w = 1.0f;
 	vertices[2].u = u0;
 	vertices[2].v = v1;
 
 	vertices[3].x = x + tex_w;
 	vertices[3].y = y + tex_h;
 	vertices[3].z = +0.5f;
-	vertices[3].w = 1.0f;
 	vertices[3].u = u1;
 	vertices[3].v = v1;
 
@@ -756,28 +740,24 @@ static inline void draw_texture_part_scale_generic(const vita2d_texture *texture
 	vertices[0].x = x;
 	vertices[0].y = y;
 	vertices[0].z = +0.5f;
-	vertices[0].w = 1.0f;
 	vertices[0].u = u0;
 	vertices[0].v = v0;
 
 	vertices[1].x = x + tex_w;
 	vertices[1].y = y;
 	vertices[1].z = +0.5f;
-	vertices[1].w = 1.0f;
 	vertices[1].u = u1;
 	vertices[1].v = v0;
 
 	vertices[2].x = x;
 	vertices[2].y = y + tex_h;
 	vertices[2].z = +0.5f;
-	vertices[2].w = 1.0f;
 	vertices[2].u = u0;
 	vertices[2].v = v1;
 
 	vertices[3].x = x + tex_w;
 	vertices[3].y = y + tex_h;
 	vertices[3].z = +0.5f;
-	vertices[3].w = 1.0f;
 	vertices[3].u = u1;
 	vertices[3].v = v1;
 
@@ -852,28 +832,24 @@ static inline void draw_texture_scale_rotate_hotspot_generic(const vita2d_textur
 	vertices[0].x = -center_x_scaled;
 	vertices[0].y = -center_y_scaled;
 	vertices[0].z = +0.5f;
-	vertices[0].w = 1.0f;
 	vertices[0].u = 0.0f;
 	vertices[0].v = 0.0f;
 
 	vertices[1].x = -center_x_scaled + w;
 	vertices[1].y = -center_y_scaled;
 	vertices[1].z = +0.5f;
-	vertices[1].w = 1.0f;
 	vertices[1].u = 1.0f;
 	vertices[1].v = 0.0f;
 
 	vertices[2].x = -center_x_scaled;
 	vertices[2].y = -center_y_scaled + h;
 	vertices[2].z = +0.5f;
-	vertices[2].w = 1.0f;
 	vertices[2].u = 0.0f;
 	vertices[2].v = 1.0f;
 
 	vertices[3].x = -center_x_scaled + w;
 	vertices[3].y = -center_y_scaled + h;
 	vertices[3].z = +0.5f;
-	vertices[3].w = 1.0f;
 	vertices[3].u = 1.0f;
 	vertices[3].v = 1.0f;
 
@@ -981,28 +957,24 @@ static inline void draw_texture_part_scale_rotate_generic(const vita2d_texture *
 	vertices[0].x = -w_half;
 	vertices[0].y = -h_half;
 	vertices[0].z = +0.5f;
-	vertices[0].w = 1.0f;
 	vertices[0].u = u0;
 	vertices[0].v = v0;
 
 	vertices[1].x = w_half;
 	vertices[1].y = -h_half;
 	vertices[1].z = +0.5f;
-	vertices[1].w = 1.0f;
 	vertices[1].u = u1;
 	vertices[1].v = v0;
 
 	vertices[2].x = -w_half;
 	vertices[2].y = h_half;
 	vertices[2].z = +0.5f;
-	vertices[2].w = 1.0f;
 	vertices[2].u = u0;
 	vertices[2].v = v1;
 
 	vertices[3].x = w_half;
 	vertices[3].y = h_half;
 	vertices[3].z = +0.5f;
-	vertices[3].w = 1.0f;
 	vertices[3].u = u1;
 	vertices[3].v = v1;
 

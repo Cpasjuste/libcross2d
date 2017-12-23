@@ -3,7 +3,7 @@
 //
 
 #include <skeleton/c2d_sfml/Font.hpp>
-#include <skeleton/c2d_sfml/Text.hpp>
+#include <skeleton/c2d_sfml/SFMLText.hpp>
 #include "c2d.h"
 #include "main.h"
 
@@ -11,65 +11,56 @@ using namespace c2d;
 
 int main() {
 
+    // create main renderer
     Renderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
 
-    /*
+    // create a rect
     Rectangle *rect = new C2DRectangle(FloatRect(200, 200, 400, 400));
     rect->setOriginCenter();
     rect->setFillColor(Color::Red);
     rect->setOutlineColor(Color::Yellow);
     rect->setOutlineThickness(8);
 
+    // create a texture and add it to the rect
     Texture *tex = new C2DTexture(TEX_PATH);
     tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
     tex->setOriginCenter();
     rect->add(tex);
 
+    // create a line and add it to the rect
     Line *line = new C2DLine(rect->getPoint(0), rect->getPoint(2), 2);
     line->setFillColor(Color::Blue);
     line->setOutlineColor(Color::Green);
     line->setOutlineThickness(1);
     rect->add(line);
 
-    renderer->add(rect);
-    */
-
+    // create a font
     Font font;
     if (!font.loadFromFile(FONT_PATH)) {
         printf("Can't load font\n");
+    } else {
+        // create a text and add it to the rect
+        Text *text = new Text("Hello world", font, 40);
+        text->setOriginCenter();
+        text->setPosition(tex->getSize().x / 2, tex->getSize().y / 2);
+        text->setFillColor(Color::Red);
+        rect->add(text);
     }
 
-    Text text;
-    text.setPosition(100, 100);
-    text.setFont(font);
-    text.setString("Hello world");
-    text.setCharacterSize(24);
-    text.setFillColor(Color::Red);
+    // add all this crap to the renderer
+    renderer->add(rect);
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 20; i++) {
 
-        vita2d_start_drawing();
-        vita2d_set_clear_color(0xff000000);
-        vita2d_clear_screen();
-
-        text.draw(renderer);
-
-        vita2d_end_drawing();
-        vita2d_wait_rendering_done();
-        vita2d_swap_buffers();
-
-        /*
         if (i > 0) {
 
             rect->move(32, 0);
             rect->setScale(rect->getScale().x - 0.1f, rect->getScale().y - 0.1f);
             rect->rotate(5);
-
         }
 
         renderer->flip();
-         */
-        renderer->delay(500);
+        renderer->delay(200);
     }
 
     delete (renderer);

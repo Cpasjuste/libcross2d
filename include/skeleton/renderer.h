@@ -23,7 +23,7 @@
 
 namespace c2d {
 
-    class Renderer : public Widget {
+    class Renderer : public Widget, public RectangleShape {
 
     public:
 

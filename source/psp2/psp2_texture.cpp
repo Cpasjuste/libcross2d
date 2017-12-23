@@ -40,13 +40,17 @@ PSP2Texture::PSP2Texture(const char *p) : Texture(p) {
     setSize(Vector2f(w, h));
     setTextureRect(IntRect(0, 0, w, h));
 
+    pitch = vita2d_texture_get_stride(tex);
+
     available = true;
 }
 
-PSP2Texture::PSP2Texture(const Vector2f &size) : Texture(size) {
+PSP2Texture::PSP2Texture(const Vector2f &size, int fmt) : Texture(size) {
 
     tex = vita2d_create_empty_texture_format(
-            (unsigned int) size.x, (unsigned int) size.y, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
+            (unsigned int) size.x, (unsigned int) size.y,
+            fmt == C2D_TEXTURE_FMT_RGBA8 ? SCE_GXM_TEXTURE_FORMAT_A8B8G8R8
+                                         : SCE_GXM_TEXTURE_FORMAT_R5G6B5);
 
     if (!tex) {
         printf("PSP2Texture: couldn't create texture\n");
@@ -56,17 +60,23 @@ PSP2Texture::PSP2Texture(const Vector2f &size) : Texture(size) {
     setSize(Vector2f(size.x, size.y));
     setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
 
-    bpp = 2;
+    pitch = vita2d_texture_get_stride(tex);
+
     available = true;
+
+    printf("tex: %ix%i - bpp: %i, pitch: %i\n", (int) size.x, (int) size.y, bpp, pitch);
 }
 
-int PSP2Texture::lock(const FloatRect &rect, void **pixels, int *pitch) {
+int PSP2Texture::lock(const FloatRect &rect, void **pixels, int *p) {
 
-    *pitch = vita2d_texture_get_stride(tex);
+    *p = pitch;
+
+    if (rect.width <= 0 || rect.height <= 0) {
+        *pixels = vita2d_texture_get_datap(tex);
+    }
 
     *pixels = (void *) ((uint8_t *) vita2d_texture_get_datap(tex) +
-                        (int) rect.top * (*pitch) +
-                        (int) rect.left * bpp);
+                        (int) rect.top * pitch + (int) rect.left * bpp);
 
     return 0;
 }
