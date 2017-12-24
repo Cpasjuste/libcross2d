@@ -14,6 +14,7 @@ int main() {
     // create main renderer
     Renderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
 
+    /*
     // create a rect
     Rectangle *rect = new C2DRectangle(FloatRect(200, 200, 400, 400));
     rect->setOriginCenter();
@@ -23,9 +24,11 @@ int main() {
 
     // create a texture and add it to the rect
     Texture *tex = new C2DTexture(TEX_PATH);
-    tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
-    tex->setOriginCenter();
-    rect->add(tex);
+    if (tex->available) {
+        tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
+        tex->setOriginCenter();
+        rect->add(tex);
+    }
 
     // create a line and add it to the rect
     Line *line = new C2DLine(rect->getPoint(0), rect->getPoint(2), 2);
@@ -33,36 +36,38 @@ int main() {
     line->setOutlineColor(Color::Green);
     line->setOutlineThickness(1);
     rect->add(line);
+    */
 
     // create a font
     Font font;
-    if (!font.loadFromFile(FONT_PATH)) {
-        printf("Can't load font\n");
-    } else {
+    if (font.loadFromFile(FONT_PATH)) {
         // create a text and add it to the rect
         Text *text = new Text("Hello world", font, 40);
-        text->setOriginCenter();
-        text->setPosition(tex->getSize().x / 2, tex->getSize().y / 2);
-        text->setFillColor(Color::Red);
-        rect->add(text);
+        text->setStyle(Text::Underlined);
+        //text->setOutlineColor(Color::Red);
+        //text->setOutlineThickness(2);
+        renderer->add(text);
     }
 
     // add all this crap to the renderer
-    renderer->add(rect);
+    //renderer->add(rect);
 
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 5; i++) {
 
         if (i > 0) {
 
+            /*
             rect->move(32, 0);
             rect->setScale(rect->getScale().x - 0.1f, rect->getScale().y - 0.1f);
             rect->rotate(5);
+            */
         }
 
         renderer->flip();
-        renderer->delay(200);
+        renderer->delay(500);
     }
 
+    // will delete widgets recursively
     delete (renderer);
 
     return 0;

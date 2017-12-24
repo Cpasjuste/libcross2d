@@ -610,18 +610,15 @@ namespace c2d {
             void *buffer;
             int pitch;
             FloatRect rect = {(float) x, (float) y, (float) w, (float) h};
-            page.texture->lock(rect, &buffer, &pitch);
+            page.texture->lock(&rect, &buffer, &pitch);
 
-            int rows = height;
-            int srcStride = width * 4;
-            int dstStride = pitch;
             const Uint8 *srcPixels = &m_pixelBuffer[0];
             Uint8 *dstPixels = (Uint8 *) buffer;
 
-            for (int i = 0; i < rows; ++i) {
-                std::memcpy(dstPixels, srcPixels, srcStride);
-                srcPixels += srcStride;
-                dstPixels += dstStride;
+            for (int i = 0; i < height; ++i) {
+                std::memcpy(dstPixels, srcPixels, (size_t) (width * 4));
+                srcPixels += width * 4;
+                dstPixels += pitch;
             }
 
             page.texture->unlock();
@@ -673,11 +670,6 @@ namespace c2d {
                 if ((textureWidth * 2 <= 1024) &&
                     (textureHeight * 2 <= 1024)) {
                     // Make the texture 2 times bigger
-                    // TODO:
-                    //Texture newTexture;
-                    //newTexture.create(textureWidth * 2, textureHeight * 2);
-                    //newTexture.update(page.texture);
-                    //page.texture.swap(newTexture);
                     if (page.texture != NULL) {
                         delete (page.texture);
                     }
@@ -737,23 +729,8 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
+
     Font::Page::Page() : nextRow(3) {
-
-        // TODO:
-        /*
-        // Make sure that the texture is initialized by default
-        sf::Image image;
-        image.create(128, 128, Color(255, 255, 255, 0));
-
-        // Reserve a 2x2 white square for texturing underlines
-        for (int x = 0; x < 2; ++x)
-            for (int y = 0; y < 2; ++y)
-                image.setPixel(x, y, Color(255, 255, 255, 255));
-
-        // Create the texture
-        texture.loadFromImage(image);
-        texture.setSmooth(true);
-        */
 
         if (texture) {
             delete (texture);
@@ -762,22 +739,25 @@ namespace c2d {
         texture = new C2DTexture(Vector2f(128, 128), C2D_TEXTURE_FMT_RGBA8);
         texture->setFiltering(C2D_TEXTURE_FILTER_LINEAR);
 
-        // init pixels
-        void *buffer;
-        int pitch;
-        FloatRect rect = {0, 0, texture->getSize().x, texture->getSize().y};
-        texture->lock(rect, &buffer, &pitch);
-        Uint8 *current = (Uint8 *) buffer;
-        Uint8 *end = current + (int) (texture->getSize().x * texture->getSize().y * 4);
-        while (current != end) {
-            (*current++) = 255;
-            (*current++) = 255;
-            (*current++) = 255;
-            (*current++) = 0;
+        // Reserve a 2x2 white square for texturing underlines
+        Uint8 *buffer;
+        texture->lock(NULL, reinterpret_cast<void **>(&buffer), NULL);
+        for (int x = 0; x < 2; ++x) {
+            for (int y = 0; y < 2; ++y) {
+                Uint8 *pixel = &buffer[(int) ((x + y * texture->getSize().x) * texture->bpp)];
+                *pixel++ = 255;
+                *pixel++ = 255;
+                *pixel++ = 255;
+                *pixel++ = 255;
+            }
         }
         texture->unlock();
+    }
 
-        texture->setFillColor(Color::White);
+    Font::Page::~Page() {
+        if (texture) {
+            delete (texture);
+        }
     }
 
 } // namespace sf

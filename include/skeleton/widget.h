@@ -17,7 +17,7 @@ namespace c2d {
 
     class Renderer;
 
-    class Widget /*: public Transformable*/ {
+    class Widget {
 
     public:
 

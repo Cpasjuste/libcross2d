@@ -130,17 +130,17 @@ void PSP2Renderer::draw(const VertexArray &vertices,
     unsigned int count = vertices.getVertexCount();
     //printf("draw: %i\n", count);
 
-    if (texture.getFillColor() == Color::White) {
+    if (vertices[0].color == Color::White) {
         vita2d_set_texture_program();
         vita2d_set_texture_wvp_uniform(((PSP2Texture *) &texture)->tex);
     } else {
         vita2d_set_texture_tint_program();
         vita2d_set_texture_wvp_uniform(((PSP2Texture *) &texture)->tex);
         vita2_set_texture_tint_color_uniform(
-                RGBA8((unsigned int) texture.getFillColor().r,
-                      (unsigned int) texture.getFillColor().g,
-                      (unsigned int) texture.getFillColor().b,
-                      (unsigned int) texture.getFillColor().a));
+                RGBA8((unsigned int) vertices[0].color.r,
+                      (unsigned int) vertices[0].color.g,
+                      (unsigned int) vertices[0].color.b,
+                      (unsigned int) vertices[0].color.a));
     }
 
     vita2d_texture_vertex *v2d_vertices =

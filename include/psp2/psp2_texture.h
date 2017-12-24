@@ -20,7 +20,7 @@ namespace c2d {
 
         ~PSP2Texture();
 
-        int lock(const FloatRect &rect, void **pixels, int *pitch);
+        int lock(FloatRect *rect, void **pixels, int *pitch);
 
         void setFiltering(int filter);
 

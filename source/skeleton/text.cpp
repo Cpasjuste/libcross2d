@@ -7,7 +7,7 @@
 
 using namespace c2d;
 
-Text::Text() : SFMLText() {
+Text::Text() {
 
     printf("Text(%p): %ix%i\n", this, (int) getLocalBounds().width, (int) getLocalBounds().height);
 
@@ -34,6 +34,6 @@ void Text::draw(Transform &transform) {
 }
 
 Text::~Text() {
+
     printf("~Text(%p)\n", this);
 }
-

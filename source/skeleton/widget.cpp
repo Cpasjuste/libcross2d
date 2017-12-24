@@ -51,22 +51,20 @@ void Widget::setVisibility(int visibility) {
 Widget::~Widget() {
 
     // delete childs
-    for (auto &child : childs) {
-        if (child) {
-            printf("~Widget(%p): delete child(%p)\n", this, child);
-            delete (child);
+    for (auto widget = childs.begin(); widget != childs.end();) {
+        if (*widget) {
+            printf("~Widget(%p): delete child(%p)\n", this, *widget);
+            delete (*widget);
         }
     }
+    childs.clear();
 
     // remove from parent
     if (parent) {
-        for (size_t i = 0; i < parent->childs.size(); i++) {
-            if (parent->childs[i] == this) {
-                printf("~Widget(%p): remove from parent(%p)\n", this, parent);
-                parent->childs.erase(parent->childs.begin() + i);
-                break;
-            }
-        }
+        printf("~Widget(%p): remove from parent(%p)\n", this, parent);
+        parent->childs.erase(
+                std::remove(parent->childs.begin(), parent->childs.end(), this),
+                parent->childs.end());
     }
 
     printf("~Widget(%p)\n", this);

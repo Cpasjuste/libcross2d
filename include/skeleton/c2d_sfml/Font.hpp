@@ -43,8 +43,10 @@
 namespace c2d {
 
     class Texture;
+
     //class C2DTexture;
     class Renderer;
+
     class InputStream;
 
 ////////////////////////////////////////////////////////////
@@ -283,7 +285,7 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         // Types
         ////////////////////////////////////////////////////////////
-        typedef std::map <Uint64, Glyph> GlyphTable; ///< Table mapping a codepoint to its glyph
+        typedef std::map<Uint64, Glyph> GlyphTable; ///< Table mapping a codepoint to its glyph
 
         ////////////////////////////////////////////////////////////
         /// \brief Structure defining a page of glyphs
@@ -292,10 +294,12 @@ namespace c2d {
         struct Page {
             Page();
 
+            ~Page();
+
             GlyphTable glyphs;  ///< Table mapping code points to their corresponding glyph
             Texture *texture = NULL; ///< Texture containing the pixels of the glyphs
             unsigned int nextRow; ///< Y position of the next new row in the texture
-            std::vector <Row> rows;    ///< List containing the position of all the existing rows
+            std::vector<Row> rows;    ///< List containing the position of all the existing rows
         };
 
         ////////////////////////////////////////////////////////////
@@ -354,7 +358,7 @@ namespace c2d {
         int *m_refCount;    ///< Reference counter used by implicit sharing
         Info m_info;        ///< Information about the font
         mutable PageTable m_pages;       ///< Table containing the glyphs pages by character size
-        mutable std::vector <Uint8> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
+        mutable std::vector<Uint8> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
 #ifdef SFML_SYSTEM_ANDROID
         void*                      m_stream; ///< Asset file streamer (if loaded from file)
 #endif

@@ -63,20 +63,20 @@ PSP2Texture::PSP2Texture(const Vector2f &size, int fmt) : Texture(size) {
     pitch = vita2d_texture_get_stride(tex);
 
     available = true;
-
-    printf("tex: %ix%i - bpp: %i, pitch: %i\n", (int) size.x, (int) size.y, bpp, pitch);
 }
 
-int PSP2Texture::lock(const FloatRect &rect, void **pixels, int *p) {
+int PSP2Texture::lock(FloatRect *rect, void **pixels, int *p) {
 
-    *p = pitch;
-
-    if (rect.width <= 0 || rect.height <= 0) {
+    if (!rect) {
         *pixels = vita2d_texture_get_datap(tex);
+    } else {
+        *pixels = (void *) ((uint8_t *) vita2d_texture_get_datap(tex) +
+                            (int) rect->top * pitch + (int) rect->left * bpp);
     }
 
-    *pixels = (void *) ((uint8_t *) vita2d_texture_get_datap(tex) +
-                        (int) rect.top * pitch + (int) rect.left * bpp);
+    if (p) {
+        *p = pitch;
+    }
 
     return 0;
 }

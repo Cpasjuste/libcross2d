@@ -26,7 +26,7 @@ namespace c2d {
 
         virtual ~Texture();
 
-        virtual int lock(const FloatRect &rect, void **pixels, int *pitch) { return 0; };
+        virtual int lock(FloatRect *rect, void **pixels, int *pitch) { return 0; };
 
         virtual void unlock() {};
 
