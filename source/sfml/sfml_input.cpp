@@ -3,8 +3,8 @@
 //
 
 #include <SFML/Window/Event.hpp>
-#include "../../include/sfml/sfml_renderer.h"
-#include "../../include/sfml/sfml_input.h"
+#include "sfml/sfml_renderer.h"
+#include "sfml/sfml_input.h"
 
 static int key_id[KEY_COUNT]{
         Input::Key::KEY_UP,

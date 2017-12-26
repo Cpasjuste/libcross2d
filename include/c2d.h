@@ -10,8 +10,7 @@
 #include "skeleton/line.h"
 #include "skeleton/texture.h"
 #include "skeleton/text.h"
-//#include "skeleton/font.h"
-//#include "skeleton/input.h"
+#include "skeleton/input.h"
 //#include "skeleton/audio.h"
 #include "skeleton/timer.h"
 #include "skeleton/io.h"
@@ -29,8 +28,8 @@ extern c2d::Renderer *c2d_renderer;
 
 #define C2DRenderer PSP2Renderer
 #define C2DTexture PSP2Texture
-#define C2DRectangle Rectangle
-#define C2DLine Line
+//#define C2DRectangle Rectangle
+//#define C2DLine Line
 //#define C2DFont PSP2Font
 //#define C2DInput SDL2Input
 //#define C2DAudio SDL2Audio
@@ -208,8 +207,7 @@ extern c2d::Renderer *c2d_renderer;
 
 #include "sfml/sfml_renderer.h"
 #include "sfml/sfml_texture.h"
-//#include "sfml/sfml_font.h"
-//#include "sfml/sfml_input.h"
+#include "sfml/sfml_input.h"
 //#include "sdl2/sdl2_audio.h"
 #include "posix/posix_io.h"
 
@@ -217,9 +215,10 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DTexture SFMLTexture
 #define C2DRectangle Rectangle
 #define C2DLine Line
-#define C2DFont SFMLFont
+#define C2DFont Font
+#define C2DText Text
 #define C2DInput SFMLInput
-#define C2DAudio SDL2Audio
+//#define C2DAudio SDL2Audio
 #define C2DIo POSIXIo
 
 #define KEY_JOY_UP_DEFAULT      -1  // use hat

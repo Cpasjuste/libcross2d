@@ -49,55 +49,27 @@ void SFMLRenderer::setShader(int index) {
     shaders->current = index;
 }
 
-/*
-void SFMLRenderer::DrawLine(int x1, int y1, int x2, int y2, const Color &c) {
-
-    sf::Color col(c.r, c.g, c.b, c.a);
-
-    sf::Vertex line[] = {
-            sf::Vertex(sf::Vector2f(x1, y1), col),
-            sf::Vertex(sf::Vector2f(x2, y2), col)
-    };
-
-    window.draw(line, 2, sf::Lines);
-}
-*/
-
-void SFMLRenderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
-
-    sf::RectangleShape rect((const sf::Vector2f &) rectangle.getSize());
-    rect.setPosition((const sf::Vector2f &) rectangle.getPosition());
-    rect.setOrigin((const sf::Vector2f &) rectangle.getOrigin());
-    rect.setScale((const sf::Vector2f &) rectangle.getScale());
-    rect.setRotation(rectangle.getRotation());
-
-    rect.setFillColor((const sf::Color &) rectangle.getFillColor());
-    rect.setOutlineColor((const sf::Color &) rectangle.getOutlineColor());
-    rect.setOutlineThickness(rectangle.getOutlineThickness());
+void SFMLRenderer::draw(const VertexArray &vertices,
+                        const Transform &transform) {
 
     sf::RenderStates states;
     states.transform = ((sf::Transform &) transform);
 
-    window.draw(rect, states);
+    window.draw((sf::Vertex *) vertices.getVertices().data(), vertices.getVertexCount(),
+                (sf::PrimitiveType) vertices.getPrimitiveType(), states);
 }
 
-void SFMLRenderer::drawTexture(Texture &texture, Transform &transform) {
-
-    sf::Sprite sprite = ((SFMLTexture *) &texture)->sprite;
-    sprite.setPosition((const sf::Vector2f &) texture.getPosition());
-    sprite.setOrigin((const sf::Vector2f &) texture.getOrigin());
-    sprite.setScale((const sf::Vector2f &) texture.getScale());
-    sprite.setRotation(texture.getRotation());
-
-    sprite.setColor((const sf::Color &) texture.getFillColor());
+void SFMLRenderer::draw(const VertexArray &vertices,
+                        const Transform &transform,
+                        const Texture &texture) {
 
     sf::RenderStates states;
     states.transform = ((sf::Transform &) transform);
+    states.texture = &((SFMLTexture &) texture).texture;
 
-    // set sprite shader
     sf::Shader *shader = (sf::Shader *) shaders->Get()->data;
     if (shader) {
-        shader->setUniform("Texture", (const sf::Texture &) texture);
+        shader->setUniform("Texture", ((SFMLTexture &) texture).texture);
         shader->setUniform("MVPMatrix", sf::Glsl::Mat4(
                 window.getView().getTransform().getMatrix()));
         shader->setUniform("TextureSize", sf::Glsl::Vec2(
@@ -112,7 +84,24 @@ void SFMLRenderer::drawTexture(Texture &texture, Transform &transform) {
         states.shader = shader;
     }
 
-    window.draw(sprite, states);
+    window.draw((sf::Vertex *) vertices.getVertices().data(), vertices.getVertexCount(),
+                (sf::PrimitiveType) vertices.getPrimitiveType(), states);
+
+}
+
+void SFMLRenderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
+
+    Transform combined = transform * rectangle.getTransform();
+    draw(rectangle.getVertices(), combined);
+    if (rectangle.getOutlineThickness() > 0) {
+        draw(rectangle.getOutlineVertices(), combined);
+    }
+}
+
+void SFMLRenderer::drawTexture(Texture &texture, Transform &transform) {
+
+    Transform combined = transform * texture.getTransform();
+    draw(texture.getVertices(), combined, texture);
 }
 
 void SFMLRenderer::flip() {

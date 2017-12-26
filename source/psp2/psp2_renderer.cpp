@@ -10,8 +10,6 @@
 
 #include "psp2/psp2_renderer.h"
 #include "psp2/psp2_texture.h"
-//#include "psp2/psp2_font.h"
-//#include "psp2/psp2_texture.h"
 #include "psp2/psp2_shaders.h"
 
 using namespace c2d;

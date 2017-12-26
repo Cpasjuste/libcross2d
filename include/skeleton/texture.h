@@ -15,7 +15,7 @@
 
 namespace c2d {
 
-    class Texture : public Widget, public RectangleShape {
+    class Texture : public Widget, public sfml::RectangleShape {
 
     public:
 

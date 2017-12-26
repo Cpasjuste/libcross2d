@@ -9,7 +9,7 @@
 
 namespace c2d {
 
-    class Rectangle : public Widget, public RectangleShape {
+    class Rectangle : public Widget, public sfml::RectangleShape {
 
     public:
 

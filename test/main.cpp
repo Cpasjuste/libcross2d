@@ -3,7 +3,7 @@
 //
 
 #include <skeleton/c2d_sfml/Font.hpp>
-#include <skeleton/c2d_sfml/SFMLText.hpp>
+#include <skeleton/c2d_sfml/Text.hpp>
 #include "c2d.h"
 #include "main.h"
 
@@ -14,7 +14,6 @@ int main() {
     // create main renderer
     Renderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
 
-    /*
     // create a rect
     Rectangle *rect = new C2DRectangle(FloatRect(200, 200, 400, 400));
     rect->setOriginCenter();
@@ -36,31 +35,28 @@ int main() {
     line->setOutlineColor(Color::Green);
     line->setOutlineThickness(1);
     rect->add(line);
-    */
 
     // create a font
     Font font;
     if (font.loadFromFile(FONT_PATH)) {
         // create a text and add it to the rect
         Text *text = new Text("Hello world", font, 40);
-        text->setStyle(Text::Underlined);
-        //text->setOutlineColor(Color::Red);
-        //text->setOutlineThickness(2);
-        renderer->add(text);
+        text->setOutlineColor(Color::Blue);
+        text->setOutlineThickness(2);
+        text->setPosition(rect->getSize().x / 2, 32);
+        text->setOriginCenter();
+        rect->add(text);
     }
 
     // add all this crap to the renderer
-    //renderer->add(rect);
+    renderer->add(rect);
 
     for (int i = 0; i < 5; i++) {
 
         if (i > 0) {
-
-            /*
             rect->move(32, 0);
             rect->setScale(rect->getScale().x - 0.1f, rect->getScale().y - 0.1f);
             rect->rotate(5);
-            */
         }
 
         renderer->flip();

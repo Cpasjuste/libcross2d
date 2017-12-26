@@ -35,7 +35,7 @@
 #include <cstdio>
 #include <string>
 
-namespace c2d {
+namespace sfml {
 ////////////////////////////////////////////////////////////
 /// \brief Implementation of input stream based on a file
 ///

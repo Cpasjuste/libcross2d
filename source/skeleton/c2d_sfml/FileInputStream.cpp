@@ -31,7 +31,7 @@
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 
-namespace c2d {
+namespace sfml {
 ////////////////////////////////////////////////////////////
     FileInputStream::FileInputStream()
             : m_file(NULL) {

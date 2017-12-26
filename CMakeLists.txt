@@ -5,10 +5,10 @@ set(CMAKE_SYSTEM_NAME "Generic")
 enable_language(ASM)
 
 # delete cmake cache folder before changing this options
-option(BUILD_SFML "Build with SFML support" OFF)
+option(BUILD_SFML "Build with SFML support" ON)
 option(BUILD_SDL2 "Build with SDL2 support" OFF)
 option(BUILD_SDL1 "Build with SDL1 support" OFF)
-option(BUILD_PSP2 "Build with PSP2 support" ON)
+option(BUILD_PSP2 "Build with PSP2 support" OFF)
 option(BUILD_PS3 "Build with PS3 support" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_RPI "Build with RPI support" OFF)
@@ -30,34 +30,35 @@ set(FLAGS -Wall -Wno-strict-aliasing)
 # CROSS2D
 ##############
 set(CROSS2D_DIR include)
-set(CROSS2D_SRC
-        source/skeleton/widget.cpp
-        source/skeleton/renderer.cpp
-        source/skeleton/rectangle.cpp
-        source/skeleton/texture.cpp
-        source/skeleton/line.cpp
-        source/skeleton/text.cpp
-        source/skeleton/c2d_sfml/Shape.cpp
-        source/skeleton/c2d_sfml/Color.cpp
-        source/skeleton/c2d_sfml/Transform.cpp
-        source/skeleton/c2d_sfml/Transformable.cpp
-        source/skeleton/c2d_sfml/Vertex.cpp
-        source/skeleton/c2d_sfml/VertexArray.cpp
-        source/skeleton/c2d_sfml/RectangleShape.cpp
-        source/skeleton/c2d_sfml/FileInputStream.cpp
-        source/skeleton/c2d_sfml/Font.cpp
-        source/skeleton/c2d_sfml/SFMLText.cpp
-        source/skeleton/c2d_sfml/String.cpp
-        )
-#file(GLOB CROSS2D_SRC src/skeleton/*.c*)
+file(GLOB CROSS2D_SRC source/skeleton/*.c* source/skeleton/c2d_sfml/*.c*)
 
 #####################
 # PLATORM SPECIFIC
 #####################
 #####################
-# PSP2 PLATORM
+# SFML PLATORM
 #####################
-if (BUILD_PSP2)
+if (BUILD_SFML)
+    set(PLATFORM_DIRS
+            source/sfml
+            source/posix
+            )
+    file(GLOB PLATFORM_SRC
+            # source/sfml/*.c*
+            source/sfml/sfml_renderer.cpp
+            source/sfml/sfml_texture.cpp
+            source/sfml/sfml_shaders.cpp
+            source/posix/*.c*
+            # source/sdl2/sdl2_audio.cpp #TODO: get rid of sdl2, use sdl2 audio for now
+            )
+    list(APPEND FLAGS
+            -O3 -D__SFML__
+            -I/usr/include/freetype2
+            )
+    #####################
+    # PSP2 PLATORM
+    #####################
+elseif (BUILD_PSP2)
     set(PLATFORM_DIRS
             source/psp2
             source/psp2/libvita2d/include
@@ -180,24 +181,7 @@ elseif (BUILD_SDL1)
             source/posix/*.c*
             )
     list(APPEND FLAGS -O3 -D__SDL1__)
-    #####################
-    # SFML PLATORM
-    #####################
-elseif (BUILD_SFML)
-    set(PLATFORM_DIRS
-            source/sfml
-            source/posix
-            )
-    file(GLOB PLATFORM_SRC
-            # source/sfml/*.c*
-            source/sfml/sfml_renderer.cpp
-            source/sfml/sfml_texture.cpp
-            source/sfml/sfml_shaders.cpp
-            source/posix/*.c*
-            # source/sdl2/sdl2_audio.cpp #TODO: get rid of sdl2, use sdl2 audio for now
-            )
-    list(APPEND FLAGS -O3 -D__SFML__)
-endif (BUILD_PSP2)
+endif (BUILD_SFML)
 
 
 add_library(${PROJECT_NAME} ${CROSS2D_SRC} ${PLATFORM_SRC})
@@ -250,7 +234,7 @@ if (BUILD_SFML)
     add_executable(${PROJECT_NAME}.sfml test/main.cpp)
     target_compile_options(${PROJECT_NAME}.sfml PRIVATE ${FLAGS})
     target_link_libraries(${PROJECT_NAME}.sfml
-            cross2d SDL2 sfml-graphics sfml-window sfml-system GL png z)
+            cross2d SDL2 sfml-graphics sfml-window sfml-system GL freetype png z)
     add_dependencies(${PROJECT_NAME}.sfml ${PROJECT_NAME})
 endif (BUILD_SFML)
 

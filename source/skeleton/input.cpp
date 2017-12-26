@@ -4,6 +4,8 @@
 
 #include "c2d.h"
 
+using namespace c2d;
+
 Input::Input(Renderer *r) : keyboard() {
 
     this->renderer = r;

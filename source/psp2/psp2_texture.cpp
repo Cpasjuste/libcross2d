@@ -57,9 +57,6 @@ PSP2Texture::PSP2Texture(const Vector2f &size, int fmt) : Texture(size) {
         return;
     }
 
-    setSize(Vector2f(size.x, size.y));
-    setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
-
     pitch = vita2d_texture_get_stride(tex);
 
     available = true;

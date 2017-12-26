@@ -25,14 +25,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "skeleton/c2d_sfml/SFMLText.hpp"
+#include "skeleton/c2d_sfml/Text.hpp"
 #include "skeleton/renderer.h"
-//#include "skeleton/c2d_sfml/Texture.hpp"
 //#include <SFML/Graphics/RenderTarget.hpp>
 #include <cmath>
 
+using namespace c2d;
 
 namespace {
+
     // Add an underline or strikethrough line to the vertex array
     void addLine(c2d::VertexArray &vertices, float lineLength, float lineTop, const c2d::Color &color, float offset,
                  float thickness, float outlineThickness = 0) {
@@ -87,9 +88,10 @@ namespace {
 }
 
 
-namespace c2d {
+namespace sfml {
+
 ////////////////////////////////////////////////////////////
-    SFMLText::SFMLText() :
+    Text::Text() :
             m_string(),
             m_font(NULL),
             m_characterSize(30),
@@ -106,7 +108,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    SFMLText::SFMLText(const String &string, const Font &font, unsigned int characterSize) :
+    Text::Text(const String &string, const Font &font, unsigned int characterSize) :
             m_string(string),
             m_font(&font),
             m_characterSize(characterSize),
@@ -123,7 +125,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void SFMLText::setString(const String &string) {
+    void Text::setString(const String &string) {
         if (m_string != string) {
             m_string = string;
             m_geometryNeedUpdate = true;
@@ -132,7 +134,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void SFMLText::setFont(const Font &font) {
+    void Text::setFont(const Font &font) {
         if (m_font != &font) {
             m_font = &font;
             m_geometryNeedUpdate = true;
@@ -141,7 +143,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void SFMLText::setCharacterSize(unsigned int size) {
+    void Text::setCharacterSize(unsigned int size) {
         if (m_characterSize != size) {
             m_characterSize = size;
             m_geometryNeedUpdate = true;
@@ -150,7 +152,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void SFMLText::setStyle(Uint32 style) {
+    void Text::setStyle(Uint32 style) {
         if (m_style != style) {
             m_style = style;
             m_geometryNeedUpdate = true;
@@ -158,7 +160,7 @@ namespace c2d {
     }
 
 ////////////////////////////////////////////////////////////
-    void SFMLText::setFillColor(const Color &color) {
+    void Text::setFillColor(const Color &color) {
         if (color != m_fillColor) {
             m_fillColor = color;
 
@@ -173,7 +175,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void SFMLText::setOutlineColor(const Color &color) {
+    void Text::setOutlineColor(const Color &color) {
         if (color != m_outlineColor) {
             m_outlineColor = color;
 
@@ -188,7 +190,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void SFMLText::setOutlineThickness(float thickness) {
+    void Text::setOutlineThickness(float thickness) {
         if (thickness != m_outlineThickness) {
             m_outlineThickness = thickness;
             m_geometryNeedUpdate = true;
@@ -197,48 +199,48 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    const String &SFMLText::getString() const {
+    const String &Text::getString() const {
         return m_string;
     }
 
 
 ////////////////////////////////////////////////////////////
-    const Font *SFMLText::getFont() const {
+    const Font *Text::getFont() const {
         return m_font;
     }
 
 
 ////////////////////////////////////////////////////////////
-    unsigned int SFMLText::getCharacterSize() const {
+    unsigned int Text::getCharacterSize() const {
         return m_characterSize;
     }
 
 
 ////////////////////////////////////////////////////////////
-    Uint32 SFMLText::getStyle() const {
+    Uint32 Text::getStyle() const {
         return m_style;
     }
 
 ////////////////////////////////////////////////////////////
-    const Color &SFMLText::getFillColor() const {
+    const Color &Text::getFillColor() const {
         return m_fillColor;
     }
 
 
 ////////////////////////////////////////////////////////////
-    const Color &SFMLText::getOutlineColor() const {
+    const Color &Text::getOutlineColor() const {
         return m_outlineColor;
     }
 
 
 ////////////////////////////////////////////////////////////
-    float SFMLText::getOutlineThickness() const {
+    float Text::getOutlineThickness() const {
         return m_outlineThickness;
     }
 
 
 ////////////////////////////////////////////////////////////
-    Vector2f SFMLText::findCharacterPos(std::size_t index) const {
+    Vector2f Text::findCharacterPos(std::size_t index) const {
         // Make sure that we have a valid font
         if (!m_font)
             return Vector2f();
@@ -288,7 +290,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    FloatRect SFMLText::getLocalBounds() const {
+    FloatRect Text::getLocalBounds() const {
         ensureGeometryUpdate();
 
         return m_bounds;
@@ -296,33 +298,33 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    FloatRect SFMLText::getGlobalBounds() const {
+    FloatRect Text::getGlobalBounds() const {
         return getTransform().transformRect(getLocalBounds());
     }
 
 
-    void SFMLText::setOriginTopLeft() {
+    void Text::setOriginTopLeft() {
         setOrigin(0, 0);
     }
 
-    void SFMLText::setOriginTopRight() {
+    void Text::setOriginTopRight() {
         setOrigin(getLocalBounds().width, 0);
     }
 
-    void SFMLText::setOriginCenter() {
+    void Text::setOriginCenter() {
         setOrigin(getLocalBounds().width / 2, getLocalBounds().height / 2);
     }
 
-    void SFMLText::setOriginBottomLeft() {
+    void Text::setOriginBottomLeft() {
         setOrigin(0, getLocalBounds().height);
     }
 
-    void SFMLText::setOriginBottomRight() {
+    void Text::setOriginBottomRight() {
         setOrigin(getLocalBounds().width, getLocalBounds().height);
     }
 
 ////////////////////////////////////////////////////////////
-    void SFMLText::draw(Renderer *render, const Transform &transform) {
+    void Text::draw(Renderer *render, const Transform &transform) {
         if (m_font) {
 
             ensureGeometryUpdate();
@@ -334,11 +336,12 @@ namespace c2d {
                 render->draw(m_outlineVertices, combined, (Texture &) m_font->getTexture(m_characterSize));
 
             render->draw(m_vertices, combined, (Texture &) m_font->getTexture(m_characterSize));
+            //render->drawTexture((Texture &) m_font->getTexture(m_characterSize), combined);
         }
     }
 
 ////////////////////////////////////////////////////////////
-    void SFMLText::ensureGeometryUpdate() const {
+    void Text::ensureGeometryUpdate() const {
         // Do nothing, if geometry has not changed
         if (!m_geometryNeedUpdate)
             return;

@@ -30,12 +30,12 @@
 ////////////////////////////////////////////////////////////
 #include "Shape.hpp"
 
-namespace c2d {
+namespace sfml {
 ////////////////////////////////////////////////////////////
 /// \brief Specialized shape representing a rectangle
 ///
 ////////////////////////////////////////////////////////////
-    class RectangleShape : public Shape {
+    class RectangleShape : public c2d::Shape {
     public:
 
         ////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ namespace c2d {
         /// \param size Size of the rectangle
         ///
         ////////////////////////////////////////////////////////////
-        explicit RectangleShape(const Vector2f &size = Vector2f(0, 0));
+        explicit RectangleShape(const c2d::Vector2f &size = c2d::Vector2f(0, 0));
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the size of the rectangle
@@ -54,7 +54,7 @@ namespace c2d {
         /// \see getSize
         ///
         ////////////////////////////////////////////////////////////
-        void setSize(const Vector2f &size);
+        void setSize(const c2d::Vector2f &size);
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the size of the rectangle
@@ -64,7 +64,7 @@ namespace c2d {
         /// \see setSize
         ///
         ////////////////////////////////////////////////////////////
-        const Vector2f &getSize() const;
+        const c2d::Vector2f &getSize() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief set the local origin of the object
@@ -111,14 +111,14 @@ namespace c2d {
         /// \return index-th point of the shape
         ///
         ////////////////////////////////////////////////////////////
-        virtual Vector2f getPoint(std::size_t index) const;
+        virtual c2d::Vector2f getPoint(std::size_t index) const;
 
     private:
 
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        Vector2f m_size; ///< Size of the rectangle
+        c2d::Vector2f m_size; ///< Size of the rectangle
     };
 
 } // namespace c2d

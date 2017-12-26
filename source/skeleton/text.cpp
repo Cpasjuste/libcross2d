@@ -15,7 +15,7 @@ Text::Text() {
 }
 
 Text::Text(const String &string, const Font &font, unsigned int characterSize)
-        : SFMLText(string, font, characterSize) {
+        : sfml::Text(string, font, characterSize) {
 
     printf("Text(%p): %ix%i\n", this, (int) getLocalBounds().width, (int) getLocalBounds().height);
 
@@ -27,7 +27,7 @@ void Text::draw(Transform &transform) {
     printf("Text(%p): draw\n", this);
 
     // draw rect from renderer
-    SFMLText::draw(c2d_renderer, transform);
+    sfml::Text::draw(c2d_renderer, transform);
 
     // call base class (draw childs)
     Widget::draw(transform);

@@ -16,18 +16,17 @@ namespace c2d {
 
         SFMLTexture(const char *path);
 
-        SFMLTexture(const Vector2f &size = Vector2f(0, 0));
+        SFMLTexture(const Vector2f &size = Vector2f(0, 0), int format = C2D_TEXTURE_FMT_RGBA8);
 
         ~SFMLTexture();
 
-        int lock(const FloatRect &rect, void **pixels, int *pitch);
+        int lock(FloatRect *rect, void **pixels, int *pitch);
 
         void unlock();
 
         void setFiltering(int filter);
 
         //private:
-        sf::Sprite sprite;
         sf::Texture texture;
         sf::Uint8 *pixels = nullptr;
     };

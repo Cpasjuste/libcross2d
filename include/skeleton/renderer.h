@@ -23,7 +23,7 @@
 
 namespace c2d {
 
-    class Renderer : public Widget, public RectangleShape {
+    class Renderer : public Widget, public sfml::RectangleShape {
 
     public:
 
@@ -38,11 +38,11 @@ namespace c2d {
                           const Transform &transform,
                           const Texture &texture) {};
 
+        virtual void drawTexture(Texture &texture, Transform &transform) {};
+
         virtual void drawLine(Line &line, Transform &transform) {};
 
         virtual void drawRectangle(Rectangle &rectangle, Transform &transform) {};
-
-        virtual void drawTexture(Texture &texture, Transform &transform) {};
 
         virtual void flip();
 

@@ -28,7 +28,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-//#include <SFML/Graphics/Export.hpp>
 //#include <SFML/Graphics/Drawable.hpp>
 #include "Transformable.hpp"
 #include "Font.hpp"
@@ -39,12 +38,12 @@
 #include <vector>
 
 
-namespace c2d {
+namespace sfml {
 ////////////////////////////////////////////////////////////
 /// \brief Graphical text that can be drawn to a render target
 ///
 ////////////////////////////////////////////////////////////
-    class SFMLText : /*public Drawable,*/ public Transformable {
+    class Text : /*public Drawable,*/ public c2d::Transformable {
     public:
 
         ////////////////////////////////////////////////////////////
@@ -65,7 +64,7 @@ namespace c2d {
         /// Creates an empty text.
         ///
         ////////////////////////////////////////////////////////////
-        SFMLText();
+        Text();
 
         ////////////////////////////////////////////////////////////
         /// \brief Construct the text from a string, font and size
@@ -82,7 +81,7 @@ namespace c2d {
         /// \param characterSize  Base size of characters, in pixels
         ///
         ////////////////////////////////////////////////////////////
-        SFMLText(const String &string, const Font &font, unsigned int characterSize = 30);
+        Text(const c2d::String &string, const c2d::Font &font, unsigned int characterSize = 30);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the text's string
@@ -103,7 +102,7 @@ namespace c2d {
         /// \see getString
         ///
         ////////////////////////////////////////////////////////////
-        void setString(const String &string);
+        void setString(const c2d::String &string);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the text's font
@@ -120,7 +119,7 @@ namespace c2d {
         /// \see getFont
         ///
         ////////////////////////////////////////////////////////////
-        void setFont(const Font &font);
+        void setFont(const c2d::Font &font);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the character size
@@ -167,7 +166,7 @@ namespace c2d {
         /// \see getFillColor
         ///
         ////////////////////////////////////////////////////////////
-        void setFillColor(const Color &color);
+        void setFillColor(const c2d::Color &color);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the outline color of the text
@@ -179,7 +178,7 @@ namespace c2d {
         /// \see getOutlineColor
         ///
         ////////////////////////////////////////////////////////////
-        void setOutlineColor(const Color &color);
+        void setOutlineColor(const c2d::Color &color);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the thickness of the text's outline
@@ -213,7 +212,7 @@ namespace c2d {
         /// \see setString
         ///
         ////////////////////////////////////////////////////////////
-        const String &getString() const;
+        const c2d::String &getString() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the text's font
@@ -227,7 +226,7 @@ namespace c2d {
         /// \see setFont
         ///
         ////////////////////////////////////////////////////////////
-        const Font *getFont() const;
+        const c2d::Font *getFont() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the character size
@@ -256,22 +255,8 @@ namespace c2d {
         ///
         /// \see setFillColor
         ///
-        /// \deprecated There is now fill and outline colors instead
-        /// of a single global color.
-        /// Use getFillColor() or getOutlineColor() instead.
-        ///
         ////////////////////////////////////////////////////////////
-        //SFML_DEPRECATED const Color& getColor() const;
-
-        ////////////////////////////////////////////////////////////
-        /// \brief Get the fill color of the text
-        ///
-        /// \return Fill color of the text
-        ///
-        /// \see setFillColor
-        ///
-        ////////////////////////////////////////////////////////////
-        const Color &getFillColor() const;
+        const c2d::Color &getFillColor() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the outline color of the text
@@ -281,7 +266,7 @@ namespace c2d {
         /// \see setOutlineColor
         ///
         ////////////////////////////////////////////////////////////
-        const Color &getOutlineColor() const;
+        const c2d::Color &getOutlineColor() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the outline thickness of the text
@@ -308,7 +293,7 @@ namespace c2d {
         /// \return Position of the character
         ///
         ////////////////////////////////////////////////////////////
-        Vector2f findCharacterPos(std::size_t index) const;
+        c2d::Vector2f findCharacterPos(std::size_t index) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the local bounding rectangle of the entity
@@ -322,7 +307,7 @@ namespace c2d {
         /// \return Local bounding rectangle of the entity
         ///
         ////////////////////////////////////////////////////////////
-        FloatRect getLocalBounds() const;
+        c2d::FloatRect getLocalBounds() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the global bounding rectangle of the entity
@@ -336,9 +321,7 @@ namespace c2d {
         /// \return Global bounding rectangle of the entity
         ///
         ////////////////////////////////////////////////////////////
-        FloatRect getGlobalBounds() const;
-
-        virtual void draw(Renderer *render, const Transform &transform);
+        c2d::FloatRect getGlobalBounds() const;
 
         void setOriginTopLeft();
 
@@ -349,6 +332,8 @@ namespace c2d {
         void setOriginBottomLeft();
 
         void setOriginBottomRight();
+
+        virtual void draw(c2d::Renderer *render, const c2d::Transform &transform);
 
     private:
 
@@ -375,16 +360,16 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        String m_string;             ///< String to display
-        const Font *m_font;               ///< Font used to display the string
+        c2d::String m_string;             ///< String to display
+        const c2d::Font *m_font;               ///< Font used to display the string
         unsigned int m_characterSize;      ///< Base size of characters, in pixels
         Uint32 m_style;              ///< Text style (see Style enum)
-        Color m_fillColor;          ///< Text fill color
-        Color m_outlineColor;       ///< Text outline color
+        c2d::Color m_fillColor;          ///< Text fill color
+        c2d::Color m_outlineColor;       ///< Text outline color
         float m_outlineThickness;   ///< Thickness of the text's outline
-        mutable VertexArray m_vertices;           ///< Vertex array containing the fill geometry
-        mutable VertexArray m_outlineVertices;    ///< Vertex array containing the outline geometry
-        mutable FloatRect m_bounds;             ///< Bounding rectangle of the text (in local coordinates)
+        mutable c2d::VertexArray m_vertices;           ///< Vertex array containing the fill geometry
+        mutable c2d::VertexArray m_outlineVertices;    ///< Vertex array containing the outline geometry
+        mutable c2d::FloatRect m_bounds;             ///< Bounding rectangle of the text (in local coordinates)
         mutable bool m_geometryNeedUpdate; ///< Does the geometry need to be recomputed?
     };
 

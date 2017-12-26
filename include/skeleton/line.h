@@ -9,7 +9,7 @@
 
 namespace c2d {
 
-    class Line : public Widget, public RectangleShape {
+    class Line : public Widget, public sfml::RectangleShape {
 
     public:
 

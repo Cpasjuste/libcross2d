@@ -37,7 +37,7 @@ typedef uint32_t Uint32;
 typedef uint64_t Uint64;
 typedef int64_t Int64;
 
-namespace c2d {
+namespace sfml {
 ////////////////////////////////////////////////////////////
 /// \brief Abstract class for custom file input streams
 ///

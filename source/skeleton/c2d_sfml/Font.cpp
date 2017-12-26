@@ -42,7 +42,7 @@
 namespace {
     // FreeType callbacks that operate on a sf::InputStream
     unsigned long read(FT_Stream rec, unsigned long offset, unsigned char *buffer, unsigned long count) {
-        c2d::InputStream *stream = static_cast<c2d::InputStream *>(rec->descriptor.pointer);
+        sfml::InputStream *stream = static_cast<sfml::InputStream *>(rec->descriptor.pointer);
         if (static_cast<unsigned long>(stream->seek(offset)) == offset) {
             if (count > 0)
                 return static_cast<unsigned long>(stream->read(reinterpret_cast<char *>(buffer), count));
@@ -221,7 +221,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    bool Font::loadFromStream(InputStream &stream) {
+    bool Font::loadFromStream(sfml::InputStream &stream) {
         // Cleanup the previous resources
         cleanup();
         m_refCount = new int(1);

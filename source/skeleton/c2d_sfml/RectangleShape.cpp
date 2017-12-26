@@ -28,8 +28,10 @@
 #include "skeleton/c2d_sfml/RectangleShape.hpp"
 #include <cmath>
 
+using namespace c2d;
 
-namespace c2d {
+namespace sfml {
+
 ////////////////////////////////////////////////////////////
     RectangleShape::RectangleShape(const Vector2f &size) {
         setSize(size);

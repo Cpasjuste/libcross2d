@@ -28,7 +28,8 @@ Texture::Texture(const Vector2f &size, int fmt) : RectangleShape(size) {
     format = fmt;
     bpp = fmt == C2D_TEXTURE_FMT_RGBA8 ? 4 : 2;
 
-    this->setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
+    setSize(Vector2f(size.x, size.y));
+    setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     setFillColor(Color::White);
 
     thisTransform = this;

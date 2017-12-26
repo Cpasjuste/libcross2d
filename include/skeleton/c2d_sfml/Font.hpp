@@ -35,6 +35,7 @@
 #include "Rect.hpp"
 #include "Vector2.hpp"
 #include "String.hpp"
+#include "InputStream.hpp"
 #include <map>
 #include <string>
 #include <vector>
@@ -43,11 +44,7 @@
 namespace c2d {
 
     class Texture;
-
-    //class C2DTexture;
     class Renderer;
-
-    class InputStream;
 
 ////////////////////////////////////////////////////////////
 /// \brief Class for loading and manipulating character fonts
@@ -153,7 +150,7 @@ namespace c2d {
         /// \see loadFromFile, loadFromMemory
         ///
         ////////////////////////////////////////////////////////////
-        bool loadFromStream(InputStream &stream);
+        bool loadFromStream(sfml::InputStream &stream);
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the font information

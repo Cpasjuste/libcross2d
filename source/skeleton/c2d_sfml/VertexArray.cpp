@@ -122,6 +122,9 @@ namespace c2d {
         }
     }
 
+    std::vector<Vertex> VertexArray::getVertices() const {
+        return m_vertices;
+    }
 
 ////////////////////////////////////////////////////////////
     // TODO:

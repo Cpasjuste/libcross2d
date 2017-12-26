@@ -5,11 +5,11 @@
 #ifndef CROSS2D_TEXT_H
 #define CROSS2D_TEXT_H
 
-#include "skeleton/c2d_sfml/SFMLText.hpp"
+#include "skeleton/c2d_sfml/Text.hpp"
 
 namespace c2d {
 
-    class Text : public Widget, public SFMLText {
+    class Text : public Widget, public sfml::Text {
 
     public:
 
