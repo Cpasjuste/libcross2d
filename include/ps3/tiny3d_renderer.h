@@ -5,30 +5,29 @@
 #ifndef TINY3D_RENDERER_H
 #define TINY3D_RENDERER_H
 
-#include "../skeleton/renderer.h"
+#include "skeleton/renderer.h"
 
-class TINY3DRenderer : Renderer {
+namespace c2d {
 
-public:
-    TINY3DRenderer(int w, int h);
+    class TINY3DRenderer : public Renderer {
 
-    virtual ~TINY3DRenderer();
+    public:
 
-    virtual void DrawLine(int x1, int y1, int x2, int y2, const Color &color);
+        TINY3DRenderer(const Vector2f &size = Vector2f(0, 0));
 
-    virtual void DrawRect(const Rect &rect, const Color &color, bool fill);
+        ~TINY3DRenderer();
 
-    virtual void Clear();
+        void draw(const VertexArray &vertices,
+                  const Transform &transform,
+                  const Texture *texture);
 
-    virtual void Flip();
+        void flip();
 
-    virtual void Delay(unsigned int ms);
+        void delay(unsigned int ms);
 
-    virtual void SetShader(int shader);
+        void setShader(int shader);
 
-private:
-    bool clear = false;
-
-};
+    };
+}
 
 #endif //TINY3D_RENDERER_H

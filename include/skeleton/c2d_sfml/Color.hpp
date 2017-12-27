@@ -73,7 +73,9 @@ namespace c2d {
         /// \return Color represented as a 32-bit unsigned integer
         ///
         ////////////////////////////////////////////////////////////
-        uint32_t toInteger() const;
+        uint32_t toRGBA() const;
+
+        uint32_t toARGB() const;
 
         ////////////////////////////////////////////////////////////
         // Static member data

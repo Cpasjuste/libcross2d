@@ -45,7 +45,7 @@ PSP2Texture::PSP2Texture(const char *p) : Texture(p) {
     available = true;
 }
 
-PSP2Texture::PSP2Texture(const Vector2f &size, int fmt) : Texture(size) {
+PSP2Texture::PSP2Texture(const Vector2f &size, int fmt) : Texture(size, fmt) {
 
     tex = vita2d_create_empty_texture_format(
             (unsigned int) size.x, (unsigned int) size.y,

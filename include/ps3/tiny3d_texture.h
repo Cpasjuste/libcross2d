@@ -5,38 +5,38 @@
 #ifndef _TINY3D_TEXTURE_H_
 #define _TINY3D_TEXTURE_H_
 
-#include "../skeleton/renderer.h"
 #include <pngdec/pngdec.h>
 #include <ppu-lv2.h>
-#include "ps3/tiny3d/include/tiny3d.h"
 
-class TINY3DTexture : Texture {
+#include "skeleton/renderer.h"
+#include "ps3/tiny3d/tiny3d.h"
 
-public:
-    TINY3DTexture(Renderer *renderer, const char *path);
+namespace c2d {
 
-    TINY3DTexture(Renderer *renderer, int w, int h);
+    class TINY3DTexture : public Texture {
 
-    ~TINY3DTexture();
+    public:
 
-    void Draw(int x, int y, int w, int h, float rotation);
+        TINY3DTexture(const char *path);
 
-    int Lock(const Rect &rect, void **pixels, int *pitch);
+        TINY3DTexture(const Vector2f &size = Vector2f(0, 0), int format = C2D_TEXTURE_FMT_RGBA8);
 
-    void Unlock();
+        ~TINY3DTexture();
 
-    void SetFiltering(int filter);
+        int lock(FloatRect *rect, void **pixels, int *pitch);
 
-private:
-    u32 *pixels;
-    u32 offset;
-    int pitch;
-    int bpp = 4;
-    int size = 0;
-    text_format fmt;
+        void unlock();
 
-private:
+        void setFiltering(int filter);
 
-};
+        //private:
+        u32 *pixels;
+        u32 offset;
+        text_format fmt;
+
+    private:
+
+    };
+}
 
 #endif //_TINY3D_TEXTURE_H_

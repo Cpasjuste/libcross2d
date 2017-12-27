@@ -7,7 +7,9 @@
 #include <sys/thread.h>
 #include <audio/audio.h>
 
-#include "../../include/ps3/ps3_audio.h"
+#include "ps3/ps3_audio.h"
+
+using namespace c2d;
 
 static unsigned char *buffer_fba;
 static int buffer_fba_size;

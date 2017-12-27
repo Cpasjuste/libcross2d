@@ -4,7 +4,9 @@
 
 #include <malloc.h>
 #include <cstdio>
-#include "../../include/skeleton/audio.h"
+#include "skeleton/audio.h"
+
+using namespace c2d;
 
 Audio::Audio(int freq, int fps) {
 

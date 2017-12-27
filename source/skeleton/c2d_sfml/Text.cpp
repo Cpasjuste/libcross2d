@@ -333,9 +333,9 @@ namespace sfml {
 
             // Only draw the outline if there is something to draw
             if (m_outlineThickness != 0)
-                render->draw(m_outlineVertices, combined, (Texture &) m_font->getTexture(m_characterSize));
+                render->draw(m_outlineVertices, combined, &m_font->getTexture(m_characterSize));
 
-            render->draw(m_vertices, combined, (Texture &) m_font->getTexture(m_characterSize));
+            render->draw(m_vertices, combined, &m_font->getTexture(m_characterSize));
             //render->drawTexture((Texture &) m_font->getTexture(m_characterSize), combined);
         }
     }

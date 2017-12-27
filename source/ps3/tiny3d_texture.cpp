@@ -3,10 +3,11 @@
 //
 
 #include "c2d.h"
-#include <pngdec/pngdec.h>
 #include <rsx/mm.h>
 
-TINY3DTexture::TINY3DTexture(Renderer *r, const char *p) : Texture(r, p) {
+using namespace c2d;
+
+TINY3DTexture::TINY3DTexture(const char *p) : Texture(p) {
 
     pngData png;
     if (pngLoadFromFile(path, &png)) {
@@ -14,13 +15,14 @@ TINY3DTexture::TINY3DTexture(Renderer *r, const char *p) : Texture(r, p) {
         return;
     }
 
-    width = png.width;
-    height = png.height;
+    setSize(Vector2f(png.width, png.height));
+    setTextureRect(IntRect(0, 0, png.width, png.height));
     pitch = png.pitch;
-    bpp = pitch / width;
-    size = width * height * bpp;
+    bpp = pitch / png.width;
+    fmt = bpp == 2 ? TINY3D_TEX_FORMAT_R5G6B5 : TINY3D_TEX_FORMAT_A8R8G8B8;
+    format = bpp == 2 ? C2D_TEXTURE_FMT_RGB565 : C2D_TEXTURE_FMT_RGBA8;
 
-    printf("TINY3DTexture: %ix%i, bpp=%i, pitch=%i, size=%i\n", width, height, bpp, pitch, size);
+    printf("TINY3DTexture: %ix%i, bpp=%i, pitch=%i\n", png.width, png.height, bpp, pitch);
 
     switch (bpp) {
 
@@ -32,12 +34,12 @@ TINY3DTexture::TINY3DTexture(Renderer *r, const char *p) : Texture(r, p) {
             fmt = TINY3D_TEX_FORMAT_A8R8G8B8;
     }
 
-    pixels = (u32 *) tiny3d_AllocTexture((u32) size);
+    pixels = (u32 *) tiny3d_AllocTexture((u32) png.width * png.height * bpp);
     if (!pixels) {
         printf("Could not create texture: tiny3d_AllocTexture\n");
     }
 
-    memcpy(pixels, png.bmp_out, (size_t) size);
+    memcpy(pixels, png.bmp_out, (size_t) png.width * (size_t) png.height * bpp);
     free(png.bmp_out);
 
     offset = tiny3d_TextureOffset(pixels);
@@ -45,16 +47,13 @@ TINY3DTexture::TINY3DTexture(Renderer *r, const char *p) : Texture(r, p) {
     available = true;
 }
 
-TINY3DTexture::TINY3DTexture(Renderer *r, int w, int h) : Texture(r, w, h) {
+TINY3DTexture::TINY3DTexture(const Vector2f &size, int _fmt) : Texture(size, _fmt) {
 
-    fmt = TINY3D_TEX_FORMAT_R5G6B5;
-    bpp = 2;
-    pitch = width * bpp;
-    size = width * height * bpp;
+    fmt = bpp == 2 ? TINY3D_TEX_FORMAT_R5G6B5 : TINY3D_TEX_FORMAT_A8R8G8B8;
 
-    printf("TINY3DTexture: %ix%i, bpp=%i, pitch=%i, size=%i\n", width, height, bpp, pitch, size);
+    printf("TINY3DTexture: %ix%i, bpp=%i, pitch=%i\n", (int) size.x, (int) size.y, bpp, pitch);
 
-    pixels = (u32 *) tiny3d_AllocTexture((u32) size);
+    pixels = (u32 *) tiny3d_AllocTexture((u32) size.x * (u32) size.y * bpp);
     if (!pixels) {
         printf("Could not allocated TINY3DTexture\n");
     }
@@ -64,57 +63,26 @@ TINY3DTexture::TINY3DTexture(Renderer *r, int w, int h) : Texture(r, w, h) {
     available = true;
 }
 
-void TINY3DTexture::Draw(int x, int y, int w, int h, float rotation) {
+int TINY3DTexture::lock(FloatRect *rect, void **pix, int *p) {
 
-    if (!pixels) {
-        return;;
+    if (!rect) {
+        *pix = pixels;
+    } else {
+        *pix = (void *) ((uint8_t *) pixels +
+                         (int) rect->top * pitch + (int) rect->left * bpp);
     }
 
-    tiny3d_SetTexture(0, offset, width, height, pitch, fmt, TEXTURE_LINEAR);
+    if (p) {
+        *p = pitch;
+    }
 
-    float dx = w / 2.0f;
-    float dy = h / 2.0f;
-
-    MATRIX matrix;
-
-    // rotate and translate the sprite
-    matrix = MatrixRotationZ(rotation);
-    matrix = MatrixMultiply(matrix, MatrixTranslation(x + dx, y + dy, 0.0f));
-
-    // fix ModelView Matrix
-    tiny3d_SetMatrixModelView(&matrix);
-
-    tiny3d_SetPolygon(TINY3D_QUADS);
-
-    tiny3d_VertexPos(-dx, -dy, 0);
-    tiny3d_VertexColor(0xffffffff);
-    tiny3d_VertexTexture(0.0f, 0.0f);
-
-    tiny3d_VertexPos(dx, -dy, 0);
-    tiny3d_VertexTexture(0.99f, 0.0f);
-
-    tiny3d_VertexPos(dx, dy, 0);
-    tiny3d_VertexTexture(0.99f, 0.99f);
-
-    tiny3d_VertexPos(-dx, dy, 0);
-    tiny3d_VertexTexture(0.0f, 0.99f);
-
-    tiny3d_End();
-
-    tiny3d_SetMatrixModelView(NULL); // set matrix identity
-
+    return 0;
 }
 
-int TINY3DTexture::Lock(const Rect &rect, void **data, int *_pitch) {
-
-    *data = pixels;
-    *_pitch = pitch;
+void TINY3DTexture::unlock() {
 }
 
-void TINY3DTexture::Unlock() {
-}
-
-void TINY3DTexture::SetFiltering(int filter) {
+void TINY3DTexture::setFiltering(int filter) {
 }
 
 TINY3DTexture::~TINY3DTexture() {

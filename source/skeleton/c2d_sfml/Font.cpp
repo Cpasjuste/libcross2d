@@ -566,13 +566,21 @@ namespace c2d {
             Uint8 *current = &m_pixelBuffer[0];
             Uint8 *end = current + width * height * 4;
 
+#ifdef __PS3__
+            while (current != end) {
+                (*current++) = 0;
+                (*current++) = 255;
+                (*current++) = 255;
+                (*current++) = 255;
+            }
+#else
             while (current != end) {
                 (*current++) = 255;
                 (*current++) = 255;
                 (*current++) = 255;
                 (*current++) = 0;
             }
-
+#endif
             // Extract the glyph's pixels from the bitmap
             const Uint8 *pixels = bitmap.buffer;
             if (bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
@@ -581,9 +589,17 @@ namespace c2d {
                     for (unsigned int x = padding; x < width - padding; ++x) {
                         // The color channels remain white, just fill the alpha channel
                         std::size_t index = static_cast<size_t>(x + y * width);
-                        m_pixelBuffer[index * 4 + 3] = static_cast<unsigned char>(((pixels[(x - padding) / 8]) &
-                                                                                   (1 << (7 - ((x - padding) % 8))))
-                                                                                  ? 255 : 0);
+#ifdef __PS3__
+                        m_pixelBuffer[index * 4 + 0] =
+                                static_cast<unsigned char>(((pixels[(x - padding) / 8]) &
+                                                            (1 << (7 - ((x - padding) % 8))))
+                                                           ? 255 : 0);
+#else
+                        m_pixelBuffer[index * 4 + 3] =
+                                static_cast<unsigned char>(((pixels[(x - padding) / 8]) &
+                                                            (1 << (7 - ((x - padding) % 8))))
+                                                           ? 255 : 0);
+#endif
                     }
                     pixels += bitmap.pitch;
                 }
@@ -593,7 +609,11 @@ namespace c2d {
                     for (unsigned int x = padding; x < width - padding; ++x) {
                         // The color channels remain white, just fill the alpha channel
                         std::size_t index = x + y * width;
+#ifdef __PS3__
+                        m_pixelBuffer[index * 4 + 0] = pixels[x - padding];
+#else
                         m_pixelBuffer[index * 4 + 3] = pixels[x - padding];
+#endif
                     }
                     pixels += bitmap.pitch;
                 }

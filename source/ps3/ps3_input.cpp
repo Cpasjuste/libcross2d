@@ -8,6 +8,8 @@
 #include "c2d.h"
 #include <io/pad.h>
 
+using namespace c2d;
+
 static int key_id[KEY_COUNT]{
         Input::Key::KEY_UP,
         Input::Key::KEY_DOWN,

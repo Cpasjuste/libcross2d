@@ -18,6 +18,30 @@ Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
     printf("Renderer(%p)\n", this);
 }
 
+void Renderer::drawLine(Line &line, Transform &transform) {
+
+    Transform combined = transform * line.getTransform();
+    draw(line.getVertices(), combined, nullptr);
+    if (line.getOutlineThickness() > 0) {
+        draw(line.getOutlineVertices(), combined, nullptr);
+    }
+}
+
+void Renderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
+
+    Transform combined = transform * rectangle.getTransform();
+    draw(rectangle.getVertices(), combined, nullptr);
+    if (rectangle.getOutlineThickness() > 0) {
+        draw(rectangle.getOutlineVertices(), combined, nullptr);
+    }
+}
+
+void Renderer::drawTexture(Texture &texture, Transform &transform) {
+
+    Transform combined = transform * texture.getTransform();
+    draw(texture.getVertices(), combined, &texture);
+}
+
 void Renderer::flip() {
 
     printf("Renderer(%p): flip\n", this);

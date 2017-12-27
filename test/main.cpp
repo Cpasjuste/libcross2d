@@ -51,9 +51,9 @@ int main() {
     // add all this crap to the renderer
     renderer->add(rect);
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 10; i++) {
 
-        if (i > 0) {
+        if (i > 4) {
             rect->move(32, 0);
             rect->setScale(rect->getScale().x - 0.1f, rect->getScale().y - 0.1f);
             rect->rotate(5);

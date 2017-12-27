@@ -5,17 +5,23 @@
 #ifndef _PS3_AUDIO_H_
 #define _PS3_AUDIO_H_
 
-#include "../skeleton/audio.h"
+#include "skeleton/audio.h"
 
-class PS3Audio : Audio {
+namespace c2d {
 
-public:
-    PS3Audio(int freq, int fps = 60);
-    virtual ~PS3Audio();
+    class PS3Audio : Audio {
 
-    virtual void Play();
-    virtual void Pause(int pause);
+    public:
 
-};
+        PS3Audio(int freq, int fps = 60);
+
+        virtual ~PS3Audio();
+
+        virtual void Play();
+
+        virtual void Pause(int pause);
+
+    };
+}
 
 #endif //_SDL2_AUDIO_H_

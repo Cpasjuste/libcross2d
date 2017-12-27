@@ -20,15 +20,8 @@ namespace c2d {
         ~SFMLRenderer();
 
         void draw(const VertexArray &vertices,
-                  const Transform &transform);
-
-        void draw(const VertexArray &vertices,
                   const Transform &transform,
-                  const Texture &texture);
-
-        void drawRectangle(Rectangle &rectangle, Transform &transform);
-
-        void drawTexture(Texture &texture, Transform &transform);
+                  const Texture *texture);
 
         void flip();
 

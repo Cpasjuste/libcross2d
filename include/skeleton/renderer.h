@@ -32,17 +32,14 @@ namespace c2d {
         virtual ~Renderer();
 
         virtual void draw(const VertexArray &vertices,
-                          const Transform &transform) {};
-
-        virtual void draw(const VertexArray &vertices,
                           const Transform &transform,
-                          const Texture &texture) {};
+                          const Texture *texture) {};
 
-        virtual void drawTexture(Texture &texture, Transform &transform) {};
+        virtual void drawTexture(Texture &texture, Transform &transform);
 
-        virtual void drawLine(Line &line, Transform &transform) {};
+        virtual void drawLine(Line &line, Transform &transform);
 
-        virtual void drawRectangle(Rectangle &rectangle, Transform &transform) {};
+        virtual void drawRectangle(Rectangle &rectangle, Transform &transform);
 
         virtual void flip();
 

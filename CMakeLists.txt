@@ -5,14 +5,14 @@ set(CMAKE_SYSTEM_NAME "Generic")
 enable_language(ASM)
 
 # delete cmake cache folder before changing this options
-option(BUILD_SFML "Build with SFML support" ON)
-option(BUILD_SDL2 "Build with SDL2 support" OFF)
-option(BUILD_SDL1 "Build with SDL1 support" OFF)
+option(BUILD_SFML "Build with SFML support" OFF)
+#option(BUILD_SDL2 "Build with SDL2 support" OFF)
+#option(BUILD_SDL1 "Build with SDL1 support" OFF)
 option(BUILD_PSP2 "Build with PSP2 support" OFF)
-option(BUILD_PS3 "Build with PS3 support" OFF)
-option(BUILD_3DS "Build with 3DS support" OFF)
-option(BUILD_RPI "Build with RPI support" OFF)
-option(BUILD_NX "Build with NX (SWITCH) support" OFF)
+option(BUILD_PS3 "Build with PS3 support" ON)
+#option(BUILD_3DS "Build with 3DS support" OFF)
+#option(BUILD_RPI "Build with RPI support" OFF)
+#option(BUILD_NX "Build with NX (SWITCH) support" OFF)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
@@ -71,8 +71,8 @@ elseif (BUILD_PSP2)
             source/psp2/psp2_texture.cpp
             source/psp2/psp2_shaders.cpp
             source/psp2/libvita2d/source/*.c
-            #source/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
-            #source/sdl2/sdl2_input.cpp # TODO: get rid of sdl2, use sdl2 input for now
+            source/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
+            source/sdl2/sdl2_input.cpp # TODO: get rid of sdl2, use sdl2 input for now
             source/psp2/libvita2d/shader/compiled/*.o
             source/psp2/vita-shader-collection/lib/*.o
             )
@@ -87,17 +87,17 @@ elseif (BUILD_PS3)
     set(CMAKE_C_FLAGS_RELEASE "-O2")
     set(CMAKE_CXX_FLAGS_RELEASE "-O2")
     set(PLATFORM_DIRS
-            src/ps3
-            src/ps3/tiny3d/source
-            src/ps3/tiny3d/include
+            source/ps3
+            source/ps3/tiny3d
+            include/ps3/tiny3d
             ${PSL1GHT}/portlibs/ppu/include/freetype2
-            src/posix
+            source/posix
             )
     file(GLOB PLATFORM_SRC
-            src/ps3/*.c*
-            src/ps3/tiny3d/source/*.c*
-            src/ps3/tiny3d/source/*.S*
-            src/posix/*.c*
+            source/ps3/*.c*
+            source/ps3/tiny3d/*.c*
+            source/ps3/tiny3d/*.S*
+            source/posix/*.c*
             )
     set(PLATFORM_LIBS
             ${PSL1GHT}/portlibs/ppu/lib/libfreetype.a

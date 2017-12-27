@@ -11,7 +11,7 @@
 #include "skeleton/texture.h"
 #include "skeleton/text.h"
 #include "skeleton/input.h"
-//#include "skeleton/audio.h"
+#include "skeleton/audio.h"
 #include "skeleton/timer.h"
 #include "skeleton/io.h"
 
@@ -22,17 +22,17 @@ extern c2d::Renderer *c2d_renderer;
 
 #include "psp2/psp2_renderer.h"
 #include "psp2/psp2_texture.h"
-//#include "psp2/psp2_font.h"
-//#include "sdl2/sdl2_input.h"
-//#include "sdl2/sdl2_audio.h"
+#include "sdl2/sdl2_input.h"
+#include "sdl2/sdl2_audio.h"
 
 #define C2DRenderer PSP2Renderer
 #define C2DTexture PSP2Texture
-//#define C2DRectangle Rectangle
-//#define C2DLine Line
-//#define C2DFont PSP2Font
-//#define C2DInput SDL2Input
-//#define C2DAudio SDL2Audio
+#define C2DRectangle Rectangle
+#define C2DLine Line
+#define C2DFont Font
+#define C2DText Text
+#define C2DInput SDL2Input
+#define C2DAudio SDL2Audio
 #define C2DIo PSP2Io
 
 #define KEY_JOY_UP_DEFAULT      8
@@ -172,14 +172,17 @@ extern c2d::Renderer *c2d_renderer;
 
 #include "ps3/tiny3d_renderer.h"
 #include "ps3/tiny3d_texture.h"
-#include "ps3/tiny3d_font.h"
 #include "ps3/ps3_input.h"
 #include "ps3/ps3_audio.h"
 #include "posix/posix_io.h"
 
 #define C2DRenderer TINY3DRenderer
 #define C2DTexture TINY3DTexture
-#define C2DFont TINY3DFont
+//#define C2DFont TINY3DFont
+#define C2DRectangle Rectangle
+#define C2DLine Line
+#define C2DFont Font
+#define C2DText Text
 #define C2DInput PS3Input
 #define C2DAudio PS3Audio
 #define C2DIo POSIXIo
@@ -208,7 +211,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "sfml/sfml_renderer.h"
 #include "sfml/sfml_texture.h"
 #include "sfml/sfml_input.h"
-//#include "sdl2/sdl2_audio.h"
+#include "sdl2/sdl2_audio.h"
 #include "posix/posix_io.h"
 
 #define C2DRenderer SFMLRenderer
@@ -218,7 +221,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DFont Font
 #define C2DText Text
 #define C2DInput SFMLInput
-//#define C2DAudio SDL2Audio
+#define C2DAudio SDL2Audio
 #define C2DIo POSIXIo
 
 #define KEY_JOY_UP_DEFAULT      -1  // use hat

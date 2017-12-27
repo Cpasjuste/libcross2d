@@ -6,7 +6,7 @@
 #ifndef LIBFONT_H
 #define LIBFONT_H
 
-#include <tiny3d.h>
+#include "tiny3d.h"
 
 #ifdef __cplusplus
 extern "C" {

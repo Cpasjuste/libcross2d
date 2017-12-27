@@ -75,8 +75,12 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    uint32_t Color::toInteger() const {
+    uint32_t Color::toRGBA() const {
         return (r << 24) | (g << 16) | (b << 8) | a;
+    }
+
+    uint32_t Color::toARGB() const {
+        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
 

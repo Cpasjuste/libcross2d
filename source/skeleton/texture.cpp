@@ -24,11 +24,11 @@ Texture::Texture(const Vector2f &size, int fmt) : RectangleShape(size) {
 
     printf("Texture(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 
-
     format = fmt;
     bpp = fmt == C2D_TEXTURE_FMT_RGBA8 ? 4 : 2;
+    pitch = (int) (getSize().x * bpp);
 
-    setSize(Vector2f(size.x, size.y));
+    setSize(size);
     setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     setFillColor(Color::White);
 

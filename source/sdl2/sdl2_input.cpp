@@ -2,9 +2,11 @@
 // Created by cpasjuste on 11/01/17.
 //
 
-#include "../../include/sdl2/sdl2_input.h"
-
 #include <cmath>
+#include "skeleton/renderer.h"
+#include "sdl2/sdl2_input.h"
+
+using namespace c2d;
 
 static int key_id[KEY_COUNT]{
         Input::Key::KEY_UP,

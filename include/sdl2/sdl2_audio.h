@@ -5,17 +5,23 @@
 #ifndef _SDL2_AUDIO_H_
 #define _SDL2_AUDIO_H_
 
-#include "../skeleton/audio.h"
+#include "skeleton/audio.h"
 
-class SDL2Audio : Audio {
+namespace c2d {
 
-public:
-    SDL2Audio(int freq, int fps = 60);
-    virtual ~SDL2Audio();
+    class SDL2Audio : Audio {
 
-    virtual void Play();
-    virtual void Pause(int pause);
+    public:
 
-};
+        SDL2Audio(int freq, int fps = 60);
+
+        virtual ~SDL2Audio();
+
+        virtual void Play();
+
+        virtual void Pause(int pause);
+
+    };
+}
 
 #endif //_SDL2_AUDIO_H_
