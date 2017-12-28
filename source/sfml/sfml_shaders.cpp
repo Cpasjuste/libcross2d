@@ -10,7 +10,7 @@ SFMLShaders::SFMLShaders(const std::string &shadersPath) : Shaders(shadersPath) 
 
     if (sf::Shader::isAvailable()) {
         POSIXIo io;
-        std::vector<std::string> shaderList = io.GetDirList(shadersPath.c_str());
+        std::vector <std::string> shaderList = io.GetDirList(shadersPath.c_str());
         for (unsigned int i = 0; i < shaderList.size(); i++) {
             const std::string name = shaderList[i].substr(0, shaderList[i].find_last_of("."));
             if (shaderList[i].substr(shaderList[i].find_last_of(".") + 1) == "v") { // vertex shader

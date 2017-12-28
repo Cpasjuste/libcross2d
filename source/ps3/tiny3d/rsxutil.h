@@ -4,7 +4,7 @@
 #include <rsx/gcm_sys.h>
 
 //extern u32 *buffer[2];
-extern gcmContextData *context; 
+extern gcmContextData *context;
 extern videoResolution Video_Resolution;
 
 // Initilize the screen and rsx

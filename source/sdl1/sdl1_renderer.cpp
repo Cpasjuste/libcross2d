@@ -44,12 +44,12 @@ void SDL1Renderer::DrawRect(const Rect &rect, const Color &c, bool fill) {
     if (fill) {
         boxRGBA(screen,
                 (Sint16) rect.x, (Sint16) rect.y,
-                (Sint16) (rect.x + rect.w), (Sint16) (rect.y + rect.h),
+                (Sint16)(rect.x + rect.w), (Sint16)(rect.y + rect.h),
                 c.r, c.g, c.b, c.a);
     } else {
         rectangleRGBA(screen,
                       (Sint16) rect.x, (Sint16) rect.y,
-                      (Sint16) (rect.x + rect.w), (Sint16) (rect.y + rect.h),
+                      (Sint16)(rect.x + rect.w), (Sint16)(rect.y + rect.h),
                       c.r, c.g, c.b, c.a);
     }
 }

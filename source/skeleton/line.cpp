@@ -31,8 +31,6 @@ std::size_t Line::getPointCount() const {
 
 void Line::draw(Transform &transform) {
 
-    printf("Line(%p): draw\n", this);
-
     // draw rect from renderer
     c2d_renderer->drawLine(*this, transform);
 

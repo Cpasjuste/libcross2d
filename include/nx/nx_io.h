@@ -18,7 +18,7 @@ public:
 
     virtual bool Exist(const char *path);
 
-    virtual std::vector<std::string> GetDirList(const char *path);
+    virtual std::vector <std::string> GetDirList(const char *path);
 
 
 private:

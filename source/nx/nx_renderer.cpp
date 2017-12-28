@@ -25,8 +25,8 @@ NXRenderer::NXRenderer() : Renderer() {
 //////////
 Font *NXRenderer::LoadFont(const char *path, int size) {
 
-    Font *font = (Font *)
-            new NXFont(path, size);
+    Font *font = (Font * )
+    new NXFont(path, size);
     return font;
 }
 

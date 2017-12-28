@@ -42,6 +42,15 @@ void Renderer::drawTexture(Texture &texture, Transform &transform) {
     draw(texture.getVertices(), combined, &texture);
 }
 
+void Renderer::drawText(Text &text, Transform &transform) {
+
+    Transform combined = transform * text.getTransform();
+    if (text.getOutlineThickness() > 0) {
+        draw(text.getOutlineVertices(), combined, &text.getFont()->getTexture(text.getCharacterSize()));
+    }
+    draw(text.getVertices(), combined, &text.getFont()->getTexture(text.getCharacterSize()));
+}
+
 void Renderer::flip() {
 
     printf("Renderer(%p): flip\n", this);

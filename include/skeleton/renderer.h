@@ -13,7 +13,7 @@
 #include "widget.h"
 #include "rectangle.h"
 #include "line.h"
-//#include "font.h"
+#include "text.h"
 #include "texture.h"
 #include "shaders.h"
 
@@ -34,6 +34,8 @@ namespace c2d {
         virtual void draw(const VertexArray &vertices,
                           const Transform &transform,
                           const Texture *texture) {};
+
+        virtual void drawText(Text &text, Transform &transform);
 
         virtual void drawTexture(Texture &texture, Transform &transform);
 

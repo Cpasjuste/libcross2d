@@ -92,7 +92,7 @@ bool Rect<T>::contains(const Vector2 <T> &point) const {
 ////////////////////////////////////////////////////////////
 template<typename T>
 bool Rect<T>::intersects(const Rect <T> &rectangle) const {
-    Rect <T> intersection;
+    Rect<T> intersection;
     return intersects(rectangle, intersection);
 }
 

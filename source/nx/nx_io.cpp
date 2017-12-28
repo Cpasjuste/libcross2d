@@ -35,7 +35,7 @@ bool NXIo::Exist(const char *path) {
     }
 }
 
-std::vector<std::string> NXIo::GetDirList(const char *path) {
+std::vector <std::string> NXIo::GetDirList(const char *path) {
     // TODO
     return Io::GetDirList(path);
 }

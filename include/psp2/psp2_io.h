@@ -12,7 +12,7 @@ class PSP2Io : Io {
 public:
     bool Exist(const char *file);
 
-    std::vector<std::string> GetDirList(const char *path);
+    std::vector <std::string> GetDirList(const char *path);
 
 };
 

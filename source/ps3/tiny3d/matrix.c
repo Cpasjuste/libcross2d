@@ -9,126 +9,120 @@
 #include <math.h>
 
 static MATRIX matrix_ident =
-{
-    {
-    {1.0, 0.0, 0.0, 0.0},
-    {0.0, 1.0, 0.0, 0.0},
-    {0.0, 0.0, 1.0, 0.0},
-    {0.0, 0.0, 0.0, 1.0}
-    }
-};
+        {
+                {
+                        {1.0, 0.0, 0.0, 0.0},
+                        {0.0, 1.0, 0.0, 0.0},
+                        {0.0, 0.0, 1.0, 0.0},
+                        {0.0, 0.0, 0.0, 1.0}
+                }
+        };
 
-MATRIX MatrixProjPerspective(float fov, float aspect, float near, float far)
-{
+MATRIX MatrixProjPerspective(float fov, float aspect, float near, float far) {
     MATRIX project;
 
-	float cotangent;
+    float cotangent;
 
-	cotangent = 1.0f/tanf(fov*0.00872664626f);
+    cotangent = 1.0f / tanf(fov * 0.00872664626f);
 
     memset(&project, 0, sizeof(MATRIX));
-   
-    project.data[0][0] =  cotangent/aspect;
-    project.data[1][1] =  - cotangent;
-  
+
+    project.data[0][0] = cotangent / aspect;
+    project.data[1][1] = -cotangent;
+
     project.data[2][2] = 1.0f;
-    project.data[2][3] = (near * far )/(far - near);
+    project.data[2][3] = (near * far) / (far - near);
     project.data[3][2] = 1.0f;
 
     return project;
 }
 
-VECTOR MatrixVectorMultiply(MATRIX mat, VECTOR vec)
-{
-	float *m = (float *) &mat;
-    
+VECTOR MatrixVectorMultiply(MATRIX mat, VECTOR vec) {
+    float *m = (float *) &mat;
+
     VECTOR temp;
-	
-    temp.x = m[0] * vec.x + m[4] * vec.y + m[8]  * vec.z + m[12];
-    temp.y = m[1] * vec.x + m[5] * vec.y + m[9]  * vec.z + m[13];
+
+    temp.x = m[0] * vec.x + m[4] * vec.y + m[8] * vec.z + m[12];
+    temp.y = m[1] * vec.x + m[5] * vec.y + m[9] * vec.z + m[13];
     temp.z = m[2] * vec.x + m[6] * vec.y + m[10] * vec.z + m[14];
-    
+
     return temp;
 }
 
-VECTOR MatrixVectorMultiply3x3(MATRIX mat, VECTOR vec)
-{
-	float *m = (float *) &mat;
-    
+VECTOR MatrixVectorMultiply3x3(MATRIX mat, VECTOR vec) {
+    float *m = (float *) &mat;
+
     VECTOR temp;
-	
-    temp.x = m[0] * vec.x + m[4] * vec.y + m[8]  * vec.z;
-    temp.y = m[1] * vec.x + m[5] * vec.y + m[9]  * vec.z;
+
+    temp.x = m[0] * vec.x + m[4] * vec.y + m[8] * vec.z;
+    temp.y = m[1] * vec.x + m[5] * vec.y + m[9] * vec.z;
     temp.z = m[2] * vec.x + m[6] * vec.y + m[10] * vec.z;
-    
+
     return temp;
 }
 
-MATRIX MatrixMultiply(MATRIX old_matrix, MATRIX new_matrix)
-{
-	MATRIX mo;
+MATRIX MatrixMultiply(MATRIX old_matrix, MATRIX new_matrix) {
+    MATRIX mo;
     float *m = (float *) &mo, *a = (float *) &old_matrix, *b = (float *) &new_matrix;
 
-    m[0]  = a[0]*b[0]  + a[1]*b[4]  + a[2]*b[8];
-    m[1]  = a[0]*b[1]  + a[1]*b[5]  + a[2]*b[9];
-    m[2]  = a[0]*b[2]  + a[1]*b[6]  + a[2]*b[10];
-    m[3]  = a[0]*b[3]  + a[1]*b[7]  + a[2]*b[11];
+    m[0] = a[0] * b[0] + a[1] * b[4] + a[2] * b[8];
+    m[1] = a[0] * b[1] + a[1] * b[5] + a[2] * b[9];
+    m[2] = a[0] * b[2] + a[1] * b[6] + a[2] * b[10];
+    m[3] = a[0] * b[3] + a[1] * b[7] + a[2] * b[11];
 
-    m[4]  = a[4]*b[0]  + a[5]*b[4]  + a[6]*b[8];
-    m[5]  = a[4]*b[1]  + a[5]*b[5]  + a[6]*b[9];
-    m[6]  = a[4]*b[2]  + a[5]*b[6]  + a[6]*b[10];
-    m[7]  = a[4]*b[3]  + a[5]*b[7]  + a[6]*b[11];
+    m[4] = a[4] * b[0] + a[5] * b[4] + a[6] * b[8];
+    m[5] = a[4] * b[1] + a[5] * b[5] + a[6] * b[9];
+    m[6] = a[4] * b[2] + a[5] * b[6] + a[6] * b[10];
+    m[7] = a[4] * b[3] + a[5] * b[7] + a[6] * b[11];
 
-    m[8]  = a[8]*b[0]  + a[9]*b[4]  + a[10]*b[8];
-    m[9]  = a[8]*b[1]  + a[9]*b[5]  + a[10]*b[9];
-    m[10] = a[8]*b[2]  + a[9]*b[6]  + a[10]*b[10];
-    m[11] = a[8]*b[3]  + a[9]*b[7]  + a[10]*b[11];
+    m[8] = a[8] * b[0] + a[9] * b[4] + a[10] * b[8];
+    m[9] = a[8] * b[1] + a[9] * b[5] + a[10] * b[9];
+    m[10] = a[8] * b[2] + a[9] * b[6] + a[10] * b[10];
+    m[11] = a[8] * b[3] + a[9] * b[7] + a[10] * b[11];
 
-    m[12] = a[12]*b[0] + a[13]*b[4] + a[14]*b[8];
-    m[13] = a[12]*b[1] + a[13]*b[5] + a[14]*b[9];
-    m[14] = a[12]*b[2] + a[13]*b[6] + a[14]*b[10];
-    m[15] = a[12]*b[3] + a[13]*b[7] + a[14]*b[11];
+    m[12] = a[12] * b[0] + a[13] * b[4] + a[14] * b[8];
+    m[13] = a[12] * b[1] + a[13] * b[5] + a[14] * b[9];
+    m[14] = a[12] * b[2] + a[13] * b[6] + a[14] * b[10];
+    m[15] = a[12] * b[3] + a[13] * b[7] + a[14] * b[11];
 
-    if(a[3]) {
-        m[0]  += a[3]*b[12];
-        m[1]  += a[3]*b[13];
-        m[2]  += a[3]*b[14];
-        m[3]  += a[3]*b[15];
-    }
-   
-    if(a[7]) {
-        m[4]  += a[7]*b[12];
-        m[5]  += a[7]*b[13];
-        m[6]  += a[7]*b[14];
-        m[6]  += a[7]*b[15];
-    }
-    
-    if(a[11]) {
-        m[8]  += a[11]*b[12];
-        m[9]  += a[11]*b[13];
-        m[10] += a[11]*b[14];
-        m[11] += a[11]*b[15];
+    if (a[3]) {
+        m[0] += a[3] * b[12];
+        m[1] += a[3] * b[13];
+        m[2] += a[3] * b[14];
+        m[3] += a[3] * b[15];
     }
 
-    if(a[15]) {
-        m[12] += a[15]*b[12];
-        m[13] += a[15]*b[13];
-        m[14] += a[15]*b[14];
-        m[15] += a[15]*b[15];
+    if (a[7]) {
+        m[4] += a[7] * b[12];
+        m[5] += a[7] * b[13];
+        m[6] += a[7] * b[14];
+        m[6] += a[7] * b[15];
     }
-   
+
+    if (a[11]) {
+        m[8] += a[11] * b[12];
+        m[9] += a[11] * b[13];
+        m[10] += a[11] * b[14];
+        m[11] += a[11] * b[15];
+    }
+
+    if (a[15]) {
+        m[12] += a[15] * b[12];
+        m[13] += a[15] * b[13];
+        m[14] += a[15] * b[14];
+        m[15] += a[15] * b[15];
+    }
+
 
     return mo;
 }
 
 
-MATRIX MatrixIdentity(void)
-{
+MATRIX MatrixIdentity(void) {
     return matrix_ident;
 }
 
-MATRIX MatrixTranslation(float x, float y, float z)
-{
+MATRIX MatrixTranslation(float x, float y, float z) {
     MATRIX result = MatrixIdentity();
 
     result.data[3][0] = x;
@@ -138,26 +132,24 @@ MATRIX MatrixTranslation(float x, float y, float z)
     return result;
 }
 
-MATRIX MatrixTranspose(MATRIX src)
-{
+MATRIX MatrixTranspose(MATRIX src) {
     int row, col;
 
     MATRIX result;
 
-    for(row = 0; row < 4; row++)
-         for(col = 0; col < 4 ; col++) {
-         
+    for (row = 0; row < 4; row++)
+        for (col = 0; col < 4; col++) {
+
             result.data[row][col] = src.data[col][row];
 
-         }
+        }
 
     return result;
 }
 
-MATRIX MatrixScale(float x, float y, float z)
-{
+MATRIX MatrixScale(float x, float y, float z) {
     MATRIX result = MatrixIdentity();
-    
+
     result.data[0][0] = x;
     result.data[1][1] = y;
     result.data[2][2] = z;
@@ -166,10 +158,9 @@ MATRIX MatrixScale(float x, float y, float z)
 }
 
 
-MATRIX MatrixRotationX(float angle)
-{
+MATRIX MatrixRotationX(float angle) {
     MATRIX result = MatrixIdentity();
-    
+
     float fcos = cosf(angle), fsin = sinf(angle);
 
     result.data[1][1] = fcos;
@@ -181,8 +172,7 @@ MATRIX MatrixRotationX(float angle)
     return result;
 }
 
-MATRIX MatrixRotationY(float angle)
-{
+MATRIX MatrixRotationY(float angle) {
     MATRIX result = MatrixIdentity();
 
     float fcos = cosf(angle), fsin = sinf(angle);
@@ -196,8 +186,7 @@ MATRIX MatrixRotationY(float angle)
     return result;
 }
 
-MATRIX MatrixRotationZ(float angle)
-{
+MATRIX MatrixRotationZ(float angle) {
     MATRIX result = MatrixIdentity();
 
     float fcos = cosf(-angle), fsin = sinf(-angle);
@@ -211,26 +200,25 @@ MATRIX MatrixRotationZ(float angle)
     return result;
 }
 
-MATRIX MatrixRotationAxis(float angle, VECTOR v)
-{
+MATRIX MatrixRotationAxis(float angle, VECTOR v) {
 
     MATRIX result;
-    
+
     float fcos = cosf(angle), fsin = sinf(angle);
 
-    v.z = - v.z;
+    v.z = -v.z;
 
     result = MatrixIdentity();
 
-    if(v.x == 1.0f && v.y == 0.0f && v.z == 0.0f) {
+    if (v.x == 1.0f && v.y == 0.0f && v.z == 0.0f) {
 
         result.data[1][1] = fcos;
         result.data[2][1] = -fsin;
 
         result.data[1][2] = fsin;
         result.data[2][2] = fcos;
-    
-    } else if(v.x == 0.0f && v.y == 1.0f && v.z == 0.0f) {
+
+    } else if (v.x == 0.0f && v.y == 1.0f && v.z == 0.0f) {
 
         result.data[0][0] = fcos;
         result.data[2][0] = fsin;
@@ -238,7 +226,7 @@ MATRIX MatrixRotationAxis(float angle, VECTOR v)
         result.data[0][2] = -fsin;
         result.data[2][2] = fcos;
 
-    } else if(v.x == 0.0f && v.y == 0.0f && v.z == 1.0f) {
+    } else if (v.x == 0.0f && v.y == 0.0f && v.z == 1.0f) {
 
         result.data[0][0] = fcos;
         result.data[1][0] = -fsin;
@@ -251,20 +239,24 @@ MATRIX MatrixRotationAxis(float angle, VECTOR v)
         float vxx = v.x * v.x, vyy = v.y * v.y, vzz = v.z * v.z;
 
         float len = vxx + vyy + vzz;
-   
+
         // normalize
 
         if (len != 0.0f && (len > 1.0001f || len < 0.9999f)) {
             len = 1.0f / sqrtf(len);
-            v.x *= len; v.y *= len; v.z *= len;
+            v.x *= len;
+            v.y *= len;
+            v.z *= len;
 
-            vxx = v.x * v.x; vyy = v.y * v.y; vzz = v.z * v.z;
+            vxx = v.x * v.x;
+            vyy = v.y * v.y;
+            vzz = v.z * v.z;
         }
 
         float vxy = v.x * v.y, vxz = v.x * v.z, vyz = v.y * v.z;
 
         float vsinx = fsin * v.x, vsiny = fsin * v.y, vsinz = fsin * v.z;
-        
+
         result.data[0][0] = vxx + fcos * (1.0f - vxx);
         result.data[0][1] = vxy + fcos * (-vxy) + vsinz;
         result.data[0][2] = vxz + fcos * (-vxz) - vsiny;
@@ -284,11 +276,10 @@ MATRIX MatrixRotationAxis(float angle, VECTOR v)
 
 /* vectors */
 
-VECTOR VectorToUnit(VECTOR v)
-{
-    float len = sqrtf( v.x * v.x + v.y * v.y + v.z * v.z);
+VECTOR VectorToUnit(VECTOR v) {
+    float len = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 
-    if(len == 0.0) len = 1.0f;
+    if (len == 0.0) len = 1.0f;
 
     v.x /= len;
     v.y /= len;
@@ -297,8 +288,7 @@ VECTOR VectorToUnit(VECTOR v)
     return v;
 }
 
-VECTOR VectorNormalPlane(VECTOR v1, VECTOR v2, VECTOR v3)
-{
+VECTOR VectorNormalPlane(VECTOR v1, VECTOR v2, VECTOR v3) {
     VECTOR v, va, vb;
 
     va.x = v1.x - v2.x;

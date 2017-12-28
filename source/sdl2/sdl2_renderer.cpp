@@ -143,7 +143,7 @@ void SDL2Renderer::drawTexture(const Texture &texture, const Transform &parentTr
             (int) trans.height
     };
 
-    SDL_RenderCopyEx(sdl_renderer, ((SDL2Texture *) &texture)->tex, &src, &dst, 0, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(sdl_renderer, ((SDL2Texture * ) & texture)->tex, &src, &dst, 0, NULL, SDL_FLIP_NONE);
 }
 
 void SDL2Renderer::flip() {

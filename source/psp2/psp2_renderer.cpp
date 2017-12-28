@@ -31,7 +31,8 @@ PSP2Renderer::PSP2Renderer(const Vector2f &size) : Renderer(size) {
 
     vita2d_init();
 
-    this->shaders = (Shaders *) new PSP2Shaders("");
+    this->shaders = (Shaders * )
+    new PSP2Shaders("");
     setShader(0);
 }
 

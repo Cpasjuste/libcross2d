@@ -24,9 +24,9 @@ s32 __attribute__((noinline)) rsxContextCallback(gcmContextData *context,u32 cou
 }
 #endif
 
-void commandBufferPut(gcmContextData* context, uint32_t value) {
-	uint32_t* buffer = context->current;
-	 *buffer++ = value;
-	context->current = buffer;
+void commandBufferPut(gcmContextData *context, uint32_t value) {
+    uint32_t *buffer = context->current;
+    *buffer++ = value;
+    context->current = buffer;
 }
 

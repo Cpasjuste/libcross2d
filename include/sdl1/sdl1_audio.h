@@ -11,9 +11,11 @@ class SDL1Audio : Audio {
 
 public:
     SDL1Audio(int freq, int fps = 60);
+
     virtual ~SDL1Audio();
 
     virtual void Play();
+
     virtual void Pause(int pause);
 
 };

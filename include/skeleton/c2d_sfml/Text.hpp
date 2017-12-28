@@ -333,7 +333,9 @@ namespace sfml {
 
         void setOriginBottomRight();
 
-        virtual void draw(c2d::Renderer *render, const c2d::Transform &transform);
+        c2d::VertexArray getVertices() const;
+
+        c2d::VertexArray getOutlineVertices() const;
 
     private:
 

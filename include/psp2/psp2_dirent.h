@@ -23,7 +23,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #ifndef _PSP2_DIRENT_H_
-#define	_PSP2_DIRENT_H_
+#define    _PSP2_DIRENT_H_
 
 #include <sys/types.h>
 #include <sys/time.h>
@@ -38,27 +38,32 @@ extern "C" {
 #define F_readdir 1
 #define F_closedir 1
 
-struct dirent
-{
-	/** File status. */
-	SceIoStat	d_stat;
-	/** File name. */
-	char	d_name[256];
-	/** Device-specific data. */
-	void	*d_private;
-	int	dummy;
+struct dirent {
+    /** File status. */
+    SceIoStat d_stat;
+    /** File name. */
+    char d_name[256];
+    /** Device-specific data. */
+    void *d_private;
+    int dummy;
 };
 
 struct DIR_;
 typedef struct DIR_ DIR;
 
-int            closedir(DIR *);
-DIR           *opendir(const char *);
+int closedir(DIR *);
+
+DIR *opendir(const char *);
+
 struct dirent *readdir(DIR *);
-int            readdir_r(DIR *, struct dirent *, struct dirent **);
-void           rewinddir(DIR *);
-void           seekdir(DIR *, long int);
-long int       telldir(DIR *);
+
+int readdir_r(DIR *, struct dirent *, struct dirent **);
+
+void rewinddir(DIR *);
+
+void seekdir(DIR *, long int);
+
+long int telldir(DIR *);
 
 #ifdef __cplusplus
 }

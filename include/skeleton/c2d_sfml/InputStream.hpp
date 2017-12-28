@@ -32,6 +32,7 @@
 //#include <SFML/System/Export.hpp>
 
 #include <cstdint>
+
 typedef uint8_t Uint8;
 typedef uint32_t Uint32;
 typedef uint64_t Uint64;

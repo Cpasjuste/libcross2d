@@ -24,10 +24,8 @@ Text::Text(const String &string, const Font &font, unsigned int characterSize)
 
 void Text::draw(Transform &transform) {
 
-    printf("Text(%p): draw\n", this);
-
-    // draw rect from renderer
-    sfml::Text::draw(c2d_renderer, transform);
+    // draw text from renderer
+    c2d_renderer->drawText(*this, transform);
 
     // call base class (draw childs)
     Widget::draw(transform);

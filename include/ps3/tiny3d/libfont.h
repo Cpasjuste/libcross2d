@@ -33,7 +33,8 @@ It receive one RSX texture pointer and return the texture pointer increased and 
 RSX texture.
 */
 
-u8 * AddFontFromBitmapArray(u8 *font, u8 *texture, u8 first_char, u8 last_char, int w, int h, int bits_per_pixel, int byte_order);
+u8 *AddFontFromBitmapArray(u8 *font, u8 *texture, u8 first_char, u8 last_char, int w, int h, int bits_per_pixel,
+                           int byte_order);
 
 /* 
 add one bitmap font creating it from True Type Fonts. You can define the font range with first_char and last_char in the range 0 to 255
@@ -45,8 +46,8 @@ It receive one RSX texture pointer and return the texture pointer increased and 
 RSX texture.
 */
 
-u8 * AddFontFromTTF(u8 *texture, u8 first_char, u8 last_char, int w, int h, 
-    void (* ttf_callback) (u8 chr, u8 * bitmap, short *w, short *h, short *y_correction));
+u8 *AddFontFromTTF(u8 *texture, u8 first_char, u8 last_char, int w, int h,
+                   void (*ttf_callback)(u8 chr, u8 *bitmap, short *w, short *h, short *y_correction));
 
 /* function to select the current font to use (the first is 0. if you select an undefined font, it uses font 0) */
 

@@ -32,7 +32,8 @@ SFMLRenderer::SFMLRenderer(const Vector2f &size, const std::string &shaderPath) 
     if (shaders) {
         delete (shaders);
     }
-    shaders = (Shaders *) new SFMLShaders(shaderPath);
+    shaders = (Shaders * )
+    new SFMLShaders(shaderPath);
 }
 
 void SFMLRenderer::setShader(int index) {

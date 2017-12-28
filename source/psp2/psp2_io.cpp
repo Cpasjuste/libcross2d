@@ -12,9 +12,9 @@ bool PSP2Io::Exist(const char *file) {
     return (stat(file, &buf) == 0);
 }
 
-std::vector<std::string> PSP2Io::GetDirList(const char *path) {
+std::vector <std::string> PSP2Io::GetDirList(const char *path) {
 
-    std::vector<std::string> files;
+    std::vector <std::string> files;
 
     DIR *dir;
     struct dirent *ent;

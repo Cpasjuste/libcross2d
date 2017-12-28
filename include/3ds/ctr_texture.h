@@ -28,6 +28,7 @@ private:
     void Tile();
 
     void TileSoft();
+
     C3D_Tex tex;
     u8 *pixels = NULL;
     GPU_TEXCOLOR fmt = GPU_RGB565;

@@ -323,7 +323,18 @@ namespace sfml {
         setOrigin(getLocalBounds().width, getLocalBounds().height);
     }
 
+    VertexArray Text::getVertices() const {
+        ensureGeometryUpdate();
+        return m_vertices;
+    }
+
+    VertexArray Text::getOutlineVertices() const {
+        ensureGeometryUpdate();
+        return m_outlineVertices;
+    }
+
 ////////////////////////////////////////////////////////////
+    /*
     void Text::draw(Renderer *render, const Transform &transform) {
         if (m_font) {
 
@@ -339,7 +350,7 @@ namespace sfml {
             //render->drawTexture((Texture &) m_font->getTexture(m_characterSize), combined);
         }
     }
-
+    */
 ////////////////////////////////////////////////////////////
     void Text::ensureGeometryUpdate() const {
         // Do nothing, if geometry has not changed
