@@ -54,7 +54,7 @@ if (BUILD_SFML)
             source/sdl2/sdl2_audio.cpp #TODO: get rid of sdl2, use sdl2 audio for now
             )
     list(APPEND FLAGS
-            -O3 -D__SFML__
+            -D__SFML__
             -I/usr/include/freetype2
             )
     #####################
@@ -81,9 +81,11 @@ elseif (BUILD_PSP2)
         file(GLOB GL_SRC source/skeleton/TinyGL/*.c)
         list(APPEND PLATFORM_SRC
                 ${GL_SRC}
+                source/psp2_tinygl/vgl.c
                 source/psp2_tinygl/psp2gl_renderer.cpp
                 source/psp2_tinygl/psp2gl_texture.cpp)
         list(APPEND FLAGS -D__PSP2GL__
+                -Wno-uninitialized
                 -ftree-vectorize -mword-relocations
                 -fomit-frame-pointer -ffast-math
                 -march=armv7-a -mtune=cortex-a9
@@ -93,7 +95,7 @@ elseif (BUILD_PSP2)
                 source/psp2/psp2_renderer.cpp
                 source/psp2/psp2_texture.cpp)
     endif (BUILD_PSP2GL)
-    list(APPEND FLAGS -Wl,-q -O3 -D__PSP2__)
+    list(APPEND FLAGS -Wl,-q -D__PSP2__)
     if (BUILD_DEBUG)
         list(APPEND FLAGS -D__PSP2_DEBUG__)
     endif (BUILD_DEBUG)

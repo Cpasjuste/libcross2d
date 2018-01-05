@@ -5,10 +5,6 @@
  * Z buffer
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "zfeatures.h"
 
 #define ZB_Z_BITS 16
@@ -153,9 +149,5 @@ typedef void (*ZB_fillTriangleFunc)(ZBuffer  *,
 void gl_free(void *p);
 void *gl_malloc(int size);
 void *gl_zalloc(int size);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _tgl_zbuffer_h_ */

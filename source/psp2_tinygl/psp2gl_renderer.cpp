@@ -2,59 +2,17 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#include <GL/gl.h>
-#include <libvita2d/include/vita2d.h>
+#include "c2d.h"
+#include "vgl.h"
+#include "GL/gl.h"
 #include <psp2/kernel/threadmgr.h>
 #include <psp2/kernel/clib.h>
-#include "c2d.h"
-#include "../skeleton/TinyGL/zbuffer.h"
 
 using namespace c2d;
 
-typedef struct {
-    ZBuffer *frameBuffer;
-    vita2d_texture *texture;
-    //void *data;
-    int w, h;
-    unsigned int pitch;
-    int mode;
-} VGLScreen;
-
-static VGLScreen *vScreen;
-
-
-static void gluPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar) {
-
-    const GLdouble pi = 3.1415926535897932384626433832795;
-    GLdouble fW, fH;
-    fH = tan(fovY / 360 * pi) * zNear;
-    fW = fH * aspect;
-    glFrustum(-fW, fW, -fH, fH, zNear, zFar);
-}
-
-
 PSP2GLRenderer::PSP2GLRenderer(const Vector2f &size) : Renderer(size) {
 
-    vScreen = (VGLScreen *) malloc(sizeof(*vScreen));
-    memset(vScreen, 0, sizeof(*vScreen));
-
-    vita2d_init();
-    // vita2d_set_vblank_wait(0); // for speed testing
-    //sceClibPrintf("PSP2GLRenderer: %f %f\n", getSize().x, getSize().y);
-
-    vScreen->texture = vita2d_create_empty_texture_format(getSize().x, getSize().y, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
-    //vScreen->data = vita2d_texture_get_datap(vScreen->texture);
-    vScreen->w = getSize().x;
-    vScreen->h = getSize().y;
-    vScreen->pitch = vScreen->w * 2;
-    vScreen->mode = ZB_MODE_5R6G5B;
-
-    vScreen->frameBuffer = ZB_open(vScreen->w, vScreen->h, vScreen->mode, 0, 0, 0, 0);
-    // map vita2d texture buffer to gl buffer for direct access
-    gl_free(vScreen->frameBuffer->pbuf);
-    vScreen->frameBuffer->pbuf = (PIXEL *) vita2d_texture_get_datap(vScreen->texture);//(PIXEL *) vScreen->data;
-
-    glInit(vScreen->frameBuffer);
+    vglInit(getSize().x, getSize().y);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);        // This Will Clear The Background Color To Black
     glClearDepth(1.0);                // Enables Clearing Of The Depth Buffer
@@ -117,11 +75,6 @@ void PSP2GLRenderer::flip() {
 
 
     /*
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    //glClearDepth(1.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-
     // call base class (draw childs)
     Renderer::flip();
     */
@@ -159,10 +112,7 @@ void PSP2GLRenderer::flip() {
     rquad -= 15.0f;                    // Decrease The Rotation Variable For The Quad
 
     // flip
-    vita2d_start_drawing();
-    vita2d_draw_texture(vScreen->texture, 0, 0);
-    vita2d_end_drawing();
-    vita2d_swap_buffers();
+    vglSwap();
 }
 
 void PSP2GLRenderer::delay(unsigned int ms) {
@@ -176,9 +126,5 @@ void PSP2GLRenderer::delay(unsigned int ms) {
 
 PSP2GLRenderer::~PSP2GLRenderer() {
 
-    vScreen->frameBuffer->frame_buffer_allocated = 0;
-    ZB_close(vScreen->frameBuffer);
-    vita2d_free_texture(vScreen->texture);
-    free(vScreen);
-    vita2d_fini();
+    vglClose();
 }
