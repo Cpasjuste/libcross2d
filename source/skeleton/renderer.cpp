@@ -76,6 +76,7 @@ Shaders *Renderer::getShaders() {
 
 void Renderer::delay(unsigned int ms) {
 
+
 }
 
 Renderer::~Renderer() {

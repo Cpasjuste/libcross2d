@@ -19,6 +19,7 @@ int main() {
     rect->setOutlineColor(Color::Orange);
     rect->setOutlineThickness(8);
 
+    /*
     // create a texture and add it to the rect
     Texture *tex = new C2DTexture(TEX_PATH);
     if (tex->available) {
@@ -26,6 +27,7 @@ int main() {
         tex->setOriginCenter();
         rect->add(tex);
     }
+    */
 
     // create a line and add it to the rect
     Line *line = new C2DLine(rect->getPoint(0), rect->getPoint(2), 2);
@@ -34,6 +36,7 @@ int main() {
     line->setOutlineThickness(1);
     rect->add(line);
 
+    /*
     // create a font
     Font font;
     if (font.loadFromFile(FONT_PATH)) {
@@ -45,6 +48,7 @@ int main() {
         text->setPosition(rect->getSize().x / 2, 32);
         rect->add(text);
     }
+    */
 
     // add all this crap to the renderer
     renderer->add(rect);

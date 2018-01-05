@@ -5,10 +5,11 @@ set(CMAKE_SYSTEM_NAME "Generic")
 enable_language(ASM)
 
 # delete cmake cache folder before changing this options
-option(BUILD_SFML "Build with SFML support" ON)
+option(BUILD_SFML "Build with SFML support" OFF)
 #option(BUILD_SDL2 "Build with SDL2 support" OFF)
 #option(BUILD_SDL1 "Build with SDL1 support" OFF)
-option(BUILD_PSP2 "Build with PSP2 support" OFF)
+option(BUILD_PSP2 "Build with PSP2 support" ON)
+option(BUILD_PSP2GL "Build with PSP2 TINYGL support (testing, needs BUILD_PSP2=ON)" ON)
 option(BUILD_PS3 "Build with PS3 support" OFF)
 #option(BUILD_3DS "Build with 3DS support" OFF)
 #option(BUILD_RPI "Build with RPI support" OFF)
@@ -68,8 +69,6 @@ elseif (BUILD_PSP2)
             )
     file(GLOB PLATFORM_SRC
             #source/psp2/*.c*
-            source/psp2/psp2_renderer.cpp
-            source/psp2/psp2_texture.cpp
             source/psp2/psp2_shaders.cpp
             source/psp2/libvita2d/source/*.c
             source/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
@@ -77,6 +76,23 @@ elseif (BUILD_PSP2)
             source/psp2/libvita2d/shader/compiled/*.o
             source/psp2/vita-shader-collection/lib/*.o
             )
+    if (BUILD_PSP2GL)
+        list(APPEND PLATFORM_DIRS include/skeleton/TinyGL)
+        file(GLOB GL_SRC source/skeleton/TinyGL/*.c)
+        list(APPEND PLATFORM_SRC
+                ${GL_SRC}
+                source/psp2_tinygl/psp2gl_renderer.cpp
+                source/psp2_tinygl/psp2gl_texture.cpp)
+        list(APPEND FLAGS -D__PSP2GL__
+                -ftree-vectorize -mword-relocations
+                -fomit-frame-pointer -ffast-math
+                -march=armv7-a -mtune=cortex-a9
+                -mfpu=neon -mfloat-abi=hard)
+    else ()
+        list(APPEND PLATFORM_SRC
+                source/psp2/psp2_renderer.cpp
+                source/psp2/psp2_texture.cpp)
+    endif (BUILD_PSP2GL)
     list(APPEND FLAGS -Wl,-q -O3 -D__PSP2__)
     if (BUILD_DEBUG)
         list(APPEND FLAGS -D__PSP2_DEBUG__)

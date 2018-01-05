@@ -22,13 +22,22 @@ extern c2d::Renderer *c2d_renderer;
 
 #ifdef __PSP2__
 
+#ifdef __PSP2GL__
+
+#include "psp2_tinygl/psp2gl_renderer.h"
+#include "psp2_tinygl/psp2gl_texture.h"
+#define C2DRenderer PSP2GLRenderer
+#define C2DTexture PSP2GLTexture
+#else
 #include "psp2/psp2_renderer.h"
 #include "psp2/psp2_texture.h"
+#define C2DRenderer PSP2Renderer
+#define C2DTexture PSP2Texture
+#endif
+
 #include "sdl2/sdl2_input.h"
 #include "sdl2/sdl2_audio.h"
 
-#define C2DRenderer PSP2Renderer
-#define C2DTexture PSP2Texture
 #define C2DRectangle Rectangle
 #define C2DLine Line
 #define C2DFont Font
@@ -180,7 +189,6 @@ extern c2d::Renderer *c2d_renderer;
 
 #define C2DRenderer TINY3DRenderer
 #define C2DTexture TINY3DTexture
-//#define C2DFont TINY3DFont
 #define C2DRectangle Rectangle
 #define C2DLine Line
 #define C2DFont Font
