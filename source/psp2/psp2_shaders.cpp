@@ -31,30 +31,32 @@
 //#include "xbr_2x_fast_v.h"
 //#include "xbr_2x_fast_f.h"
 
+using namespace c2d;
+
 PSP2Shaders::PSP2Shaders(const std::string &shadersPath) : Shaders(shadersPath) {
 
     // parent class add a "NONE" shader, we set it to a simple texture shader
-    Get(0)->data = vita2d_create_shader((SceGxmProgram *) texture_v, (SceGxmProgram *) texture_f);
+    get(0)->data = vita2d_create_shader((SceGxmProgram *) texture_v, (SceGxmProgram *) texture_f);
 
-    Add("lcd3x",
+    add("lcd3x",
         vita2d_create_shader((SceGxmProgram *) lcd3x_v, (SceGxmProgram *) lcd3x_f));
-    Add("sharp",
+    add("sharp",
         vita2d_create_shader((SceGxmProgram *) sharp_bilinear_simple_v, (SceGxmProgram *) sharp_bilinear_simple_f));
-    Add("sharp+scan",
+    add("sharp+scan",
         vita2d_create_shader((SceGxmProgram *) sharp_bilinear_v, (SceGxmProgram *) sharp_bilinear_f));
-    Add("aaa",
+    add("aaa",
         vita2d_create_shader((SceGxmProgram *) advanced_aa_v, (SceGxmProgram *) advanced_aa_f));
-    Add("scale2x",
+    add("scale2x",
         vita2d_create_shader((SceGxmProgram *) scale2x_v, (SceGxmProgram *) scale2x_f));
 
-    printf("PSP2Shader: found %i shaders\n", Count() - 1);
+    printf("PSP2Shader: found %i shaders\n", getCount() - 1);
 }
 
 PSP2Shaders::~PSP2Shaders() {
 
-    for (int i = 0; i < Count(); i++) {
-        if (Get(i)->data != NULL) {
-            vita2d_free_shader((vita2d_shader *) Get(i)->data);
+    for (int i = 0; i < getCount(); i++) {
+        if (get(i)->data != NULL) {
+            vita2d_free_shader((vita2d_shader *) get(i)->data);
         }
     }
 }

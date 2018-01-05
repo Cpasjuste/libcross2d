@@ -5,15 +5,18 @@
 #ifndef PFBA_PSP2_SHADERS_H
 #define PFBA_PSP2_SHADERS_H
 
-#include "../skeleton/shaders.h"
+#include "skeleton/shaders.h"
 
-class PSP2Shaders : Shaders {
+namespace c2d {
 
-public:
-    PSP2Shaders(const std::string &shadersPath);
+    class PSP2Shaders : Shaders {
 
-    virtual ~PSP2Shaders();
-};
+    public:
 
+        PSP2Shaders(const std::string &shadersPath);
+
+        virtual ~PSP2Shaders();
+    };
+}
 
 #endif //PFBA_PSP2_SHADERS_H

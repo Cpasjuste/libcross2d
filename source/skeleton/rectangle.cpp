@@ -19,12 +19,14 @@ Rectangle::Rectangle(const FloatRect &rect) : sfml::RectangleShape() {
 
 Rectangle::Rectangle(const Vector2f &size) : sfml::RectangleShape(size) {
 
+    thisTransform = this;
+
     printf("Rectangle(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }
 
 void Rectangle::draw(Transform &transform) {
 
-    printf("Rectangle(%p): draw\n", this);
+    //printf("Rectangle(%p): draw\n", this);
 
     // draw rect from renderer
     c2d_renderer->drawRectangle(*this, transform);

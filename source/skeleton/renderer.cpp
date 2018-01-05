@@ -39,12 +39,18 @@ void Renderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
 void Renderer::drawTexture(Texture &texture, Transform &transform) {
 
     Transform combined = transform * texture.getTransform();
+    if (texture.getOutlineThickness() > 0) {
+        draw(texture.getOutlineVertices(), combined, nullptr);
+    }
     draw(texture.getVertices(), combined, &texture);
 }
 
 void Renderer::drawText(Text &text, Transform &transform) {
 
     Transform combined = transform * text.getTransform();
+    // TODO: why ?
+    combined.translate(0, -text.getLocalBounds().height / 2);
+    // TODO: why ?
     if (text.getOutlineThickness() > 0) {
         draw(text.getOutlineVertices(), combined, &text.getFont()->getTexture(text.getCharacterSize()));
     }
@@ -53,7 +59,7 @@ void Renderer::drawText(Text &text, Transform &transform) {
 
 void Renderer::flip() {
 
-    printf("Renderer(%p): flip\n", this);
+    //printf("Renderer(%p): flip\n", this);
 
     // call base class (draw childs)
     Transform trans = getTransform();
@@ -62,6 +68,10 @@ void Renderer::flip() {
 
 void Renderer::setShader(int shader) {
 
+}
+
+Shaders *Renderer::getShaders() {
+    return shaders;
 }
 
 void Renderer::delay(unsigned int ms) {

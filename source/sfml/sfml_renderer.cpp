@@ -38,7 +38,7 @@ SFMLRenderer::SFMLRenderer(const Vector2f &size, const std::string &shaderPath) 
 
 void SFMLRenderer::setShader(int index) {
 
-    if (index == shaders->current || index >= shaders->Count()) {
+    if (index == shaders->current || index >= shaders->getCount()) {
         return;
     }
     shaders->current = index;
@@ -53,7 +53,7 @@ void SFMLRenderer::draw(const VertexArray &vertices,
     if (texture) {
         states.texture = &((SFMLTexture *) texture)->texture;
 
-        sf::Shader *shader = (sf::Shader *) shaders->Get()->data;
+        sf::Shader *shader = (sf::Shader *) shaders->get()->data;
         if (shader) {
             shader->setUniform("Texture", ((SFMLTexture *) texture)->texture);
             shader->setUniform("MVPMatrix", sf::Glsl::Mat4(

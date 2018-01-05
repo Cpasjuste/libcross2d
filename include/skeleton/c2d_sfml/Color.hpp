@@ -88,6 +88,9 @@ namespace c2d {
         static const Color Yellow;      ///< Yellow predefined color
         static const Color Magenta;     ///< Magenta predefined color
         static const Color Cyan;        ///< Cyan predefined color
+        static const Color Orange;
+        static const Color Gray;
+        static const Color GrayLight;
         static const Color Transparent; ///< Transparent (black) predefined color
 
         ////////////////////////////////////////////////////////////

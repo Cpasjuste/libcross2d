@@ -14,6 +14,7 @@ Texture::Texture(const char *p) : RectangleShape(Vector2f(0, 0)) {
     bpp = 4;
 
     setFillColor(Color::White);
+    setFiltering(C2D_TEXTURE_FILTER_LINEAR);
 
     strncpy(path, p, 512);
 
@@ -31,6 +32,7 @@ Texture::Texture(const Vector2f &size, int fmt) : RectangleShape(size) {
     setSize(size);
     setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     setFillColor(Color::White);
+    setFiltering(C2D_TEXTURE_FILTER_LINEAR);
 
     thisTransform = this;
 }

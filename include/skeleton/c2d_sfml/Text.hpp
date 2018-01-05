@@ -323,6 +323,8 @@ namespace sfml {
         ////////////////////////////////////////////////////////////
         c2d::FloatRect getGlobalBounds() const;
 
+        void setOriginTop();
+
         void setOriginTopLeft();
 
         void setOriginTopRight();
@@ -336,6 +338,8 @@ namespace sfml {
         c2d::VertexArray getVertices() const;
 
         c2d::VertexArray getOutlineVertices() const;
+
+        void setSizeMax(const c2d::Vector2f &maxSize);
 
     private:
 
@@ -373,6 +377,7 @@ namespace sfml {
         mutable c2d::VertexArray m_outlineVertices;    ///< Vertex array containing the outline geometry
         mutable c2d::FloatRect m_bounds;             ///< Bounding rectangle of the text (in local coordinates)
         mutable bool m_geometryNeedUpdate; ///< Does the geometry need to be recomputed?
+        c2d::Vector2f maxSize;
     };
 
 } // namespace sf

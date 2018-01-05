@@ -7,6 +7,8 @@
 
 #include "skeleton/c2d_sfml/Text.hpp"
 
+#define C2D_DEFAULT_CHAR_SIZE 30
+
 namespace c2d {
 
     class Text : public Widget, public sfml::Text {
@@ -15,7 +17,7 @@ namespace c2d {
 
         Text();
 
-        Text(const c2d::String &string, const c2d::Font &font, unsigned int characterSize = 30);
+        Text(const String &string, const Font &font, unsigned int characterSize = C2D_DEFAULT_CHAR_SIZE);
 
         virtual ~Text();
 

@@ -687,14 +687,29 @@ namespace c2d {
                 // TODO:
                 //if ((textureWidth * 2 <= Texture::getMaximumSize()) &&
                 //    (textureHeight * 2 <= Texture::getMaximumSize())) {
-                if ((textureWidth * 2 <= 1024) &&
-                    (textureHeight * 2 <= 1024)) {
+                if ((textureWidth * 2 <= 512) &&
+                    (textureHeight * 2 <= 512)) {
+
                     // Make the texture 2 times bigger
-                    if (page.texture != NULL) {
-                        delete (page.texture);
+                    Texture *texture = new C2DTexture(
+                            Vector2f(textureWidth * 2, textureHeight * 2), C2D_TEXTURE_FMT_RGBA8);
+
+                    Uint8 *src;
+                    page.texture->lock(NULL, reinterpret_cast<void **>(&src), NULL);
+
+                    Uint8 *dst;
+                    int dst_pitch;
+                    texture->lock(NULL, reinterpret_cast<void **>(&dst), &dst_pitch);
+
+                    for (int i = 0; i < (int) textureHeight; ++i) {
+                        std::memcpy(dst, src, (size_t) (textureWidth * 4));
+                        src += textureWidth * 4;
+                        dst += dst_pitch;
                     }
-                    page.texture = new C2DTexture(Vector2f(textureWidth * 2, textureHeight * 2), C2D_TEXTURE_FMT_RGBA8);
-                    page.texture->setFiltering(C2D_TEXTURE_FILTER_LINEAR);
+
+                    delete (page.texture);
+                    page.texture = texture;
+
                 } else {
                     // Oops, we've reached the maximum texture size...
                     printf("Failed to add a new character to the font: the maximum texture size has been reached\n");

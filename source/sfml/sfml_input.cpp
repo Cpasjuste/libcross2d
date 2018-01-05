@@ -4,7 +4,10 @@
 
 #include <SFML/Window/Event.hpp>
 #include "sfml/sfml_renderer.h"
+#include "skeleton/input.h"
 #include "sfml/sfml_input.h"
+
+using namespace c2d;
 
 static int key_id[KEY_COUNT]{
         Input::Key::KEY_UP,
@@ -66,7 +69,7 @@ int SFMLInput::GetButton(int player) {
     sf::Event event;
     while (((SFMLRenderer *) renderer)->window.pollEvent(event)) {
         if (event.type == sf::Event::JoystickButtonPressed) {
-            if (event.joystickButton.joystickId == player) {
+            if ((int) event.joystickButton.joystickId == player) {
                 return event.joystickButton.button;
             }
         }
@@ -99,10 +102,10 @@ Input::Player *SFMLInput::Update(int rotate) {
         }
 
         if (event.type == sf::Event::KeyPressed) {
-            printf("%i\n", (int) event.key.code);
+            //printf("%i\n", (int) event.key.code);
         }
         if (event.type == sf::Event::JoystickButtonPressed) {
-            printf("%i\n", (int) event.joystickButton.button);
+            //printf("%i\n", (int) event.joystickButton.button);
         }
 
     }

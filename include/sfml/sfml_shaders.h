@@ -2,18 +2,21 @@
 // Created by cpasjuste on 27/01/17.
 //
 
-#ifndef PFBA_SFML_SHADERS_H
-#define PFBA_SFML_SHADERS_H
+#ifndef CROSS2D_SFML_SHADERS_H
+#define CROSS2D_SFML_SHADERS_H
 
-#include "../skeleton/shaders.h"
+#include "skeleton/shaders.h"
 
-class SFMLShaders : Shaders {
+namespace c2d {
 
-public:
-    SFMLShaders(const std::string &shadersPath);
+    class SFMLShaders : Shaders {
 
-    virtual ~SFMLShaders();
-};
+    public:
 
+        SFMLShaders(const std::string &shadersPath);
 
-#endif //PFBA_SFML_SHADERS_H
+        virtual ~SFMLShaders();
+    };
+}
+
+#endif //CROSS2D_SFML_SHADERS_H

@@ -3,7 +3,9 @@
 //
 
 #include <sys/stat.h>
-#include "../../include/posix/posix_io.h"
+#include "posix/posix_io.h"
+
+using namespace c2d;
 
 bool POSIXIo::Exist(const char *path) {
     struct stat buf;

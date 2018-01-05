@@ -2,8 +2,6 @@
 // Created by cpasjuste on 08/12/16.
 //
 
-#include <skeleton/c2d_sfml/Font.hpp>
-#include <skeleton/c2d_sfml/Text.hpp>
 #include "c2d.h"
 #include "main.h"
 
@@ -15,10 +13,10 @@ int main() {
     Renderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
 
     // create a rect
-    Rectangle *rect = new C2DRectangle(FloatRect(200, 200, 400, 400));
+    Rectangle *rect = new C2DRectangle(FloatRect(208, 208, 400, 400));
     rect->setOriginCenter();
-    rect->setFillColor(Color::Red);
-    rect->setOutlineColor(Color::Yellow);
+    rect->setFillColor(Color::Gray);
+    rect->setOutlineColor(Color::Orange);
     rect->setOutlineThickness(8);
 
     // create a texture and add it to the rect
@@ -40,16 +38,17 @@ int main() {
     Font font;
     if (font.loadFromFile(FONT_PATH)) {
         // create a text and add it to the rect
-        Text *text = new Text("Hello world", font, 40);
+        Text *text = new Text("Hello world", font);
         text->setOutlineColor(Color::Blue);
         text->setOutlineThickness(2);
-        text->setPosition(rect->getSize().x / 2, 32);
         text->setOriginCenter();
+        text->setPosition(rect->getSize().x / 2, 32);
         rect->add(text);
     }
 
     // add all this crap to the renderer
     renderer->add(rect);
+
 
     for (int i = 0; i < 10; i++) {
 
@@ -182,4 +181,5 @@ int main() {
     delete (texture);
     delete (renderer);
 }
+
 #endif

@@ -5,15 +5,17 @@
 #ifndef _C2D_H_
 #define _C2D_H_
 
+#include "skeleton/io.h"
 #include "skeleton/renderer.h"
 #include "skeleton/rectangle.h"
 #include "skeleton/line.h"
 #include "skeleton/texture.h"
 #include "skeleton/text.h"
+#include "skeleton/textbox.h"
+#include "skeleton/listbox.h"
 #include "skeleton/input.h"
 #include "skeleton/audio.h"
 #include "skeleton/timer.h"
-#include "skeleton/io.h"
 
 // for static access
 extern c2d::Renderer *c2d_renderer;

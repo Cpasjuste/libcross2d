@@ -29,8 +29,12 @@ set(FLAGS -Wall -Wno-strict-aliasing)
 ##############
 # CROSS2D
 ##############
-set(CROSS2D_DIR include)
-file(GLOB CROSS2D_SRC source/skeleton/*.c* source/skeleton/c2d_sfml/*.c*)
+set(CROSS2D_DIR
+        include)
+
+file(GLOB CROSS2D_SRC
+        source/skeleton/*.c*
+        source/skeleton/c2d_sfml/*.c*)
 
 #####################
 # PLATORM SPECIFIC
@@ -44,12 +48,9 @@ if (BUILD_SFML)
             source/posix
             )
     file(GLOB PLATFORM_SRC
-            # source/sfml/*.c*
-            source/sfml/sfml_renderer.cpp
-            source/sfml/sfml_texture.cpp
-            source/sfml/sfml_shaders.cpp
+            source/sfml/*.c*
             source/posix/*.c*
-            # source/sdl2/sdl2_audio.cpp #TODO: get rid of sdl2, use sdl2 audio for now
+            source/sdl2/sdl2_audio.cpp #TODO: get rid of sdl2, use sdl2 audio for now
             )
     list(APPEND FLAGS
             -O3 -D__SFML__

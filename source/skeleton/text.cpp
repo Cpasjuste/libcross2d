@@ -17,7 +17,8 @@ Text::Text() {
 Text::Text(const String &string, const Font &font, unsigned int characterSize)
         : sfml::Text(string, font, characterSize) {
 
-    printf("Text(%p): %ix%i\n", this, (int) getLocalBounds().width, (int) getLocalBounds().height);
+    printf("Text(%p): %ix%i\n", this,
+           (int) getLocalBounds().width, (int) getLocalBounds().height);
 
     thisTransform = this;
 }

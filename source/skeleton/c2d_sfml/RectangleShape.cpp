@@ -44,6 +44,11 @@ namespace sfml {
         update();
     }
 
+    void RectangleShape::setSize(float width, float height) {
+        m_size.x = width;
+        m_size.y = height;
+        update();
+    }
 
 ////////////////////////////////////////////////////////////
     const Vector2f &RectangleShape::getSize() const {

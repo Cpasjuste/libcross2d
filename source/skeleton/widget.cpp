@@ -23,7 +23,7 @@ void Widget::add(Widget *widget) {
 
 void Widget::draw(Transform &transform) {
 
-    printf("Widget(%p): draw\n", this);
+    //printf("Widget(%p): draw\n", this);
 
     Transform combinedTransform = transform;
 
@@ -55,6 +55,7 @@ Widget::~Widget() {
         if (*widget) {
             printf("~Widget(%p): delete child(%p)\n", this, *widget);
             delete (*widget);
+            *widget = NULL;
         }
     }
     childs.clear();

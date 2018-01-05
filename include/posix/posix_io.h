@@ -6,18 +6,19 @@
 #define PFBA_POSIX_IO_H
 
 #include <dirent.h>
-#include "../skeleton/io.h"
+#include "skeleton/io.h"
 
-class POSIXIo : Io {
+namespace c2d {
 
-public:
+    class POSIXIo : Io {
 
-    virtual bool Exist(const char *path);
+    public:
 
-    virtual std::vector<std::string> GetDirList(const char *path);
+        virtual bool Exist(const char *path);
 
-private:
-};
+        virtual std::vector<std::string> GetDirList(const char *path);
 
+    };
+}
 
 #endif //PFBA_POSIX_IO_H

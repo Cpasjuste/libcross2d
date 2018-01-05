@@ -303,6 +303,10 @@ namespace sfml {
     }
 
 
+    void Text::setOriginTop() {
+        setOrigin(getLocalBounds().width / 2, 0);
+    }
+
     void Text::setOriginTopLeft() {
         setOrigin(0, 0);
     }
@@ -351,8 +355,15 @@ namespace sfml {
         }
     }
     */
+
+    void Text::setSizeMax(const c2d::Vector2f &size) {
+        maxSize = size;
+        m_geometryNeedUpdate = true;
+    }
+
 ////////////////////////////////////////////////////////////
     void Text::ensureGeometryUpdate() const {
+
         // Do nothing, if geometry has not changed
         if (!m_geometryNeedUpdate)
             return;
@@ -396,11 +407,16 @@ namespace sfml {
         float maxY = 0.f;
         Uint32 prevChar = 0;
         for (std::size_t i = 0; i < m_string.getSize(); ++i) {
+
             Uint32 curChar = m_string[i];
 
             // Apply the kerning offset
             x += m_font->getKerning(prevChar, curChar, m_characterSize);
             prevChar = curChar;
+
+            if (maxSize.x > 0 && ((x + m_characterSize) * getScale().x > maxSize.x)) {
+                break;
+            }
 
             // If we're using the underlined style and there's a new line, draw a line
             if (underlined && (curChar == L'\n')) {

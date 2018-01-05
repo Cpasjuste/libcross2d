@@ -56,6 +56,8 @@ namespace sfml {
         ////////////////////////////////////////////////////////////
         void setSize(const c2d::Vector2f &size);
 
+        void setSize(float width, float height);
+
         ////////////////////////////////////////////////////////////
         /// \brief Get the size of the rectangle
         ///

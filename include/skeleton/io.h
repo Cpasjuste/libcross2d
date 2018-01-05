@@ -2,36 +2,41 @@
 // Created by cpasjuste on 17/11/17.
 //
 
-#ifndef PFBA_IO_H
-#define PFBA_IO_H
+#ifndef CROSS2D_IO_H
+#define CROSS2D_IO_H
 
 #include <string>
 #include <vector>
+#include "skeleton/c2d_sfml/Color.hpp"
 
-class Io {
+#define C2D_IO_FILE 0
+#define C2D_IO_DIR  1
 
-public:
+namespace c2d {
 
-    Io() {};
+    class Io {
 
-    virtual ~Io() {};
+    public:
 
-    virtual bool Exist(const char *path) { return false; };
+        class File {
+        public:
+            std::string name;
+            std::string path;
+            size_t size = 0;
+            int type;
+            // for ui
+            Color color;
+        };
 
-    virtual std::vector<std::string> GetDirList(const char *path) { return {}; };
+        Io() {};
 
-};
+        virtual ~Io() {};
 
-#ifdef __PSP2__
-#include "psp2/psp2_io.h"
-#elif __3DS__
-#include "posix/posix_io.h"
-#elif __NX__
-#include "nx/nx_io.h"
-#elif __SDL2__ || __SDL1__
-#include "../posix/posix_io.h"
-#elif __SFML__
-#include "posix/posix_io.h"
-#endif
+        virtual bool Exist(const char *path) { return false; };
 
-#endif //PFBA_IO_H
+        virtual std::vector<std::string> GetDirList(const char *path) { return {}; };
+
+    };
+}
+
+#endif //CROSS2D_IO_H

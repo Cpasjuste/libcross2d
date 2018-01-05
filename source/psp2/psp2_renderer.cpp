@@ -31,19 +31,19 @@ PSP2Renderer::PSP2Renderer(const Vector2f &size) : Renderer(size) {
 
     vita2d_init();
 
-    this->shaders = (Shaders * )
-    new PSP2Shaders("");
+    this->shaders = (Shaders *)
+            new PSP2Shaders("");
     setShader(0);
 }
 
 void PSP2Renderer::setShader(int index) {
 
-    if (index == shaders->current || index >= shaders->Count()) {
+    if (index == shaders->current || index >= shaders->getCount()) {
         return;
     }
     shaders->current = index;
 
-    vita2d_shader *shader = (vita2d_shader *) shaders->Get()->data;
+    vita2d_shader *shader = (vita2d_shader *) shaders->get()->data;
     if (shader != NULL) {
         vita2d_texture_set_program(shader->vertexProgram, shader->fragmentProgram);
         vita2d_texture_set_wvp(shader->wvpParam);

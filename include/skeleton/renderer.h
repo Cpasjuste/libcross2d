@@ -49,6 +49,8 @@ namespace c2d {
 
         virtual void setShader(int shader);
 
+        virtual Shaders *getShaders();
+
     protected:
 
         Shaders *shaders;

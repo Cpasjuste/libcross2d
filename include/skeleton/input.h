@@ -62,7 +62,7 @@ namespace c2d {
 
         virtual ~Input() {};
 
-        virtual Player *Update(int rotate) { return players; }; // to implement
+        virtual Player *Update(int rotate = 0) { return players; }; // to implement
         virtual int GetButton(int player) { return -1; }; // to implement
 
         virtual int Clear(int player);
