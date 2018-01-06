@@ -5,21 +5,17 @@
 #ifndef PSP2GL_RENDERER_H
 #define PSP2GL_RENDERER_H
 
-#include "skeleton/renderer.h"
+#include "skeleton/renderergl.h"
 
 namespace c2d {
 
-    class PSP2GLRenderer : public Renderer {
+    class PSP2GLRenderer : public GLRenderer {
 
     public:
 
         PSP2GLRenderer(const Vector2f &size = Vector2f(0, 0));
 
         ~PSP2GLRenderer();
-
-        void draw(const VertexArray &vertices,
-                  const Transform &transform,
-                  const Texture *texture);
 
         void flip();
 

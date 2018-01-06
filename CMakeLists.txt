@@ -70,12 +70,20 @@ elseif (BUILD_PSP2)
     file(GLOB PLATFORM_SRC
             #source/psp2/*.c*
             source/psp2/psp2_shaders.cpp
-            source/psp2/libvita2d/source/*.c
+            #source/psp2/libvita2d/source/*.c
             source/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
             source/sdl2/sdl2_input.cpp # TODO: get rid of sdl2, use sdl2 input for now
-            source/psp2/libvita2d/shader/compiled/*.o
-            source/psp2/vita-shader-collection/lib/*.o
+            #source/psp2/libvita2d/shader/compiled/*.o
+            #source/psp2/vita-shader-collection/lib/*.o
             )
+        set(PLATFORM_LIBS
+                cross2d SDL2 cross2d vita2d freetype
+                SceDisplay_stub SceGxm_stub SceSysmodule_stub
+                SceCtrl_stub ScePgf_stub SceNetCtl_stub
+                SceNet_stub ScePower_stub SceCommonDialog_stub
+                SceAudio_stub SceAppMgr_stub SceTouch_stub
+                stdc++ png jpeg z m c
+                )
     if (BUILD_PSP2GL)
         list(APPEND PLATFORM_DIRS include/skeleton/TinyGL)
         file(GLOB GL_SRC source/skeleton/TinyGL/*.c)
@@ -263,14 +271,7 @@ endif (BUILD_SFML)
 if (BUILD_PSP2)
     add_executable(${PROJECT_NAME}.psp2 test/main.cpp)
     target_compile_options(${PROJECT_NAME}.psp2 PRIVATE ${FLAGS})
-    target_link_libraries(${PROJECT_NAME}.psp2
-            cross2d SDL2 cross2d freetype
-            SceDisplay_stub SceGxm_stub SceSysmodule_stub
-            SceCtrl_stub ScePgf_stub SceNetCtl_stub
-            SceNet_stub ScePower_stub SceCommonDialog_stub
-            SceAudio_stub SceAppMgr_stub SceTouch_stub
-            stdc++ png jpeg z m c
-            )
+    target_link_libraries(${PROJECT_NAME}.psp2 ${PLATFORM_LIBS})
     add_dependencies(${PROJECT_NAME}.psp2 ${PROJECT_NAME})
     add_custom_target(${PROJECT_NAME}.psp2.vpk
             DEPENDS ${PROJECT_NAME}.psp2

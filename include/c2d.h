@@ -22,6 +22,9 @@ extern c2d::Renderer *c2d_renderer;
 
 #ifdef __PSP2__
 
+#include <psp2/kernel/clib.h>
+#define printf sceClibPrintf
+
 #ifdef __PSP2GL__
 
 #include "psp2_tinygl/psp2gl_renderer.h"

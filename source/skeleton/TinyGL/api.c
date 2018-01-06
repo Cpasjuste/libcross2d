@@ -368,6 +368,35 @@ void glFrustum(double left,double right,double bottom,double top,
   gl_add_op(p);
 }
 
+void glOrthof(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top,
+              GLfloat near, GLfloat far)
+{
+
+  float m[4 * 4];
+  m[0x0] = 2.0f / (right - left);
+  m[0x4] = 0.0f;
+  m[0x8] = 0.0f;
+  m[0xC] = -(right + left) / (right - left);
+
+  m[0x1] = 0.0f;
+  m[0x5] = 2.0f / (top - bottom);
+  m[0x9] = 0.0f;
+  m[0xD] = -(top + bottom) / (top - bottom);
+
+  m[0x2] = 0.0f;
+  m[0x6] = 0.0f;
+  m[0xA] = -2.0f / (far - near);
+  m[0xE] = (far + near) / (far - near);
+
+  m[0x3] = 0.0f;
+  m[0x7] = 0.0f;
+  m[0xB] = 0.0f;
+  m[0xF] = 1.0f;
+
+  glLoadMatrixf(m);
+
+}
+
 /* lightening */
 
 void glMaterialfv(int mode,int type,float *v)

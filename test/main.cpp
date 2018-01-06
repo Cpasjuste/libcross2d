@@ -56,13 +56,11 @@ int main() {
 
     for (int i = 0; i < 5; i++) {
 
-        /*
-        if (i > 4) {
+        if (i > 0) {
             rect->move(32, 0);
             rect->setScale(rect->getScale().x - 0.1f, rect->getScale().y - 0.1f);
             rect->rotate(5);
         }
-        */
 
         renderer->flip();
         renderer->delay(500);

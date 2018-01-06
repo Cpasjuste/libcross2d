@@ -67,10 +67,10 @@ void vglSwap() {
 }
 
 void vglClose() {
-	
+
 	vScreen->frameBuffer->frame_buffer_allocated = 0;
-	ZB_close(vScreen->frameBuffer);
 	vita2d_free_texture(vScreen->texture);
+	ZB_close(vScreen->frameBuffer);
 	free(vScreen);
 	vita2d_fini();
 	scePowerSetArmClockFrequency(266);

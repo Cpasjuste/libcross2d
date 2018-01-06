@@ -738,7 +738,8 @@ void glScalef(float x,float y,float z);
 void glViewport(int x,int y,int width,int height);
 void glFrustum(double left,double right,double bottom,double top,
                double near,double far);
-
+void glOrthof(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top,
+			  GLfloat near, GLfloat far);
 /* lists */
 unsigned int glGenLists(int range);
 int glIsList(unsigned int list);
