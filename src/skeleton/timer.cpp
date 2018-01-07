@@ -3,11 +3,7 @@
 //
 
 #include <cstdio>
-#include <sys/time.h>
-
 #include "timer.h"
-
-static struct timeval start;
 
 Timer::Timer() {
     Reset();
