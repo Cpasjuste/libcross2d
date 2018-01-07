@@ -12,13 +12,16 @@ class Timer {
 public:
     Timer();
 
-    virtual void Reset();
+    void Reset();
 
-    virtual unsigned long GetMicros();
+    unsigned long GetMicros();
 
-    virtual unsigned long GetMillis();
+    unsigned long GetMillis();
 
-    virtual unsigned int GetSeconds();
+    unsigned int GetSeconds();
+
+private:
+    struct timeval start;
 };
 
 #endif //_TIMER_H_
