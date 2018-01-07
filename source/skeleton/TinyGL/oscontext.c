@@ -1,7 +1,6 @@
-#include <GL/oscontext.h>
+#include "skeleton/TinyGL/GL/oscontext.h"
 #include "zbuffer.h"
 #include "zgl.h"
-#include <GL/gl.h>
 #include <stdlib.h>
 #include <assert.h>
 

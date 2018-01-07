@@ -534,7 +534,7 @@ void glClearDepth(double depth)
 
 /* textures */
 
-void glTexImage2D( int target, int level, int components,
+void glTexImage2D( int target, int level, GLint internalFormat,
                    int width, int height, int border,
                    int format, int type, void *pixels)
 {
@@ -543,7 +543,7 @@ void glTexImage2D( int target, int level, int components,
   p[0].op=OP_TexImage2D;
   p[1].i=target;
   p[2].i=level;
-  p[3].i=components;
+  p[3].i=internalFormat;
   p[4].i=width;
   p[5].i=height;
   p[6].i=border;

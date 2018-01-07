@@ -5,6 +5,8 @@
 #ifndef C2D_INPUT_H
 #define C2D_INPUT_H
 
+#include "skeleton/renderer.h"
+
 #define PLAYER_COUNT 4
 #define KEY_COUNT 14
 

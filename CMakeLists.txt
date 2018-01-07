@@ -7,9 +7,9 @@ enable_language(ASM)
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support" OFF)
 #option(BUILD_SDL2 "Build with SDL2 support" OFF)
-#option(BUILD_SDL1 "Build with SDL1 support" OFF)
-option(BUILD_PSP2 "Build with PSP2 support" ON)
-option(BUILD_PSP2GL "Build with PSP2 TINYGL support (testing, needs BUILD_PSP2=ON)" ON)
+option(BUILD_SDL1 "Build with SDL1 (software) support" ON)
+option(BUILD_PSP2 "Build with PSP2 support" OFF)
+option(BUILD_PSP2GL "Build with PSP2 TINYGL support (testing, needs BUILD_PSP2=ON)" OFF)
 option(BUILD_PS3 "Build with PS3 support" OFF)
 #option(BUILD_3DS "Build with 3DS support" OFF)
 #option(BUILD_RPI "Build with RPI support" OFF)
@@ -202,10 +202,12 @@ elseif (BUILD_SDL1)
     set(PLATFORM_DIRS
             source/sdl1
             source/posix
+            /usr/include/freetype2
             )
     file(GLOB PLATFORM_SRC
             source/sdl1/*.c*
             source/posix/*.c*
+            source/skeleton/TinyGL/*.c
             )
     list(APPEND FLAGS -O3 -D__SDL1__)
 endif (BUILD_SFML)
@@ -234,7 +236,7 @@ if (BUILD_SDL1)
     add_executable(${PROJECT_NAME}.sdl1 test/main.cpp)
     target_compile_options(${PROJECT_NAME}.sdl1 PRIVATE ${FLAGS})
     target_link_libraries(${PROJECT_NAME}.sdl1
-            cross2d SDL SDL_image SDL_gfx SDL_ttf z)
+            cross2d SDL SDL_image SDL_gfx SDL_ttf freetype png z)
     add_dependencies(${PROJECT_NAME}.sdl1 ${PROJECT_NAME})
 endif (BUILD_SDL1)
 

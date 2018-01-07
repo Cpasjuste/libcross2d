@@ -90,7 +90,7 @@ void ZB_fillTriangleSmooth(ZBuffer *zb,
     }\
     z+=dzdx;					\
     og1+=dgdx;					\
-    or1+=drdx;					\
+    or1+=drdx;					\current_texture
     ob1+=dbdx;					\
 }
 
