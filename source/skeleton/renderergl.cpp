@@ -55,7 +55,7 @@ void GLRenderer::flip() {
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrthof(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
+        glOrtho(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
         glMatrixMode(GL_MODELVIEW);
         gl_init = 1;
     }

@@ -740,6 +740,8 @@ void glFrustum(double left,double right,double bottom,double top,
                double near,double far);
 void glOrthof(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top,
 			  GLfloat near, GLfloat far);
+#define glOrtho glOrthof
+
 /* lists */
 unsigned int glGenLists(int range);
 int glIsList(unsigned int list);

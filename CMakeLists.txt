@@ -5,12 +5,13 @@ set(CMAKE_SYSTEM_NAME "Generic")
 enable_language(ASM)
 
 # delete cmake cache folder before changing this options
-option(BUILD_SFML "Build with SFML support" OFF)
+option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
 #option(BUILD_SDL2 "Build with SDL2 support" OFF)
 #option(BUILD_SDL1 "Build with SDL1 support" OFF)
-option(BUILD_PSP2 "Build with PSP2 support" ON)
-option(BUILD_PSP2GL "Build with PSP2 TINYGL support (testing, needs BUILD_PSP2=ON)" ON)
-option(BUILD_PS3 "Build with PS3 support" OFF)
+option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" ON)
+option(BUILD_PSP2_GL "Build with PSP2 TinyGL support (testing, software rendering, slow, needs BUILD_PSP2=ON)" OFF)
+option(BUILD_PSP2_OSMESA "Build with PSP2 OSMesa support (testing, software rendering, slow, needs BUILD_PSP2=ON)" ON)
+option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 #option(BUILD_3DS "Build with 3DS support" OFF)
 #option(BUILD_RPI "Build with RPI support" OFF)
 #option(BUILD_NX "Build with NX (SWITCH) support" OFF)
@@ -76,34 +77,37 @@ elseif (BUILD_PSP2)
             #source/psp2/libvita2d/shader/compiled/*.o
             #source/psp2/vita-shader-collection/lib/*.o
             )
-        set(PLATFORM_LIBS
-                cross2d SDL2 cross2d vita2d freetype
-                SceDisplay_stub SceGxm_stub SceSysmodule_stub
-                SceCtrl_stub ScePgf_stub SceNetCtl_stub
-                SceNet_stub ScePower_stub SceCommonDialog_stub
-                SceAudio_stub SceAppMgr_stub SceTouch_stub
-                stdc++ png jpeg z m c
-                )
-    if (BUILD_PSP2GL)
+    set(PLATFORM_LIBS
+            cross2d SDL2 cross2d vita2d freetype
+            SceDisplay_stub SceGxm_stub SceSysmodule_stub
+            SceCtrl_stub ScePgf_stub SceNetCtl_stub
+            SceNet_stub ScePower_stub SceCommonDialog_stub
+            SceAudio_stub SceAppMgr_stub SceTouch_stub
+            stdc++ png jpeg z m c
+            )
+    if (BUILD_PSP2_GL)
         list(APPEND PLATFORM_DIRS include/skeleton/TinyGL)
         file(GLOB GL_SRC source/skeleton/TinyGL/*.c)
         list(APPEND PLATFORM_SRC
                 ${GL_SRC}
-                source/psp2_tinygl/vgl.c
-                source/psp2_tinygl/psp2gl_renderer.cpp
-                source/psp2_tinygl/psp2gl_texture.cpp)
-        list(APPEND FLAGS -D__PSP2GL__
-                -Wno-uninitialized
-                -ftree-vectorize -mword-relocations
-                -fomit-frame-pointer -ffast-math
-                -march=armv7-a -mtune=cortex-a9
-                -mfpu=neon -mfloat-abi=hard)
+                source/psp2_tinygl/psp2gl_renderer.cpp)
+        list(APPEND FLAGS -D__PSP2_GL__)
+    elseif (BUILD_PSP2_OSMESA)
+        list(APPEND PLATFORM_SRC
+                source/psp2_osmesa/psp2osmesa_renderer.cpp)
+        list(APPEND FLAGS -D__PSP2_OSMESA__)
+        list(APPEND PLATFORM_LIBS OSMesa)
     else ()
         list(APPEND PLATFORM_SRC
                 source/psp2/psp2_renderer.cpp
                 source/psp2/psp2_texture.cpp)
-    endif (BUILD_PSP2GL)
-    list(APPEND FLAGS -Wl,-q -D__PSP2__)
+    endif (BUILD_PSP2_GL)
+    list(APPEND FLAGS -Wl,-q -D__PSP2__
+            -Wno-uninitialized
+            -ftree-vectorize -mword-relocations
+            -fomit-frame-pointer -ffast-math
+            -march=armv7-a -mtune=cortex-a9
+            -mfpu=neon -mfloat-abi=hard)
     if (BUILD_DEBUG)
         list(APPEND FLAGS -D__PSP2_DEBUG__)
     endif (BUILD_DEBUG)
