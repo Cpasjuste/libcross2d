@@ -1,6 +1,5 @@
 #include "zgl.h"
 
-
 void glopClearColor(GLContext *c,GLParam *p)
 {
   c->clear_color.v[0]=p[1].f;

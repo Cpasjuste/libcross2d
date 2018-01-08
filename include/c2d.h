@@ -154,17 +154,21 @@ extern c2d::Renderer *c2d_renderer;
 #elif __SDL1__
 
 #include "sdl1/sdl1_renderer.h"
-#include "sdl1/sdl1_font.h"
+#include "skeleton/texturegl.h"
 #include "sdl1/sdl1_input.h"
 #include "sdl1/sdl1_audio.h"
 #include "posix/posix_io.h"
 
 #define C2DRenderer SDL1Renderer
-#define C2DTexture SDL1Texture
-#define C2DFont SDL1Font
+#define C2DTexture GLTexture
+#define C2DRectangle Rectangle
+#define C2DLine Line
+#define C2DFont Font
+#define C2DText Text
 #define C2DInput SDL1Input
 #define C2DAudio SDL1Audio
 #define C2DIo POSIXIo
+
 
 #define KEY_JOY_UP_DEFAULT      -1  // use hat
 #define KEY_JOY_DOWN_DEFAULT    -1  // use hat

@@ -6,6 +6,8 @@
 #include "../../include/sdl1/sdl1_input.h"
 #include <SDL/SDL_keyboard.h>
 
+using namespace c2d;
+
 static int key_id[KEY_COUNT]{
         Input::Key::KEY_UP,
         Input::Key::KEY_DOWN,

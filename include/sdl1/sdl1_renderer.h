@@ -5,32 +5,27 @@
 #ifndef SDL1_RENDERER_H
 #define SDL1_RENDERER_H
 
-#include <SDL/SDL.h>
+#include "SDL/SDL.h"
+#include "skeleton/renderergl.h"
 
-#include "../skeleton/renderer.h"
-#include "sdl1_font.h"
-#include "sdl1_texture.h"
+namespace c2d {
 
-class SDL1Renderer : Renderer {
+    class SDL1Renderer : public GLRenderer {
 
-public:
-    SDL1Renderer(int w, int h);
+    public:
 
-    virtual ~SDL1Renderer();
+        SDL1Renderer(const Vector2f &size = Vector2f(0, 0));
 
-    virtual void DrawLine(int x1, int y1, int x2, int y2, const Color &color);
+        ~SDL1Renderer();
 
-    virtual void DrawRect(const Rect &rect, const Color &color, bool fill);
+        void flip();
 
-    virtual void Clear();
+        void delay(unsigned int ms);
 
-    virtual void Flip();
+    private:
 
-    virtual void Delay(unsigned int ms);
+        SDL_Surface *screen = NULL;
+    };
+}
 
-    virtual void SetShader(int shader);
-
-    SDL_Surface *screen;
-};
-
-#endif //SDL1_RENDERER_H
+#endif //PSP2GL_RENDERER_H

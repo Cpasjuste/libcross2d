@@ -767,7 +767,7 @@ void glLoadName(unsigned int name);
 void glGenTextures(int n, unsigned int *textures);
 void glDeleteTextures(int n, const unsigned int *textures);
 void glBindTexture(int target,int texture);
-void glTexImage2D( int target, int level, int components,
+void glTexImage2D( int target, int level, GLint internalFormat,
 		    int width, int height, int border,
                     int format, int type, void *pixels);
 void glTexEnvi(int target,int pname,int param);

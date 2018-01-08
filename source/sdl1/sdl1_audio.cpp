@@ -4,7 +4,9 @@
 
 #include <malloc.h>
 #include <SDL/SDL.h>
-#include "sdl1_audio.h"
+#include "sdl1/sdl1_audio.h"
+
+using namespace c2d;
 
 static bool use_mutex = false;
 

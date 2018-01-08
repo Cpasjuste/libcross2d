@@ -3,7 +3,7 @@
 //
 
 #include "c2d.h"
-#include "GL/gl.h"
+#include "skeleton/TinyGL/GL/tinygl.h"
 
 using namespace c2d;
 
@@ -27,20 +27,36 @@ void GLRenderer::draw(const VertexArray &vertices,
         glMultMatrixf(transform.getMatrix());
     }
 
+    GLTexture *tex = ((GLTexture *) texture);
+    if (tex && tex->available) {
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, tex->texID);
+    }
+
     static const GLenum modes[] =
             {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
              GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
     GLenum mode = modes[vertices.getPrimitiveType()];
 
     glBegin(mode);
+
     for (unsigned int i = 0; i < count; i++) {
+        if (tex && tex->available) {
+            glTexCoord2f(vertices[i].texCoords.x / texture->getSize().x,
+                         vertices[i].texCoords.y / texture->getSize().y);
+        }
         glColor4f(vertices[i].color.r / 255.0f,
                   vertices[i].color.g / 255.0f,
                   vertices[i].color.b / 255.0f,
                   vertices[i].color.a / 255.0f);
         glVertex2f(vertices[i].position.x, vertices[i].position.y);
     }
+
     glEnd();
+
+    if (tex && tex->available) {
+        glDisable(GL_TEXTURE_2D);
+    }
 
     glPopMatrix();
 }
@@ -48,10 +64,12 @@ void GLRenderer::draw(const VertexArray &vertices,
 void GLRenderer::flip() {
 
     if (!gl_init) {
-        glClearDepth(1.0);
-        glEnable(GL_DEPTH_TEST);
+
         glDisable(GL_LIGHTING);
-        //glShadeModel(GL_SMOOTH);
+        glDisable(GL_CULL_FACE);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_ALPHA_TEST);
+        glEnable(GL_BLEND);
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();

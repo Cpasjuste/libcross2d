@@ -6,7 +6,7 @@
 #include <psp2/kernel/threadmgr.h>
 
 #include "c2d.h"
-#include "skeleton/TinyGL/GL/gl.h"
+#include "skeleton/TinyGL/GL/tinygl.h"
 #include "../skeleton/TinyGL/zbuffer.h"
 
 using namespace c2d;

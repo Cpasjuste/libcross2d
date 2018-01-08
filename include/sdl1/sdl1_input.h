@@ -5,29 +5,33 @@
 #ifndef _SDL1_INPUT_H
 #define _SDL1_INPUT_H
 
-#include "../skeleton/input.h"
+#include "skeleton/input.h"
+#include "skeleton/renderer.h"
 #include <SDL/SDL.h>
 
-class SDL1Input : Input {
+namespace c2d {
 
-public:
-    SDL1Input(Renderer *renderer);
+    class SDL1Input : Input {
 
-    virtual ~SDL1Input();
+    public:
+        SDL1Input(Renderer *renderer);
 
-    virtual Player *Update(int rotate);
+        virtual ~SDL1Input();
 
-    virtual int GetButton(int player);
+        virtual Player *Update(int rotate);
 
-private:
-    virtual void process_axis(Input::Player &player, int rotate);
+        virtual int GetButton(int player);
 
-    virtual void process_hat(Input::Player &player, int rotate);
+    private:
+        virtual void process_axis(Input::Player &player, int rotate);
 
-    virtual void process_buttons(Input::Player &player, int rotate);
+        virtual void process_hat(Input::Player &player, int rotate);
 
-    virtual void process_keyboard(Input::Player &player, int rotate);
+        virtual void process_buttons(Input::Player &player, int rotate);
 
-};
+        virtual void process_keyboard(Input::Player &player, int rotate);
+
+    };
+}
 
 #endif //_SDL1_INPUT_H
