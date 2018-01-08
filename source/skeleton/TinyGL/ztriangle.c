@@ -8,14 +8,17 @@ void ZB_fillTriangleFlat(ZBuffer *zb,
 {
 #if TGL_FEATURE_RENDER_BITS == 24
     unsigned char colorR, colorG, colorB;
+/*
+#elif TGL_FEATURE_RENDER_BITS == 32
+    unsigned char colorR, colorG, colorB, colorA;
+*/
 #else
     int color;
 #endif
 
 #define INTERP_Z
 
-#if TGL_FEATURE_RENDER_BITS == 24 
-
+#if TGL_FEATURE_RENDER_BITS == 24
 #define DRAW_INIT()				\
 {						\
   colorR=p2->r>>8; \
@@ -34,12 +37,35 @@ void ZB_fillTriangleFlat(ZBuffer *zb,
     }\
     z+=dzdx;					\
 }
+/*
+#elif TGL_FEATURE_RENDER_BITS == 32
 
+#define DRAW_INIT()				\
+{						\
+  colorR=p2->r>>8; \
+  colorG=p2->g>>8; \
+  colorB=p2->b>>8; \
+  colorA=p2->a>>8; \
+}
+
+#define PUT_PIXEL(_a)		\
+{						\
+    zz=z >> ZB_POINT_Z_FRAC_BITS;		\
+    if (ZCMP(zz,pz[_a])) {				\
+      pp[3 * (_a)]=colorR;\
+      pp[3 * (_a) + 1]=colorG;\
+      pp[3 * (_a) + 2]=colorB;\
+      pp[3 * (_a) + 3]=colorA;\
+      pz[_a]=zz;				\
+    }\
+    z+=dzdx;					\
+}
+*/
 #else
 
 #define DRAW_INIT()				\
 {						\
-  color=RGB_TO_PIXEL(p2->r,p2->g,p2->b);	\
+  color=RGBA_TO_PIXEL(p2->r,p2->g,p2->b,p2->a);	\
 }
   
 #define PUT_PIXEL(_a)				\
@@ -71,7 +97,7 @@ void ZB_fillTriangleSmooth(ZBuffer *zb,
 #define INTERP_Z
 #define INTERP_RGB
 
-#define SAR_RND_TO_ZERO(v,n) (v / (1<<n))
+#define SAR_RND_TO_ZERO(v,n) ((v) / (1<<(n)))
 
 #if TGL_FEATURE_RENDER_BITS == 24
 
@@ -90,10 +116,32 @@ void ZB_fillTriangleSmooth(ZBuffer *zb,
     }\
     z+=dzdx;					\
     og1+=dgdx;					\
-    or1+=drdx;					\current_texture
+    or1+=drdx;					\
     ob1+=dbdx;					\
 }
+/*
+#elif TGL_FEATURE_RENDER_BITS == 32
+#define DRAW_INIT() 				\
+{						\
+}
 
+#define PUT_PIXEL(_a)				\
+{						\
+    zz=z >> ZB_POINT_Z_FRAC_BITS;		\
+    if (ZCMP(zz,pz[_a])) {				\
+      pp[3 * (_a)]=or1 >> 8;\
+      pp[3 * _a + 1]=og1 >> 8;\
+      pp[3 * _a + 2]=ob1 >> 8;\
+      pp[3 * _a + 3]=oa1 >> 8;\
+      pz[_a]=zz;				\
+    }\
+    z+=dzdx;					\
+    og1+=dgdx;					\
+    or1+=drdx;					\
+    ob1+=dbdx;					\
+    oa1+=dadx;					\
+}
+*/
 #elif TGL_FEATURE_RENDER_BITS == 16
 
 #define DRAW_INIT() 				\
@@ -157,13 +205,14 @@ void ZB_fillTriangleSmooth(ZBuffer *zb,
 {						\
     zz=z >> ZB_POINT_Z_FRAC_BITS;		\
     if (ZCMP(zz,pz[_a])) {				\
-      pp[_a] = RGB_TO_PIXEL(or1, og1, ob1);\
+      pp[_a] = RGBA_TO_PIXEL(or1, og1, ob1, oa1);\
       pz[_a]=zz;				\
     }\
     z+=dzdx;					\
     og1+=dgdx;					\
     or1+=drdx;					\
     ob1+=dbdx;					\
+    oa1+=dadx;					\
 }
 
 #endif /* TGL_FEATURE_RENDER_BITS */
@@ -206,7 +255,26 @@ void ZB_fillTriangleMapping(ZBuffer *zb,
     s+=dsdx;					\
     t+=dtdx;					\
 }
+/*
+#elif TGL_FEATURE_RENDER_BITS == 32
 
+#define PUT_PIXEL(_a)				\
+{						\
+   unsigned char *ptr;\
+   zz=z >> ZB_POINT_Z_FRAC_BITS;		\
+     if (ZCMP(zz,pz[_a])) {				\
+       ptr = texture + (((t & 0x3FC00000) | s) >> 14) * 3; \
+       pp[3 * _a]= ptr[0];\
+       pp[3 * _a + 1]= ptr[1];\
+       pp[3 * _a + 2]= ptr[2];\
+       pp[3 * _a + 3]= ptr[3];\
+       pz[_a]=zz;				\
+    }						\
+    z+=dzdx;					\
+    s+=dsdx;					\
+    t+=dtdx;					\
+}
+*/
 #else
 
 #define PUT_PIXEL(_a)				\
@@ -272,8 +340,27 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
     t+=dtdx;					\
 }
 
-#else
+#elif TGL_FEATURE_RENDER_BITS == 32
+/*
+#define PUT_PIXEL(_a)				\
+{						\
+   unsigned char *ptr;\
+   zz=z >> ZB_POINT_Z_FRAC_BITS;		\
+     if (ZCMP(zz,pz[_a])) {				\
+       ptr = texture + (((t & 0x3FC00000) | (s & 0x003FC000)) >> 14) * 3;\
+       pp[3 * _a]= ptr[0];\
+       pp[3 * _a + 1]= ptr[1];\
+       pp[3 * _a + 2]= ptr[2];\
+       pp[3 * _a + 3]= ptr[3];\
+       pz[_a]=zz;				\
+    }						\
+    z+=dzdx;					\
+    s+=dsdx;					\
+    t+=dtdx;					\
+}
 
+#else
+*/
 #define PUT_PIXEL(_a)				\
 {						\
    zz=z >> ZB_POINT_Z_FRAC_BITS;		\

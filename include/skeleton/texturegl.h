@@ -6,7 +6,6 @@
 #define GL_TEXTURE_H
 
 #include "skeleton/texture.h"
-#include "skeleton/TinyGL/GL/tinygl.h"
 
 namespace c2d {
 
@@ -27,7 +26,7 @@ namespace c2d {
 
         void setFiltering(int filter);
 
-        GLuint texID = 0;
+        unsigned int texID = 0;
 
     private:
 
@@ -35,4 +34,4 @@ namespace c2d {
     };
 }
 
-#endif //PSP2GL_TEXTURE_H
+#endif //GL_TEXTURE_H

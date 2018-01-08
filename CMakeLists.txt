@@ -8,9 +8,9 @@ enable_language(ASM)
 option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
 option(BUILD_SDL1 "Build with SDL1 (software) support" ON)
 #option(BUILD_SDL2 "Build with SDL2 support" OFF)
-option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" ON)
+option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PSP2_GL "Build with PSP2 TinyGL support (testing, software rendering, slow, needs BUILD_PSP2=ON)" OFF)
-option(BUILD_PSP2_OSMESA "Build with PSP2 OSMesa support (testing, software rendering, slow, needs BUILD_PSP2=ON)" ON)
+option(BUILD_PSP2_OSMESA "Build with PSP2 OSMesa support (testing, software rendering, slow, needs BUILD_PSP2=ON)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 #option(BUILD_3DS "Build with 3DS support" OFF)
 #option(BUILD_RPI "Build with RPI support" OFF)
@@ -64,7 +64,7 @@ if (BUILD_SFML)
 elseif (BUILD_PSP2)
     set(PLATFORM_DIRS
             source/psp2
-            source/psp2/libvita2d/include
+            #source/psp2/libvita2d/include
             source/psp2/vita-shader-collection/includes
             ${VITASDK}/arm-vita-eabi/include/freetype2
             )
@@ -80,9 +80,8 @@ elseif (BUILD_PSP2)
     set(PLATFORM_LIBS
             cross2d SDL2 cross2d vita2d freetype
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
-            SceCtrl_stub ScePgf_stub SceNetCtl_stub
-            SceNet_stub ScePower_stub SceCommonDialog_stub
-            SceAudio_stub SceAppMgr_stub SceTouch_stub
+            SceCtrl_stub SceCommonDialog_stub
+            SceAudio_stub SceTouch_stub
             stdc++ png jpeg z m c
             )
     if (BUILD_PSP2_GL)
@@ -91,12 +90,12 @@ elseif (BUILD_PSP2)
         list(APPEND PLATFORM_SRC
                 ${GL_SRC}
                 source/psp2_tinygl/psp2gl_renderer.cpp)
-        list(APPEND FLAGS -D__PSP2_GL__)
+        list(APPEND FLAGS -D__PSP2_GL__ -D__TINYGL__)
     elseif (BUILD_PSP2_OSMESA)
         list(APPEND PLATFORM_SRC
                 source/psp2_osmesa/psp2osmesa_renderer.cpp)
         list(APPEND FLAGS -D__PSP2_OSMESA__)
-        list(APPEND PLATFORM_LIBS OSMesa)
+        list(APPEND PLATFORM_LIBS OSMesa pthread)
     else ()
         list(APPEND PLATFORM_SRC
                 source/psp2/psp2_renderer.cpp
@@ -213,7 +212,7 @@ elseif (BUILD_SDL1)
             source/posix/*.c*
             source/skeleton/TinyGL/*.c
             )
-    list(APPEND FLAGS -O3 -D__SDL1__)
+    list(APPEND FLAGS -O3 -D__SDL1__ -D__TINYGL__)
 endif (BUILD_SFML)
 
 

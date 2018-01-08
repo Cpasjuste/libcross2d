@@ -18,7 +18,7 @@ void ZB_plot(ZBuffer * zb, ZBufferPoint * p)
         pp[1]=p->g>>8;
         pp[2]=p->b>>8;
 #else
-	*pp = RGB_TO_PIXEL(p->r, p->g, p->b);
+	*pp = RGBA_TO_PIXEL(p->r, p->g, p->b, p->a);
 #endif
 	*pz = zz;
     }
@@ -57,8 +57,8 @@ void ZB_line_z(ZBuffer * zb, ZBufferPoint * p1, ZBufferPoint * p2)
 {
     int color1, color2;
 
-    color1 = RGB_TO_PIXEL(p1->r, p1->g, p1->b);
-    color2 = RGB_TO_PIXEL(p2->r, p2->g, p2->b);
+    color1 = RGBA_TO_PIXEL(p1->r, p1->g, p1->b, p1->a);
+    color2 = RGBA_TO_PIXEL(p2->r, p2->g, p2->b, p2->a);
 
     /* choose if the line should have its color interpolated or not */
     if (color1 == color2) {
@@ -72,8 +72,8 @@ void ZB_line(ZBuffer * zb, ZBufferPoint * p1, ZBufferPoint * p2)
 {
     int color1, color2;
 
-    color1 = RGB_TO_PIXEL(p1->r, p1->g, p1->b);
-    color2 = RGB_TO_PIXEL(p2->r, p2->g, p2->b);
+    color1 = RGBA_TO_PIXEL(p1->r, p1->g, p1->b, p1->a);
+    color2 = RGBA_TO_PIXEL(p2->r, p2->g, p2->b, p2->a);
 
     /* choose if the line should have its color interpolated or not */
     if (color1 == color2) {

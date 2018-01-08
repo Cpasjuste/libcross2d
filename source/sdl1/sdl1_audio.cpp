@@ -59,7 +59,7 @@ static void read_buffer(void *unused, unsigned char *data, int len) {
     }
 
     if (buffered_bytes >= len) {
-        if (buf_read_pos + len <= buf_size) {
+        if ((int) (buf_read_pos + len) <= buf_size) {
             memcpy(data, buffer_sdl + buf_read_pos, len);
         } else {
             int tail = buf_size - buf_read_pos;

@@ -102,11 +102,12 @@ void glDeleteTextures(int n, const unsigned int *textures) {
 
 
 void glopBindTexture(GLContext *c, GLParam *p) {
-    int target = p[1].i;
+
+    //int target = p[1].i;
     int texture = p[2].i;
     GLTexture *t;
 
-    assert(target == GL_TEXTURE_2D && texture >= 0);
+    assert(p[1].i == GL_TEXTURE_2D && texture >= 0);
 
     t = find_texture(c, texture);
     if (t == NULL) {
@@ -122,7 +123,7 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
     int width = p[4].i;
     int height = p[5].i;
     int border = p[6].i;
-    int format = p[7].i;
+    //int format = p[7].i;
     int type = p[8].i;
     void *pixels = p[9].p;
     GLImage *im;

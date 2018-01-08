@@ -27,11 +27,12 @@ extern c2d::Renderer *c2d_renderer;
 
 #ifdef __PSP2_GL__
 #include "psp2_tinygl/psp2gl_renderer.h"
+#include "skeleton/texturegl.h"
 #define C2DRenderer PSP2GLRenderer
 #define C2DTexture GLTexture
 #elif __PSP2_OSMESA__
 #include "psp2_osmesa/psp2osmesa_renderer.h"
-#include "skeleton/textu"
+#include "skeleton/texturegl.h"
 #define C2DRenderer PSP2OSMESARenderer
 #define C2DTexture GLTexture
 #else

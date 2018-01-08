@@ -1,12 +1,12 @@
 {
     int n, dx, dy, sx, pp_inc_1, pp_inc_2;
-    register int a;
+    register int _a;
     register PIXEL *pp;
 #if defined(INTERP_RGB) || TGL_FEATURE_RENDER_BITS == 24
-    register unsigned int r, g, b;
+    register unsigned int r, g, b, a;
 #endif
 #ifdef INTERP_RGB
-    register unsigned int rinc, ginc, binc;
+    register unsigned int rinc, ginc, binc, ainc;
 #endif
 #ifdef INTERP_Z
     register unsigned short *pz;
@@ -33,6 +33,7 @@
     r = p2->r << 8;
     g = p2->g << 8;
     b = p2->b << 8;
+    a = p2->a << 8;
 #elif TGL_FEATURE_RENDER_BITS == 24
     /* for 24 bits, we store the colors in different variables */
     r = p2->r >> 8;
@@ -45,7 +46,7 @@
 #if TGL_FEATURE_RENDER_BITS == 24
 #define RGBPIXEL pp[0] = r >> 16, pp[1] = g >> 16, pp[2] = b >> 16
 #else
-#define RGBPIXEL *pp = RGB_TO_PIXEL(r >> 8,g >> 8,b >> 8)
+#define RGBPIXEL *pp = RGBA_TO_PIXEL(r >> 8,g >> 8,b >> 8,a >> 8)
 #endif
 #else /* INTERP_RGB */
 #define RGB(x)
@@ -76,8 +77,9 @@
     ZZ(zinc=(p2->z-p1->z)/n);\
     RGB(rinc=((p2->r-p1->r) << 8)/n;\
         ginc=((p2->g-p1->g) << 8)/n;\
-        binc=((p2->b-p1->b) << 8)/n);\
-    a=2*dy-dx;\
+        binc=((p2->g-p1->b) << 8)/n;\
+        ainc=((p2->a-p1->a) << 8)/n);\
+    _a=2*dy-dx;\
     dy=2*dy;\
     dx=2*dx-dy;\
     pp_inc_1 = (inc_1) * PSZB;\
@@ -85,9 +87,9 @@
     do {\
         PUTPIXEL();\
         ZZ(z+=zinc);\
-        RGB(r+=rinc;g+=ginc;b+=binc);\
-        if (a>0) { pp=(PIXEL *)((char *)pp + pp_inc_1); ZZ(pz+=(inc_1));  a-=dx; }\
-	else { pp=(PIXEL *)((char *)pp + pp_inc_2); ZZ(pz+=(inc_2)); a+=dy; }\
+        RGB(r+=rinc;g+=ginc;b+=binc;a+=ainc);\
+        if (_a>0) { pp=(PIXEL *)((char *)pp + pp_inc_1); ZZ(pz+=(inc_1));  _a-=dx; }\
+	else { pp=(PIXEL *)((char *)pp + pp_inc_2); ZZ(pz+=(inc_2)); _a+=dy; }\
     } while (--n >= 0);
 
 /* fin macro */

@@ -10,7 +10,7 @@
 
 using namespace c2d;
 
-static vita2d_texture *texture = NULL;
+static vita2d_texture *texture;
 static OSMesaContext mesa_ctx = NULL;
 
 PSP2OSMESARenderer::PSP2OSMESARenderer(const Vector2f &size) : GLRenderer(size) {
@@ -18,35 +18,50 @@ PSP2OSMESARenderer::PSP2OSMESARenderer(const Vector2f &size) : GLRenderer(size) 
     const GLint z = 16, stencil = 0, accum = 0;
     GLint cBits;
 
-    mesa_ctx = OSMesaCreateContextExt(OSMESA_RGBA, z, stencil, accum, NULL);
+    printf("OSMesaCreateContextExt\n");
+    mesa_ctx = OSMesaCreateContextExt(OSMESA_ARGB, z, stencil, accum, NULL);
     if (!mesa_ctx) {
         printf("OSMesaCreateContextExt() failed!\n");
+        available = false;
         return;
     }
 
+    printf("vita2d_init\n");
     vita2d_init();
+    printf("vita2d_create_empty_texture_format: %i %i\n", (uint) getSize().x, (uint) getSize().y);
     texture = vita2d_create_empty_texture_format(
-            (uint) getSize().x, (uint) getSize().y, (SceGxmTextureFormat) SCE_GXM_TEXTURE_BASE_FORMAT_U8U8U8U8);
-    void *buffer = vita2d_texture_get_datap(texture);
+            (uint) getSize().x, (uint) getSize().y, SCE_GXM_TEXTURE_FORMAT_A8R8G8B8);
+    if (texture == NULL) {
+        printf("vita2d_create_empty_texture_format failed!\n");
+        vita2d_fini();
+        //OSMesaDestroyContext(mesa_ctx);
+        available = false;
+        return;
+    }
 
-    /* Bind the buffer to the context and make it current */
-    if (!OSMesaMakeCurrent(mesa_ctx, buffer, GL_UNSIGNED_BYTE, w, h)) {
+    void *vbuffer = vita2d_texture_get_datap(texture);
+
+    /*
+    printf("OSMesaMakeCurrent\n");
+    if (!OSMesaMakeCurrent(mesa_ctx, vita2d_texture_get_datap(texture),
+                           GL_UNSIGNED_BYTE, (GLsizei) getSize().x, (GLsizei) getSize().y)) {
         printf("OSMesaMakeCurrent (8 bits/channel) failed!\n");
         vita2d_free_texture(texture);
-        texture = NULL;
+        vita2d_fini();
         OSMesaDestroyContext(mesa_ctx);
-        mesa_ctx = NULL;
+        available = false;
         return;
     }
 
+    printf("glGetIntegerv\n");
     glGetIntegerv(GL_RED_BITS, &cBits);
     if (cBits != 8) {
         printf("Unable to create 8-bit/channel renderbuffer.\n");
         printf("May need to recompile Mesa with CHAN_BITS=16 or 32.\n");
         vita2d_free_texture(texture);
-        texture = NULL;
+        vita2d_fini();
         OSMesaDestroyContext(mesa_ctx);
-        mesa_ctx = NULL;
+        available = false;
         return;
     }
 
@@ -54,17 +69,22 @@ PSP2OSMESARenderer::PSP2OSMESARenderer(const Vector2f &size) : GLRenderer(size) 
     glGetIntegerv(GL_BLUE_BITS, &cBits);
     glGetIntegerv(GL_ALPHA_BITS, &cBits);
 
+    printf("OSMesaColorClamp\n");
     OSMesaColorClamp(GL_TRUE);
+    */
+
+    available = true;
 }
 
 void PSP2OSMESARenderer::flip() {
 
-    // call base class (draw childs)
-    GLRenderer::flip();
+    if (available) {
 
-    if (texture) {
+        // call base class (draw childs)
+        //GLRenderer::flip();
+
         // flip (draw mesa buffer to screen)
-        glFinish();
+        //glFinish();
 
         vita2d_start_drawing();
         vita2d_clear_screen();
@@ -86,14 +106,17 @@ void PSP2OSMESARenderer::delay(unsigned int ms) {
 
 PSP2OSMESARenderer::~PSP2OSMESARenderer() {
 
-    vita2d_wait_rendering_done();
-    vita2d_fini();
+    if (available) {
 
-    if (mesa_ctx) {
-        OSMesaDestroyContext(mesa_ctx);
-    }
+        vita2d_wait_rendering_done();
+        vita2d_fini();
 
-    if (texture) {
-        vita2d_free_texture(texture);
+        //if (mesa_ctx) {
+        //    OSMesaDestroyContext(mesa_ctx);
+       // }
+
+        if (texture) {
+            vita2d_free_texture(texture);
+        }
     }
 }

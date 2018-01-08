@@ -63,8 +63,11 @@ typedef unsigned char PIXEL;
 
 #elif TGL_FEATURE_RENDER_BITS == 32
 
-#define RGB_TO_PIXEL(r,g,b) \
-  ((((r) << 8) & 0xff0000) | ((g) & 0xff00) | ((b) >> 8))
+#define RGBA_TO_PIXEL(r,g,b,a) \
+	((((r) << 8) & 0xff0000) | ((g) & 0xff00) | ((b) >> 8))
+    //((((r) << 8) & 0xff0000) | ((g) & 0xff00) | ((b) >> 8))
+//((r) << 24) + ((g) << 16) + ((b) << 8) + ((a));
+//((((r) << 8) & 0xff0000) | ((g) & 0xff00) | ((b) >> 8))
 typedef unsigned int PIXEL;
 #define PSZB 4
 #define PSZSH 5
@@ -79,11 +82,11 @@ typedef struct {
     int xsize,ysize;
     int linesize; /* line size, in bytes */
     int mode;
-    
+
     unsigned short *zbuf;
     PIXEL *pbuf;
     int frame_buffer_allocated;
-    
+
     int nb_colors;
     unsigned char *dctable;
     int *ctable;
@@ -93,8 +96,8 @@ typedef struct {
 typedef struct {
   int x,y,z;     /* integer coordinates in the zbuffer */
   int s,t;       /* coordinates for the mapping */
-  int r,g,b;     /* color indexes */
-  
+  int r,g,b,a;     /* color indexes */
+
   float sz,tz;   /* temporary coordinates for mapping */
 } ZBufferPoint;
 
@@ -111,7 +114,7 @@ void ZB_close(ZBuffer *zb);
 
 void ZB_resize(ZBuffer *zb,void *frame_buffer,int xsize,int ysize);
 void ZB_clear(ZBuffer *zb,int clear_z,int z,
-	      int clear_color,int r,int g,int b);
+	      int clear_color,int r,int g,int b,int a);
 /* linesize is in BYTES */
 void ZB_copyFrameBuffer(ZBuffer *zb,void *buf,int linesize);
 

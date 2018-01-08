@@ -3,12 +3,18 @@
 //
 
 #include <png.h>
-#include "skeleton/lodepng.h"
 #include "c2d.h"
-#include "skeleton/texturegl.h"
+#include "skeleton/lodepng.h"
+
+#ifdef __TINYGL__
+#include "skeleton/TinyGL/GL/tinygl.h"
+#else
+#include "GL/gl.h"
+#endif
 
 using namespace c2d;
 
+/*
 static GLuint load_png(const char *file_name,
                        int *width, int *height, int *fmt) {
 
@@ -160,6 +166,7 @@ static GLuint load_png(const char *file_name,
 
     return texture;
 }
+*/
 
 GLTexture::GLTexture(const char *path) : Texture(path) {
 
