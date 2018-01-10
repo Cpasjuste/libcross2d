@@ -7,7 +7,7 @@ enable_language(ASM)
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
 option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" ON)
-option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" OFF)
+option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" ON)
 #option(BUILD_SDL2 "Build with SDL2 support" OFF)
 option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PSP2_GL "Build with PSP2 TinyGL support (testing, software rendering, slow, needs BUILD_PSP2=ON)" OFF)
@@ -215,6 +215,15 @@ elseif (BUILD_SDL1)
     list(APPEND FLAGS -D__SDL1__)
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)
+        set(LIBS
+                cross2d GL
+                SDL SDL_image SDL_gfx SDL_ttf freetype png z
+                )
+    else ()
+        set(LIBS
+                cross2d OSMesa pthread
+                SDL SDL_image SDL_gfx SDL_ttf freetype png z
+                )
     endif (BUILD_SDL1_GL)
 endif (BUILD_SFML)
 
@@ -241,9 +250,7 @@ endif (BUILD_SDL2)
 if (BUILD_SDL1)
     add_executable(${PROJECT_NAME}.sdl1 test/main.cpp)
     target_compile_options(${PROJECT_NAME}.sdl1 PRIVATE ${FLAGS})
-    target_link_libraries(${PROJECT_NAME}.sdl1
-            cross2d OSMesa pthread
-            SDL SDL_image SDL_gfx SDL_ttf freetype png z)
+    target_link_libraries(${PROJECT_NAME}.sdl1 ${LIBS})
     add_dependencies(${PROJECT_NAME}.sdl1 ${PROJECT_NAME})
 endif (BUILD_SDL1)
 

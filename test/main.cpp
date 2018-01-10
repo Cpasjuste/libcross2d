@@ -35,7 +35,6 @@ int main() {
     line->setOutlineThickness(1);
     rect->add(line);
 
-    /*
     // create a font
     Font font;
     if (font.loadFromFile(FONT_PATH)) {
@@ -47,7 +46,6 @@ int main() {
         text->setPosition(rect->getSize().x / 2, 32);
         rect->add(text);
     }
-    */
 
     // add all this crap to the renderer
     renderer->add(rect);
