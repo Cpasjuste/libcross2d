@@ -55,7 +55,6 @@ Widget::~Widget() {
         if (*widget) {
             printf("~Widget(%p): delete child(%p)\n", this, *widget);
             delete (*widget);
-            *widget = NULL;
         }
     }
     childs.clear();

@@ -60,7 +60,7 @@ int main() {
         }
 
         renderer->flip();
-        renderer->delay(1000);
+        renderer->delay(500);
     }
 
     // will delete widgets recursively
