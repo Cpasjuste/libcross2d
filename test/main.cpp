@@ -16,6 +16,8 @@ int main() {
     Rectangle *rect = new C2DRectangle(FloatRect(208, 208, 400, 400));
     rect->setOriginCenter();
     rect->setFillColor(Color::Gray);
+
+    /*
     rect->setOutlineColor(Color::Orange);
     rect->setOutlineThickness(8);
 
@@ -33,6 +35,7 @@ int main() {
     line->setOutlineColor(Color::Green);
     line->setOutlineThickness(1);
     rect->add(line);
+    */
 
     /*
     // create a font

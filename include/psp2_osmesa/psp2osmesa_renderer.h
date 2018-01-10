@@ -5,7 +5,9 @@
 #ifndef PSP2OSMESA_RENDERER_H
 #define PSP2OSMESA_RENDERER_H
 
+#include <vita2d.h>
 #include "skeleton/renderergl.h"
+#include "GL/osmesa.h"
 
 namespace c2d {
 
@@ -20,6 +22,10 @@ namespace c2d {
         void flip();
 
         void delay(unsigned int ms);
+
+    private:
+        vita2d_texture *texture;
+        OSMesaContext mesa_ctx;
     };
 }
 

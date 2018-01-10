@@ -17,10 +17,10 @@ void glopClear(GLContext *c,GLParam *p)
 {
   int mask=p[1].i;
   int z=0;
-  int r=(int)(c->clear_color.v[0]*65535);
-  int g=(int)(c->clear_color.v[1]*65535);
-  int b=(int)(c->clear_color.v[2]*65535);
-  int a=(int)(c->clear_color.v[3]*65535);
+  int r=(int)(c->clear_color.v[0]*255);
+  int g=(int)(c->clear_color.v[1]*255);
+  int b=(int)(c->clear_color.v[2]*255);
+  int a=(int)(c->clear_color.v[3]*255);
 
   /* TODO : correct value of Z */
 

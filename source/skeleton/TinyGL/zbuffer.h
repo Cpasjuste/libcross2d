@@ -63,8 +63,9 @@ typedef unsigned char PIXEL;
 
 #elif TGL_FEATURE_RENDER_BITS == 32
 
+// BGRA
 #define RGBA_TO_PIXEL(r,g,b,a) \
-	((((r) << 8) & 0xff0000) | ((g) & 0xff00) | ((b) >> 8))
+	((a) << 24) | ((r) << 16) | ((g) << 8) | ((b));
     //((((r) << 8) & 0xff0000) | ((g) & 0xff00) | ((b) >> 8))
 //((r) << 24) + ((g) << 16) + ((b) << 8) + ((a));
 //((((r) << 8) & 0xff0000) | ((g) & 0xff00) | ((b) >> 8))

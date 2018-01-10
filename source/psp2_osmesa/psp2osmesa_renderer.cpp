@@ -2,29 +2,15 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#include <vita2d.h>
+#include "c2d.h"
 #include <psp2/kernel/threadmgr.h>
 
-#include "c2d.h"
-#include "GL/osmesa.h"
-
 using namespace c2d;
-
-static vita2d_texture *texture;
-static OSMesaContext mesa_ctx = NULL;
 
 PSP2OSMESARenderer::PSP2OSMESARenderer(const Vector2f &size) : GLRenderer(size) {
 
     const GLint z = 16, stencil = 0, accum = 0;
     GLint cBits;
-
-    printf("OSMesaCreateContextExt\n");
-    mesa_ctx = OSMesaCreateContextExt(OSMESA_ARGB, z, stencil, accum, NULL);
-    if (!mesa_ctx) {
-        printf("OSMesaCreateContextExt() failed!\n");
-        available = false;
-        return;
-    }
 
     printf("vita2d_init\n");
     vita2d_init();
@@ -34,14 +20,20 @@ PSP2OSMESARenderer::PSP2OSMESARenderer(const Vector2f &size) : GLRenderer(size) 
     if (texture == NULL) {
         printf("vita2d_create_empty_texture_format failed!\n");
         vita2d_fini();
-        //OSMesaDestroyContext(mesa_ctx);
         available = false;
         return;
     }
 
-    void *vbuffer = vita2d_texture_get_datap(texture);
+    printf("OSMesaCreateContextExt\n");
+    mesa_ctx = OSMesaCreateContextExt(OSMESA_ARGB, z, stencil, accum, NULL);
+    if (!mesa_ctx) {
+        printf("OSMesaCreateContextExt() failed!\n");
+        vita2d_free_texture(texture);
+        vita2d_fini();
+        available = false;
+        return;
+    }
 
-    /*
     printf("OSMesaMakeCurrent\n");
     if (!OSMesaMakeCurrent(mesa_ctx, vita2d_texture_get_datap(texture),
                            GL_UNSIGNED_BYTE, (GLsizei) getSize().x, (GLsizei) getSize().y)) {
@@ -71,7 +63,6 @@ PSP2OSMESARenderer::PSP2OSMESARenderer(const Vector2f &size) : GLRenderer(size) 
 
     printf("OSMesaColorClamp\n");
     OSMesaColorClamp(GL_TRUE);
-    */
 
     available = true;
 }
@@ -81,10 +72,10 @@ void PSP2OSMESARenderer::flip() {
     if (available) {
 
         // call base class (draw childs)
-        //GLRenderer::flip();
+        GLRenderer::flip();
 
         // flip (draw mesa buffer to screen)
-        //glFinish();
+        glFinish();
 
         vita2d_start_drawing();
         vita2d_clear_screen();
@@ -111,9 +102,9 @@ PSP2OSMESARenderer::~PSP2OSMESARenderer() {
         vita2d_wait_rendering_done();
         vita2d_fini();
 
-        //if (mesa_ctx) {
-        //    OSMesaDestroyContext(mesa_ctx);
-       // }
+        if (mesa_ctx) {
+            OSMesaDestroyContext(mesa_ctx);
+        }
 
         if (texture) {
             vita2d_free_texture(texture);

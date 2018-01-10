@@ -26,7 +26,7 @@ include(Toolchain.cmake)
 project(cross2d)
 
 # flags
-set(FLAGS -Wall -Wno-strict-aliasing)
+set(FLAGS -Wall)
 
 ##############
 # CROSS2D
@@ -78,11 +78,11 @@ elseif (BUILD_PSP2)
             #source/psp2/vita-shader-collection/lib/*.o
             )
     set(PLATFORM_LIBS
-            cross2d SDL2 cross2d vita2d freetype
+            cross2d SDL2 vita2d freetype
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub
-            stdc++ png jpeg z m c
+            png jpeg z m c
             )
     if (BUILD_PSP2_GL)
         list(APPEND PLATFORM_DIRS include/skeleton/TinyGL)
@@ -210,7 +210,7 @@ elseif (BUILD_SDL1)
     file(GLOB PLATFORM_SRC
             source/sdl1/*.c*
             source/posix/*.c*
-            source/skeleton/TinyGL/*.c
+            #source/skeleton/TinyGL/*.c
             )
     list(APPEND FLAGS -O3 -D__SDL1__ -D__TINYGL__)
 endif (BUILD_SFML)
@@ -239,7 +239,7 @@ if (BUILD_SDL1)
     add_executable(${PROJECT_NAME}.sdl1 test/main.cpp)
     target_compile_options(${PROJECT_NAME}.sdl1 PRIVATE ${FLAGS})
     target_link_libraries(${PROJECT_NAME}.sdl1
-            cross2d SDL SDL_image SDL_gfx SDL_ttf freetype png z)
+            OSMesa cross2d SDL SDL_image SDL_gfx SDL_ttf freetype png z)
     add_dependencies(${PROJECT_NAME}.sdl1 ${PROJECT_NAME})
 endif (BUILD_SDL1)
 
