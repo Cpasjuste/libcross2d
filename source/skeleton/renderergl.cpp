@@ -72,17 +72,18 @@ void GLRenderer::flip() {
 
     if (!gl_init) {
 
-        glDisable(GL_LIGHTING);
-        //glDisable(GL_CULL_FACE);
-        glEnable(GL_DEPTH_TEST);
-        //glDisable(GL_ALPHA_TEST);
-        //glEnable(GL_BLEND);
+        glDisable(GL_CULL_FACE);
+        glDisable(GL_DEPTH_TEST);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glDisable(GL_ALPHA_TEST);
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glOrtho(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
         glMatrixMode(GL_MODELVIEW);
-        gl_init = 1;
+
+        gl_init = true;
     }
 
     // clear screen
@@ -90,7 +91,7 @@ void GLRenderer::flip() {
                  getFillColor().g / 255.0f,
                  getFillColor().b / 255.0f,
                  getFillColor().a / 255.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // call base class (draw childs)
     Renderer::flip();

@@ -29,15 +29,15 @@
 
 /* enable various convertion code from internal pixel format (usually
    16 bits per pixel) to any external format */
-//#define TGL_FEATURE_16_BITS        1
+#define TGL_FEATURE_16_BITS        1
 //#define TGL_FEATURE_8_BITS         1
 //#define TGL_FEATURE_24_BITS        1
-#define TGL_FEATURE_32_BITS        1
+//#define TGL_FEATURE_32_BITS        1
 
 
 //#define TGL_FEATURE_RENDER_BITS    15
-//#define TGL_FEATURE_RENDER_BITS    16
+#define TGL_FEATURE_RENDER_BITS    16
 //#define TGL_FEATURE_RENDER_BITS    24
-#define TGL_FEATURE_RENDER_BITS    32
+//#define TGL_FEATURE_RENDER_BITS    32
 
 #endif /* _tgl_features_h_ */

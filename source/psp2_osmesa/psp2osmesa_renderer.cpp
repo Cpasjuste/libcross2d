@@ -45,6 +45,8 @@ PSP2OSMESARenderer::PSP2OSMESARenderer(const Vector2f &size) : GLRenderer(size) 
         return;
     }
 
+    OSMesaPixelStore(OSMESA_Y_UP, 0);
+
     printf("glGetIntegerv\n");
     glGetIntegerv(GL_RED_BITS, &cBits);
     if (cBits != 8) {

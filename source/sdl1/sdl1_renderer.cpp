@@ -3,16 +3,19 @@
 //
 
 //
-// SDL1 platform use TinyGL (OpenGL software wrapper) for rendering
+// SDL1 with OSMesa (OpenGL software wrapper) for rendering
 //
 
+#ifndef __SDL1_GL__
+
+#include <GL/gl.h>
+#include <GL/osmesa.h>
+
 #include "c2d.h"
-#include "skeleton/TinyGL/GL/tinygl.h"
-#include "../skeleton/TinyGL/zbuffer.h"
 
 using namespace c2d;
 
-static ZBuffer *gl_framebuffer = NULL;
+static OSMesaContext mesa_ctx;
 
 SDL1Renderer::SDL1Renderer(const Vector2f &size) : GLRenderer(size) {
 
@@ -28,14 +31,26 @@ SDL1Renderer::SDL1Renderer(const Vector2f &size) : GLRenderer(size) {
         return;
     }
 
-    gl_framebuffer = ZB_open((int) getSize().x, (int) getSize().y,
-                             ZB_MODE_RGBA, 0, 0, 0, 0);
+    mesa_ctx = OSMesaCreateContextExt(OSMESA_BGRA, 0, 0, 0, NULL);
+    if (!mesa_ctx) {
+        printf("OSMesaCreateContextExt() failed!\n");
+        SDL_FreeSurface(screen);
+        available = false;
+        return;
+    }
 
-    // map screen buffer to gl buffer for direct access
-    gl_free(gl_framebuffer->pbuf);
-    gl_framebuffer->pbuf = (PIXEL *) screen->pixels;
+    if (!OSMesaMakeCurrent(mesa_ctx, screen->pixels,
+                           GL_UNSIGNED_BYTE, (GLsizei) getSize().x, (GLsizei) getSize().y)) {
+        printf("OSMesaMakeCurrent (8 bits/channel) failed!\n");
+        SDL_FreeSurface(screen);
+        OSMesaDestroyContext(mesa_ctx);
+        available = false;
+        return;
+    }
 
-    glInit(gl_framebuffer);
+    OSMesaPixelStore(OSMESA_Y_UP, 0);
+
+    available = true;
 
     this->shaders = new Shaders("");
 }
@@ -44,6 +59,9 @@ void SDL1Renderer::flip() {
 
     // call base class (draw childs)
     GLRenderer::flip();
+
+    // flip (draw mesa buffer to screen)
+    glFinish();
 
     SDL_Flip(screen);
 }
@@ -55,8 +73,9 @@ void SDL1Renderer::delay(unsigned int ms) {
 
 SDL1Renderer::~SDL1Renderer() {
 
-    gl_framebuffer->frame_buffer_allocated = 0;
-    ZB_close(gl_framebuffer);
+    if (mesa_ctx) {
+        OSMesaDestroyContext(mesa_ctx);
+    }
 
     if (screen) {
         SDL_FreeSurface(screen);
@@ -64,3 +83,5 @@ SDL1Renderer::~SDL1Renderer() {
 
     SDL_Quit();
 }
+
+#endif // __SDL1_GL__

@@ -318,8 +318,7 @@ void gl_convertRGB_to_8A8R8G8B(unsigned int *pixmap, unsigned char *rgb,
 void gl_resizeImage(unsigned char *dest,int xsize_dest,int ysize_dest,
                     unsigned char *src,int xsize_src,int ysize_src);
 void gl_resizeImageNoInterpolate(unsigned char *dest,int xsize_dest,int ysize_dest,
-                                 unsigned char *src,int xsize_src,int ysize_src,
-                                 int component);
+                                 unsigned char *src,int xsize_src,int ysize_src);
 
 GLContext *gl_get_context(void);
 

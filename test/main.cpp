@@ -17,7 +17,6 @@ int main() {
     rect->setOriginCenter();
     rect->setFillColor(Color::Gray);
 
-    /*
     rect->setOutlineColor(Color::Orange);
     rect->setOutlineThickness(8);
 
@@ -35,7 +34,6 @@ int main() {
     line->setOutlineColor(Color::Green);
     line->setOutlineThickness(1);
     rect->add(line);
-    */
 
     /*
     // create a font
@@ -57,16 +55,14 @@ int main() {
 
     for (int i = 0; i < 5; i++) {
 
-        /*
         if (i > 0) {
             rect->move(32, 0);
             rect->setScale(rect->getScale().x - 0.1f, rect->getScale().y - 0.1f);
             rect->rotate(5);
         }
-        */
 
         renderer->flip();
-        renderer->delay(50000);
+        renderer->delay(1000);
     }
 
     // will delete widgets recursively
