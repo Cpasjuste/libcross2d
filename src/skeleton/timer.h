@@ -19,6 +19,9 @@ public:
     virtual unsigned long GetMillis();
 
     virtual unsigned int GetSeconds();
+
+private:
+    struct timeval start;
 };
 
 #endif //_TIMER_H_

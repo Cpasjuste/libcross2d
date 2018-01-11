@@ -7,8 +7,6 @@
 
 #include "timer.h"
 
-static struct timeval start;
-
 Timer::Timer() {
     Reset();
 }
