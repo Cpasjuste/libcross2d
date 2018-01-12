@@ -6,8 +6,8 @@ enable_language(ASM)
 
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
-option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" ON)
-option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" ON)
+option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" OFF)
+option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" OFF)
 #option(BUILD_SDL2 "Build with SDL2 support" OFF)
 option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PSP2_GL "Build with PSP2 TinyGL support (testing, software rendering, slow, needs BUILD_PSP2=ON)" OFF)
@@ -15,7 +15,7 @@ option(BUILD_PSP2_OSMESA "Build with PSP2 OSMesa support (testing, software rend
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 #option(BUILD_3DS "Build with 3DS support" OFF)
 #option(BUILD_RPI "Build with RPI support" OFF)
-#option(BUILD_NX "Build with NX (SWITCH) support" OFF)
+option(BUILD_SWITCH_NX "Build with NX (SWITCH) support" ON)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
@@ -173,7 +173,7 @@ elseif (BUILD_3DS)
     #####################
     # NX PLATORM
     #####################
-elseif (BUILD_NX)
+elseif (BUILD_SWITCH_NX)
     set(PLATFORM_DIRS
             source/nx
             ${DEVKITPRO}/libnx/include
@@ -324,7 +324,7 @@ endif (BUILD_3DS)
 #####################
 # NX (SWITCH) target
 #####################
-if (BUILD_NX)
+if (BUILD_SWITCH_NX)
     add_executable(${PROJECT_NAME}.nx test/main.cpp)
     target_compile_options(${PROJECT_NAME}.nx PRIVATE ${FLAGS} -I${DEVKITPRO}/libnx/include)
     target_link_libraries(${PROJECT_NAME}.nx
@@ -333,4 +333,4 @@ if (BUILD_NX)
             m)
     set_target_properties(${PROJECT_NAME}.nx PROPERTIES LINK_FLAGS "-specs=switch.specs")
     add_dependencies(${PROJECT_NAME}.nx ${PROJECT_NAME})
-endif (BUILD_NX)
+endif (BUILD_SWITCH_NX)
