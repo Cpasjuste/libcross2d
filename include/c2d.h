@@ -113,8 +113,14 @@ extern c2d::Renderer *c2d_renderer;
 #elif __NX__
 
 #include "nx/nx_renderer.h"
-#include "nx/nx_font.h"
 #define C2DRenderer NXRenderer
+#define C2DTexture Texure
+#define C2DRectangle Rectangle
+#define C2DLine Line
+#define C2DFont Font
+#define C2DText Text
+#define C2DInput Input
+#define C2DAudio Audio
 #define C2DIo NXIo
 
 #elif __SDL2__

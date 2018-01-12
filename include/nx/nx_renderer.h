@@ -6,7 +6,7 @@
 #define _NX_RENDERER_H_
 
 #include <switch.h>
-#include "../skeleton/renderer.h"
+#include "skeleton/renderer.h"
 
 class NXRenderer : Renderer {
 

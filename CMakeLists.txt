@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_SYSTEM_NAME "Generic")
 enable_language(ASM)
@@ -16,6 +16,7 @@ option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 #option(BUILD_3DS "Build with 3DS support" OFF)
 #option(BUILD_RPI "Build with RPI support" OFF)
 option(BUILD_SWITCH_NX "Build with NX (SWITCH) support" ON)
+#option(BUILD_SWITCH_TRANSISTOR "Build with NX (SWITCH) support" ON)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
@@ -181,7 +182,15 @@ elseif (BUILD_SWITCH_NX)
     file(GLOB PLATFORM_SRC
             source/nx/*.c*
             )
-    list(APPEND FLAGS -D_NX -D__NX__
+    list(APPEND FLAGS -D__NX__
+            -ffunction-sections -fomit-frame-pointer
+            )
+elseif (BUILD_SWITCH_TRANSISTOR)
+    set(PLATFORM_DIRS
+            )
+    file(GLOB PLATFORM_SRC
+            )
+    list(APPEND FLAGS -D__TRANSISTOR__
             -ffunction-sections -fomit-frame-pointer
             )
     #####################
@@ -334,3 +343,16 @@ if (BUILD_SWITCH_NX)
     set_target_properties(${PROJECT_NAME}.nx PROPERTIES LINK_FLAGS "-specs=switch.specs")
     add_dependencies(${PROJECT_NAME}.nx ${PROJECT_NAME})
 endif (BUILD_SWITCH_NX)
+
+#####################
+# TRANSISTOR (SWITCH) target
+#####################
+if (BUILD_SWITCH_TRANSISTOR)
+    add_executable(${PROJECT_NAME}.nx test/main.cpp)
+    target_compile_options(${PROJECT_NAME}.nx PRIVATE ${FLAGS})
+    target_link_libraries(${PROJECT_NAME}.nx
+            cross2d
+            m)
+    #set_target_properties(${PROJECT_NAME}.nx PROPERTIES LINK_FLAGS "-specs=switch.specs")
+    add_dependencies(${PROJECT_NAME}.nx ${PROJECT_NAME})
+endif (BUILD_SWITCH_TRANSISTOR)
