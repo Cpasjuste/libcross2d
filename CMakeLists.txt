@@ -6,8 +6,8 @@ enable_language(ASM)
 
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
-option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" OFF)
-option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" OFF)
+option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" ON)
+option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" ON)
 #option(BUILD_SDL2 "Build with SDL2 support" OFF)
 option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PSP2_GL "Build with PSP2 TinyGL support (testing, software rendering, slow, needs BUILD_PSP2=ON)" OFF)
@@ -15,7 +15,7 @@ option(BUILD_PSP2_OSMESA "Build with PSP2 OSMesa support (testing, software rend
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 #option(BUILD_3DS "Build with 3DS support" OFF)
 #option(BUILD_RPI "Build with RPI support" OFF)
-option(BUILD_SWITCH_NX "Build with NX (SWITCH) support" ON)
+option(BUILD_SWITCH_NX "Build with NX (SWITCH) support" OFF)
 #option(BUILD_SWITCH_TRANSISTOR "Build with NX (SWITCH) support" ON)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")

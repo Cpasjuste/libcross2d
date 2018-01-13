@@ -5,9 +5,7 @@
 #include <cstdio>
 #include <sys/time.h>
 
-#include "../../include/skeleton/timer.h"
-
-static struct timeval start;
+#include "skeleton/timer.h"
 
 Timer::Timer() {
     Reset();
