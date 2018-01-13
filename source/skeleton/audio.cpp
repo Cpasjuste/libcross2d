@@ -3,7 +3,6 @@
 //
 
 #include <malloc.h>
-#include <cstdio>
 #include "skeleton/audio.h"
 
 using namespace c2d;

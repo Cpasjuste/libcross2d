@@ -100,6 +100,8 @@ Input::Player *SDL2Input::Update(int rotate) {
         }
     }
 
+    SDL_JoystickUpdate(); // ensure all joysticks are up-to-date to remove lag
+
     for (int i = 0; i < PLAYER_COUNT; i++) {
 
         if (!players[i].enabled) {
