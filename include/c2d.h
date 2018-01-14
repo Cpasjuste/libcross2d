@@ -126,15 +126,17 @@ extern c2d::Renderer *c2d_renderer;
 #elif __SDL2__
 
 #include "sdl2/sdl2_renderer.h"
-#include "sdl2/sdl2_texture.h"
-//#include "sdl2/sdl2_font.h"
-//#include "sdl2/sdl2_input.h"
-//#include "sdl2/sdl2_audio.h"
+#include "skeleton/texturegl.h"
+#include "sdl2/sdl2_input.h"
+#include "sdl2/sdl2_audio.h"
 #include "posix/posix_io.h"
 
 #define C2DRenderer SDL2Renderer
-#define C2DTexture SDL2Texture
-#define C2DFont SDL2Font
+#define C2DTexture GLTexture
+#define C2DRectangle Rectangle
+#define C2DLine Line
+#define C2DFont Font
+#define C2DText Text
 #define C2DInput SDL2Input
 #define C2DAudio SDL2Audio
 #define C2DIo POSIXIo

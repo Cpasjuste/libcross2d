@@ -6,17 +6,11 @@
 #define SDL2_RENDERER_H
 
 #include <SDL2/SDL.h>
-
-#include "skeleton/renderer.h"
-#include "sdl2/sdl2_texture.h"
-
-//#include "sdl2/sdl2_font.h"
-//#include "sdl2/sdl2_texture.h"
-//#include "sdl2/sdl2_fontcache.h"
+#include "skeleton/renderergl.h"
 
 namespace c2d {
 
-    class SDL2Renderer : public Renderer {
+    class SDL2Renderer : public GLRenderer {
 
     public:
 
@@ -24,20 +18,15 @@ namespace c2d {
 
         ~SDL2Renderer();
 
-        void drawRectangle(const Rectangle &rectangle, const Transform &transform, const Vector2f &scaling);
-
-        void drawTexture(const Texture &texture, const Transform &transform, const Vector2f &scaling);
-
         void flip();
 
         void delay(unsigned int ms);
 
-        void setShader(int shader);
+    private:
 
-        //private:
         SDL_Window *window = nullptr;
-        SDL_Renderer *sdl_renderer = nullptr;
-        SDL2Texture *draw_tex;
+        SDL_Renderer *renderer = nullptr;
+        SDL_Surface *surface = nullptr;
     };
 }
 
