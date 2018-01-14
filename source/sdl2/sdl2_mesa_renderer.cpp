@@ -110,8 +110,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
 
 void SDL2Renderer::flip() {
 
-    printf("SDL2Renderer(%p): flip\n", this);
-
     // call base class (draw childs)
     GLRenderer::flip();
 

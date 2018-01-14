@@ -210,9 +210,9 @@ elseif (BUILD_SDL2)
     list(APPEND FLAGS -D__SDL2__)
     if (BUILD_SDL2_GL)
         list(APPEND FLAGS -D__SDL2_GL__)
-        set(LIBS cross2d GL SDL2 freetype z)
+        set(LIBS cross2d GL SDL2 freetype png z)
     else ()
-        set(LIBS cross2d OSMesa pthread SDL2 freetype z)
+        set(LIBS cross2d OSMesa pthread SDL2 freetype png z)
     endif (BUILD_SDL2_GL)
     #####################
     # SDL1 PLATORM

@@ -15,6 +15,8 @@ Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
 
     setFillColor(Color::Black);
 
+    shaders = new Shaders("");
+
     printf("Renderer(%p)\n", this);
 }
 
