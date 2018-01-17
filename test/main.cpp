@@ -28,7 +28,6 @@ int main() {
         rect->add(tex);
     }
 
-    /*
     // create a line and add it to the rect
     Line *line = new C2DLine(rect->getPoint(0), rect->getPoint(2), 2);
     line->setFillColor(Color::Blue);
@@ -47,7 +46,6 @@ int main() {
         text->setPosition(rect->getSize().x / 2, 32);
         rect->add(text);
     }
-    */
 
     // add all this crap to the renderer
     renderer->add(rect);
