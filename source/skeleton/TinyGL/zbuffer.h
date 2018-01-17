@@ -1,153 +1,474 @@
-#ifndef _tgl_zbuffer_h_
-#define _tgl_zbuffer_h_
-
-/*
- * Z buffer
+/* ResidualVM - A 3D game interpreter
+ *
+ * ResidualVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the AUTHORS
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
-#include "zfeatures.h"
+/*
+ * This file is based on, or a modified version of code from TinyGL (C) 1997-1998 Fabrice Bellard,
+ * which is licensed under the zlib-license (see LICENSE).
+ * It also has modifications by the ResidualVM-team, which are covered under the GPLv2 (or later).
+ */
+
+#ifndef GRAPHICS_TINYGL_ZBUFFER_H_
+#define GRAPHICS_TINYGL_ZBUFFER_H_
+
+#include "pixelbuffer.h"
+#include "gl.h"
+#include "rect.h"
+
+namespace TinyGL {
+
+// Z buffer
 
 #define ZB_Z_BITS 16
 
 #define ZB_POINT_Z_FRAC_BITS 14
 
-#define ZB_POINT_S_MIN ( (1<<13) )
-#define ZB_POINT_S_MAX ( (1<<22)-(1<<13) )
-#define ZB_POINT_T_MIN ( (1<<21) )
-#define ZB_POINT_T_MAX ( (1<<30)-(1<<21) )
+#define ZB_POINT_ST_FRAC_BITS 14
+#define ZB_POINT_ST_FRAC_SHIFT     (ZB_POINT_ST_FRAC_BITS - 1)
+#define ZB_POINT_ST_MIN            ( (1 << ZB_POINT_ST_FRAC_SHIFT) )
+#define ZB_POINT_ST_MAX            ( (c->_textureSize << ZB_POINT_ST_FRAC_BITS) - (1 << ZB_POINT_ST_FRAC_SHIFT) )
 
-#define ZB_POINT_RED_MIN ( (1<<10) )
-#define ZB_POINT_RED_MAX ( (1<<16)-(1<<10) )
-#define ZB_POINT_GREEN_MIN ( (1<<9) )
-#define ZB_POINT_GREEN_MAX ( (1<<16)-(1<<9) )
-#define ZB_POINT_BLUE_MIN ( (1<<10) )
-#define ZB_POINT_BLUE_MAX ( (1<<16)-(1<<10) )
+#define ZB_POINT_RED_MIN ( (1 << 10) )
+#define ZB_POINT_RED_MAX ( (1 << 16) - (1 << 10) )
+#define ZB_POINT_GREEN_MIN ( (1 << 9) )
+#define ZB_POINT_GREEN_MAX ( (1 << 16) - (1 << 9) )
+#define ZB_POINT_BLUE_MIN ( (1 << 10) )
+#define ZB_POINT_BLUE_MAX ( (1 << 16) - (1 << 10) )
+#define ZB_POINT_ALPHA_MIN ( (1 << 10) )
+#define ZB_POINT_ALPHA_MAX ( (1 << 16) - (1 << 10) )
 
-/* display modes */
-#define ZB_MODE_5R6G5B  1  /* true color 16 bits */
-#define ZB_MODE_INDEX   2  /* color index 8 bits */
-#define ZB_MODE_RGBA    3  /* 32 bit rgba mode */
-#define ZB_MODE_RGB24   4  /* 24 bit rgb mode */
-#define ZB_NB_COLORS    225 /* number of colors for 8 bit display */
+#define RGB_TO_PIXEL(r, g, b) cmode.ARGBToColor(255, r >> 8, g >> 8, b >> 8) // Default to 255 alpha aka solid colour.
 
-#if TGL_FEATURE_RENDER_BITS == 15
+static const int DRAW_DEPTH_ONLY = 0;
+static const int DRAW_FLAT = 1;
+static const int DRAW_SMOOTH = 2;
+static const int DRAW_SHADOW_MASK = 3;
+static const int DRAW_SHADOW = 4;
 
-#define RGB_TO_PIXEL(r,g,b) \
-  ((((r) >> 1) & 0x7c00) | (((g) >> 6) & 0x03e0) | ((b) >> 11))
-typedef unsigned short PIXEL;
-/* bytes per pixel */
-#define PSZB 2 
-/* bits per pixel = (1 << PSZH) */
-#define PSZSH 4 
+extern uint8 PSZB;
 
-#elif TGL_FEATURE_RENDER_BITS == 16
+struct Buffer {
+	byte *pbuf;
+	unsigned int *zbuf;
+	bool used;
+};
 
-/* 16 bit mode */
-#define RGB_TO_PIXEL(r,g,b) \
-  (((r) & 0xF800) | (((g) >> 5) & 0x07E0) | ((b) >> 11))
-typedef unsigned short PIXEL;
-#define PSZB 2 
-#define PSZSH 4 
+struct ZBufferPoint {
+	int x, y, z;   // integer coordinates in the zbuffer
+	int s, t;      // coordinates for the mapping
+	int r, g, b, a;   // color indexes
 
-#elif TGL_FEATURE_RENDER_BITS == 24
+	float sz, tz;  // temporary coordinates for mapping
 
-#define RGB_TO_PIXEL(r,g,b) \
-  ((((r) << 8) & 0xff0000) | ((g) & 0xff00) | ((b) >> 8))
-typedef unsigned char PIXEL;
-#define PSZB 3
-#define PSZSH 5
+	bool operator==(const ZBufferPoint &other) const {
+		return	x == other.x &&
+				y == other.y && 
+				z == other.z &&
+				s == other.s &&
+				t == other.t && 
+				r == other.r && 
+				g == other.g && 
+				b == other.b &&
+				a == other.a;
+	}
+};
 
-#elif TGL_FEATURE_RENDER_BITS == 32
+struct FrameBuffer {
+	FrameBuffer(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer);
+	~FrameBuffer();
 
-#define RGB_TO_PIXEL(r,g,b) \
-  ((((r) << 8) & 0xff0000) | ((g) & 0xff00) | ((b) >> 8))
-typedef unsigned int PIXEL;
-#define PSZB 4
-#define PSZSH 5
+	Buffer *genOffscreenBuffer();
+	void delOffscreenBuffer(Buffer *buffer);
+	void clear(int clear_z, int z, int clear_color, int r, int g, int b);
+	void clearRegion(int x, int y, int w, int h,int clear_z, int z, int clear_color, int r, int g, int b);
 
-#else
+	byte *getPixelBuffer() {
+		return pbuf.getRawBuffer(0);
+	}
 
-#error Incorrect number of bits per pixel
+	unsigned int *getZBuffer() {
+		return _zbuf;
+	}
 
-#endif
+	FORCEINLINE void readPixelRGB(int pixel, byte &r, byte &g, byte &b) {
+		pbuf.getRGBAt(pixel, r, g, b);
+	}
 
-typedef struct {
-    int xsize,ysize;
-    int linesize; /* line size, in bytes */
-    int mode;
-    
-    unsigned short *zbuf;
-    PIXEL *pbuf;
-    int frame_buffer_allocated;
-    
-    int nb_colors;
-    unsigned char *dctable;
-    int *ctable;
-    PIXEL *current_texture;
-} ZBuffer;
+	FORCEINLINE bool compareDepth(unsigned int &zSrc, unsigned int &zDst) {
+		if (!_depthTestEnabled)
+			return true;
 
-typedef struct {
-  int x,y,z;     /* integer coordinates in the zbuffer */
-  int s,t;       /* coordinates for the mapping */
-  int r,g,b;     /* color indexes */
-  
-  float sz,tz;   /* temporary coordinates for mapping */
-} ZBufferPoint;
+		switch (_depthFunc) {
+		case TGL_NEVER:
+			break;
+		case TGL_LESS:
+			if (zDst < zSrc)
+				return true;
+			break;
+		case TGL_EQUAL:
+			if (zDst == zSrc)
+				return true;
+			break;
+		case TGL_LEQUAL:
+			if (zDst <= zSrc)
+				return true;
+			break;
+		case TGL_GREATER:
+			if (zDst > zSrc)
+				return true;
+			break;
+		case TGL_NOTEQUAL:
+			if (zDst != zSrc)
+				return true;
+			break;
+		case TGL_GEQUAL:
+			if (zDst >= zSrc)
+				return true;
+			break;
+		case TGL_ALWAYS:
+			return true;
+		}
+		return false;
+	}
 
-/* zbuffer.c */
+	FORCEINLINE bool checkAlphaTest(byte aSrc) {
+		if (!_alphaTestEnabled)
+			return true;
 
-ZBuffer *ZB_open(int xsize,int ysize,int mode,
-		 int nb_colors,
-		 unsigned char *color_indexes,
-		 int *color_table,
-		 void *frame_buffer);
+		switch (_alphaTestFunc) {
+		case TGL_NEVER:
+			break;
+		case TGL_LESS:
+			if (aSrc < _alphaTestRefVal)
+				return true;
+			break;
+		case TGL_EQUAL:
+			if (aSrc == _alphaTestRefVal)
+				return true;
+			break;
+		case TGL_LEQUAL:
+			if (aSrc <= _alphaTestRefVal)
+				return true;
+			break;
+		case TGL_GREATER:
+			if (aSrc > _alphaTestRefVal)
+				return true;
+			break;
+		case TGL_NOTEQUAL:
+			if (aSrc != _alphaTestRefVal)
+				return true;
+			break;
+		case TGL_GEQUAL:
+			if (aSrc >= _alphaTestRefVal)
+				return true;
+			break;
+		case TGL_ALWAYS:
+			return true;
+		}
+		return false;
+	}
 
+	template <bool kEnableAlphaTest, bool kBlendingEnabled>
+	FORCEINLINE void writePixel(int pixel, int value) {
+		byte rSrc, gSrc, bSrc, aSrc;
+		this->pbuf.getFormat().colorToARGB(value, aSrc, rSrc, gSrc, bSrc);
 
-void ZB_close(ZBuffer *zb);
+		if (kBlendingEnabled == false) {
+			this->pbuf.setPixelAt(pixel, value);
+		} else {
+			writePixel<kEnableAlphaTest, kBlendingEnabled>(pixel, aSrc, rSrc, gSrc, bSrc);
+		}
+	}
 
-void ZB_resize(ZBuffer *zb,void *frame_buffer,int xsize,int ysize);
-void ZB_clear(ZBuffer *zb,int clear_z,int z,
-	      int clear_color,int r,int g,int b);
-/* linesize is in BYTES */
-void ZB_copyFrameBuffer(ZBuffer *zb,void *buf,int linesize);
+	FORCEINLINE void writePixel(int pixel, int value) {
+		writePixel<true, true>(pixel, value);
+	}
 
-/* zdither.c */
+	FORCEINLINE void writePixel(int pixel, byte rSrc, byte gSrc, byte bSrc) {
+		writePixel(pixel, 255, rSrc, gSrc, bSrc);
+	}
 
-void ZB_initDither(ZBuffer *zb,int nb_colors,
-		   unsigned char *color_indexes,int *color_table);
-void ZB_closeDither(ZBuffer *zb);
-void ZB_ditherFrameBuffer(ZBuffer *zb,unsigned char *dest,
-			  int linesize);
+	FORCEINLINE bool scissorPixel(int pixel) {
+		int x = pixel % xsize;
+		int y = pixel / xsize;
+		return x < _clipRectangle.left || x > _clipRectangle.right || y < _clipRectangle.top || y > _clipRectangle.bottom;
+	}
 
-/* zline.c */
+	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc) {
+		writePixel<true, true>(pixel, aSrc, rSrc, gSrc, bSrc);
+	}
 
-void ZB_plot(ZBuffer *zb,ZBufferPoint *p);
-void ZB_line(ZBuffer *zb,ZBufferPoint *p1,ZBufferPoint *p2);
-void ZB_line_z(ZBuffer * zb, ZBufferPoint * p1, ZBufferPoint * p2);
+	template <bool kEnableAlphaTest, bool kBlendingEnabled>
+	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc) {
+		if (kEnableAlphaTest) {
+			if (!checkAlphaTest(aSrc))
+				return;
+		}
+		
+		if (kBlendingEnabled == false) {
+			this->pbuf.setPixelAt(pixel, aSrc, rSrc, gSrc, bSrc);
+		} else {
+			byte rDst, gDst, bDst, aDst;
+			this->pbuf.getARGBAt(pixel, aDst, rDst, gDst, bDst);
+			switch (_sourceBlendingFactor) {
+			case TGL_ZERO:
+				rSrc = gSrc = bSrc = 0;
+				break;
+			case TGL_ONE:
+				break;
+			case TGL_DST_COLOR:
+				rSrc = (rDst * rSrc) >> 8;
+				gSrc = (gDst * gSrc) >> 8;
+				bSrc = (bDst * bSrc) >> 8;
+				break;
+			case TGL_ONE_MINUS_DST_COLOR:
+				rSrc = (rSrc * (255 - rDst)) >> 8;
+				gSrc = (gSrc * (255 - gDst)) >> 8;
+				bSrc = (bSrc * (255 - bDst)) >> 8;
+				break;
+			case TGL_SRC_ALPHA:
+				rSrc = (rSrc * aSrc) >> 8;
+				gSrc = (gSrc * aSrc) >> 8;
+				bSrc = (bSrc * aSrc) >> 8;
+				break;
+			case TGL_ONE_MINUS_SRC_ALPHA:
+				rSrc = (rSrc * (255 - aSrc)) >> 8;
+				gSrc = (gSrc * (255 - aSrc)) >> 8;
+				bSrc = (bSrc * (255 - aSrc)) >> 8;
+				break;
+			case TGL_DST_ALPHA:
+				rSrc = (rSrc * aDst) >> 8;
+				gSrc = (gSrc * aDst) >> 8;
+				bSrc = (bSrc * aDst) >> 8;
+				break;
+			case TGL_ONE_MINUS_DST_ALPHA:
+				rSrc = (rSrc * (255 - aDst)) >> 8;
+				gSrc = (gSrc * (255 - aDst)) >> 8;
+				bSrc = (bSrc * (255 - aDst)) >> 8;
+				break;
+			default:
+				break;
+			}
 
-/* ztriangle.c */
+			switch (_destinationBlendingFactor) {
+			case TGL_ZERO:
+				rDst = gDst = bDst = 0;
+				break;
+			case TGL_ONE:
+				break;
+			case TGL_DST_COLOR:
+				rDst = (rDst * rSrc) >> 8;
+				gDst = (gDst * gSrc) >> 8;
+				bDst = (bDst * bSrc) >> 8;
+				break;
+			case TGL_ONE_MINUS_DST_COLOR:
+				rDst = (rDst * (255 - rSrc)) >> 8;
+				gDst = (gDst * (255 - gSrc)) >> 8;
+				bDst = (bDst * (255 - bSrc)) >> 8;
+				break;
+			case TGL_SRC_ALPHA:
+				rDst = (rDst * aSrc) >> 8;
+				gDst = (gDst * aSrc) >> 8;
+				bDst = (bDst * aSrc) >> 8;
+				break;
+			case TGL_ONE_MINUS_SRC_ALPHA:
+				rDst = (rDst * (255 - aSrc)) >> 8;
+				gDst = (gDst * (255 - aSrc)) >> 8;
+				bDst = (bDst * (255 - aSrc)) >> 8;
+				break;
+			case TGL_DST_ALPHA:
+				rDst = (rDst * aDst) >> 8;
+				gDst = (gDst * aDst) >> 8;
+				bDst = (bDst * aDst) >> 8;
+				break;
+			case TGL_ONE_MINUS_DST_ALPHA:
+				rDst = (rDst * (255 - aDst)) >> 8;
+				gDst = (gDst * (255 - aDst)) >> 8;
+				bDst = (bDst * (255 - aDst)) >> 8;
+				break;
+			case TGL_SRC_ALPHA_SATURATE: {
+				int factor = aSrc < 1 - aDst ? aSrc : 1 - aDst;
+				rDst = (rDst * factor) >> 8;
+				gDst = (gDst * factor) >> 8;
+				bDst = (bDst * factor) >> 8;
+				}
+				break;
+			default:
+				break;
+			}
+			int finalR, finalG, finalB;
+			finalR = rDst + rSrc;
+			finalG = gDst + gSrc;
+			finalB = bDst + bSrc;
+			if (finalR > 255) { finalR = 255; }
+			if (finalG > 255) { finalG = 255; }
+			if (finalB > 255) { finalB = 255; }
+			this->pbuf.setPixelAt(pixel, 255, finalR, finalG, finalB);
+		}
+	}
 
-void ZB_setTexture(ZBuffer *zb, PIXEL *texture);
+	void copyToBuffer(Graphics::PixelBuffer &buf) {
+		buf.copyBuffer(0, xsize * ysize, pbuf);
+	}
 
-void ZB_fillTriangleFlat(ZBuffer *zb,
-		 ZBufferPoint *p1,ZBufferPoint *p2,ZBufferPoint *p3);
+	void copyFromBuffer(Graphics::PixelBuffer buf) {
+		pbuf.copyBuffer(0, xsize * ysize, buf);
+	}
+	
+	void enableBlending(bool enable) {
+		_blendingEnabled = enable;
+	}
 
-void ZB_fillTriangleSmooth(ZBuffer *zb,
-		   ZBufferPoint *p1,ZBufferPoint *p2,ZBufferPoint *p3);
+	void enableDepthTest(bool enable) {
+		_depthTestEnabled = enable;
+	}
 
-void ZB_fillTriangleMapping(ZBuffer *zb,
-		    ZBufferPoint *p1,ZBufferPoint *p2,ZBufferPoint *p3);
+	void setBlendingFactors(int sFactor, int dFactor) {
+		_sourceBlendingFactor = sFactor;
+		_destinationBlendingFactor = dFactor;
+	}
 
-void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
-                    ZBufferPoint *p0,ZBufferPoint *p1,ZBufferPoint *p2);
+	void enableAlphaTest(bool enable) {
+		_alphaTestEnabled = enable;
+	}
 
+	void setAlphaTestFunc(int func, int ref) {
+		_alphaTestFunc = func;
+		_alphaTestRefVal = ref;
+	}
 
-typedef void (*ZB_fillTriangleFunc)(ZBuffer  *,
-	    ZBufferPoint *,ZBufferPoint *,ZBufferPoint *);
+	void setDepthFunc(int func) {
+		_depthFunc = func;
+	}
 
-/* memory.c */
+	void enableDepthWrite(bool enable) {
+		this->_depthWrite = enable;
+	}
+
+	bool isAlphaBlendingEnabled() const {
+		return _sourceBlendingFactor == TGL_SRC_ALPHA && _destinationBlendingFactor == TGL_ONE_MINUS_SRC_ALPHA;
+	}
+
+	/**
+	* Blit the buffer to the screen buffer, checking the depth of the pixels.
+	* Eack pixel is copied if and only if its depth value is bigger than the
+	* depth value of the screen pixel, so if it is 'above'.
+	*/
+	void blitOffscreenBuffer(Buffer *buffer);
+	void selectOffscreenBuffer(Buffer *buffer);
+	void clearOffscreenBuffer(Buffer *buffer);
+	void setTexture(const Graphics::PixelBuffer &texture);
+
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool enableBlending>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawMode, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawMode, bool kDepthWrite, bool enableAlphaTest>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawMode, bool kDepthWrite>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawMode>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
+	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
+	void fillLineGeneric(ZBufferPoint *p1, ZBufferPoint *p2, int color);
+
+	void fillTriangleTextureMappingPerspectiveSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleTextureMappingPerspectiveFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
+	void plot(ZBufferPoint *p);
+	void fillLine(ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillLineZ(ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillLineFlatZ(ZBufferPoint *p1, ZBufferPoint *p2, int color);
+	void fillLineInterpZ(ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2, int color);
+	void fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2);
+
+	void setScissorRectangle(int left, int right, int top, int bottom) {
+		_clipRectangle.left = left;
+		_clipRectangle.right = right;
+		_clipRectangle.top = top;
+		_clipRectangle.bottom = bottom;
+	}
+
+	Common::Rect _clipRectangle;
+	int xsize, ysize;
+	int linesize; // line size, in bytes
+	Graphics::PixelFormat cmode;
+	int pixelbits;
+	int pixelbytes;
+
+	Buffer buffer;
+
+	unsigned char *shadow_mask_buf;
+	int shadow_color_r;
+	int shadow_color_g;
+	int shadow_color_b;
+	int frame_buffer_allocated;
+
+	unsigned char *dctable;
+	int *ctable;
+	Graphics::PixelBuffer current_texture;
+	int _textureSize;
+	int _textureSizeMask;
+
+	FORCEINLINE bool isBlendingEnabled() const { return _blendingEnabled; }
+	FORCEINLINE void getBlendingFactors(int &sourceFactor, int &destinationFactor) const { sourceFactor = _sourceBlendingFactor; destinationFactor = _destinationBlendingFactor; }
+	FORCEINLINE bool isAlphaTestEnabled() const { return _alphaTestEnabled; }
+	FORCEINLINE bool isDepthWriteEnabled() const { return _depthWrite; }
+	FORCEINLINE int getDepthFunc() const { return _depthFunc; }
+	FORCEINLINE int getDepthWrite() const { return _depthWrite; }
+	FORCEINLINE int getAlphaTestFunc() const { return _alphaTestFunc; }
+	FORCEINLINE int getAlphaTestRefVal() const { return _alphaTestRefVal; }
+	FORCEINLINE int getDepthTestEnabled() const { return _depthTestEnabled; }
+
+private:
+
+	unsigned int *_zbuf;
+	bool _depthWrite;
+	Graphics::PixelBuffer pbuf;
+	bool _blendingEnabled;
+	int _sourceBlendingFactor;
+	int _destinationBlendingFactor;
+	bool _alphaTestEnabled;
+	bool _depthTestEnabled;
+	int _alphaTestFunc;
+	int _alphaTestRefVal;
+	int _depthFunc;
+};
+
+// memory.c
 void gl_free(void *p);
 void *gl_malloc(int size);
 void *gl_zalloc(int size);
 
-#endif /* _tgl_zbuffer_h_ */
+} // end of namespace TinyGL
+
+#endif

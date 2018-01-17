@@ -6,10 +6,13 @@
 
 #ifdef __TINYGL__
 
-#include "skeleton/TinyGL/GL/tinygl.h"
+#include "gl.h"
+//#include "skeleton/TinyGL/GL/tinygl.h"
 
 #else
+
 #include "GL/gl.h"
+
 #endif
 
 using namespace c2d;
@@ -24,18 +27,20 @@ void GLRenderer::draw(const VertexArray &vertices,
                       const Transform &transform,
                       const Texture *texture) {
 
-    unsigned int count = vertices.getVertexCount();
+    size_t count = vertices.getVertexCount();
 
     glPushMatrix();
 
     if (transform == Transform::Identity) {
         glLoadIdentity();
     } else {
-        glMultMatrixf(transform.getMatrix());
+        glLoadMatrixf(transform.getMatrix());
     }
 
     GLTexture *tex = ((GLTexture *) texture);
     if (tex && tex->available) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex->texID);
     }
@@ -63,6 +68,7 @@ void GLRenderer::draw(const VertexArray &vertices,
 
     if (tex && tex->available) {
         glDisable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
     }
 
     glPopMatrix();
@@ -72,11 +78,9 @@ void GLRenderer::flip() {
 
     if (!gl_init) {
 
-        glDisable(GL_CULL_FACE);
+        glDisable(GL_LIGHTING);
         glDisable(GL_DEPTH_TEST);
-        glDisable(GL_ALPHA_TEST);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthMask(GL_FALSE);
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();

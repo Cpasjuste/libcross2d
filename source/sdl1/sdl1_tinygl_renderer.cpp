@@ -6,16 +6,14 @@
 // SDL1 with OSMesa (OpenGL software wrapper) for rendering
 //
 
-#if !defined(__SDL1_GL__) && !defined(__TINYGL__)
-
-#include <GL/gl.h>
-#include <GL/osmesa.h>
+#ifdef __TINYGL__
 
 #include "c2d.h"
+#include "zgl.h"
 
 using namespace c2d;
 
-static OSMesaContext mesa_ctx;
+//static ZBuffer *frameBuffer;
 
 SDL1Renderer::SDL1Renderer(const Vector2f &size) : GLRenderer(size) {
 
@@ -25,30 +23,32 @@ SDL1Renderer::SDL1Renderer(const Vector2f &size) : GLRenderer(size) {
     }
 
     screen = SDL_SetVideoMode((int) getSize().x, (int) getSize().y,
-                              32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+                              16, SDL_HWSURFACE | SDL_DOUBLEBUF);
     if (!screen) {
         printf("Couldn't init SDL: %s\n", SDL_GetError());
         return;
     }
 
-    mesa_ctx = OSMesaCreateContextExt(OSMESA_BGRA, 0, 0, 0, NULL);
-    if (!mesa_ctx) {
-        printf("OSMesaCreateContextExt() failed!\n");
-        SDL_FreeSurface(screen);
-        available = false;
-        return;
-    }
+    /*
+    frameBuffer = ZB_open((int) getSize().x, (int) getSize().y,
+                          ZB_MODE_RGBA, 0, 0, 0, 0);
+    gl_free(frameBuffer->pbuf);
+    frameBuffer->pbuf = (PIXEL *) screen->pixels;
+    glInit(frameBuffer);
+    */
 
-    if (!OSMesaMakeCurrent(mesa_ctx, screen->pixels,
-                           GL_UNSIGNED_BYTE, (GLsizei) getSize().x, (GLsizei) getSize().y)) {
-        printf("OSMesaMakeCurrent (8 bits/channel) failed!\n");
-        SDL_FreeSurface(screen);
-        OSMesaDestroyContext(mesa_ctx);
-        available = false;
-        return;
-    }
+    SDL_PixelFormat *f = screen->format;
+    Graphics::PixelFormat fmt = Graphics::PixelFormat(
+            f->BytesPerPixel, 8 - f->Rloss, 8 - f->Gloss, 8 - f->Bloss, 0,
+            f->Rshift, f->Gshift, f->Bshift, f->Ashift);
 
-    OSMesaPixelStore(OSMESA_Y_UP, 0);
+    Graphics::PixelBuffer screenBuffer =
+            Graphics::PixelBuffer(fmt, (byte *) screen->pixels);
+
+    TinyGL::FrameBuffer *fb = new TinyGL::FrameBuffer(
+            (int) getSize().x, (int) getSize().y, screenBuffer);
+
+    TinyGL::glInit(fb, 512);
 
     available = true;
 
@@ -60,8 +60,8 @@ void SDL1Renderer::flip() {
     // call base class (draw childs)
     GLRenderer::flip();
 
-    // flip (draw mesa buffer to screen)
-    glFinish();
+    // flip (draw buffer to screen)
+    TinyGL::tglPresentBuffer();
 
     SDL_Flip(screen);
 }
@@ -73,9 +73,6 @@ void SDL1Renderer::delay(unsigned int ms) {
 
 SDL1Renderer::~SDL1Renderer() {
 
-    if (mesa_ctx) {
-        OSMesaDestroyContext(mesa_ctx);
-    }
 
     if (screen) {
         SDL_FreeSurface(screen);

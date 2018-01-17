@@ -11,12 +11,12 @@ int main() {
 
     // create main renderer
     Renderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
+    renderer->setFillColor(Color::Black);
 
     // create a rect
     Rectangle *rect = new C2DRectangle(FloatRect(208, 208, 400, 400));
     rect->setOriginCenter();
     rect->setFillColor(Color::Gray);
-
     rect->setOutlineColor(Color::Orange);
     rect->setOutlineThickness(8);
 
@@ -28,6 +28,7 @@ int main() {
         rect->add(tex);
     }
 
+    /*
     // create a line and add it to the rect
     Line *line = new C2DLine(rect->getPoint(0), rect->getPoint(2), 2);
     line->setFillColor(Color::Blue);
@@ -46,10 +47,10 @@ int main() {
         text->setPosition(rect->getSize().x / 2, 32);
         rect->add(text);
     }
+    */
 
     // add all this crap to the renderer
     renderer->add(rect);
-
 
     for (int i = 0; i < 5; i++) {
 

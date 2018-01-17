@@ -7,7 +7,10 @@
 #include "skeleton/lodepng.h"
 
 #ifdef __TINYGL__
-#include "skeleton/TinyGL/GL/tinygl.h"
+
+#include "gl.h"
+//#include "skeleton/TinyGL/GL/tinygl.h"
+
 #else
 
 #include "GL/gl.h"
@@ -52,7 +55,7 @@ GLTexture::GLTexture(const Vector2f &size, int format) : Texture(size, format) {
     if (texID) {
         pixels = (unsigned char *) malloc((size_t) (size.x * size.y * bpp));
         glBindTexture(GL_TEXTURE_2D, texID);
-        glTexImage2D(GL_TEXTURE_2D, 0, bpp, (GLsizei) size.x, (GLsizei) size.y, 0,
+        glTexImage2D(GL_TEXTURE_2D, 0, bpp == 4 ? 4 : 3, (GLsizei) size.x, (GLsizei) size.y, 0,
                      GL_RGBA, GL_UNSIGNED_BYTE, pixels);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
