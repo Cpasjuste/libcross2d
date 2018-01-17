@@ -8,14 +8,14 @@
 #include "skeleton/timer.h"
 
 Timer::Timer() {
-    Reset();
+    reset();
 }
 
-void Timer::Reset() {
+void Timer::reset() {
     gettimeofday(&start, NULL);
 }
 
-unsigned long Timer::GetMicros() {
+unsigned long Timer::getMicros() {
     unsigned int ticks;
     struct timeval now;
     gettimeofday(&now, NULL);
@@ -23,10 +23,10 @@ unsigned long Timer::GetMicros() {
     return ticks;
 }
 
-unsigned long Timer::GetMillis() {
-    return GetMicros() / 1000;
+unsigned long Timer::getMillis() {
+    return getMicros() / 1000;
 }
 
-unsigned int Timer::GetSeconds() {
-    return (unsigned int) (GetMicros() / 1000000);
+unsigned int Timer::getSeconds() {
+    return (unsigned int) (getMicros() / 1000000);
 }

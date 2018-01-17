@@ -21,7 +21,17 @@ namespace c2d {
 
         void setSelection(int index);
 
+        void setHighLight(bool enable);
+
         int getMaxLines();
+
+        std::vector<c2d::Text *> getLines();
+
+        std::vector<c2d::Io::File *> getFiles();
+
+        Io::File *getSelection();
+
+        int getIndex();
 
     private:
 
@@ -31,6 +41,7 @@ namespace c2d {
         int line_height;
         int max_lines;
         int font_size = C2D_DEFAULT_CHAR_SIZE;
+        int index = 0;
     };
 }
 

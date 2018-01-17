@@ -625,8 +625,6 @@ namespace c2d {
             unsigned int w = glyph.textureRect.width + 2 * padding;
             unsigned int h = glyph.textureRect.height + 2 * padding;
 
-            // TODO:
-            //page.texture.update(&m_pixelBuffer[0], w, h, x, y);
             void *buffer;
             int pitch;
             FloatRect rect = {(float) x, (float) y, (float) w, (float) h};
@@ -687,8 +685,8 @@ namespace c2d {
                 // TODO:
                 //if ((textureWidth * 2 <= Texture::getMaximumSize()) &&
                 //    (textureHeight * 2 <= Texture::getMaximumSize())) {
-                if ((textureWidth * 2 <= 512) &&
-                    (textureHeight * 2 <= 512)) {
+                if ((textureWidth * 2 <= 1024) &&
+                    (textureHeight * 2 <= 1024)) {
 
                     // Make the texture 2 times bigger
                     Texture *texture = new C2DTexture(

@@ -94,7 +94,7 @@ elseif (BUILD_PSP2)
         list(APPEND PLATFORM_SRC
                 ${GL_SRC}
                 source/psp2_tinygl/psp2gl_renderer.cpp)
-        list(APPEND FLAGS -D__PSP2_GL__ -D__TINYGL__)
+        list(APPEND FLAGS -D__GL__ -D__PSP2_GL__ -D__TINYGL__)
     elseif (BUILD_PSP2_OSMESA)
         list(APPEND PLATFORM_SRC
                 source/psp2_osmesa/psp2osmesa_renderer.cpp)
@@ -208,7 +208,7 @@ elseif (BUILD_SDL2)
             source/sdl2/*.c*
             source/posix/*.c*
             )
-    list(APPEND FLAGS -D__SDL2__)
+    list(APPEND FLAGS -D__SDL2__ -D__GL__)
     if (BUILD_SDL2_GL)
         list(APPEND FLAGS -D__SDL2_GL__)
         set(LIBS cross2d GL SDL2 freetype png z)
@@ -228,7 +228,7 @@ elseif (BUILD_SDL1)
             source/sdl1/*.c*
             source/posix/*.c*
             )
-    list(APPEND FLAGS -D__SDL1__)
+    list(APPEND FLAGS -D__SDL1__ -D__GL__)
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)
         set(LIBS cross2d GL SDL freetype png z)

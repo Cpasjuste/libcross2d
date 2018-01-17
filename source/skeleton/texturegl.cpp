@@ -2,6 +2,8 @@
 // Created by cpasjuste on 01/12/16.
 //
 
+#ifdef __GL__
+
 #include <png.h>
 #include "c2d.h"
 #include "skeleton/lodepng.h"
@@ -104,3 +106,5 @@ GLTexture::~GLTexture() {
         glDeleteTextures(1, &texID);
     }
 }
+
+#endif // __GL__

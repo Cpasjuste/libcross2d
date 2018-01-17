@@ -2,6 +2,8 @@
 // Created by cpasjuste on 21/11/16.
 //
 
+#ifdef __GL__
+
 #include "c2d.h"
 
 #ifdef __TINYGL__
@@ -39,8 +41,6 @@ void GLRenderer::draw(const VertexArray &vertices,
 
     GLTexture *tex = ((GLTexture *) texture);
     if (tex && tex->available) {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex->texID);
     }
@@ -68,7 +68,6 @@ void GLRenderer::draw(const VertexArray &vertices,
 
     if (tex && tex->available) {
         glDisable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
     }
 
     glPopMatrix();
@@ -81,6 +80,9 @@ void GLRenderer::flip() {
         glDisable(GL_LIGHTING);
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -104,3 +106,5 @@ void GLRenderer::flip() {
 GLRenderer::~GLRenderer() {
 
 }
+
+#endif // __GL__

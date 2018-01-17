@@ -23,9 +23,9 @@ ListBox::ListBox(const Font &font,
     float font_scaling = 1;
     line_height = (int) font.getLineSpacing(C2D_DEFAULT_CHAR_SIZE) + 12;
     max_lines = (int) getSize().y / line_height;
-    if (max_lines < 15) {
+    if (max_lines < 15 /*&& fileList.size() > 10*/) {
         // scale text to see enough lines on small screens
-        max_lines = getSize().y < MIN_SIZE_Y ? 10 : 15;
+        max_lines = std::min(getSize().y < MIN_SIZE_Y ? 10 : 15, (int) files.size());
         font_scaling = (getSize().y / (float) max_lines) / line_height;
         font_size *= font_scaling;
         line_height *= font_scaling;
@@ -89,6 +89,27 @@ void ListBox::setSelection(int index) {
             }
         }
     }
+}
+
+std::vector<c2d::Text *> ListBox::getLines() {
+    return lines;
+}
+
+std::vector<c2d::Io::File *> ListBox::getFiles() {
+    return files;
+}
+
+Io::File *ListBox::getSelection() {
+    return files[index];
+}
+
+int ListBox::getIndex() {
+    return index;
+}
+
+void ListBox::setHighLight(bool enable) {
+    rectangle->setVisibility(enable ? C2D_VISIBILITY_VISIBLE
+                                    : C2D_VISIBILITY_HIDDEN);
 }
 
 int ListBox::getMaxLines() {
