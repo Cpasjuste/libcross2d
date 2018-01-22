@@ -303,6 +303,7 @@ namespace c2d {
     const Glyph &Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const {
         // Get the page corresponding to the character size
         GlyphTable &glyphs = m_pages[characterSize].glyphs;
+        m_pages[characterSize].texture->setFiltering(m_filtering);
 
         // Build the key by combining the code point, bold flag, and outline thickness
         Uint64 key = (static_cast<Uint64>(*reinterpret_cast<Uint32 *>(&outlineThickness)) << 32)
@@ -403,6 +404,13 @@ namespace c2d {
         return *m_pages[characterSize].texture;
     }
 
+    void Font::setFiltering(int filter) {
+
+        m_filtering = filter;
+        for (unsigned int i = 0; i < m_pages.size(); i++) {
+            m_pages[i].texture->setFiltering(filter);
+        }
+    }
 
 ////////////////////////////////////////////////////////////
     Font &Font::operator=(const Font &right) {
@@ -541,6 +549,7 @@ namespace c2d {
 
             // Get the glyphs page corresponding to the character size
             Page &page = m_pages[characterSize];
+            m_pages[characterSize].texture->setFiltering(m_filtering);
 
             // Find a good position for the new glyph into the texture
             glyph.textureRect = findGlyphRect(page, width, height);
@@ -691,6 +700,7 @@ namespace c2d {
                     // Make the texture 2 times bigger
                     Texture *texture = new C2DTexture(
                             Vector2f(textureWidth * 2, textureHeight * 2), C2D_TEXTURE_FMT_RGBA8);
+                    texture->setFiltering(m_filtering);
 
                     Uint8 *src;
                     page.texture->lock(NULL, reinterpret_cast<void **>(&src), NULL);
@@ -770,7 +780,6 @@ namespace c2d {
         }
 
         texture = new C2DTexture(Vector2f(128, 128), C2D_TEXTURE_FMT_RGBA8);
-        texture->setFiltering(C2D_TEXTURE_FILTER_LINEAR);
 
         // Reserve a 2x2 white square for texturing underlines
         Uint8 *buffer;

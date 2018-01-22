@@ -23,7 +23,7 @@ ListBox::ListBox(const Font &font,
     // calculate line height and maximum lines per page, adjust font size if needed
     float font_scaling = 1;
     font_size = fontSize > 0 ? fontSize : C2D_DEFAULT_CHAR_SIZE;
-    line_height = font_size > 0 ? (font_size + 6) : ((int) font.getLineSpacing(C2D_DEFAULT_CHAR_SIZE) + 6);
+    line_height = font_size > 0 ? font_size + 4 : (int) font.getLineSpacing(font_size) + 4;
     max_lines = (int) getSize().y / line_height;
     if (max_lines < 15 && fontSize <= 0) {
         // scale text to see enough lines on small screens
@@ -82,7 +82,7 @@ void ListBox::setSelection(int index) {
 
             // set highlight position and color
             if (index_start + i == index) {
-                rectangle->setPosition(2, lines[i]->getGlobalBounds().top);
+                rectangle->setPosition(2, lines[i]->getGlobalBounds().top - 1);
                 Color color = file->color;
                 rectangle->setOutlineColor(color);
                 color.a = 100;
@@ -92,7 +92,7 @@ void ListBox::setSelection(int index) {
     }
 }
 
-int ListBox::getFontSize() {
+unsigned int ListBox::getFontSize() {
     return font_size;
 }
 

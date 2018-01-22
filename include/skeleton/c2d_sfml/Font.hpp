@@ -256,6 +256,8 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         const Texture &getTexture(unsigned int characterSize) const;
 
+        void setFiltering(int filter);
+
         ////////////////////////////////////////////////////////////
         /// \brief Overload of assignment operator
         ///
@@ -357,6 +359,8 @@ namespace c2d {
         Info m_info;        ///< Information about the font
         mutable PageTable m_pages;       ///< Table containing the glyphs pages by character size
         mutable std::vector<Uint8> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
+        int m_filtering = 1; // C2D_TEXTURE_FILTER_LINEAR
+
 #ifdef SFML_SYSTEM_ANDROID
         void*                      m_stream; ///< Asset file streamer (if loaded from file)
 #endif

@@ -26,7 +26,7 @@ namespace c2d {
 
         int getMaxLines();
 
-        int getFontSize();
+        unsigned int getFontSize();
 
         std::vector<c2d::Text *> getLines();
 
