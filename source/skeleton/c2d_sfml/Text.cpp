@@ -414,8 +414,18 @@ namespace sfml {
             x += m_font->getKerning(prevChar, curChar, m_characterSize);
             prevChar = curChar;
 
+            // handle maxSize.x // TODO: handle maxSize.y ?
             if (maxSize.x > 0 && ((x + m_characterSize) * getScale().x > maxSize.x)) {
-                break;
+                while (i < m_string.getSize()) {
+                    curChar = m_string[i];
+                    if (curChar == '\n') {
+                        break;
+                    }
+                    i++;
+                }
+                if (i >= m_string.getSize()) {
+                    break;
+                }
             }
 
             // If we're using the underlined style and there's a new line, draw a line
