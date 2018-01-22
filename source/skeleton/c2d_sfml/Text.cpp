@@ -252,7 +252,7 @@ namespace sfml {
         // Precompute the variables needed by the algorithm
         bool bold = (m_style & Bold) != 0;
         float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
-        float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize));
+        float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + m_line_spacing;
 
         // Compute the position
         Vector2f position;
@@ -361,6 +361,10 @@ namespace sfml {
         m_geometryNeedUpdate = true;
     }
 
+    void Text::setLineSpacingModifier(int size) {
+        m_line_spacing = size;
+    }
+
 ////////////////////////////////////////////////////////////
     void Text::ensureGeometryUpdate() const {
 
@@ -396,7 +400,7 @@ namespace sfml {
 
         // Precompute the variables needed by the algorithm
         float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
-        float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize));
+        float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + m_line_spacing;
         float x = 0.f;
         float y = static_cast<float>(m_characterSize);
 

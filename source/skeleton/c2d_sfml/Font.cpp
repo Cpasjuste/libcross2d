@@ -357,7 +357,7 @@ namespace c2d {
         FT_Face face = static_cast<FT_Face>(m_face);
 
         if (face && setCurrentSize(characterSize)) {
-            return static_cast<float>(face->size->metrics.height) / static_cast<float>(1 << 6);
+            return ((float) face->size->metrics.height / (float) (1 << 6));
         } else {
             return 0.f;
         }

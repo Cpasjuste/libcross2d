@@ -341,6 +341,8 @@ namespace sfml {
 
         void setSizeMax(const c2d::Vector2f &maxSize);
 
+        void setLineSpacingModifier(int size);
+
     private:
 
         ////////////////////////////////////////////////////////////
@@ -378,6 +380,7 @@ namespace sfml {
         mutable c2d::FloatRect m_bounds;             ///< Bounding rectangle of the text (in local coordinates)
         mutable bool m_geometryNeedUpdate; ///< Does the geometry need to be recomputed?
         c2d::Vector2f maxSize;
+        int m_line_spacing = 0;
     };
 
 } // namespace sf
