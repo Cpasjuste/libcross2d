@@ -10,20 +10,22 @@ using namespace c2d;
 
 ListBox::ListBox(const Font &font,
                  const FloatRect &rect,
-                 const std::vector<Io::File *> &fileList) : Rectangle(rect) {
+                 const std::vector<Io::File *> &fileList,
+                 int fontSize) : Rectangle(rect) {
 
     files = fileList;
 
-    // set bg colors
+    // set default bg colors
     setFillColor(Color::GrayLight);
     setOutlineColor(Color::Orange);
     setOutlineThickness(2);
 
     // calculate line height and maximum lines per page, adjust font size if needed
     float font_scaling = 1;
-    line_height = (int) font.getLineSpacing(C2D_DEFAULT_CHAR_SIZE) + 12;
+    font_size = fontSize > 0 ? fontSize : C2D_DEFAULT_CHAR_SIZE;
+    line_height = font_size > 0 ? (font_size + 6) : ((int) font.getLineSpacing(C2D_DEFAULT_CHAR_SIZE) + 6);
     max_lines = (int) getSize().y / line_height;
-    if (max_lines < 15 /*&& fileList.size() > 10*/) {
+    if (max_lines < 15 && fontSize <= 0) {
         // scale text to see enough lines on small screens
         max_lines = std::min(getSize().y < MIN_SIZE_Y ? 10 : 15, (int) files.size());
         font_scaling = (getSize().y / (float) max_lines) / line_height;
@@ -33,7 +35,6 @@ ListBox::ListBox(const Font &font,
 
     // add selection rectangle (highlight)
     rectangle = new Rectangle(Vector2f(getSize().x - 4, line_height));
-    rectangle->setFillColor(Color(32, 32, 32));
     rectangle->setOutlineThickness(1);
     rectangle->setOrigin(0, line_height / 2);
     add(rectangle);
@@ -89,6 +90,10 @@ void ListBox::setSelection(int index) {
             }
         }
     }
+}
+
+int ListBox::getFontSize() {
+    return font_size;
 }
 
 std::vector<c2d::Text *> ListBox::getLines() {

@@ -59,8 +59,8 @@ GLTexture::GLTexture(const Vector2f &size, int format) : Texture(size, format) {
         glBindTexture(GL_TEXTURE_2D, texID);
         glTexImage2D(GL_TEXTURE_2D, 0, bpp == 4 ? 4 : 3, (GLsizei) size.x, (GLsizei) size.y, 0,
                      GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         available = true;
     } else {
         printf("Couldn't create texture: %s\n", path);
@@ -97,6 +97,11 @@ void GLTexture::unlock() {
 
 void GLTexture::setFiltering(int filter) {
 
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                    filter == C2D_TEXTURE_FILTER_LINEAR ? GL_LINEAR : GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                    filter == C2D_TEXTURE_FILTER_LINEAR ? GL_LINEAR : GL_NEAREST);
 }
 
 GLTexture::~GLTexture() {

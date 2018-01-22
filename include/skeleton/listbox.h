@@ -15,7 +15,8 @@ namespace c2d {
 
         ListBox(const Font &font,
                 const FloatRect &rect,
-                const std::vector<Io::File *> &fileList);
+                const std::vector<Io::File *> &fileList,
+                int fontSize = 0);
 
         ~ListBox();
 
@@ -24,6 +25,8 @@ namespace c2d {
         void setHighLight(bool enable);
 
         int getMaxLines();
+
+        int getFontSize();
 
         std::vector<c2d::Text *> getLines();
 
@@ -40,7 +43,7 @@ namespace c2d {
         Rectangle *rectangle;
         int line_height;
         int max_lines;
-        int font_size = C2D_DEFAULT_CHAR_SIZE;
+        int font_size;
         int index = 0;
     };
 }
