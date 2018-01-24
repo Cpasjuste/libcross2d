@@ -8,8 +8,7 @@
 
 #ifdef __TINYGL__
 
-#include "gl.h"
-//#include "skeleton/TinyGL/GL/tinygl.h"
+#include "GL/pgl.h"
 
 #else
 

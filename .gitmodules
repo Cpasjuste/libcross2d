@@ -1,0 +1,3 @@
+[submodule "source/skeleton/pTinyGL"]
+	path = source/skeleton/pTinyGL
+	url = git@github.com:Cpasjuste/pTinyGL.git

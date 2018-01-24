@@ -233,8 +233,11 @@ elseif (BUILD_SDL1)
         list(APPEND FLAGS -D__SDL1_GL__)
         set(LIBS cross2d GL SDL freetype png z)
     elseif (BUILD_SDL1_TINYGL)
-        list(APPEND PLATFORM_DIRS source/skeleton/TinyGL)
-        file(GLOB TINYGL_SRC source/skeleton/TinyGL/*.c*)
+        list(APPEND PLATFORM_DIRS source/skeleton/pTinyGL/include)
+        file(GLOB TINYGL_SRC
+                source/skeleton/pTinyGL/source/*.c*
+                source/skeleton/pTinyGL/source/api/*.c*
+                )
         list(APPEND PLATFORM_SRC ${TINYGL_SRC})
         list(APPEND FLAGS -D__TINYGL__ -DSDL_BACKEND)
         set(LIBS cross2d SDL freetype png z)
