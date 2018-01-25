@@ -26,7 +26,7 @@ GLTexture::GLTexture(const char *path) : Texture(path) {
 
     error = lodepng_decode32_file(&pixels, &w, &h, path);
     if (error) {
-        printf("error %u: %s\n", error, lodepng_error_text(error));
+        printf("Couldn't create texture:: %s\n", lodepng_error_text(error));
         return;
     }
 
@@ -91,8 +91,10 @@ void GLTexture::unlock() {
         glBindTexture(GL_TEXTURE_2D, texID);
         glTexImage2D(GL_TEXTURE_2D, 0, bpp == 4 ? 4 : 3, (GLsizei) getSize().x, (GLsizei) getSize().y, 0,
                      bpp == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, pixels);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                        filter == C2D_TEXTURE_FILTER_LINEAR ? GL_LINEAR : GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                        filter == C2D_TEXTURE_FILTER_LINEAR ? GL_LINEAR : GL_NEAREST);
     }
 #else
     glBindTexture(GL_TEXTURE_2D, texID);
@@ -107,7 +109,9 @@ void GLTexture::unlock() {
 #endif
 }
 
-void GLTexture::setFiltering(int filter) {
+void GLTexture::setFiltering(int f) {
+
+    filter = f;
 
     glBindTexture(GL_TEXTURE_2D, texID);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,

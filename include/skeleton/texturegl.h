@@ -31,6 +31,7 @@ namespace c2d {
     private:
 
         unsigned char *pixels = NULL;
+        int filter = C2D_TEXTURE_FILTER_LINEAR;
     };
 }
 

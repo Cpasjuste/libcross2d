@@ -23,8 +23,10 @@ Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
 void Renderer::drawLine(Line &line, Transform &transform) {
 
     Transform combined = transform * line.getTransform();
-    draw(line.getVertices(), combined, nullptr);
-    if (line.getOutlineThickness() > 0) {
+    if (line.getFillColor().a != 0) {
+        draw(line.getVertices(), combined, nullptr);
+    }
+    if (line.getOutlineColor().a != 0 && line.getOutlineThickness() > 0) {
         draw(line.getOutlineVertices(), combined, nullptr);
     }
 }
@@ -32,8 +34,10 @@ void Renderer::drawLine(Line &line, Transform &transform) {
 void Renderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
 
     Transform combined = transform * rectangle.getTransform();
-    draw(rectangle.getVertices(), combined, nullptr);
-    if (rectangle.getOutlineThickness() > 0) {
+    if (rectangle.getFillColor().a != 0) {
+        draw(rectangle.getVertices(), combined, nullptr);
+    }
+    if (rectangle.getOutlineColor().a != 0 && rectangle.getOutlineThickness() > 0) {
         draw(rectangle.getOutlineVertices(), combined, nullptr);
     }
 }
@@ -41,10 +45,12 @@ void Renderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
 void Renderer::drawTexture(Texture &texture, Transform &transform) {
 
     Transform combined = transform * texture.getTransform();
-    if (texture.getOutlineThickness() > 0) {
+    if (texture.getOutlineColor().a != 0 && texture.getOutlineThickness() > 0) {
         draw(texture.getOutlineVertices(), combined, nullptr);
     }
-    draw(texture.getVertices(), combined, &texture);
+    if (texture.getFillColor().a != 0) {
+        draw(texture.getVertices(), combined, &texture);
+    }
 }
 
 void Renderer::drawText(Text &text, Transform &transform) {

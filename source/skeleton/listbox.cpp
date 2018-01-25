@@ -85,7 +85,13 @@ void ListBox::setSelection(int index) {
                 rectangle->setPosition(2, lines[i]->getGlobalBounds().top - 1);
                 Color color = file->color;
                 rectangle->setOutlineColor(color);
+#ifdef __TINYGL__
+                color.r *= 0.25f;
+                color.g *= 0.25f;
+                color.b *= 0.25f;
+#else
                 color.a = 100;
+#endif
                 rectangle->setFillColor(color);
             }
         }
