@@ -113,15 +113,18 @@ extern c2d::Renderer *c2d_renderer;
 #elif __NX__
 
 #include "nx/nx_renderer.h"
+#include "skeleton/texturegl.h"
+#include "posix/posix_io.h"
+
 #define C2DRenderer NXRenderer
-#define C2DTexture Texure
+#define C2DTexture GLTexture
 #define C2DRectangle Rectangle
 #define C2DLine Line
 #define C2DFont Font
 #define C2DText Text
 #define C2DInput Input
 #define C2DAudio Audio
-#define C2DIo NXIo
+#define C2DIo POSIXIo
 
 #elif __SDL2__
 

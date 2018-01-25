@@ -3,7 +3,7 @@
 //
 
 //
-// SDL1 with OSMesa (OpenGL software wrapper) for rendering
+// SDL1 with TinyGL (OpenGL software wrapper) for rendering
 //
 
 #ifdef __TINYGL__
@@ -38,8 +38,6 @@ void SDL1Renderer::delay(unsigned int ms) {
 SDL1Renderer::~SDL1Renderer() {
 
     pglClose();
-
-    SDL_Quit();
 }
 
-#endif // __SDL1_GL__
+#endif // __TINYGL__

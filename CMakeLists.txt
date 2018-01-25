@@ -17,7 +17,7 @@ option(BUILD_PSP2_OSMESA "Build with PSP2 OSMesa support (testing, software rend
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 #option(BUILD_3DS "Build with 3DS support" OFF)
 #option(BUILD_RPI "Build with RPI support" OFF)
-option(BUILD_SWITCH_NX "Build with NX (SWITCH) support" OFF)
+option(BUILD_NX "Build with NX (SWITCH) support" OFF)
 #option(BUILD_SWITCH_TRANSISTOR "Build with NX (SWITCH) support" ON)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -62,6 +62,10 @@ if (BUILD_SFML)
             -D__SFML__
             -I/usr/include/freetype2
             )
+    set(PLATFORM_LIBS
+            cross2d SDL2
+            sfml-graphics sfml-window sfml-system
+            GL freetype png z)
     #####################
     # PSP2 PLATORM
     #####################
@@ -169,6 +173,15 @@ elseif (BUILD_3DS)
             # TODO: fix that crap...
             source/3ds/vshaders.v.o
             )
+
+    set(PLATFORM_LIBS
+            cross2d
+            ${DEVKITPRO}/portlibs/3ds/lib/libSDL2.a
+            ${DEVKITPRO}/portlibs/armv6k/lib/libpng.a
+            ${DEVKITPRO}/portlibs/armv6k/lib/libz.a
+            ${DEVKITPRO}/libctru/lib/libcitro3d.a
+            ${DEVKITPRO}/libctru/lib/libctru.a
+            m)
     list(APPEND FLAGS -O3 -DARM11 -D_3DS -D__3DS__
             -D__CITRO3D__
             -ffunction-sections -fomit-frame-pointer
@@ -176,17 +189,28 @@ elseif (BUILD_3DS)
     #####################
     # NX PLATORM
     #####################
-elseif (BUILD_SWITCH_NX)
+elseif (BUILD_NX)
     set(PLATFORM_DIRS
             source/nx
+            source/posix
+            source/skeleton/pTinyGL/include
             ${DEVKITPRO}/libnx/include
+            ${DEVKITPRO}/portlibs/armv8-a/include/freetype2
             )
     file(GLOB PLATFORM_SRC
             source/nx/*.c*
+            source/posix/*.c*
+            source/skeleton/pTinyGL/source/pgl_nx.c
+            source/skeleton/pTinyGL/source/api/*.c*
             )
-    list(APPEND FLAGS -D__NX__
+    list(APPEND FLAGS -D__NX__ -D__GL__ -D__TINYGL__
             -ffunction-sections -fomit-frame-pointer
             )
+    set(PLATFORM_LIBS cross2d
+            ${DEVKITPRO}/libnx/lib/libnx.a
+            ${DEVKITPRO}/portlibs/armv8-a/lib/libfreetype.a
+            ${DEVKITPRO}/portlibs/armv8-a/lib/libpng.a
+            ${DEVKITPRO}/portlibs/armv8-a/lib/libz.a)
 elseif (BUILD_SWITCH_TRANSISTOR)
     set(PLATFORM_DIRS
             )
@@ -211,9 +235,9 @@ elseif (BUILD_SDL2)
     list(APPEND FLAGS -D__SDL2__ -D__GL__)
     if (BUILD_SDL2_GL)
         list(APPEND FLAGS -D__SDL2_GL__)
-        set(LIBS cross2d GL SDL2 freetype png z)
+        set(PLATFORM_LIBS cross2d GL SDL2 freetype png z)
     else ()
-        set(LIBS cross2d OSMesa pthread SDL2 freetype png z)
+        set(PLATFORM_LIBS cross2d OSMesa pthread SDL2 freetype png z)
     endif (BUILD_SDL2_GL)
     #####################
     # SDL1 PLATORM
@@ -231,18 +255,18 @@ elseif (BUILD_SDL1)
     list(APPEND FLAGS -D__SDL1__ -D__GL__)
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)
-        set(LIBS cross2d GL SDL freetype png z)
+        set(PLATFORM_LIBS cross2d GL SDL freetype png z)
     elseif (BUILD_SDL1_TINYGL)
         list(APPEND PLATFORM_DIRS source/skeleton/pTinyGL/include)
         file(GLOB TINYGL_SRC
-                source/skeleton/pTinyGL/source/*.c*
+                source/skeleton/pTinyGL/source/pgl_sdl1.c
                 source/skeleton/pTinyGL/source/api/*.c*
                 )
         list(APPEND PLATFORM_SRC ${TINYGL_SRC})
         list(APPEND FLAGS -D__TINYGL__)
-        set(LIBS cross2d SDL freetype png z)
+        set(PLATFORM_LIBS cross2d SDL freetype png z)
     else ()
-        set(LIBS cross2d OSMesa pthread SDL freetype png z)
+        set(PLATFORM_LIBS cross2d OSMesa pthread SDL freetype png z)
     endif (BUILD_SDL1_GL)
 endif (BUILD_SFML)
 
@@ -253,115 +277,52 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PLATFORM_DIRS})
 target_compile_options(${PROJECT_NAME} PRIVATE ${FLAGS})
 
 #####################
-# SDL2 (unix) target
+# test executable
 #####################
-if (BUILD_SDL2)
-    add_executable(${PROJECT_NAME}.sdl2 test/main.cpp)
-    target_compile_options(${PROJECT_NAME}.sdl2 PRIVATE ${FLAGS})
-    target_link_libraries(${PROJECT_NAME}.sdl2 ${LIBS})
-    add_dependencies(${PROJECT_NAME}.sdl2 ${PROJECT_NAME})
-endif (BUILD_SDL2)
-
-#####################
-# SDL1 (unix) target
-#####################
-if (BUILD_SDL1)
-    add_executable(${PROJECT_NAME}.sdl1 test/main.cpp)
-    target_compile_options(${PROJECT_NAME}.sdl1 PRIVATE ${FLAGS})
-    target_link_libraries(${PROJECT_NAME}.sdl1 ${LIBS})
-    add_dependencies(${PROJECT_NAME}.sdl1 ${PROJECT_NAME})
-endif (BUILD_SDL1)
+add_executable(${PROJECT_NAME}.elf test/main.cpp)
+target_compile_options(${PROJECT_NAME}.elf PRIVATE ${FLAGS})
+target_link_libraries(${PROJECT_NAME}.elf ${PLATFORM_LIBS})
 
 #####################
 # PS3 target
 #####################
 if (BUILD_PS3)
-    add_executable(${PROJECT_NAME}.ps3 test/main.cpp)
-    target_compile_options(${PROJECT_NAME}.ps3 PRIVATE ${FLAGS})
-    target_include_directories(${PROJECT_NAME}.ps3 PUBLIC ${CROSS2D_DIR})
-    target_include_directories(${PROJECT_NAME}.ps3 PRIVATE ${PLATFORM_DIRS})
-    target_link_libraries(${PROJECT_NAME}.ps3 cross2d ${PLATFORM_LIBS})
-    add_dependencies(${PROJECT_NAME}.ps3 ${PROJECT_NAME})
-    add_custom_target(${PROJECT_NAME}.ps3.elf
-            DEPENDS ${PROJECT_NAME}.ps3
-            COMMAND ${PSL1GHT}/bin/sprxlinker ${PROJECT_NAME}.ps3
-            )
+    add_custom_target(${PROJECT_NAME}.ps3
+            DEPENDS ${PROJECT_NAME}.elf
+            COMMAND ${PSL1GHT}/bin/sprxlinker ${PROJECT_NAME}.elf)
+    add_dependencies(${PROJECT_NAME}.ps3 ${PROJECT_NAME}.elf)
 endif (BUILD_PS3)
-
-#####################
-# SFML (unix) target
-#####################
-if (BUILD_SFML)
-    add_executable(${PROJECT_NAME}.sfml test/main.cpp)
-    target_compile_options(${PROJECT_NAME}.sfml PRIVATE ${FLAGS})
-    target_link_libraries(${PROJECT_NAME}.sfml
-            cross2d SDL2 sfml-graphics sfml-window sfml-system GL freetype png z)
-    add_dependencies(${PROJECT_NAME}.sfml ${PROJECT_NAME})
-endif (BUILD_SFML)
 
 #####################
 # PSP2 (vita) target
 #####################
 if (BUILD_PSP2)
-    add_executable(${PROJECT_NAME}.psp2 test/main.cpp)
-    target_compile_options(${PROJECT_NAME}.psp2 PRIVATE ${FLAGS})
-    target_link_libraries(${PROJECT_NAME}.psp2 ${PLATFORM_LIBS})
-    add_dependencies(${PROJECT_NAME}.psp2 ${PROJECT_NAME})
-    add_custom_target(${PROJECT_NAME}.psp2.vpk
-            DEPENDS ${PROJECT_NAME}.psp2
+    add_custom_target(${PROJECT_NAME}.vpk
+            DEPENDS ${PROJECT_NAME}.elf
             COMMAND rm -rf vpk && mkdir -p vpk/sce_sys
-            COMMAND ${VITASDK}/bin/vita-elf-create ${PROJECT_NAME}.psp2 ${PROJECT_NAME}.velf
+            COMMAND ${VITASDK}/bin/vita-elf-create ${PROJECT_NAME}.elf ${PROJECT_NAME}.velf
             COMMAND ${VITASDK}/bin/vita-make-fself -c ${PROJECT_NAME}.velf vpk/eboot.bin
             COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID=${TITLE_ID} "${PROJECT_NAME}" vpk/sce_sys/param.sfo
             COMMAND cp -r ../res/* vpk/
             COMMAND cd vpk && zip -r ../${PROJECT_NAME}-${BUILD_DATE}.vpk . && cd ..
             )
+    add_dependencies(${PROJECT_NAME}.vpk ${PROJECT_NAME}.elf)
 endif (BUILD_PSP2)
 
 #####################
 # CTR (3DS) target
 #####################
 if (BUILD_3DS)
-    add_executable(${PROJECT_NAME}.3ds test/main.cpp)
-    target_compile_options(${PROJECT_NAME}.3ds PRIVATE ${FLAGS})
-    target_include_directories(${PROJECT_NAME}.3ds PUBLIC ${CROSS2D_DIR})
-    target_include_directories(${PROJECT_NAME}.3ds PRIVATE ${PLATFORM_DIRS})
-    target_link_libraries(${PROJECT_NAME}.3ds
-            cross2d
-            ${DEVKITPRO}/portlibs/3ds/lib/libSDL2.a
-            ${DEVKITPRO}/portlibs/armv6k/lib/libpng.a
-            ${DEVKITPRO}/portlibs/armv6k/lib/libz.a
-            ${DEVKITPRO}/libctru/lib/libcitro3d.a
-            ${DEVKITPRO}/libctru/lib/libctru.a
-            m)
-    set_target_properties(${PROJECT_NAME}.3ds PROPERTIES LINK_FLAGS "-specs=3dsx.specs")
-    add_dependencies(${PROJECT_NAME}.3ds ${PROJECT_NAME})
-    add_3dsx_target(${PROJECT_NAME}.3ds NO_SMDH)
+    set_target_properties(${PROJECT_NAME}.elf PROPERTIES LINK_FLAGS "-specs=3dsx.specs")
+    add_3dsx_target(${PROJECT_NAME}.elf NO_SMDH)
 endif (BUILD_3DS)
 
 #####################
 # NX (SWITCH) target
 #####################
-if (BUILD_SWITCH_NX)
-    add_executable(${PROJECT_NAME}.nx test/main.cpp)
-    target_compile_options(${PROJECT_NAME}.nx PRIVATE ${FLAGS} -I${DEVKITPRO}/libnx/include)
-    target_link_libraries(${PROJECT_NAME}.nx
-            cross2d
-            ${DEVKITPRO}/libnx/lib/libnx.a
-            m)
-    set_target_properties(${PROJECT_NAME}.nx PROPERTIES LINK_FLAGS "-specs=switch.specs")
-    add_dependencies(${PROJECT_NAME}.nx ${PROJECT_NAME})
-endif (BUILD_SWITCH_NX)
-
-#####################
-# TRANSISTOR (SWITCH) target
-#####################
-if (BUILD_SWITCH_TRANSISTOR)
-    add_executable(${PROJECT_NAME}.nx test/main.cpp)
-    target_compile_options(${PROJECT_NAME}.nx PRIVATE ${FLAGS})
-    target_link_libraries(${PROJECT_NAME}.nx
-            cross2d
-            m)
-    #set_target_properties(${PROJECT_NAME}.nx PROPERTIES LINK_FLAGS "-specs=switch.specs")
-    add_dependencies(${PROJECT_NAME}.nx ${PROJECT_NAME})
-endif (BUILD_SWITCH_TRANSISTOR)
+if (BUILD_NX)
+    set_target_properties(${PROJECT_NAME}.elf PROPERTIES LINK_FLAGS "-specs=switch.specs")
+    add_custom_target(${PROJECT_NAME}.nro
+            DEPENDS ${PROJECT_NAME}.elf
+            COMMAND elf2nro ${PROJECT_NAME}.elf ${PROJECT_NAME}.nro)
+endif (BUILD_NX)

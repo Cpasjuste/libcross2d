@@ -2,49 +2,25 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#ifndef _NX_RENDERER_H_
-#define _NX_RENDERER_H_
+#ifndef NX_RENDERER_H
+#define NX_RENDERER_H
 
-#include <switch.h>
-#include "skeleton/renderer.h"
+#include "skeleton/renderergl.h"
 
-class NXRenderer : Renderer {
+namespace c2d {
 
-public:
-    NXRenderer();
+    class NXRenderer : public GLRenderer {
 
-    ~NXRenderer();
+    public:
 
-    Font *LoadFont(const char *path, int size);
+        NXRenderer(const Vector2f &size = Vector2f(0, 0));
 
-    void DrawFont(Font *font, int x, int y, const char *fmt, ...);
+        ~NXRenderer();
 
-    Texture *CreateTexture(int w, int h);
+        void flip();
 
-    Texture *LoadTexture(const char *file);
+        void delay(unsigned int ms);
+    };
+}
 
-    void DrawTexture(Texture *texture, int x, int y, int w, int h, float rotation);
-
-    int LockTexture(Texture *texture, const Rect &rect, void **pixels, int *pitch);
-
-    void DrawLine(int x1, int y1, int x2, int y2, const Color &color);
-
-    void DrawRect(const Rect &rect, const Color &color, bool fill = true);
-
-    void Clip(const Rect &rect);
-
-    const Rect GetWindowSize();
-
-    void Clear();
-
-    void Flip();
-
-    void Delay(unsigned int ms);
-
-    void SetShader(int shader);
-
-private:
-
-};
-
-#endif //_NX_RENDERER_H_
+#endif // NX_RENDERER_H

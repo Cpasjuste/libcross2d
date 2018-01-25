@@ -6,8 +6,9 @@
 #define PFBA_NX_IO_H
 
 #include <switch.h>
-#include "../skeleton/io.h"
+#include "skeleton/io.h"
 
+/*
 class NXIo : Io {
 
 public:
@@ -25,6 +26,6 @@ private:
 
     FsFileSystem *fs;
 };
-
+*/
 
 #endif //PFBA_NX_IO_H

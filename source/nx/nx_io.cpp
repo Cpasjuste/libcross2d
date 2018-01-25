@@ -2,8 +2,9 @@
 // Created by cpasjuste on 17/11/17.
 //
 
-#include "../../include/nx/nx_io.h"
+//#include "nx/nx_io.h"
 
+/*
 NXIo::NXIo() {
 
     Result res = fsInitialize();
@@ -39,3 +40,4 @@ std::vector <std::string> NXIo::GetDirList(const char *path) {
     // TODO
     return Io::GetDirList(path);
 }
+*/
