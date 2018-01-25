@@ -5,36 +5,35 @@
 #ifndef _CTR_RENDERER_H_
 #define _CTR_RENDERER_H_
 
-#include "../skeleton/renderer.h"
+#include "skeleton/renderer.h"
 
-class CTRRenderer : Renderer {
+namespace c2d {
 
-public:
-    CTRRenderer(int w, int h);
+    class CTRRenderer : public Renderer {
 
-    ~CTRRenderer();
+    public:
 
-    void DrawLine(int x1, int y1, int x2, int y2, const Color &color);
+        CTRRenderer(const Vector2f &size = Vector2f(0, 0));
 
-    void DrawRect(const Rect &rect, const Color &color, bool fill = true);
+        ~CTRRenderer();
 
-    void Clear();
+        void draw(const VertexArray &vertices,
+                  const Transform &transform,
+                  const Texture *texture);
 
-    void Flip();
+        void flip();
 
-    void Delay(unsigned int ms);
+        void delay(unsigned int ms);
 
-    void StartDrawing(bool vertexColor);
+        C3D_RenderTarget *target;
 
-    C3D_RenderTarget *target;
+    private:
 
-private:
-
-    bool drawing_started = false;
-    int uloc_projection;
-    C3D_Mtx mtx_projection;
-    DVLB_s *vshader_dvlb;
-    shaderProgram_s program;
-};
+        int uloc_projection;
+        C3D_Mtx mtx_projection;
+        DVLB_s *vshader_dvlb;
+        shaderProgram_s program;
+    };
+}
 
 #endif //_CTR_RENDERER_H_

@@ -3,7 +3,6 @@
 //
 
 #include "c2d.h"
-#include "../../include/3ds/ctr_png.h"
 
 #ifdef __CITRO3D__
 #define TILE_FLAGS(inFmt, outFmt) \

@@ -3,7 +3,9 @@
 //
 
 #include <3ds.h>
-#include "../../include/3ds/ctr_input.h"
+#include "3ds/ctr_input.h"
+
+using namespace c2d;
 
 static int key_id[KEY_COUNT]{
         Input::Key::KEY_UP,
@@ -40,6 +42,7 @@ CTRInput::~CTRInput() {
 
 int CTRInput::GetButton(int player) {
 
+    // TODO:
     /*
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -48,12 +51,6 @@ int CTRInput::GetButton(int player) {
         }
     }
     */
-    // TODO:
-    while (true) {
-
-        hidScanInput();
-
-    }
 
     return -1;
 }

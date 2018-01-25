@@ -5,23 +5,26 @@
 #ifndef _CTR_INPUT_H
 #define _CTR_INPUT_H
 
-#include "../skeleton/renderer.h"
-#include "../skeleton/input.h"
+#include "skeleton/renderer.h"
+#include "skeleton/input.h"
 
-class CTRInput : Input {
+namespace c2d {
 
-public:
-    CTRInput(Renderer *renderer);
+    class CTRInput : Input {
 
-    virtual ~CTRInput();
+    public:
+        CTRInput(Renderer *renderer);
 
-    virtual Player *Update(int rotate = 0);
+        virtual ~CTRInput();
 
-    virtual int GetButton(int player);
+        virtual Player *Update(int rotate = 0);
 
-private:
-    virtual void process_buttons(Input::Player &player, int rotate = 0);
+        virtual int GetButton(int player);
 
-};
+    private:
+        virtual void process_buttons(Input::Player &player, int rotate = 0);
+
+    };
+}
 
 #endif //_CTR_INPUT_H
