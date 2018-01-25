@@ -275,7 +275,7 @@ extern c2d::Renderer *c2d_renderer;
 #endif
 
 #ifndef NO_KEYBOARD
-#ifdef __SDL2__
+#if defined(__SDL2__) || defined(__SDL1__)
 #define KEY_KB_UP_DEFAULT      82
 #define KEY_KB_DOWN_DEFAULT    81
 #define KEY_KB_LEFT_DEFAULT    80
