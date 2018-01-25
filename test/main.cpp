@@ -24,16 +24,10 @@ int main() {
     Texture *tex = new C2DTexture(TEX_PATH);
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
+        tex->setScale(0.5f, 0.5f);
         tex->setOriginCenter();
         rect->add(tex);
     }
-
-    // create a line and add it to the rect
-    Line *line = new C2DLine(rect->getPoint(0), rect->getPoint(2), 2);
-    line->setFillColor(Color::Blue);
-    line->setOutlineColor(Color::Green);
-    line->setOutlineThickness(1);
-    rect->add(line);
 
     // create a font
     Font font;
