@@ -9,8 +9,8 @@
 
 #define SCR_W 960
 #define SCR_H 544
-#define FONT_PATH   "ux0:/default.ttf"
-#define TEX_PATH    "ux0:/title.png"
+#define FONT_PATH   "app0:/default.ttf"
+#define TEX_PATH    "app0:/title.png"
 int KEYS[]{
         // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
         82, 81, 80, 79, 89, 90, 91, 92, 93, 94, 41, 40, 0 // KEY_QUIT

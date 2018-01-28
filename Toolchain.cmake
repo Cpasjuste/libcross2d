@@ -1,15 +1,14 @@
 # setup toolchains
 
 if (BUILD_PSP2)
-    set(VITASDK $ENV{VITASDK})
-    set(CMAKE_SYSTEM_PROCESSOR "armv7-a")
-    set(CMAKE_C_COMPILER "${VITASDK}/bin/arm-vita-eabi-gcc")
-    set(CMAKE_CXX_COMPILER "${VITASDK}/bin/arm-vita-eabi-g++")
-    set(CMAKE_ASM_COMPILER "${VITASDK}/bin/arm-vita-eabi-gcc")
-    set(CMAKE_C_FLAGS "-Wl,-q" CACHE STRING "C flags")
-    set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=gnu++11 -fpermissive" CACHE STRING "C++ flags")
-    execute_process(COMMAND "date" "+%Y.%m.%d" OUTPUT_VARIABLE BUILD_DATE OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(TITLE_ID "CROSS2D00")
+    if (NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+        if (DEFINED ENV{VITASDK})
+            set(CMAKE_TOOLCHAIN_FILE "$ENV{VITASDK}/share/vita.toolchain.cmake" CACHE PATH "toolchain file")
+        else ()
+            message(FATAL_ERROR "Please define VITASDK to point to your SDK path!")
+        endif ()
+    endif ()
+    include("$ENV{VITASDK}/share/vita.cmake" REQUIRED)
 endif (BUILD_PSP2)
 
 if (BUILD_PS3)

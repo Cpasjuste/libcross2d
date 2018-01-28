@@ -14,9 +14,9 @@ namespace c2d {
 
     public:
 
-        virtual bool Exist(const char *path);
+        virtual bool exist(const char *path);
 
-        virtual std::vector<std::string> GetDirList(const char *path);
+        virtual std::vector<std::string> getDirList(const char *path);
 
     };
 }

@@ -2,19 +2,21 @@
 // Created by cpasjuste on 19/12/16.
 //
 
+#include <dirent.h>
 #include <sys/stat.h>
-#include "../../include/psp2/psp2_io.h"
-#include "../../include/psp2/psp2_dirent.h"
+#include "psp2/psp2_io.h"
 
-bool PSP2Io::Exist(const char *file) {
+using namespace c2d;
+
+bool PSP2Io::exist(const char *file) {
 
     struct stat buf;
     return (stat(file, &buf) == 0);
 }
 
-std::vector <std::string> PSP2Io::GetDirList(const char *path) {
+std::vector<std::string> PSP2Io::getDirList(const char *path) {
 
-    std::vector <std::string> files;
+    std::vector<std::string> files;
 
     DIR *dir;
     struct dirent *ent;

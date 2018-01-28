@@ -9,7 +9,6 @@
 
 //#ifdef __PSP2_DEBUG__
 #include <psp2/kernel/clib.h>
-
 #define printf sceClibPrintf
 //#endif
 
@@ -32,12 +31,6 @@ namespace c2d {
         void delay(unsigned int ms);
 
         void setShader(int shader);
-
-    private:
-
-        void startDrawing();
-
-        bool drawing_started = false;
     };
 }
 

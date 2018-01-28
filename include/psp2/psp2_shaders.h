@@ -7,6 +7,16 @@
 
 #include "skeleton/shaders.h"
 
+typedef struct vita2d_shader {
+    SceGxmShaderPatcherId vertexProgramId;
+    SceGxmShaderPatcherId fragmentProgramId;
+    SceGxmVertexProgram *vertexProgram;
+    SceGxmFragmentProgram *fragmentProgram;
+    const SceGxmProgramParameter *paramPositionAttribute;
+    const SceGxmProgramParameter *paramTexcoordAttribute;
+    const SceGxmProgramParameter *wvpParam;
+} vita2d_shader;
+
 namespace c2d {
 
     class PSP2Shaders : Shaders {
@@ -16,6 +26,8 @@ namespace c2d {
         PSP2Shaders(const std::string &shadersPath);
 
         virtual ~PSP2Shaders();
+
+        vita2d_shader *createShader(const SceGxmProgram *vertexProgramGxp, const SceGxmProgram *fragmentProgramGxp);
     };
 }
 

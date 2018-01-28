@@ -51,7 +51,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DText Text
 #define C2DInput SDL2Input
 #define C2DAudio SDL2Audio
-#define C2DIo PSP2Io
+#define C2DIo PS2Io
 
 #define KEY_JOY_UP_DEFAULT      8
 #define KEY_JOY_DOWN_DEFAULT    6

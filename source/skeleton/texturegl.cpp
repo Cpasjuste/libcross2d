@@ -10,7 +10,7 @@
 
 #ifdef __TINYGL__
 
-#include "GL/pgl.h"
+#include "pTinyGL/pgl.h"
 
 #else
 

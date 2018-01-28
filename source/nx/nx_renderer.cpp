@@ -7,15 +7,14 @@
 //
 
 #include "c2d.h"
-#include "GL/pgl.h"
+#include "pTinyGL/pgl.h"
+#include <switch.h>
 
 using namespace c2d;
 
 NXRenderer::NXRenderer(const Vector2f &size) : GLRenderer(size) {
 
     pglInit((int) size.x, (int) size.y);
-
-    this->shaders = new Shaders("");
     available = true;
 }
 
@@ -30,6 +29,7 @@ void NXRenderer::flip() {
 
 void NXRenderer::delay(unsigned int ms) {
 
+    svcSleepThread(1000000 * ms);
 }
 
 NXRenderer::~NXRenderer() {

@@ -2,21 +2,19 @@ cmake_minimum_required(VERSION 3.0)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_SYSTEM_NAME "Generic")
-enable_language(ASM)
 
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
 option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" OFF)
 option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" OFF)
-option(BUILD_SDL1_TINYGL "Build with SDL1 support (software rendering, slow, needs BUILD_SDL1=ON)" OFF)
+option(BUILD_SDL1_TINYGL "Build with SDL1 support (software rendering, slow, needs BUILD_SDL1=OFF)" OFF)
 option(BUILD_SDL2 "Build with SDL2 support (software, osmesa) support" OFF)
 option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" OFF)
 option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PSP2_GL "Build with PSP2 TinyGL support (testing, software rendering, slow, needs BUILD_PSP2=ON)" OFF)
 option(BUILD_PSP2_OSMESA "Build with PSP2 OSMesa support (testing, software rendering, slow, needs BUILD_PSP2=ON)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
-option(BUILD_3DS "Build with 3DS support" ON)
-#option(BUILD_RPI "Build with RPI support" OFF)
+option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
 #option(BUILD_SWITCH_TRANSISTOR "Build with NX (SWITCH) support" ON)
 
@@ -72,33 +70,28 @@ if (BUILD_SFML)
 elseif (BUILD_PSP2)
     set(PLATFORM_DIRS
             source/psp2
-            #source/psp2/libvita2d/include
             source/psp2/vita-shader-collection/includes
             ${VITASDK}/arm-vita-eabi/include/freetype2
             )
     file(GLOB PLATFORM_SRC
-            #source/psp2/*.c*
-            source/psp2/psp2_shaders.cpp
-            #source/psp2/libvita2d/source/*.c
+            source/psp2/*.c*
             source/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
             source/sdl2/sdl2_input.cpp # TODO: get rid of sdl2, use sdl2 input for now
-            #source/psp2/libvita2d/shader/compiled/*.o
-            #source/psp2/vita-shader-collection/lib/*.o
+            source/psp2/vita-shader-collection/lib/*.o
             )
     set(PLATFORM_LIBS
-            cross2d SDL2 vita2d freetype
+            cross2d SDL2 vita2d vita2d_ext freetype
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceCtrl_stub SceCommonDialog_stub
-            SceAudio_stub SceTouch_stub
+            SceAudio_stub SceTouch_stub SceHid_stub
             png jpeg z m c
             )
     if (BUILD_PSP2_GL)
-        list(APPEND PLATFORM_DIRS include/skeleton/TinyGL)
-        file(GLOB GL_SRC source/skeleton/TinyGL/*.c)
-        list(APPEND PLATFORM_SRC
-                ${GL_SRC}
-                source/psp2_tinygl/psp2gl_renderer.cpp)
+        add_subdirectory(source/skeleton/pTinyGL)
+        list(APPEND PLATFORM_DIRS source/skeleton/pTinyGL/include)
+        list(APPEND PLATFORM_SRC source/psp2_tinygl/psp2gl_renderer.cpp)
         list(APPEND FLAGS -D__GL__ -D__PSP2_GL__ -D__TINYGL__)
+        list(APPEND PLATFORM_LIBS pTinyGL)
     elseif (BUILD_PSP2_OSMESA)
         list(APPEND PLATFORM_SRC
                 source/psp2_osmesa/psp2osmesa_renderer.cpp)
@@ -190,6 +183,7 @@ elseif (BUILD_3DS)
     # NX PLATORM
     #####################
 elseif (BUILD_NX)
+    add_subdirectory(source/skeleton/pTinyGL)
     set(PLATFORM_DIRS
             source/nx
             source/posix
@@ -200,13 +194,11 @@ elseif (BUILD_NX)
     file(GLOB PLATFORM_SRC
             source/nx/*.c*
             source/posix/*.c*
-            source/skeleton/pTinyGL/source/pgl_nx.c
-            source/skeleton/pTinyGL/source/api/*.c*
             )
     list(APPEND FLAGS -D__NX__ -D__GL__ -D__TINYGL__
             -ffunction-sections -fomit-frame-pointer
             )
-    set(PLATFORM_LIBS cross2d
+    set(PLATFORM_LIBS cross2d pTinyGL
             ${DEVKITPRO}/libnx/lib/libnx.a
             ${DEVKITPRO}/portlibs/armv8-a/lib/libfreetype.a
             ${DEVKITPRO}/portlibs/armv8-a/lib/libpng.a
@@ -246,83 +238,73 @@ elseif (BUILD_SDL1)
     set(PLATFORM_DIRS
             source/sdl1
             source/posix
-            /usr/include/freetype2
-            )
+            /usr/include/freetype2)
     file(GLOB PLATFORM_SRC
             source/sdl1/*.c*
-            source/posix/*.c*
-            )
+            source/posix/*.c*)
     list(APPEND FLAGS -D__SDL1__ -D__GL__)
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)
         set(PLATFORM_LIBS cross2d GL SDL freetype png z)
     elseif (BUILD_SDL1_TINYGL)
+        add_subdirectory(source/skeleton/pTinyGL)
         list(APPEND PLATFORM_DIRS source/skeleton/pTinyGL/include)
-        file(GLOB TINYGL_SRC
-                source/skeleton/pTinyGL/source/pgl_sdl1.c
-                source/skeleton/pTinyGL/source/api/*.c*
-                )
-        list(APPEND PLATFORM_SRC ${TINYGL_SRC})
         list(APPEND FLAGS -D__TINYGL__)
-        set(PLATFORM_LIBS cross2d SDL freetype png z)
+        set(PLATFORM_LIBS cross2d pTinyGL SDL freetype png z)
     else ()
         set(PLATFORM_LIBS cross2d OSMesa pthread SDL freetype png z)
     endif (BUILD_SDL1_GL)
 endif (BUILD_SFML)
 
+add_library(cross2d ${CROSS2D_SRC} ${PLATFORM_SRC})
+target_include_directories(cross2d PUBLIC ${CROSS2D_DIR} ${PLATFORM_DIRS})
+target_compile_options(cross2d PUBLIC ${FLAGS})
 
-add_library(${PROJECT_NAME} ${CROSS2D_SRC} ${PLATFORM_SRC})
-target_include_directories(${PROJECT_NAME} PUBLIC ${CROSS2D_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${PLATFORM_DIRS})
-target_compile_options(${PROJECT_NAME} PRIVATE ${FLAGS})
+install(FILES ${CMAKE_BINARY_DIR}/libcross2d.a DESTINATION lib)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include DESTINATION include/cross2d)
 
 #####################
 # test executable
 #####################
-add_executable(${PROJECT_NAME}.elf test/main.cpp)
-target_compile_options(${PROJECT_NAME}.elf PRIVATE ${FLAGS})
-target_link_libraries(${PROJECT_NAME}.elf ${PLATFORM_LIBS})
+add_executable(cross2d.elf test/main.cpp)
+target_compile_options(cross2d.elf PRIVATE ${FLAGS})
+target_link_libraries(cross2d.elf ${PLATFORM_LIBS})
 
 #####################
 # PS3 target
 #####################
 if (BUILD_PS3)
-    add_custom_target(${PROJECT_NAME}.ps3
-            DEPENDS ${PROJECT_NAME}.elf
-            COMMAND ${PSL1GHT}/bin/sprxlinker ${PROJECT_NAME}.elf)
-    add_dependencies(${PROJECT_NAME}.ps3 ${PROJECT_NAME}.elf)
+    add_custom_target(cross2d.ps3
+            DEPENDS cross2d.elf
+            COMMAND ${PSL1GHT}/bin/sprxlinker cross2d.elf)
+    add_dependencies(cross2d.ps3 cross2d.elf)
 endif (BUILD_PS3)
 
 #####################
 # PSP2 (vita) target
 #####################
 if (BUILD_PSP2)
-    add_custom_target(${PROJECT_NAME}.vpk
-            DEPENDS ${PROJECT_NAME}.elf
-            COMMAND rm -rf vpk && mkdir -p vpk/sce_sys
-            COMMAND ${VITASDK}/bin/vita-elf-create ${PROJECT_NAME}.elf ${PROJECT_NAME}.velf
-            COMMAND ${VITASDK}/bin/vita-make-fself -c ${PROJECT_NAME}.velf vpk/eboot.bin
-            COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID=${TITLE_ID} "${PROJECT_NAME}" vpk/sce_sys/param.sfo
-            COMMAND cp -r ../res/* vpk/
-            COMMAND cd vpk && zip -r ../${PROJECT_NAME}-${BUILD_DATE}.vpk . && cd ..
-            )
-    add_dependencies(${PROJECT_NAME}.vpk ${PROJECT_NAME}.elf)
+    vita_create_self(cross2d.self cross2d.elf)
+    vita_create_vpk(cross2d.vpk "CROSS2D00" cross2d.self
+            VERSION "01.00" NAME "CROSS2D"
+            FILE ${CMAKE_CURRENT_SOURCE_DIR}/res/default.ttf default.ttf
+            FILE ${CMAKE_CURRENT_SOURCE_DIR}/res/title.png title.png)
 endif (BUILD_PSP2)
 
 #####################
 # CTR (3DS) target
 #####################
 if (BUILD_3DS)
-    set_target_properties(${PROJECT_NAME}.elf PROPERTIES LINK_FLAGS "-specs=3dsx.specs")
-    add_3dsx_target(${PROJECT_NAME}.elf NO_SMDH)
+    set_target_properties(cross2d.elf PROPERTIES LINK_FLAGS "-specs=3dsx.specs")
+    add_3dsx_target(cross2d.elf NO_SMDH)
 endif (BUILD_3DS)
 
 #####################
 # NX (SWITCH) target
 #####################
 if (BUILD_NX)
-    set_target_properties(${PROJECT_NAME}.elf PROPERTIES LINK_FLAGS "-specs=switch.specs")
-    add_custom_target(${PROJECT_NAME}.nro
-            DEPENDS ${PROJECT_NAME}.elf
-            COMMAND elf2nro ${PROJECT_NAME}.elf ${PROJECT_NAME}.nro)
+    set_target_properties(cross2d.elf PROPERTIES LINK_FLAGS "-specs=switch.specs")
+    add_custom_target(cross2d.nro
+            DEPENDS cross2d.elf
+            COMMAND elf2nro cross2d.elf cross2d.nro)
 endif (BUILD_NX)

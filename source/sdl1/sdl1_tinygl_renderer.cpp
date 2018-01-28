@@ -9,15 +9,13 @@
 #ifdef __TINYGL__
 
 #include "c2d.h"
-#include "GL/pgl.h"
+#include "pTinyGL/pgl.h"
 
 using namespace c2d;
 
 SDL1Renderer::SDL1Renderer(const Vector2f &size) : GLRenderer(size) {
 
     pglInit((int) size.x, (int) size.y);
-
-    this->shaders = new Shaders("");
     available = true;
 }
 

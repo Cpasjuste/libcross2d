@@ -5,15 +5,19 @@
 #ifndef FBA_PSP2_UTILITY_H
 #define FBA_PSP2_UTILITY_H
 
-#include "../skeleton/io.h"
+#include "skeleton/io.h"
 
-class PSP2Io : Io {
+namespace c2d {
 
-public:
-    bool Exist(const char *file);
+    class PSP2Io : Io {
 
-    std::vector <std::string> GetDirList(const char *path);
+    public:
 
-};
+        bool exist(const char *file);
+
+        std::vector<std::string> getDirList(const char *path);
+
+    };
+}
 
 #endif //FBA_PSP2_UTILITY_H

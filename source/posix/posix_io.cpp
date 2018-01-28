@@ -7,12 +7,12 @@
 
 using namespace c2d;
 
-bool POSIXIo::Exist(const char *path) {
+bool POSIXIo::exist(const char *path) {
     struct stat buf;
     return (stat(path, &buf) == 0);
 }
 
-std::vector<std::string> POSIXIo::GetDirList(const char *path) {
+std::vector<std::string> POSIXIo::getDirList(const char *path) {
 
     std::vector<std::string> files;
     struct dirent *ent;
