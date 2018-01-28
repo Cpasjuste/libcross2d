@@ -10,9 +10,7 @@ option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs B
 option(BUILD_SDL1_TINYGL "Build with SDL1 support (software rendering, slow, needs BUILD_SDL1=OFF)" OFF)
 option(BUILD_SDL2 "Build with SDL2 support (software, osmesa) support" OFF)
 option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" OFF)
-option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
-option(BUILD_PSP2_GL "Build with PSP2 TinyGL support (testing, software rendering, slow, needs BUILD_PSP2=ON)" OFF)
-option(BUILD_PSP2_OSMESA "Build with PSP2 OSMesa support (testing, software rendering, slow, needs BUILD_PSP2=ON)" OFF)
+option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" ON)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
@@ -80,28 +78,12 @@ elseif (BUILD_PSP2)
             source/psp2/vita-shader-collection/lib/*.o
             )
     set(PLATFORM_LIBS
-            cross2d SDL2 vita2d vita2d_ext freetype
+            cross2d SDL2 vita2d freetype
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub
             png jpeg z m c
             )
-    if (BUILD_PSP2_GL)
-        add_subdirectory(source/skeleton/pTinyGL)
-        list(APPEND PLATFORM_DIRS source/skeleton/pTinyGL/include)
-        list(APPEND PLATFORM_SRC source/psp2_tinygl/psp2gl_renderer.cpp)
-        list(APPEND FLAGS -D__GL__ -D__PSP2_GL__ -D__TINYGL__)
-        list(APPEND PLATFORM_LIBS pTinyGL)
-    elseif (BUILD_PSP2_OSMESA)
-        list(APPEND PLATFORM_SRC
-                source/psp2_osmesa/psp2osmesa_renderer.cpp)
-        list(APPEND FLAGS -D__PSP2_OSMESA__)
-        list(APPEND PLATFORM_LIBS OSMesa pthread)
-    else ()
-        list(APPEND PLATFORM_SRC
-                source/psp2/psp2_renderer.cpp
-                source/psp2/psp2_texture.cpp)
-    endif (BUILD_PSP2_GL)
     list(APPEND FLAGS -Wl,-q -D__PSP2__
             -Wno-uninitialized
             -ftree-vectorize -mword-relocations
