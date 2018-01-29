@@ -7,8 +7,14 @@
 
 #include "skeleton/timer.h"
 
+using namespace c2d;
+
 Timer::Timer() {
     reset();
+}
+
+Timer::~Timer() {
+
 }
 
 void Timer::reset() {

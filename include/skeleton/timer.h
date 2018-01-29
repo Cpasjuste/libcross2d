@@ -7,21 +7,28 @@
 
 #include <sys/time.h>
 
-class Timer {
+namespace c2d {
 
-public:
-    Timer();
+    class Timer {
 
-    virtual void reset();
+    public:
 
-    virtual unsigned long getMicros();
+        Timer();
 
-    virtual unsigned long getMillis();
+        virtual ~Timer();
 
-    virtual unsigned int getSeconds();
+        virtual void reset();
 
-private:
-    struct timeval start;
-};
+        virtual unsigned long getMicros();
+
+        virtual unsigned long getMillis();
+
+        virtual unsigned int getSeconds();
+
+    private:
+
+        struct timeval start;
+    };
+}
 
 #endif //_TIMER_H_

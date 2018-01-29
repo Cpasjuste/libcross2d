@@ -300,7 +300,7 @@ extern c2d::Renderer *c2d_renderer;
 #endif
 
 #ifndef NO_KEYBOARD
-#if defined(__SDL2__) || defined(__SDL1__)
+#if defined(__SDL2__)
 #define KEY_KB_UP_DEFAULT      82
 #define KEY_KB_DOWN_DEFAULT    81
 #define KEY_KB_LEFT_DEFAULT    80
@@ -315,6 +315,22 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_KB_START1_DEFAULT  40
 #define KEY_KB_MENU1_DEFAULT   40
 #define KEY_KB_MENU2_DEFAULT   44
+#elif defined(__SDL1__)
+// SDLKey from SDL_keysym.h
+#define KEY_KB_UP_DEFAULT      273
+#define KEY_KB_DOWN_DEFAULT    274
+#define KEY_KB_LEFT_DEFAULT    276
+#define KEY_KB_RIGHT_DEFAULT   275
+#define KEY_KB_FIRE1_DEFAULT   257
+#define KEY_KB_FIRE2_DEFAULT   258
+#define KEY_KB_FIRE3_DEFAULT   259
+#define KEY_KB_FIRE4_DEFAULT   260
+#define KEY_KB_FIRE5_DEFAULT   261
+#define KEY_KB_FIRE6_DEFAULT   262
+#define KEY_KB_COIN1_DEFAULT   32
+#define KEY_KB_START1_DEFAULT  13
+#define KEY_KB_MENU1_DEFAULT   38
+#define KEY_KB_MENU2_DEFAULT   233
 #elif __SFML__
 #define KEY_KB_UP_DEFAULT      73
 #define KEY_KB_DOWN_DEFAULT    74

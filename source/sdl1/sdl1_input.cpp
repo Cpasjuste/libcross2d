@@ -3,8 +3,11 @@
 //
 
 #include <cmath>
-#include "../../include/sdl1/sdl1_input.h"
+#include "sdl1/sdl1_input.h"
+
+#if SDL_VERSION_ATLEAST(1, 3, 0)
 #include <SDL/SDL_keyboard.h>
+#endif
 
 using namespace c2d;
 
@@ -99,6 +102,8 @@ Input::Player *SDL1Input::Update(int rotate) {
             return players;
         }
     }
+
+    SDL_JoystickUpdate(); // ensure all joysticks are up-to-date to remove lag
 
     for (int i = 0; i < PLAYER_COUNT; i++) {
 

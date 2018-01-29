@@ -290,7 +290,6 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
                     break;
             }
         }
-
 #endif
 
         if (SDL_JoystickGetButton((SDL_Joystick *) player.data, mapping)) {
