@@ -57,7 +57,7 @@ GLTexture::GLTexture(const Vector2f &size, int format) : Texture(size, format) {
         pixels = (unsigned char *) malloc((size_t) (size.x * size.y * bpp));
         glBindTexture(GL_TEXTURE_2D, texID);
         glTexImage2D(GL_TEXTURE_2D, 0, bpp == 4 ? 4 : 3, (GLsizei) size.x, (GLsizei) size.y, 0,
-                     bpp == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, pixels);
+                     bpp == 4 ? GL_RGBA : GL_RGB, bpp == 4 ? GL_UNSIGNED_BYTE : GL_UNSIGNED_SHORT_5_6_5, pixels);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         available = true;
@@ -101,10 +101,10 @@ void GLTexture::unlock() {
 
     if (format == C2D_TEXTURE_FMT_RGBA8) {
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, (GLsizei) getSize().x, (GLsizei) getSize().y,
-                GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+                        GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     } else {
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, (GLsizei) getSize().x, (GLsizei) getSize().y,
-                GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
+                        GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
     }
 #endif
 }
