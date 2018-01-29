@@ -93,10 +93,10 @@ void PSP2Renderer::draw(const VertexArray &vertices,
             void *color_buffer;
             sceGxmReserveFragmentDefaultUniformBuffer(_vita2d_context, &color_buffer);
             float *tint_color = (float *) vita2d_pool_memalign(4 * sizeof(float), sizeof(float));
-            tint_color[0] = vertices[0].color.r;
-            tint_color[1] = vertices[0].color.g;
-            tint_color[2] = vertices[0].color.b;
-            tint_color[3] = vertices[0].color.a;
+            tint_color[0] = vertices[0].color.r / 255.0f;
+            tint_color[1] = vertices[0].color.g / 255.0f;
+            tint_color[2] = vertices[0].color.b / 255.0f;
+            tint_color[3] = vertices[0].color.a / 255.0f;
             sceGxmSetUniformDataF(color_buffer, _vita2d_textureTintColorParam, 0, 4, tint_color);
         }
 
@@ -154,7 +154,7 @@ void PSP2Renderer::draw(const VertexArray &vertices,
         sceGxmSetUniformDataF(vertexDefaultBuffer, _vita2d_colorWvpParam, 0, 16, _vita2d_ortho_matrix);
 
         sceGxmSetVertexStream(_vita2d_context, 0, v2d_vertices);
-        sceGxmDraw(_vita2d_context, SCE_GXM_PRIMITIVE_TRIANGLE_STRIP, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, count);
+        sceGxmDraw(_vita2d_context, type, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, count);
     }
 }
 
