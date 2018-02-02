@@ -9,13 +9,13 @@ using namespace c2d;
 
 Widget::Widget() {
 
-    printf("Widget(%p)\n", this);
+    //printf("Widget(%p)\n", this);
 }
 
 void Widget::add(Widget *widget) {
 
     if (widget) {
-        printf("Widget(%p): add(%p)\n", this, widget);
+        //printf("Widget(%p): add(%p)\n", this, widget);
         widget->parent = this;
         childs.push_back(widget);
     }
@@ -48,12 +48,37 @@ void Widget::setVisibility(int visibility) {
     this->visibility = visibility;
 }
 
+int Widget::getLayer() {
+    return layer;
+}
+
+static bool sortByLayer(Widget *w1, Widget *w2) {
+    return w1->getLayer() < w2->getLayer();
+}
+
+void Widget::setLayer(int layer) {
+
+    this->layer = layer;
+    if (parent) {
+        std::sort(parent->childs.begin(),
+                  parent->childs.end(),
+                  sortByLayer);
+    }
+}
+
+void Widget::remove(Widget *widget) {
+
+    childs.erase(std::remove(
+            childs.begin(), childs.end(), widget),
+                 childs.end());
+}
+
 Widget::~Widget() {
 
     // delete childs
     for (auto widget = childs.begin(); widget != childs.end();) {
         if (*widget) {
-            printf("~Widget(%p): delete child(%p)\n", this, *widget);
+            //printf("~Widget(%p): delete child(%p)\n", this, *widget);
             delete (*widget);
         }
     }
@@ -61,11 +86,11 @@ Widget::~Widget() {
 
     // remove from parent
     if (parent) {
-        printf("~Widget(%p): remove from parent(%p)\n", this, parent);
+        // printf("~Widget(%p): remove from parent(%p)\n", this, parent);
         parent->childs.erase(
                 std::remove(parent->childs.begin(), parent->childs.end(), this),
                 parent->childs.end());
     }
 
-    printf("~Widget(%p)\n", this);
+    //printf("~Widget(%p)\n", this);
 }

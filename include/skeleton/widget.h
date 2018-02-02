@@ -30,10 +30,18 @@ namespace c2d {
         // Childs
         void add(Widget *widget);
 
+        // remove a widget without calling
+        // it's destructor
+        void remove(Widget *widget);
+
         // visibility
         int getVisibility();
 
         void setVisibility(int visibility);
+
+        int getLayer();
+
+        void setLayer(int layer);
 
         bool available = false;
 
@@ -43,6 +51,7 @@ namespace c2d {
 
         Widget *parent = NULL;
         Transformable *thisTransform = NULL;
+        int layer = 0;
         std::vector<Widget *> childs;
     };
 }

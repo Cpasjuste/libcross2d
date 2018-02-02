@@ -64,14 +64,14 @@ namespace c2d {
 
         virtual ~Input() {};
 
-        virtual Player *Update(int rotate = 0) { return players; }; // to implement
-        virtual int GetButton(int player) { return -1; }; // to implement
+        virtual Player *update(int rotate = 0) { return players; }; // to implement
+        virtual int getButton(int player) { return -1; }; // to implement
 
-        virtual int Clear(int player);
+        virtual int clear(int player);
 
-        virtual void SetJoystickMapping(int player, int *mapping, int deadzone);
+        virtual void setJoystickMapping(int player, int *mapping, int deadzone);
 
-        virtual void SetKeyboardMapping(int *mapping);
+        virtual void setKeyboardMapping(int *mapping);
 
         Player players[PLAYER_COUNT];
         Keyboard keyboard;

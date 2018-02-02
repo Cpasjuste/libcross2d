@@ -8,10 +8,8 @@ using namespace c2d;
 
 #define MIN_SIZE_Y  200
 
-ListBox::ListBox(const Font &font,
-                 const FloatRect &rect,
-                 const std::vector<Io::File *> &fileList,
-                 int fontSize) : Rectangle(rect) {
+ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
+                 const std::vector<Io::File *> &fileList) : Rectangle(rect) {
 
     files = fileList;
 
@@ -20,18 +18,8 @@ ListBox::ListBox(const Font &font,
     setOutlineColor(Color::Orange);
     setOutlineThickness(2);
 
-    // calculate line height and maximum lines per page, adjust font size if needed
-    float font_scaling = 1;
-    font_size = fontSize > 0 ? fontSize : C2D_DEFAULT_CHAR_SIZE;
-    line_height = font_size > 0 ? font_size + 4 : (int) font.getLineSpacing(font_size) + 4;
+    line_height = fontSize + 4;
     max_lines = (int) getSize().y / line_height;
-    if (max_lines < 15 && fontSize <= 0) {
-        // scale text to see enough lines on small screens
-        max_lines = std::min(getSize().y < MIN_SIZE_Y ? 10 : 15, (int) files.size());
-        font_scaling = (getSize().y / (float) max_lines) / line_height;
-        font_size *= font_scaling;
-        line_height *= font_scaling;
-    }
 
     // add selection rectangle (highlight)
     rectangle = new Rectangle(Vector2f(getSize().x - 4, line_height));
@@ -43,10 +31,10 @@ ListBox::ListBox(const Font &font,
     for (int i = 0; i < max_lines; i++) {
         lines.push_back(new Text());
         lines[i]->setFont(font);
-        lines[i]->setCharacterSize((unsigned int) font_size);
+        lines[i]->setCharacterSize((unsigned int) fontSize);
         lines[i]->setOutlineThickness(getSize().y < MIN_SIZE_Y ? 1 : 2);
         lines[i]->setOutlineColor(Color::Black);
-        lines[i]->setPosition(8 * font_scaling, (12 * font_scaling) + line_height * i);
+        lines[i]->setPosition(8, 12 + line_height * i);
         lines[i]->setSizeMax(Vector2f(getSize().x, 0));
         add(lines[i]);
     }
@@ -61,8 +49,16 @@ ListBox::~ListBox() {
     lines.clear();
 }
 
-void ListBox::setSelection(int index) {
+void ListBox::setSelection(int idx) {
 
+    if (files.size() < 1) {
+        rectangle->setVisibility(C2D_VISIBILITY_HIDDEN);
+        return;
+    } else {
+        rectangle->setVisibility(C2D_VISIBILITY_VISIBLE);
+    }
+
+    index = idx;
     int page = index / max_lines;
     int index_start = page * max_lines;
 
@@ -96,10 +92,6 @@ void ListBox::setSelection(int index) {
             }
         }
     }
-}
-
-unsigned int ListBox::getFontSize() {
-    return font_size;
 }
 
 std::vector<c2d::Text *> ListBox::getLines() {

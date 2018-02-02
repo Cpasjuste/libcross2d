@@ -79,7 +79,7 @@ SDL1Input::~SDL1Input() {
     }
 }
 
-int SDL1Input::GetButton(int player) {
+int SDL1Input::getButton(int player) {
     SDL_Event event = {};
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_JOYBUTTONDOWN) {
@@ -89,7 +89,7 @@ int SDL1Input::GetButton(int player) {
     return -1;
 }
 
-Input::Player *SDL1Input::Update(int rotate) {
+Input::Player *SDL1Input::update(int rotate) {
 
     for (int i = 0; i < PLAYER_COUNT; i++) {
         players[i].state = 0;

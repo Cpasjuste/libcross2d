@@ -13,6 +13,8 @@ namespace c2d {
 
     public:
 
+        Rectangle();
+
         Rectangle(const FloatRect &rect = FloatRect(0, 0, 0, 0));
 
         Rectangle(const Vector2f &size = Vector2f(0, 0));
