@@ -76,7 +76,7 @@ SDL2Input::~SDL2Input() {
     }
 }
 
-int SDL2Input::GetButton(int player) {
+int SDL2Input::getButton(int player) {
     SDL_Event event = {};
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_JOYBUTTONDOWN) {
@@ -86,7 +86,7 @@ int SDL2Input::GetButton(int player) {
     return -1;
 }
 
-Input::Player *SDL2Input::Update(int rotate) {
+Input::Player *SDL2Input::update(int rotate) {
 
     for (int i = 0; i < PLAYER_COUNT; i++) {
         players[i].state = 0;

@@ -17,9 +17,9 @@ namespace c2d {
 
         virtual ~SDL2Input();
 
-        virtual Player *Update(int rotate);
+        virtual Player *update(int rotate = 0);
 
-        virtual int GetButton(int player);
+        virtual int getButton(int player);
 
     private:
         virtual void process_axis(Input::Player &player, int rotate);

@@ -186,7 +186,7 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         5
 
 #elif __SDL1__
-
+s
 #include "sdl1/sdl1_renderer.h"
 #include "skeleton/texturegl.h"
 #include "sdl1/sdl1_input.h"
@@ -301,20 +301,21 @@ extern c2d::Renderer *c2d_renderer;
 
 #ifndef NO_KEYBOARD
 #if defined(__SDL2__)
+// SDL key.keysym.scancode
 #define KEY_KB_UP_DEFAULT      82
 #define KEY_KB_DOWN_DEFAULT    81
 #define KEY_KB_LEFT_DEFAULT    80
 #define KEY_KB_RIGHT_DEFAULT   79
-#define KEY_KB_FIRE1_DEFAULT   89
-#define KEY_KB_FIRE2_DEFAULT   90
-#define KEY_KB_FIRE3_DEFAULT   91
-#define KEY_KB_FIRE4_DEFAULT   92
-#define KEY_KB_FIRE5_DEFAULT   93
-#define KEY_KB_FIRE6_DEFAULT   94
-#define KEY_KB_COIN1_DEFAULT   44
-#define KEY_KB_START1_DEFAULT  40
-#define KEY_KB_MENU1_DEFAULT   40
-#define KEY_KB_MENU2_DEFAULT   44
+#define KEY_KB_FIRE1_DEFAULT   20   // A
+#define KEY_KB_FIRE2_DEFAULT   26   // Z
+#define KEY_KB_FIRE3_DEFAULT   8    // E
+#define KEY_KB_FIRE4_DEFAULT   4    // Q
+#define KEY_KB_FIRE5_DEFAULT   22   // S
+#define KEY_KB_FIRE6_DEFAULT   7    // D
+#define KEY_KB_COIN1_DEFAULT   44   // SPACE
+#define KEY_KB_START1_DEFAULT  40   // ENTER
+#define KEY_KB_MENU1_DEFAULT   40   // ENTER
+#define KEY_KB_MENU2_DEFAULT   44   // SPACE
 #elif defined(__SDL1__)
 // SDLKey from SDL_keysym.h
 #define KEY_KB_UP_DEFAULT      273
