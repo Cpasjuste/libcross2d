@@ -9,7 +9,7 @@
 
 namespace c2d {
 
-    class PSP2Io : Io {
+    class PSP2Io : public Io {
 
     public:
 

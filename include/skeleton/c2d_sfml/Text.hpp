@@ -33,7 +33,7 @@
 #include "Font.hpp"
 #include "Rect.hpp"
 #include "VertexArray.hpp"
-#include "String.hpp"
+//#include "String.hpp"
 #include <string>
 #include <vector>
 
@@ -81,7 +81,7 @@ namespace sfml {
         /// \param characterSize  Base size of characters, in pixels
         ///
         ////////////////////////////////////////////////////////////
-        Text(const c2d::String &string, const c2d::Font &font, unsigned int characterSize = 30);
+        Text(const std::string &string, const c2d::Font &font, unsigned int characterSize = 30);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the text's string
@@ -102,7 +102,7 @@ namespace sfml {
         /// \see getString
         ///
         ////////////////////////////////////////////////////////////
-        void setString(const c2d::String &string);
+        void setString(const std::string &string);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the text's font
@@ -212,7 +212,7 @@ namespace sfml {
         /// \see setString
         ///
         ////////////////////////////////////////////////////////////
-        const c2d::String &getString() const;
+        const std::string &getString() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the text's font
@@ -341,6 +341,8 @@ namespace sfml {
 
         void setSizeMax(const c2d::Vector2f &maxSize);
 
+        void setSizeMax(float x, float y);
+
         void setLineSpacingModifier(int size);
 
     private:
@@ -368,7 +370,7 @@ namespace sfml {
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        c2d::String m_string;             ///< String to display
+        std::string m_string;             ///< String to display
         const c2d::Font *m_font;               ///< Font used to display the string
         unsigned int m_characterSize;      ///< Base size of characters, in pixels
         Uint32 m_style;              ///< Text style (see Style enum)
@@ -379,7 +381,7 @@ namespace sfml {
         mutable c2d::VertexArray m_outlineVertices;    ///< Vertex array containing the outline geometry
         mutable c2d::FloatRect m_bounds;             ///< Bounding rectangle of the text (in local coordinates)
         mutable bool m_geometryNeedUpdate; ///< Does the geometry need to be recomputed?
-        c2d::Vector2f maxSize;
+        c2d::Vector2f maxSize = c2d::Vector2f(0, 0);
         int m_line_spacing = 0;
     };
 

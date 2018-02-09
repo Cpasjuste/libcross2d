@@ -108,7 +108,7 @@ namespace sfml {
 
 
 ////////////////////////////////////////////////////////////
-    Text::Text(const String &string, const Font &font, unsigned int characterSize) :
+    Text::Text(const std::string &string, const Font &font, unsigned int characterSize) :
             m_string(string),
             m_font(&font),
             m_characterSize(characterSize),
@@ -125,10 +125,12 @@ namespace sfml {
 
 
 ////////////////////////////////////////////////////////////
-    void Text::setString(const String &string) {
+    void Text::setString(const std::string &string) {
         if (m_string != string) {
             m_string = string;
             m_geometryNeedUpdate = true;
+            // PSP2 fix: update now as we can't delete vita2d_texture when drawing
+            ensureGeometryUpdate();
         }
     }
 
@@ -199,7 +201,7 @@ namespace sfml {
 
 
 ////////////////////////////////////////////////////////////
-    const String &Text::getString() const {
+    const std::string &Text::getString() const {
         return m_string;
     }
 
@@ -246,8 +248,10 @@ namespace sfml {
             return Vector2f();
 
         // Adjust the index if it's out of range
-        if (index > m_string.getSize())
-            index = m_string.getSize();
+        //if (index > m_string.getSize())
+        //    index = m_string.getSize();
+        if (index > m_string.length())
+            index = m_string.length();
 
         // Precompute the variables needed by the algorithm
         bool bold = (m_style & Bold) != 0;
@@ -361,6 +365,12 @@ namespace sfml {
         m_geometryNeedUpdate = true;
     }
 
+    void Text::setSizeMax(float x, float y) {
+        maxSize.x = x;
+        maxSize.y = y;
+        m_geometryNeedUpdate = true;
+    }
+
     void Text::setLineSpacingModifier(int size) {
         m_line_spacing = size;
     }
@@ -381,7 +391,7 @@ namespace sfml {
         m_bounds = FloatRect();
 
         // No font or text: nothing to draw
-        if (!m_font || m_string.isEmpty())
+        if (!m_font || m_string.empty())
             return;
 
         // Compute values related to the text style
@@ -410,7 +420,7 @@ namespace sfml {
         float maxX = 0.f;
         float maxY = 0.f;
         Uint32 prevChar = 0;
-        for (std::size_t i = 0; i < m_string.getSize(); ++i) {
+        for (std::size_t i = 0; i < m_string.length(); ++i) {
 
             Uint32 curChar = m_string[i];
 
@@ -420,14 +430,14 @@ namespace sfml {
 
             // handle maxSize.x // TODO: handle maxSize.y ?
             if (maxSize.x > 0 && ((x + m_characterSize) * getScale().x > maxSize.x)) {
-                while (i < m_string.getSize()) {
+                while (i < m_string.length()) {
                     curChar = m_string[i];
                     if (curChar == '\n') {
                         break;
                     }
                     i++;
                 }
-                if (i >= m_string.getSize()) {
+                if (i >= m_string.length()) {
                     break;
                 }
             }

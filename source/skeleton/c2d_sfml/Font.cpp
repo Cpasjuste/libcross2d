@@ -306,7 +306,7 @@ namespace c2d {
         m_pages[characterSize].texture->setFiltering(m_filtering);
 
         // Build the key by combining the code point, bold flag, and outline thickness
-        Uint64 key = (static_cast<Uint64>(*reinterpret_cast<Uint32 *>(&outlineThickness)) << 32)
+        Uint64 key = (static_cast<Uint64>(*&outlineThickness) << 32)
                      | (static_cast<Uint64>(bold ? 1 : 0) << 31)
                      | static_cast<Uint64>(codePoint);
 
@@ -696,8 +696,9 @@ namespace c2d {
                 //    (textureHeight * 2 <= Texture::getMaximumSize())) {
                 if ((textureWidth * 2 <= 1024) &&
                     (textureHeight * 2 <= 1024)) {
-
-                    // Make the texture 2 times bigger
+                    // TODO
+                    //page.texture->resize(Vector2f(textureWidth * 2, textureHeight * 2));
+                    // TODO
                     Texture *texture = new C2DTexture(
                             Vector2f(textureWidth * 2, textureHeight * 2), C2D_TEXTURE_FMT_RGBA8);
                     texture->setFiltering(m_filtering);
@@ -717,7 +718,6 @@ namespace c2d {
 
                     delete (page.texture);
                     page.texture = texture;
-
                 } else {
                     // Oops, we've reached the maximum texture size...
                     printf("Failed to add a new character to the font: the maximum texture size has been reached\n");
@@ -777,6 +777,7 @@ namespace c2d {
 
         if (texture) {
             delete (texture);
+            texture = NULL;
         }
 
         texture = new C2DTexture(Vector2f(128, 128), C2D_TEXTURE_FMT_RGBA8);
@@ -799,6 +800,7 @@ namespace c2d {
     Font::Page::~Page() {
         if (texture) {
             delete (texture);
+            texture = NULL;
         }
     }
 

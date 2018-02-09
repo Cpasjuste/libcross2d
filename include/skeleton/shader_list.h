@@ -10,11 +10,12 @@
 
 namespace c2d {
 
-    class Shaders {
+    class ShaderList {
 
     public:
 
         struct Shader {
+
             std::string name;
             void *data = NULL;
 
@@ -24,11 +25,11 @@ namespace c2d {
             }
         };
 
-        Shaders(const std::string &shadersPath) {
+        ShaderList(const std::string &shadersPath) {
             list.push_back(Shader("NONE", NULL));
         }
 
-        virtual ~Shaders() {
+        virtual ~ShaderList() {
             list.clear();
         }
 
@@ -36,18 +37,20 @@ namespace c2d {
             list.push_back(Shader(n, d));
         }
 
-        virtual Shader *get() {
-            if ((size_t) current >= list.size()) {
-                return NULL;
-            }
-            return &list[current];
-        }
-
         virtual Shader *get(int index) {
             if ((size_t) index >= list.size()) {
                 return NULL;
             }
             return &list[index];
+        }
+
+        virtual Shader *get(const std::string &name) {
+            for (size_t i = 0; i < list.size(); i++) {
+                if (list[i].name == name) {
+                    return &list[i];
+                }
+            }
+            return NULL;
         }
 
         virtual std::vector<std::string> getNames() {
@@ -61,8 +64,6 @@ namespace c2d {
         virtual int getCount() {
             return list.size();
         }
-
-        int current = 0;
 
     private:
         std::vector<Shader> list;

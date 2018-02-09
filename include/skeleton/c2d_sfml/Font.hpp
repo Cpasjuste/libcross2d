@@ -34,7 +34,7 @@
 //#include <SFML/Graphics/Texture.hpp>
 #include "Rect.hpp"
 #include "Vector2.hpp"
-#include "String.hpp"
+//#include "String.hpp"
 #include "InputStream.hpp"
 #include <map>
 #include <string>

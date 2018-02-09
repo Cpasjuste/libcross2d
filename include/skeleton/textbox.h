@@ -14,7 +14,7 @@ namespace c2d {
 
     public:
 
-        TextBox(const String &string, const Font &font,
+        TextBox(const std::string &string, const Font &font,
                 const FloatRect &rect = FloatRect(),
                 const Color &fillColor = Color::GrayLight,
                 const Color &textColor = Color::White);

@@ -3,7 +3,6 @@
 //
 
 #include <SDL2/SDL.h>
-#include <vita2d.h>
 #include <psp2/kernel/threadmgr.h>
 
 #include "psp2/psp2_renderer.h"
@@ -13,7 +12,6 @@
 using namespace c2d;
 
 extern "C" {
-extern SceGxmContext *_vita2d_context;
 extern float _vita2d_ortho_matrix[4 * 4];
 extern SceGxmVertexProgram *_vita2d_colorVertexProgram;
 extern SceGxmFragmentProgram *_vita2d_colorFragmentProgram;
@@ -35,17 +33,7 @@ PSP2Renderer::PSP2Renderer(const Vector2f &size) : Renderer(size) {
 
     vita2d_init();
 
-    this->shaders = (Shaders *) new PSP2Shaders("");
-    setShader(0);
-}
-
-void PSP2Renderer::setShader(int index) {
-
-    if (index == shaders->current || index >= shaders->getCount()) {
-        return;
-    }
-
-    shaders->current = index;
+    shaderList = (ShaderList *) new PSP2ShaderList("");
 }
 
 void PSP2Renderer::draw(const VertexArray &vertices,
@@ -56,6 +44,11 @@ void PSP2Renderer::draw(const VertexArray &vertices,
 
     uint16_t *v2d_indices = (uint16_t *) vita2d_pool_memalign(
             count * sizeof(uint16_t), sizeof(uint16_t));
+
+    if (!v2d_indices) {
+        printf("PSP2Render::draw: vita2d_pool_memalign failed (v2d_indices)\n");
+        return;
+    }
 
     SceGxmPrimitiveType type;
     switch (vertices.getPrimitiveType()) {
@@ -81,17 +74,16 @@ void PSP2Renderer::draw(const VertexArray &vertices,
             return;
     }
 
-    if (texture) {
-
+    PSP2Texture *tex = (PSP2Texture *) texture;
+    if (tex) {
         if (vertices[0].color == Color::White) {
-            vita2d_shader *shader = (vita2d_shader *) shaders->get()->data;
-            sceGxmSetVertexProgram(_vita2d_context, shader->vertexProgram);
-            sceGxmSetFragmentProgram(_vita2d_context, shader->fragmentProgram);
+            // we only apply custom shader to "white" texture
+            tex->applyShader();
         } else {
-            sceGxmSetVertexProgram(_vita2d_context, _vita2d_textureVertexProgram);
-            sceGxmSetFragmentProgram(_vita2d_context, _vita2d_textureTintFragmentProgram);
+            sceGxmSetVertexProgram(vita2d_get_context(), _vita2d_textureVertexProgram);
+            sceGxmSetFragmentProgram(vita2d_get_context(), _vita2d_textureTintFragmentProgram);
             void *color_buffer;
-            sceGxmReserveFragmentDefaultUniformBuffer(_vita2d_context, &color_buffer);
+            sceGxmReserveFragmentDefaultUniformBuffer(vita2d_get_context(), &color_buffer);
             float *tint_color = (float *) vita2d_pool_memalign(4 * sizeof(float), sizeof(float));
             tint_color[0] = vertices[0].color.r / 255.0f;
             tint_color[1] = vertices[0].color.g / 255.0f;
@@ -105,25 +97,29 @@ void PSP2Renderer::draw(const VertexArray &vertices,
                         count * sizeof(vita2d_texture_vertex),
                         sizeof(vita2d_texture_vertex));
 
+        if (!v2d_vertices) {
+            printf("PSP2Render::draw: vita2d_pool_memalign failed (v2d_vertices)\n");
+            return;
+        }
+
         for (unsigned int i = 0; i < count; i++) {
             Vector2f v = transform.transformPoint(vertices[i].position);
 
             v2d_vertices[i].x = v.x;
             v2d_vertices[i].y = v.y;
             v2d_vertices[i].z = +0.5f;
-            v2d_vertices[i].u = vertices[i].texCoords.x / texture->getSize().x;
-            v2d_vertices[i].v = vertices[i].texCoords.y / texture->getSize().y;
+            v2d_vertices[i].u = vertices[i].texCoords.x / tex->getSize().x;
+            v2d_vertices[i].v = vertices[i].texCoords.y / tex->getSize().y;
 
             v2d_indices[i] = (uint16_t) i;
         }
 
         void *vertex_wvp_buffer;
-        sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertex_wvp_buffer);
+        sceGxmReserveVertexDefaultUniformBuffer(vita2d_get_context(), &vertex_wvp_buffer);
         sceGxmSetUniformDataF(vertex_wvp_buffer, _vita2d_textureWvpParam, 0, 16, _vita2d_ortho_matrix);
-
-        sceGxmSetFragmentTexture(_vita2d_context, 0, &((PSP2Texture *) texture)->tex->gxm_tex);
-        sceGxmSetVertexStream(_vita2d_context, 0, v2d_vertices);
-        sceGxmDraw(_vita2d_context, type, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, count);
+        sceGxmSetFragmentTexture(vita2d_get_context(), 0, &tex->tex->gxm_tex);
+        sceGxmSetVertexStream(vita2d_get_context(), 0, v2d_vertices);
+        sceGxmDraw(vita2d_get_context(), type, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, count);
 
     } else {
 
@@ -132,6 +128,11 @@ void PSP2Renderer::draw(const VertexArray &vertices,
                         vita2d_pool_memalign(
                                 count * sizeof(vita2d_color_vertex),
                                 sizeof(vita2d_color_vertex));
+
+        if (!v2d_vertices) {
+            printf("PSP2Render::draw: vita2d_pool_memalign failed (v2d_vertices)\n");
+            return;
+        }
 
         for (unsigned int i = 0; i < count; i++) {
             Vector2f v = transform.transformPoint(vertices[i].position);
@@ -146,15 +147,15 @@ void PSP2Renderer::draw(const VertexArray &vertices,
             v2d_indices[i] = (uint16_t) i;
         }
 
-        sceGxmSetVertexProgram(_vita2d_context, _vita2d_colorVertexProgram);
-        sceGxmSetFragmentProgram(_vita2d_context, _vita2d_colorFragmentProgram);
+        sceGxmSetVertexProgram(vita2d_get_context(), _vita2d_colorVertexProgram);
+        sceGxmSetFragmentProgram(vita2d_get_context(), _vita2d_colorFragmentProgram);
 
         void *vertexDefaultBuffer;
-        sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertexDefaultBuffer);
+        sceGxmReserveVertexDefaultUniformBuffer(vita2d_get_context(), &vertexDefaultBuffer);
         sceGxmSetUniformDataF(vertexDefaultBuffer, _vita2d_colorWvpParam, 0, 16, _vita2d_ortho_matrix);
 
-        sceGxmSetVertexStream(_vita2d_context, 0, v2d_vertices);
-        sceGxmDraw(_vita2d_context, type, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, count);
+        sceGxmSetVertexStream(vita2d_get_context(), 0, v2d_vertices);
+        sceGxmDraw(vita2d_get_context(), type, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, count);
     }
 }
 
@@ -192,5 +193,5 @@ PSP2Renderer::~PSP2Renderer() {
 
     vita2d_wait_rendering_done();
     vita2d_fini();
-    delete (shaders);
+    delete (shaderList);
 }

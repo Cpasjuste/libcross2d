@@ -14,7 +14,7 @@ Text::Text() {
     thisTransform = this;
 }
 
-Text::Text(const String &string, const Font &font, unsigned int characterSize)
+Text::Text(const std::string &string, const Font &font, unsigned int characterSize)
         : sfml::Text(string, font, characterSize) {
 
     //printf("Text(%p): %ix%i\n", this,

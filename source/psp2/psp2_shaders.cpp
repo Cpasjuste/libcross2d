@@ -33,26 +33,26 @@
 
 using namespace c2d;
 
-PSP2Shaders::PSP2Shaders(const std::string &shadersPath) : Shaders(shadersPath) {
+PSP2ShaderList::PSP2ShaderList(const std::string &shadersPath) : ShaderList(shadersPath) {
 
     // parent class add a "NONE" shader, we set it to a simple texture shader
-    get(0)->data = createShader((SceGxmProgram *) texture_v, (SceGxmProgram *) texture_f);
+    get(0)->data = create((SceGxmProgram *) texture_v, (SceGxmProgram *) texture_f);
 
     add("lcd3x",
-        createShader((SceGxmProgram *) lcd3x_v, (SceGxmProgram *) lcd3x_f));
+        create((SceGxmProgram *) lcd3x_v, (SceGxmProgram *) lcd3x_f));
     add("sharp",
-        createShader((SceGxmProgram *) sharp_bilinear_simple_v, (SceGxmProgram *) sharp_bilinear_simple_f));
+        create((SceGxmProgram *) sharp_bilinear_simple_v, (SceGxmProgram *) sharp_bilinear_simple_f));
     add("sharp+scan",
-        createShader((SceGxmProgram *) sharp_bilinear_v, (SceGxmProgram *) sharp_bilinear_f));
+        create((SceGxmProgram *) sharp_bilinear_v, (SceGxmProgram *) sharp_bilinear_f));
     add("aaa",
-        createShader((SceGxmProgram *) advanced_aa_v, (SceGxmProgram *) advanced_aa_f));
+        create((SceGxmProgram *) advanced_aa_v, (SceGxmProgram *) advanced_aa_f));
     add("scale2x",
-        createShader((SceGxmProgram *) scale2x_v, (SceGxmProgram *) scale2x_f));
+        create((SceGxmProgram *) scale2x_v, (SceGxmProgram *) scale2x_f));
 
-    printf("PSP2Shader: found %i shaders\n", getCount() - 1);
+    printf("PSP2ShaderList: found %i shaders\n", getCount() - 1);
 }
 
-PSP2Shaders::~PSP2Shaders() {
+PSP2ShaderList::~PSP2ShaderList() {
 
     SceGxmShaderPatcher *shaderPatcher = vita2d_get_shader_patcher();
 
@@ -70,7 +70,7 @@ PSP2Shaders::~PSP2Shaders() {
 
 // from frangarcj
 vita2d_shader *
-PSP2Shaders::createShader(const SceGxmProgram *vertexProgramGxp, const SceGxmProgram *fragmentProgramGxp) {
+PSP2ShaderList::create(const SceGxmProgram *vertexProgramGxp, const SceGxmProgram *fragmentProgramGxp) {
 
     vita2d_shader *shader = (vita2d_shader *) malloc(sizeof(*shader));
     SceGxmShaderPatcher *shaderPatcher = vita2d_get_shader_patcher();
@@ -83,6 +83,14 @@ PSP2Shaders::createShader(const SceGxmProgram *vertexProgramGxp, const SceGxmPro
 
     shader->paramPositionAttribute = sceGxmProgramFindParameterByName(vertexProgramGxp, "aPosition");
     shader->paramTexcoordAttribute = sceGxmProgramFindParameterByName(vertexProgramGxp, "aTexcoord");
+
+    shader->vertexInput.texture_size = sceGxmProgramFindParameterByName(vertexProgramGxp, "IN.texture_size");
+    shader->vertexInput.output_size = sceGxmProgramFindParameterByName(vertexProgramGxp, "IN.output_size");
+    shader->vertexInput.video_size = sceGxmProgramFindParameterByName(vertexProgramGxp, "IN.video_size");
+
+    shader->fragmentInput.texture_size = sceGxmProgramFindParameterByName(fragmentProgramGxp, "IN.texture_size");
+    shader->fragmentInput.output_size = sceGxmProgramFindParameterByName(fragmentProgramGxp, "IN.output_size");
+    shader->fragmentInput.video_size = sceGxmProgramFindParameterByName(fragmentProgramGxp, "IN.video_size");
 
     // create texture vertex format
     SceGxmVertexAttribute textureVertexAttributes[2];
@@ -138,4 +146,38 @@ PSP2Shaders::createShader(const SceGxmProgram *vertexProgramGxp, const SceGxmPro
     shader->wvpParam = sceGxmProgramFindParameterByName(vertexProgramGxp, "wvp");
 
     return shader;
+}
+
+void PSP2ShaderList::setVertexUniform(
+        const vita2d_shader *shader,
+        const char *param, const float *value, unsigned int length) {
+    void *vertex_wvp_buffer;
+    const SceGxmProgram *program = sceGxmVertexProgramGetProgram(shader->vertexProgram);
+    const SceGxmProgramParameter *program_parameter = sceGxmProgramFindParameterByName(program, param);
+    sceGxmReserveVertexDefaultUniformBuffer(vita2d_get_context(), &vertex_wvp_buffer);
+    sceGxmSetUniformDataF(vertex_wvp_buffer, program_parameter, 0, length, value);
+}
+
+void PSP2ShaderList::setVertexUniform(
+        const SceGxmProgramParameter *program_parameter, const float *value, unsigned int length) {
+    void *vertex_wvp_buffer;
+    sceGxmReserveVertexDefaultUniformBuffer(vita2d_get_context(), &vertex_wvp_buffer);
+    sceGxmSetUniformDataF(vertex_wvp_buffer, program_parameter, 0, length, value);
+}
+
+void PSP2ShaderList::setFragmentUniform(
+        const vita2d_shader *shader,
+        const char *param, const float *value, unsigned int length) {
+    void *fragment_wvp_buffer;
+    const SceGxmProgram *program = sceGxmFragmentProgramGetProgram(shader->fragmentProgram);
+    const SceGxmProgramParameter *program_parameter = sceGxmProgramFindParameterByName(program, param);
+    sceGxmReserveFragmentDefaultUniformBuffer(vita2d_get_context(), &fragment_wvp_buffer);
+    sceGxmSetUniformDataF(fragment_wvp_buffer, program_parameter, 0, length, value);
+}
+
+void PSP2ShaderList::setFragmentUniform(
+        const SceGxmProgramParameter *program_parameter, const float *value, unsigned int length) {
+    void *fragment_wvp_buffer;
+    sceGxmReserveFragmentDefaultUniformBuffer(vita2d_get_context(), &fragment_wvp_buffer);
+    sceGxmSetUniformDataF(fragment_wvp_buffer, program_parameter, 0, length, value);
 }

@@ -10,7 +10,7 @@
 
 namespace c2d {
 
-    class SDL2Input : Input {
+    class SDL2Input : public Input {
 
     public:
         SDL2Input(Renderer *renderer);

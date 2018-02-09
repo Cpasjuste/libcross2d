@@ -14,7 +14,9 @@ int main() {
     renderer->setFillColor(Color::Black);
 
     // create a rect
-    Rectangle *rect = new C2DRectangle(FloatRect(208, 208, 400, 400));
+    Rectangle *rect = new C2DRectangle(
+            FloatRect(renderer->getSize().x / 2, renderer->getSize().y / 2,
+                      renderer->getSize().x / 2, renderer->getSize().y / 2));
     rect->setOriginCenter();
     rect->setFillColor(Color::Gray);
     rect->setOutlineColor(Color::Orange);
@@ -41,6 +43,20 @@ int main() {
         rect->add(text);
     }
 
+    std::vector<Io::File *> files;
+    for (int i = 0; i < 10000; i++) {
+        Io::File *file = new Io::File();
+        file->name = (char *) malloc(64);
+        strcpy(file->name, "Heapo, 'dfsQSq a13ddql:a");
+        file->color = Color::Red;
+        files.push_back(file);
+    }
+    ListBox *listBox = new ListBox(font, 20, rect->getLocalBounds(), (std::vector<Io::File *> &) files);
+    listBox->setOutlineThickness(2);
+    listBox->setFillColor(Color::GrayLight);
+    listBox->setOutlineColor(Color::Orange);
+    rect->add(listBox);
+
     // add all this crap to the renderer
     renderer->add(rect);
 
@@ -53,7 +69,7 @@ int main() {
         }
 
         renderer->flip();
-        renderer->delay(500);
+        renderer->delay(5000);
     }
 
     // will delete widgets recursively

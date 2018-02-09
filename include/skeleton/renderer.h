@@ -15,7 +15,7 @@
 #include "line.h"
 #include "text.h"
 #include "texture.h"
-#include "shaders.h"
+#include "shader_list.h"
 
 #ifndef MAX_PATH
 #define MAX_PATH 512
@@ -47,13 +47,11 @@ namespace c2d {
 
         virtual void delay(unsigned int ms);
 
-        virtual void setShader(int shader);
-
-        virtual Shaders *getShaders();
+        virtual ShaderList *getShaderList();
 
     protected:
 
-        Shaders *shaders;
+        ShaderList *shaderList = NULL;
     };
 }
 

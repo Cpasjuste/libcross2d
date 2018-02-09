@@ -18,25 +18,23 @@ ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
     setOutlineColor(Color::Orange);
     setOutlineThickness(2);
 
-    line_height = fontSize + 4;
+    line_height = (int) font.getLineSpacing((unsigned int) fontSize) + 8;
     max_lines = (int) getSize().y / line_height;
 
     // add selection rectangle (highlight)
-    rectangle = new Rectangle(Vector2f(getSize().x - 4, line_height));
-    rectangle->setOutlineThickness(1);
-    rectangle->setOrigin(0, line_height / 2);
-    add(rectangle);
+    highlight = new Rectangle(Vector2f(getSize().x - 4, line_height));
+    highlight->setOutlineThickness(1);
+    add(highlight);
 
     // add lines of text
     for (int i = 0; i < max_lines; i++) {
-        lines.push_back(new Text());
-        lines[i]->setFont(font);
-        lines[i]->setCharacterSize((unsigned int) fontSize);
-        lines[i]->setOutlineThickness(getSize().y < MIN_SIZE_Y ? 1 : 2);
-        lines[i]->setOutlineColor(Color::Black);
-        lines[i]->setPosition(8, 12 + line_height * i);
-        lines[i]->setSizeMax(Vector2f(getSize().x, 0));
-        add(lines[i]);
+        Text *text = new Text("LINE", font, (unsigned int) fontSize);
+        text->setOutlineThickness(getSize().y < MIN_SIZE_Y ? 1 : 2);
+        text->setOutlineColor(Color::Black);
+        text->setPosition(8, 8 + line_height * i);
+        text->setSizeMax(Vector2f(getSize().x, 0));
+        add(text);
+        lines.push_back(text);
     }
 
     // update texts
@@ -44,19 +42,12 @@ ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
 };
 
 ListBox::~ListBox() {
-    // no need to delete lines pointer,
+    // no need to delete lines widgets (ptr),
     // will be delete by parent (widget)
     lines.clear();
 }
 
 void ListBox::setSelection(int idx) {
-
-    if (files.size() < 1) {
-        rectangle->setVisibility(C2D_VISIBILITY_HIDDEN);
-        return;
-    } else {
-        rectangle->setVisibility(C2D_VISIBILITY_VISIBLE);
-    }
 
     index = idx;
     int page = index / max_lines;
@@ -67,20 +58,18 @@ void ListBox::setSelection(int idx) {
         if (index_start + i >= (int) files.size()) {
             lines[i]->setVisibility(C2D_VISIBILITY_HIDDEN);
         } else {
-
             // set file
             Io::File *file = files.at((unsigned long) (index_start + i));
             lines[i]->setVisibility(C2D_VISIBILITY_VISIBLE);
-            lines[i]->setString(file->name.c_str());
-
+            lines[i]->setString(file->name);
             // set text color based on file color
             lines[i]->setFillColor(file->color);
 
             // set highlight position and color
             if (index_start + i == index) {
-                rectangle->setPosition(2, lines[i]->getGlobalBounds().top - 1);
+                highlight->setPosition(2, lines[i]->getPosition().y - 6);
                 Color color = file->color;
-                rectangle->setOutlineColor(color);
+                highlight->setOutlineColor(color);
 #ifdef __TINYGL__
                 color.r *= 0.25f;
                 color.g *= 0.25f;
@@ -88,9 +77,15 @@ void ListBox::setSelection(int idx) {
 #else
                 color.a = 100;
 #endif
-                rectangle->setFillColor(color);
+                highlight->setFillColor(color);
             }
         }
+    }
+
+    if (files.size() < 1) {
+        highlight->setVisibility(C2D_VISIBILITY_HIDDEN);
+    } else {
+        highlight->setVisibility(C2D_VISIBILITY_VISIBLE);
     }
 }
 
@@ -103,7 +98,8 @@ std::vector<c2d::Io::File *> ListBox::getFiles() {
 }
 
 Io::File *ListBox::getSelection() {
-    return files[index];
+    return (int) files.size() <= index ? NULL : files[index];
+
 }
 
 int ListBox::getIndex() {
@@ -111,7 +107,7 @@ int ListBox::getIndex() {
 }
 
 void ListBox::setHighLight(bool enable) {
-    rectangle->setVisibility(enable ? C2D_VISIBILITY_VISIBLE
+    highlight->setVisibility(enable ? C2D_VISIBILITY_VISIBLE
                                     : C2D_VISIBILITY_HIDDEN);
 }
 

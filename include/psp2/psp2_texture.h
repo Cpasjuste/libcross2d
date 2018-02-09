@@ -20,9 +20,15 @@ namespace c2d {
 
         ~PSP2Texture();
 
+        int resize(const Vector2f &size, bool copyPixels = true);
+
         int lock(FloatRect *rect, void **pixels, int *pitch);
 
         void setFiltering(int filter);
+
+        void setShader(int shader);
+
+        void applyShader();
 
         //private:
         vita2d_texture *tex = nullptr;

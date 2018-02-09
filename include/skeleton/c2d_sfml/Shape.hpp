@@ -99,7 +99,7 @@ namespace c2d {
         /// \see getFillColor, setOutlineColor
         ///
         ////////////////////////////////////////////////////////////
-        void setFillColor(const Color &color);
+        virtual void setFillColor(const Color &color);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the outline color of the shape
@@ -111,7 +111,7 @@ namespace c2d {
         /// \see getOutlineColor, setFillColor
         ///
         ////////////////////////////////////////////////////////////
-        void setOutlineColor(const Color &color);
+        virtual void setOutlineColor(const Color &color);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the thickness of the shape's outline
@@ -126,7 +126,7 @@ namespace c2d {
         /// \see getOutlineThickness
         ///
         ////////////////////////////////////////////////////////////
-        void setOutlineThickness(float thickness);
+        virtual void setOutlineThickness(float thickness);
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the source texture of the shape

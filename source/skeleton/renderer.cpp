@@ -12,12 +12,9 @@ Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
 
     thisTransform = this;
     c2d_renderer = this;
-
     setFillColor(Color::Black);
 
-    shaders = new Shaders("");
-
-    printf("Renderer(%p)\n", this);
+    //printf("Renderer(%p)\n", this);
 }
 
 void Renderer::drawLine(Line &line, Transform &transform) {
@@ -33,6 +30,7 @@ void Renderer::drawLine(Line &line, Transform &transform) {
 
 void Renderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
 
+    //printf("drawRectangle\n");
     Transform combined = transform * rectangle.getTransform();
     if (rectangle.getFillColor().a != 0) {
         draw(rectangle.getVertices(), combined, nullptr);
@@ -44,6 +42,7 @@ void Renderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
 
 void Renderer::drawTexture(Texture &texture, Transform &transform) {
 
+    //printf("drawTexture: %ix%i (%s)\n", (int)texture.getSize().x, (int)texture.getSize().y, texture.path);
     Transform combined = transform * texture.getTransform();
     if (texture.getOutlineColor().a != 0 && texture.getOutlineThickness() > 0) {
         draw(texture.getOutlineVertices(), combined, nullptr);
@@ -55,10 +54,11 @@ void Renderer::drawTexture(Texture &texture, Transform &transform) {
 
 void Renderer::drawText(Text &text, Transform &transform) {
 
+    //printf("drawText: %s\n", text.getString().toAnsiString().c_str());
     Transform combined = transform * text.getTransform();
     // TODO: why ?
-    combined.translate(0, -text.getLocalBounds().height / 2);
-    // TODO: why ?
+    combined.translate(0, -(text.getFont()->getLineSpacing(text.getCharacterSize()) / 2));
+    //
     if (text.getOutlineThickness() > 0) {
         draw(text.getOutlineVertices(), combined, &text.getFont()->getTexture(text.getCharacterSize()));
     }
@@ -74,12 +74,8 @@ void Renderer::flip() {
     Widget::draw(trans);
 }
 
-void Renderer::setShader(int shader) {
-
-}
-
-Shaders *Renderer::getShaders() {
-    return shaders;
+ShaderList *Renderer::getShaderList() {
+    return shaderList;
 }
 
 void Renderer::delay(unsigned int ms) {
@@ -89,5 +85,5 @@ void Renderer::delay(unsigned int ms) {
 
 Renderer::~Renderer() {
 
-    printf("~Renderer(%p)\n", this);
+    //printf("~Renderer(%p)\n", this);
 }

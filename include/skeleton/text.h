@@ -17,7 +17,8 @@ namespace c2d {
 
         Text();
 
-        Text(const String &string, const Font &font, unsigned int characterSize = C2D_DEFAULT_CHAR_SIZE);
+        Text(const std::string &string, const Font &font,
+             unsigned int characterSize = C2D_DEFAULT_CHAR_SIZE);
 
         virtual ~Text();
 

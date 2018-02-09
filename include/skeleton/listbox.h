@@ -36,7 +36,7 @@ namespace c2d {
 
         std::vector<Io::File *> files;
         std::vector<c2d::Text *> lines;
-        Rectangle *rectangle;
+        Rectangle *highlight;
         int line_height;
         int max_lines;
         int index = 0;

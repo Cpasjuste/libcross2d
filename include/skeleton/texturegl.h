@@ -20,6 +20,8 @@ namespace c2d {
 
         ~GLTexture();
 
+        int resize(const Vector2f &size, bool copyPixels = true);
+
         int lock(FloatRect *rect, void **pixels, int *pitch);
 
         void unlock();
@@ -31,7 +33,6 @@ namespace c2d {
     private:
 
         unsigned char *pixels = NULL;
-        int filter = C2D_TEXTURE_FILTER_LINEAR;
     };
 }
 

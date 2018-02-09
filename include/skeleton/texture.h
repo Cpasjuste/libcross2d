@@ -6,6 +6,7 @@
 #define _TEXTURE_H_
 
 #include "widget.h"
+#include "shader_list.h"
 
 #define C2D_TEXTURE_FILTER_POINT    0
 #define C2D_TEXTURE_FILTER_LINEAR   1
@@ -26,11 +27,17 @@ namespace c2d {
 
         virtual ~Texture();
 
-        virtual int lock(FloatRect *rect, void **pixels, int *pitch) { return 0; };
+        virtual int resize(const Vector2f &size, bool copyPixels = true) { return -1; };
+
+        virtual int lock(FloatRect *rect, void **pixels, int *pitch) { return -1; };
 
         virtual void unlock() {};
 
         virtual void setFiltering(int filter) {};
+
+        virtual void setShader(int shaderIndex) {};
+
+        virtual void applyShader() {};
         // END - to implement, device specific code
 
         char path[512];
@@ -38,6 +45,8 @@ namespace c2d {
         int format = C2D_TEXTURE_FMT_RGBA8;
         int bpp = 4;
         int pitch = 0;
+        int filtering = C2D_TEXTURE_FILTER_LINEAR;
+        ShaderList::Shader *shader = NULL;
 
     private:
 

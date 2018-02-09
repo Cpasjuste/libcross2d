@@ -29,8 +29,6 @@ namespace c2d {
         void flip();
 
         void delay(unsigned int ms);
-
-        void setShader(int shader);
     };
 }
 

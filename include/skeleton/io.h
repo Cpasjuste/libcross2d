@@ -21,9 +21,8 @@ namespace c2d {
         class File {
         public:
             File() {};
-            File(const std::string &n) { name = n; };
-            std::string name;
-            std::string path;
+            char *name;
+            char *path;
             size_t size = 0;
             int type;
             // for ui

@@ -6,24 +6,28 @@
 #define _C2D_H_
 
 #include "skeleton/io.h"
+#include "skeleton/input.h"
+#include "skeleton/audio.h"
+#include "skeleton/timer.h"
 #include "skeleton/renderer.h"
 #include "skeleton/rectangle.h"
 #include "skeleton/line.h"
 #include "skeleton/texture.h"
 #include "skeleton/text.h"
+#include "skeleton/button.h"
 #include "skeleton/textbox.h"
 #include "skeleton/listbox.h"
-#include "skeleton/input.h"
-#include "skeleton/audio.h"
-#include "skeleton/timer.h"
+#include "skeleton/messagebox.h"
 
-// for static access
+// for internal usage
 extern c2d::Renderer *c2d_renderer;
 
 #ifdef __PSP2__
 
+#ifdef __PSP2_DEBUG__
 #include <psp2/kernel/clib.h>
 #define printf sceClibPrintf
+#endif
 
 #ifdef __PSP2_GL__
 #include "psp2_tinygl/psp2gl_renderer.h"

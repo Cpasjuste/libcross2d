@@ -10,7 +10,7 @@
 
 namespace c2d {
 
-    class POSIXIo : Io {
+    class POSIXIo : public Io {
 
     public:
 
