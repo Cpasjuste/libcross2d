@@ -265,7 +265,7 @@ namespace c2d {
         /// getPointCount or getPoint is different).
         ///
         ////////////////////////////////////////////////////////////
-        void update();
+        void updateShape();
 
     private:
 

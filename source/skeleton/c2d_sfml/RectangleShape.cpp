@@ -41,13 +41,13 @@ namespace sfml {
 ////////////////////////////////////////////////////////////
     void RectangleShape::setSize(const Vector2f &size) {
         m_size = size;
-        update();
+        updateShape();
     }
 
     void RectangleShape::setSize(float width, float height) {
         m_size.x = width;
         m_size.y = height;
-        update();
+        updateShape();
     }
 
 ////////////////////////////////////////////////////////////

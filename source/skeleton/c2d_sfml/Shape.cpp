@@ -119,7 +119,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void Shape::setOutlineThickness(float thickness) {
         m_outlineThickness = thickness;
-        update(); // recompute everything because the whole shape must be offset
+        updateShape(); // recompute everything because the whole shape must be offset
     }
 
 
@@ -164,7 +164,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void Shape::update() {
+    void Shape::updateShape() {
 
         // Get the total number of points of the shape
         std::size_t count = getPointCount();
