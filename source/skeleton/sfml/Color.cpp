@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 
-#include "skeleton/c2d_sfml/Color.hpp"
+#include "skeleton/sfml/Color.hpp"
 #include <algorithm>
 
 namespace c2d {

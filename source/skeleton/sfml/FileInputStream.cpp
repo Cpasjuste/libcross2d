@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "skeleton/c2d_sfml/FileInputStream.hpp"
+#include "skeleton/sfml/FileInputStream.hpp"
 
 #ifdef ANDROID
 #include <SFML/System/Android/ResourceStream.hpp>

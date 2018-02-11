@@ -5,7 +5,7 @@
 #ifndef CROSS2D_TEXT_H
 #define CROSS2D_TEXT_H
 
-#include "skeleton/c2d_sfml/Text.hpp"
+#include "skeleton/sfml/Text.hpp"
 
 #define C2D_DEFAULT_CHAR_SIZE 30
 

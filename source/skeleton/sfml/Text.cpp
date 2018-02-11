@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "skeleton/c2d_sfml/Text.hpp"
+#include "skeleton/sfml/Text.hpp"
 #include "skeleton/renderer.h"
 //#include <SFML/Graphics/RenderTarget.hpp>
 #include <cmath>

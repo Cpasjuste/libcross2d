@@ -7,7 +7,7 @@
 
 #include <string>
 #include <vector>
-#include "skeleton/c2d_sfml/Color.hpp"
+#include "skeleton/sfml/Color.hpp"
 
 #define C2D_IO_FILE 0
 #define C2D_IO_DIR  1

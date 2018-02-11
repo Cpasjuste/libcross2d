@@ -46,7 +46,11 @@ int main() {
     // add all this crap to the renderer
     renderer->add(rect);
 
+    C2DClock clock;
+
     for (int i = 0; i < 5; i++) {
+
+        printf("Time: %f\n", clock.getElapsedTime().asSeconds());
 
         if (i > 0) {
             rect->move(32, 0);

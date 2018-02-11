@@ -11,7 +11,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "skeleton/c2d_sfml/RectangleShape.hpp"
+#include "skeleton/sfml/RectangleShape.hpp"
 
 namespace c2d {
 

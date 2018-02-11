@@ -26,10 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include "c2d.h"
-#include "skeleton/c2d_sfml/Font.hpp"
-//#include <SFML/Graphics/GLCheck.hpp>
-#include "skeleton/c2d_sfml/InputStream.hpp"
-//#include <SFML/System/Err.hpp>
+#include "skeleton/sfml/Font.hpp"
+#include "skeleton/sfml/InputStream.hpp"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H

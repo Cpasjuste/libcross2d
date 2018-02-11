@@ -47,6 +47,7 @@ extern c2d::Renderer *c2d_renderer;
 #endif
 
 #include "psp2/psp2_io.h"
+#include "psp2/psp2_clock.h"
 #include "sdl2/sdl2_input.h"
 #include "sdl2/sdl2_audio.h"
 
@@ -57,6 +58,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DInput SDL2Input
 #define C2DAudio SDL2Audio
 #define C2DIo PSP2Io
+#define C2DClock PSP2Clock
 
 #define KEY_JOY_UP_DEFAULT      8
 #define KEY_JOY_DOWN_DEFAULT    6
@@ -159,6 +161,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "sdl2/sdl2_input.h"
 #include "sdl2/sdl2_audio.h"
 #include "posix/posix_io.h"
+#include "posix/posix_clock.h"
 
 #define C2DRenderer SDL2Renderer
 #define C2DTexture GLTexture
@@ -169,6 +172,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DInput SDL2Input
 #define C2DAudio SDL2Audio
 #define C2DIo POSIXIo
+#define C2DClock POSIXClock
 
 #define KEY_JOY_UP_DEFAULT      -1  // use hat
 #define KEY_JOY_DOWN_DEFAULT    -1  // use hat

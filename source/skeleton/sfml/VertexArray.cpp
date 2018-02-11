@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "skeleton/c2d_sfml/VertexArray.hpp"
+#include "skeleton/sfml/VertexArray.hpp"
 
 
 namespace c2d {
@@ -122,7 +122,7 @@ namespace c2d {
         }
     }
 
-    std::vector<Vertex> VertexArray::getVertices() const {
+    std::vector <Vertex> VertexArray::getVertices() const {
         return m_vertices;
     }
 
