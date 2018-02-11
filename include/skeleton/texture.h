@@ -5,7 +5,7 @@
 #ifndef _TEXTURE_H_
 #define _TEXTURE_H_
 
-#include "widget.h"
+#include "object.h"
 #include "shader_list.h"
 
 #define C2D_TEXTURE_FILTER_POINT    0
@@ -16,7 +16,7 @@
 
 namespace c2d {
 
-    class Texture : public Widget, public sfml::RectangleShape {
+    class Texture : public C2DObject, public sfml::RectangleShape {
 
     public:
 

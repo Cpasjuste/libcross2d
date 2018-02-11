@@ -10,7 +10,7 @@
 #include <cstdarg>
 #include <cstdio>
 
-#include "widget.h"
+#include "object.h"
 #include "rectangle.h"
 #include "line.h"
 #include "text.h"
@@ -23,7 +23,7 @@
 
 namespace c2d {
 
-    class Renderer : public Widget, public sfml::RectangleShape {
+    class Renderer : public C2DObject, public sfml::RectangleShape {
 
     public:
 

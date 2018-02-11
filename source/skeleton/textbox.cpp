@@ -36,7 +36,7 @@ void TextBox::draw(Transform &transform) {
     c2d_renderer->drawRectangle(*this, transform);
 
     // call base class (draw childs)
-    Widget::draw(transform);
+    C2DObject::draw(transform);
 }
 
 Text *TextBox::getText() {

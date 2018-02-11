@@ -17,22 +17,22 @@ namespace c2d {
 
     class Renderer;
 
-    class Widget {
+    class C2DObject {
 
     public:
 
-        Widget();
+        C2DObject();
 
-        virtual ~Widget();
+        virtual ~C2DObject();
 
         virtual void draw(Transform &transform);
 
         // Childs
-        void add(Widget *widget);
+        void add(C2DObject *object);
 
         // remove a widget without calling
         // it's destructor
-        void remove(Widget *widget);
+        void remove(C2DObject *object);
 
         // visibility
         int getVisibility();
@@ -49,10 +49,10 @@ namespace c2d {
 
         int visibility = C2D_VISIBILITY_VISIBLE;
 
-        Widget *parent = NULL;
+        C2DObject *parent = NULL;
         Transformable *thisTransform = NULL;
         int layer = 0;
-        std::vector<Widget *> childs;
+        std::vector<C2DObject *> childs;
     };
 }
 

@@ -7,21 +7,21 @@
 
 using namespace c2d;
 
-Widget::Widget() {
+C2DObject::C2DObject() {
 
     //printf("Widget(%p)\n", this);
 }
 
-void Widget::add(Widget *widget) {
+void C2DObject::add(C2DObject *object) {
 
-    if (widget) {
+    if (object) {
         //printf("Widget(%p): add(%p)\n", this, widget);
-        widget->parent = this;
-        childs.push_back(widget);
+        object->parent = this;
+        childs.push_back(object);
     }
 }
 
-void Widget::draw(Transform &transform) {
+void C2DObject::draw(Transform &transform) {
 
     //printf("Widget(%p): draw\n", this);
 
@@ -38,25 +38,25 @@ void Widget::draw(Transform &transform) {
     }
 }
 
-int Widget::getVisibility() {
+int C2DObject::getVisibility() {
 
     return visibility;
 }
 
-void Widget::setVisibility(int visibility) {
+void C2DObject::setVisibility(int visibility) {
 
     this->visibility = visibility;
 }
 
-int Widget::getLayer() {
+int C2DObject::getLayer() {
     return layer;
 }
 
-static bool sortByLayer(Widget *w1, Widget *w2) {
+static bool sortByLayer(C2DObject *w1, C2DObject *w2) {
     return w1->getLayer() < w2->getLayer();
 }
 
-void Widget::setLayer(int layer) {
+void C2DObject::setLayer(int layer) {
 
     this->layer = layer;
     if (parent) {
@@ -66,14 +66,14 @@ void Widget::setLayer(int layer) {
     }
 }
 
-void Widget::remove(Widget *widget) {
+void C2DObject::remove(C2DObject *widget) {
 
     childs.erase(std::remove(
             childs.begin(), childs.end(), widget),
                  childs.end());
 }
 
-Widget::~Widget() {
+C2DObject::~C2DObject() {
 
     // delete childs
     for (auto widget = childs.begin(); widget != childs.end();) {
@@ -91,6 +91,5 @@ Widget::~Widget() {
                 std::remove(parent->childs.begin(), parent->childs.end(), this),
                 parent->childs.end());
     }
-
     //printf("~Widget(%p)\n", this);
 }

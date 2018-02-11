@@ -36,7 +36,7 @@ set(CROSS2D_DIR
 
 file(GLOB CROSS2D_SRC
         source/skeleton/*.c*
-        source/skeleton/c2d_sfml/*.c*)
+        source/skeleton/sfml/*.c*)
 
 #####################
 # PLATORM SPECIFIC

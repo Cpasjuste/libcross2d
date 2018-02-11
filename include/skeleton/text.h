@@ -11,7 +11,7 @@
 
 namespace c2d {
 
-    class Text : public Widget, public sfml::Text {
+    class Text : public C2DObject, public sfml::Text {
 
     public:
 

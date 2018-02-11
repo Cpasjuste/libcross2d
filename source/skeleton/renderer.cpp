@@ -71,7 +71,7 @@ void Renderer::flip() {
 
     // call base class (draw childs)
     Transform trans = getTransform();
-    Widget::draw(trans);
+    C2DObject::draw(trans);
 }
 
 ShaderList *Renderer::getShaderList() {

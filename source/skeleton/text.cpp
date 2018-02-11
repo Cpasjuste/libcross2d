@@ -29,7 +29,7 @@ void Text::draw(Transform &transform) {
     c2d_renderer->drawText(*this, transform);
 
     // call base class (draw childs)
-    Widget::draw(transform);
+    C2DObject::draw(transform);
 }
 
 Text::~Text() {

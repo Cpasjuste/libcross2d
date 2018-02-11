@@ -5,11 +5,11 @@
 #ifndef CROSS2D_LINE_H
 #define CROSS2D_LINE_H
 
-#include "widget.h"
+#include "object.h"
 
 namespace c2d {
 
-    class Line : public Widget, public sfml::RectangleShape {
+    class Line : public C2DObject, public sfml::RectangleShape {
 
     public:
 

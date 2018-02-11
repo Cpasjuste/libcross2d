@@ -35,7 +35,7 @@ void Line::draw(Transform &transform) {
     c2d_renderer->drawLine(*this, transform);
 
     // call base class (draw childs)
-    Widget::draw(transform);
+    C2DObject::draw(transform);
 }
 
 Line::~Line() {

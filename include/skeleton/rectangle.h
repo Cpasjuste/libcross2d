@@ -5,11 +5,11 @@
 #ifndef CROSS2D_RECTANGLE_H
 #define CROSS2D_RECTANGLE_H
 
-#include "widget.h"
+#include "object.h"
 
 namespace c2d {
 
-    class Rectangle : public Widget, public sfml::RectangleShape {
+    class Rectangle : public C2DObject, public sfml::RectangleShape {
 
     public:
 

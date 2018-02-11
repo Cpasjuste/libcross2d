@@ -43,7 +43,7 @@ void Texture::draw(Transform &transform) {
     c2d_renderer->drawTexture(*this, transform);
 
     // call base class (draw childs)
-    Widget::draw(transform);
+    C2DObject::draw(transform);
 }
 
 Texture::~Texture() {
