@@ -43,20 +43,6 @@ int main() {
         rect->add(text);
     }
 
-    std::vector<Io::File *> files;
-    for (int i = 0; i < 10000; i++) {
-        Io::File *file = new Io::File();
-        file->name = (char *) malloc(64);
-        strcpy(file->name, "Heapo, 'dfsQSq a13ddql:a");
-        file->color = Color::Red;
-        files.push_back(file);
-    }
-    ListBox *listBox = new ListBox(font, 20, rect->getLocalBounds(), (std::vector<Io::File *> &) files);
-    listBox->setOutlineThickness(2);
-    listBox->setFillColor(Color::GrayLight);
-    listBox->setOutlineColor(Color::Orange);
-    rect->add(listBox);
-
     // add all this crap to the renderer
     renderer->add(rect);
 
@@ -69,7 +55,7 @@ int main() {
         }
 
         renderer->flip();
-        renderer->delay(5000);
+        renderer->delay(500);
     }
 
     // will delete widgets recursively
