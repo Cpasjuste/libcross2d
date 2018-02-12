@@ -57,7 +57,8 @@ void Renderer::drawText(Text &text, Transform &transform) {
     //printf("drawText: %s\n", text.getString().toAnsiString().c_str());
     Transform combined = transform * text.getTransform();
     // TODO: why ?
-    combined.translate(0, -(text.getFont()->getLineSpacing(text.getCharacterSize()) / 2));
+    combined.translate(0, -(text.getFont()->getLineSpacing(text.getCharacterSize()) / 2)
+                          + text.getOutlineThickness());
     //
     if (text.getOutlineThickness() > 0) {
         draw(text.getOutlineVertices(), combined, &text.getFont()->getTexture(text.getCharacterSize()));
