@@ -29,28 +29,15 @@ extern c2d::Renderer *c2d_renderer;
 #define printf sceClibPrintf
 #endif
 
-#ifdef __PSP2_GL__
-#include "psp2_tinygl/psp2gl_renderer.h"
-#include "skeleton/texturegl.h"
-#define C2DRenderer PSP2GLRenderer
-#define C2DTexture GLTexture
-#elif __PSP2_OSMESA__
-#include "psp2_osmesa/psp2osmesa_renderer.h"
-#include "skeleton/texturegl.h"
-#define C2DRenderer PSP2OSMESARenderer
-#define C2DTexture GLTexture
-#else
-#include "psp2/psp2_renderer.h"
-#include "psp2/psp2_texture.h"
+#include "platforms/psp2/psp2_renderer.h"
+#include "platforms/psp2/psp2_texture.h"
+#include "platforms/psp2/psp2_io.h"
+#include "platforms/psp2/psp2_clock.h"
+#include "platforms/sdl2/sdl2_input.h"
+#include "platforms/sdl2/sdl2_audio.h"
+
 #define C2DRenderer PSP2Renderer
 #define C2DTexture PSP2Texture
-#endif
-
-#include "psp2/psp2_io.h"
-#include "psp2/psp2_clock.h"
-#include "sdl2/sdl2_input.h"
-#include "sdl2/sdl2_audio.h"
-
 #define C2DRectangle Rectangle
 #define C2DLine Line
 #define C2DFont Font
@@ -83,11 +70,11 @@ extern c2d::Renderer *c2d_renderer;
 
 #include <3ds.h>
 #include <citro3d.h>
-#include "3ds/ctr_renderer.h"
-#include "3ds/ctr_texture.h"
-#include "3ds/ctr_input.h"
-#include "sdl2/sdl2_audio.h"
-#include "posix/posix_io.h"
+#include "platforms/3ds/ctr_renderer.h"
+#include "platforms/3ds/ctr_texture.h"
+#include "platforms/3ds/ctr_input.h"
+#include "platforms/sdl2/sdl2_audio.h"
+#include "platforms/posix/posix_io.h"
 
 #define C2DRenderer CTRRenderer
 #define C2DTexture CTRTexture
@@ -121,9 +108,9 @@ extern c2d::Renderer *c2d_renderer;
 
 #elif __NX__
 
-#include "nx/nx_renderer.h"
+#include "platforms/nx/nx_renderer.h"
 #include "skeleton/texturegl.h"
-#include "posix/posix_io.h"
+#include "platforms/posix/posix_io.h"
 
 #define C2DRenderer NXRenderer
 #define C2DTexture GLTexture
@@ -157,11 +144,11 @@ extern c2d::Renderer *c2d_renderer;
 #elif __SDL2__
 
 #include "skeleton/texturegl.h"
-#include "sdl2/sdl2_renderer.h"
-#include "sdl2/sdl2_input.h"
-#include "sdl2/sdl2_audio.h"
-#include "posix/posix_io.h"
-#include "posix/posix_clock.h"
+#include "platforms/sdl2/sdl2_renderer.h"
+#include "platforms/sdl2/sdl2_input.h"
+#include "platforms/sdl2/sdl2_audio.h"
+#include "platforms/posix/posix_io.h"
+#include "platforms/posix/posix_clock.h"
 
 #define C2DRenderer SDL2Renderer
 #define C2DTexture GLTexture
@@ -194,12 +181,12 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         5
 
 #elif __SDL1__
-s
-#include "sdl1/sdl1_renderer.h"
+
+#include "platforms/sdl1/sdl1_renderer.h"
 #include "skeleton/texturegl.h"
-#include "sdl1/sdl1_input.h"
-#include "sdl1/sdl1_audio.h"
-#include "posix/posix_io.h"
+#include "platforms/sdl1/sdl1_input.h"
+#include "platforms/sdl1/sdl1_audio.h"
+#include "platforms/posix/posix_io.h"
 
 #define C2DRenderer SDL1Renderer
 #define C2DTexture GLTexture
@@ -233,11 +220,11 @@ s
 
 #elif __PS3__
 
-#include "ps3/tiny3d_renderer.h"
-#include "ps3/tiny3d_texture.h"
-#include "ps3/ps3_input.h"
-#include "ps3/ps3_audio.h"
-#include "posix/posix_io.h"
+#include "platforms/ps3/tiny3d_renderer.h"
+#include "platforms/ps3/tiny3d_texture.h"
+#include "platforms/ps3/ps3_input.h"
+#include "platforms/ps3/ps3_audio.h"
+#include "platforms/posix/posix_io.h"
 
 #define C2DRenderer TINY3DRenderer
 #define C2DTexture TINY3DTexture
@@ -270,11 +257,11 @@ s
 
 #elif __SFML__
 
-#include "sfml/sfml_renderer.h"
-#include "sfml/sfml_texture.h"
-#include "sfml/sfml_input.h"
-#include "sdl2/sdl2_audio.h"
-#include "posix/posix_io.h"
+#include "platforms/sfml/sfml_renderer.h"
+#include "platforms/sfml/sfml_texture.h"
+#include "platforms/sfml/sfml_input.h"
+#include "platforms/sdl2/sdl2_audio.h"
+#include "platforms/posix/posix_io.h"
 
 #define C2DRenderer SFMLRenderer
 #define C2DTexture SFMLTexture

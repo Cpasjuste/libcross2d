@@ -4,7 +4,7 @@
 
 #include <dirent.h>
 #include <sys/stat.h>
-#include "psp2/psp2_io.h"
+#include "platforms/psp2/psp2_io.h"
 
 using namespace c2d;
 

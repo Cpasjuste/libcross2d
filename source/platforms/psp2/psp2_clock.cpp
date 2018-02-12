@@ -3,7 +3,7 @@
 //
 
 #include <sys/time.h>
-#include "psp2/psp2_clock.h"
+#include "platforms/psp2/psp2_clock.h"
 
 using namespace c2d;
 

@@ -4,7 +4,7 @@
 
 #include <malloc.h>
 #include <SDL2/SDL.h>
-#include "../../include/sdl2/sdl2_audio.h"
+#include "platforms/sdl2/sdl2_audio.h"
 
 #ifdef __PSP2_DEBUG__
 #include <psp2/kernel/clib.h>

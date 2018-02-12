@@ -46,13 +46,13 @@ file(GLOB CROSS2D_SRC
 #####################
 if (BUILD_SFML)
     set(PLATFORM_DIRS
-            source/sfml
-            source/posix
+            source/platforms/sfml
+            source/platforms/posix
             )
     file(GLOB PLATFORM_SRC
-            source/sfml/*.c*
-            source/posix/*.c*
-            source/sdl2/sdl2_audio.cpp #TODO: get rid of sdl2, use sdl2 audio for now
+            source/platforms/sfml/*.c*
+            source/platforms/posix/*.c*
+            source/platforms/sdl2/sdl2_audio.cpp #TODO: get rid of sdl2, use sdl2 audio for now
             )
     list(APPEND FLAGS
             -D__SFML__
@@ -67,15 +67,15 @@ if (BUILD_SFML)
     #####################
 elseif (BUILD_PSP2)
     set(PLATFORM_DIRS
-            source/psp2
-            source/psp2/vita-shader-collection/includes
+            source/platforms/psp2
+            source/platforms/psp2/vita-shader-collection/includes
             ${VITASDK}/arm-vita-eabi/include/freetype2
             )
     file(GLOB PLATFORM_SRC
-            source/psp2/*.c*
-            source/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
-            source/sdl2/sdl2_input.cpp # TODO: get rid of sdl2, use sdl2 input for now
-            source/psp2/vita-shader-collection/lib/*.o
+            source/platforms/psp2/*.c*
+            source/platforms/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
+            source/platforms/sdl2/sdl2_input.cpp # TODO: get rid of sdl2, use sdl2 input for now
+            source/platforms/psp2/vita-shader-collection/lib/*.o
             )
     set(PLATFORM_LIBS
             cross2d SDL2 vita2d freetype
@@ -100,17 +100,17 @@ elseif (BUILD_PS3)
     set(CMAKE_C_FLAGS_RELEASE "-O2")
     set(CMAKE_CXX_FLAGS_RELEASE "-O2")
     set(PLATFORM_DIRS
-            source/ps3
-            source/ps3/tiny3d
-            include/ps3/tiny3d
+            source/platforms/ps3
+            source/platforms/ps3/tiny3d
+            include/platforms/ps3/tiny3d
+            source/platforms/posix
             ${PSL1GHT}/portlibs/ppu/include/freetype2
-            source/posix
             )
     file(GLOB PLATFORM_SRC
-            source/ps3/*.c*
-            source/ps3/tiny3d/*.c*
-            source/ps3/tiny3d/*.S*
-            source/posix/*.c*
+            source/platforms/ps3/*.c*
+            source/platforms/ps3/tiny3d/*.c*
+            source/platforms/ps3/tiny3d/*.S*
+            source/platforms/posix/*.c*
             )
     set(PLATFORM_LIBS
             ${PSL1GHT}/portlibs/ppu/lib/libfreetype.a
@@ -135,18 +135,18 @@ elseif (BUILD_3DS)
     #set(SHADER_AS picasso)
     #add_shbin_library(shaders.3ds src/3ds/vshader.v.pica)
     set(PLATFORM_DIRS
-            source/3ds
-            source/posix
+            source/platforms/3ds
+            source/platforms/posix
             ${DEVKITPRO}/libctru/include
             ${DEVKITPRO}/portlibs/3ds/include
             ${DEVKITPRO}/portlibs/armv6k/include
             )
     file(GLOB PLATFORM_SRC
-            source/3ds/*.c*
-            source/posix/*.c*
-            source/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
+            source/platforms/3ds/*.c*
+            source/platforms/posix/*.c*
+            source/platforms/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
             # TODO: fix that crap...
-            source/3ds/vshaders.v.o
+            source/platforms/3ds/vshaders.v.o
             )
 
     set(PLATFORM_LIBS
@@ -167,15 +167,15 @@ elseif (BUILD_3DS)
 elseif (BUILD_NX)
     add_subdirectory(source/skeleton/pTinyGL)
     set(PLATFORM_DIRS
-            source/nx
-            source/posix
-            source/skeleton/pTinyGL/include
+            source/platforms/nx
+            source/platforms/posix
+            source/platforms/skeleton/pTinyGL/include
             ${DEVKITPRO}/libnx/include
             ${DEVKITPRO}/portlibs/armv8-a/include/freetype2
             )
     file(GLOB PLATFORM_SRC
-            source/nx/*.c*
-            source/posix/*.c*
+            source/platforms/nx/*.c*
+            source/platforms/posix/*.c*
             )
     list(APPEND FLAGS -D__NX__ -D__GL__ -D__TINYGL__
             -ffunction-sections -fomit-frame-pointer
@@ -198,13 +198,13 @@ elseif (BUILD_SWITCH_TRANSISTOR)
     #####################
 elseif (BUILD_SDL2)
     set(PLATFORM_DIRS
-            source/sdl2
-            source/posix
+            source/platforms/sdl2
+            source/platforms/posix
             /usr/include/freetype2
             )
     file(GLOB PLATFORM_SRC
-            source/sdl2/*.c*
-            source/posix/*.c*
+            source/platforms/sdl2/*.c*
+            source/platforms/posix/*.c*
             )
     list(APPEND FLAGS -D__SDL2__ -D__GL__)
     if (BUILD_SDL2_GL)
@@ -218,12 +218,12 @@ elseif (BUILD_SDL2)
     #####################
 elseif (BUILD_SDL1)
     set(PLATFORM_DIRS
-            source/sdl1
-            source/posix
+            source/platforms/sdl1
+            source/platforms/posix
             /usr/include/freetype2)
     file(GLOB PLATFORM_SRC
-            source/sdl1/*.c*
-            source/posix/*.c*)
+            source/platforms/sdl1/*.c*
+            source/platforms/posix/*.c*)
     list(APPEND FLAGS -D__SDL1__ -D__GL__)
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)

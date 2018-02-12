@@ -3,7 +3,7 @@
 //
 
 #include <ctime>
-#include "posix/posix_clock.h"
+#include "platforms/posix/posix_clock.h"
 
 using namespace c2d;
 

@@ -5,9 +5,9 @@
 #include <SDL2/SDL.h>
 #include <psp2/kernel/threadmgr.h>
 
-#include "psp2/psp2_renderer.h"
-#include "psp2/psp2_texture.h"
-#include "psp2/psp2_shaders.h"
+#include "platforms/psp2/psp2_renderer.h"
+#include "platforms/psp2/psp2_texture.h"
+#include "platforms/psp2/psp2_shaders.h"
 
 using namespace c2d;
 

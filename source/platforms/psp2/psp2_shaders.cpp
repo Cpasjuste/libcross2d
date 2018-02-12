@@ -3,7 +3,7 @@
 //
 
 #include <vita2d.h>
-#include "psp2/psp2_shaders.h"
+#include "platforms/psp2/psp2_shaders.h"
 
 #include "lcd3x_v.h"
 #include "lcd3x_f.h"

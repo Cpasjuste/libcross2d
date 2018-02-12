@@ -4,7 +4,7 @@
 
 #include <cmath>
 #include "skeleton/renderer.h"
-#include "sdl2/sdl2_input.h"
+#include "platforms/sdl2/sdl2_input.h"
 
 using namespace c2d;
 

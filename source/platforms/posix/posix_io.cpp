@@ -3,7 +3,7 @@
 //
 
 #include <sys/stat.h>
-#include "posix/posix_io.h"
+#include "platforms/posix/posix_io.h"
 
 using namespace c2d;
 

@@ -5,7 +5,7 @@
 #include <cstring>
 #include <cstdio>
 #include "c2d.h"
-#include "psp2/psp2_shaders.h"
+#include "platforms/psp2/psp2_shaders.h"
 
 #ifdef __PSP2_DEBUG__
 
