@@ -15,7 +15,7 @@ int main() {
 
     // create a rect
     Rectangle *rect = new C2DRectangle(
-            FloatRect(renderer->getSize().x / 2, renderer->getSize().y / 2,
+            FloatRect(0, renderer->getSize().y / 2,
                       renderer->getSize().x / 2, renderer->getSize().y / 2));
     rect->setOriginCenter();
     rect->setFillColor(Color::Gray);
@@ -48,18 +48,20 @@ int main() {
 
     C2DClock clock;
 
-    for (int i = 0; i < 5; i++) {
+    while (true) {
 
-        printf("Time: %f\n", clock.getElapsedTime().asSeconds());
+        float delta = renderer->getDeltaTime().asSeconds();
+        printf("Time: %f (delta: %f)\n", clock.getElapsedTime().asSeconds(), delta);
 
-        if (i > 0) {
-            rect->move(32, 0);
-            rect->setScale(rect->getScale().x - 0.1f, rect->getScale().y - 0.1f);
-            rect->rotate(5);
-        }
+        rect->move(100 * delta, 0);
+        rect->setScale(rect->getScale().x - (0.1f * delta), rect->getScale().y - (0.1f * delta));
+        rect->rotate(50 * delta);
 
         renderer->flip();
-        renderer->delay(500);
+
+        if (rect->getPosition().x > renderer->getSize().x) {
+            break;
+        }
     }
 
     // will delete widgets recursively

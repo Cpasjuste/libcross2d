@@ -10,12 +10,12 @@
 #include <cstdarg>
 #include <cstdio>
 
-#include "object.h"
 #include "rectangle.h"
 #include "line.h"
 #include "text.h"
 #include "texture.h"
 #include "shader_list.h"
+#include "skeleton/sfml/Clock.hpp"
 
 #ifndef MAX_PATH
 #define MAX_PATH 512
@@ -45,13 +45,17 @@ namespace c2d {
 
         virtual void flip();
 
-        virtual void delay(unsigned int ms);
+        virtual void delay(unsigned int ms) {};
 
         virtual ShaderList *getShaderList();
+
+        Time getDeltaTime() const;
 
     protected:
 
         ShaderList *shaderList = NULL;
+        Clock *deltaClock = NULL;
+        Time deltaTime;
     };
 }
 

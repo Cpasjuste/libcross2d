@@ -5,6 +5,7 @@
 #ifndef _C2D_H_
 #define _C2D_H_
 
+#include "skeleton/object.h"
 #include "skeleton/io.h"
 #include "skeleton/input.h"
 #include "skeleton/audio.h"
@@ -155,8 +156,8 @@ extern c2d::Renderer *c2d_renderer;
 
 #elif __SDL2__
 
-#include "sdl2/sdl2_renderer.h"
 #include "skeleton/texturegl.h"
+#include "sdl2/sdl2_renderer.h"
 #include "sdl2/sdl2_input.h"
 #include "sdl2/sdl2_audio.h"
 #include "posix/posix_io.h"

@@ -47,6 +47,8 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         Clock() {};
 
+        virtual ~Clock() {};
+
         // TO IMPLEMENT
         virtual Time getCurrentTime() const { return Time {}; };
 
