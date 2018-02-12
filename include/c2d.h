@@ -108,8 +108,9 @@ extern c2d::Renderer *c2d_renderer;
 
 #elif __NX__
 
-#include "platforms/nx/nx_renderer.h"
 #include "skeleton/texturegl.h"
+#include "platforms/nx/nx_renderer.h"
+#include "platforms/nx/nx_clock.h"
 #include "platforms/posix/posix_io.h"
 
 #define C2DRenderer NXRenderer
@@ -121,6 +122,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DInput Input
 #define C2DAudio Audio
 #define C2DIo POSIXIo
+#define C2DClock NXClock
 
 #define KEY_JOY_UP_DEFAULT      -1  // use hat
 #define KEY_JOY_DOWN_DEFAULT    -1  // use hat

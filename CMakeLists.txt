@@ -169,13 +169,13 @@ elseif (BUILD_NX)
     set(PLATFORM_DIRS
             source/platforms/nx
             source/platforms/posix
-            source/platforms/skeleton/pTinyGL/include
+            source/skeleton/pTinyGL/include
             ${DEVKITPRO}/libnx/include
             ${DEVKITPRO}/portlibs/armv8-a/include/freetype2
             )
     file(GLOB PLATFORM_SRC
             source/platforms/nx/*.c*
-            source/platforms/posix/*.c*
+            source/platforms/posix/posix_io.cpp
             )
     list(APPEND FLAGS -D__NX__ -D__GL__ -D__TINYGL__
             -ffunction-sections -fomit-frame-pointer
