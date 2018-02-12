@@ -8,7 +8,6 @@
 #include "skeleton/io.h"
 #include "skeleton/input.h"
 #include "skeleton/audio.h"
-#include "skeleton/timer.h"
 #include "skeleton/renderer.h"
 #include "skeleton/rectangle.h"
 #include "skeleton/line.h"
