@@ -187,6 +187,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/sdl1/sdl1_input.h"
 #include "platforms/sdl1/sdl1_audio.h"
 #include "platforms/posix/posix_io.h"
+#include "platforms/posix/posix_clock.h"
 
 #define C2DRenderer SDL1Renderer
 #define C2DTexture GLTexture
@@ -197,7 +198,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DInput SDL1Input
 #define C2DAudio SDL1Audio
 #define C2DIo POSIXIo
-
+#define C2DClock POSIXClock
 
 #define KEY_JOY_UP_DEFAULT      -1  // use hat
 #define KEY_JOY_DOWN_DEFAULT    -1  // use hat

@@ -3,7 +3,7 @@
 //
 
 #include <cmath>
-#include "sdl1/sdl1_input.h"
+#include "platforms/sdl1/sdl1_input.h"
 
 #if SDL_VERSION_ATLEAST(1, 3, 0)
 #include <SDL/SDL_keyboard.h>

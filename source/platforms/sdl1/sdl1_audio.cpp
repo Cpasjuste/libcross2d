@@ -4,7 +4,7 @@
 
 #include <malloc.h>
 #include <SDL/SDL.h>
-#include "sdl1/sdl1_audio.h"
+#include "platforms/sdl1/sdl1_audio.h"
 
 using namespace c2d;
 
