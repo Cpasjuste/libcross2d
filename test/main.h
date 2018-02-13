@@ -31,8 +31,8 @@ int KEYS[]{
 
 #define SCR_W 1280
 #define SCR_H 720
-#define FONT_PATH   "default.ttf"
-#define TEX_PATH    "title.png"
+#define FONT_PATH   "/default.ttf"
+#define TEX_PATH    "/title.png"
 
 #elif __SFML__
 

@@ -108,6 +108,8 @@ extern c2d::Renderer *c2d_renderer;
 
 #elif __NX__
 
+#define printf(...) fprintf(stderr, __VA_ARGS__)
+
 #include "skeleton/texturegl.h"
 #include "platforms/nx/nx_renderer.h"
 #include "platforms/nx/nx_clock.h"

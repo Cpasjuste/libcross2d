@@ -3,22 +3,28 @@
 //
 
 //
-// NX with TinyGL (OpenGL software wrapper) for rendering
+// NX with TinyGL (OpenGL software wrapper) rendering
 //
 
+#include <switch.h>
 #include "c2d.h"
 #include "pTinyGL/pgl.h"
-#include <switch.h>
 
 using namespace c2d;
 
 NXRenderer::NXRenderer(const Vector2f &size) : GLRenderer(size) {
 
     pglInit((int) size.x, (int) size.y);
+
+    consoleInit(NULL);
+    consoleDebugInit(debugDevice_SVC);
+
     available = true;
 }
 
 void NXRenderer::flip() {
+
+    appletMainLoop();
 
     // call base class (draw childs)
     GLRenderer::flip();
