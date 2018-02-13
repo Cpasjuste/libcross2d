@@ -13,7 +13,7 @@ option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs B
 option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
-option(BUILD_NX "Build with NX (SWITCH) support" ON)
+option(BUILD_NX "Build with NX (SWITCH) support" OFF)
 #option(BUILD_SWITCH_TRANSISTOR "Build with NX (SWITCH) support" ON)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
