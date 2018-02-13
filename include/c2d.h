@@ -12,6 +12,7 @@
 #include "skeleton/renderer.h"
 #include "skeleton/rectangle.h"
 #include "skeleton/line.h"
+#include "skeleton/circle.h"
 #include "skeleton/texture.h"
 #include "skeleton/text.h"
 #include "skeleton/button.h"
@@ -39,6 +40,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DRenderer PSP2Renderer
 #define C2DTexture PSP2Texture
 #define C2DRectangle Rectangle
+#define C2DCircle Circle
 #define C2DLine Line
 #define C2DFont Font
 #define C2DText Text
@@ -118,6 +120,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DRenderer NXRenderer
 #define C2DTexture GLTexture
 #define C2DRectangle Rectangle
+#define C2DCircle Circle
 #define C2DLine Line
 #define C2DFont Font
 #define C2DText Text
@@ -157,6 +160,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DRenderer SDL2Renderer
 #define C2DTexture GLTexture
 #define C2DRectangle Rectangle
+#define C2DCircle Circle
 #define C2DLine Line
 #define C2DFont Font
 #define C2DText Text
@@ -196,6 +200,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DRenderer SDL1Renderer
 #define C2DTexture GLTexture
 #define C2DRectangle Rectangle
+#define C2DCircle Circle
 #define C2DLine Line
 #define C2DFont Font
 #define C2DText Text

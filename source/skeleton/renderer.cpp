@@ -41,6 +41,18 @@ void Renderer::drawRectangle(Rectangle &rectangle, Transform &transform) {
     }
 }
 
+void Renderer::drawCircle(Circle &circle, Transform &transform) {
+
+    //printf("drawRectangle\n");
+    Transform combined = transform * circle.getTransform();
+    if (circle.getFillColor().a != 0) {
+        draw(circle.getVertices(), combined, nullptr);
+    }
+    if (circle.getOutlineColor().a != 0 && circle.getOutlineThickness() > 0) {
+        draw(circle.getOutlineVertices(), combined, nullptr);
+    }
+}
+
 void Renderer::drawTexture(Texture &texture, Transform &transform) {
 
     //printf("drawTexture: %ix%i (%s)\n", (int)texture.getSize().x, (int)texture.getSize().y, texture.path);
