@@ -35,6 +35,7 @@ set(CROSS2D_DIR
         include)
 
 file(GLOB CROSS2D_SRC
+        source/widgets/*.c*
         source/skeleton/*.c*
         source/skeleton/sfml/*.c*)
 

@@ -2,7 +2,7 @@
 // Created by cpasjuste on 05/01/18.
 //
 
-#include "skeleton/listbox.h"
+#include "widgets/listbox.h"
 
 using namespace c2d;
 

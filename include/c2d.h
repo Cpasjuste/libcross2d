@@ -15,10 +15,10 @@
 #include "skeleton/circle.h"
 #include "skeleton/texture.h"
 #include "skeleton/text.h"
-#include "skeleton/button.h"
-#include "skeleton/textbox.h"
-#include "skeleton/listbox.h"
-#include "skeleton/messagebox.h"
+#include "widgets/button.h"
+#include "widgets/textbox.h"
+#include "widgets/listbox.h"
+#include "widgets/messagebox.h"
 
 // for internal usage
 extern c2d::Renderer *c2d_renderer;
