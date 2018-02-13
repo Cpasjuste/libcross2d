@@ -5,7 +5,7 @@
 #ifndef CROSS2D_RENDERERGL_H
 #define CROSS2D_RENDERERGL_H
 
-#include "renderer.h"
+#include "skeleton/renderer.h"
 
 namespace c2d {
 

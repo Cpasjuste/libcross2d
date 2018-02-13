@@ -5,7 +5,7 @@
 #ifndef NX_RENDERER_H
 #define NX_RENDERER_H
 
-#include "skeleton/renderergl.h"
+#include "platforms/gl/gl_renderer.h"
 
 namespace c2d {
 

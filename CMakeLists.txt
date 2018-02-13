@@ -168,6 +168,7 @@ elseif (BUILD_NX)
     add_subdirectory(source/skeleton/pTinyGL)
     set(PLATFORM_DIRS
             source/platforms/nx
+            source/platforms/gl
             source/platforms/posix
             source/skeleton/pTinyGL/include
             ${DEVKITPRO}/libnx/include
@@ -175,6 +176,7 @@ elseif (BUILD_NX)
             )
     file(GLOB PLATFORM_SRC
             source/platforms/nx/*.c*
+            source/platforms/gl/*.c*
             source/platforms/posix/posix_io.cpp
             )
     list(APPEND FLAGS -D__NX__ -D__GL__ -D__TINYGL__
@@ -199,11 +201,13 @@ elseif (BUILD_SWITCH_TRANSISTOR)
 elseif (BUILD_SDL2)
     set(PLATFORM_DIRS
             source/platforms/sdl2
+            source/platforms/gl
             source/platforms/posix
             /usr/include/freetype2
             )
     file(GLOB PLATFORM_SRC
             source/platforms/sdl2/*.c*
+            source/platforms/gl/*.c*
             source/platforms/posix/*.c*
             )
     list(APPEND FLAGS -D__SDL2__ -D__GL__)
@@ -219,10 +223,12 @@ elseif (BUILD_SDL2)
 elseif (BUILD_SDL1)
     set(PLATFORM_DIRS
             source/platforms/sdl1
+            source/platforms/gl
             source/platforms/posix
             /usr/include/freetype2)
     file(GLOB PLATFORM_SRC
             source/platforms/sdl1/*.c*
+            source/platforms/gl/*.c*
             source/platforms/posix/*.c*)
     list(APPEND FLAGS -D__SDL1__ -D__GL__)
     if (BUILD_SDL1_GL)

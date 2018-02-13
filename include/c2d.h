@@ -112,7 +112,7 @@ extern c2d::Renderer *c2d_renderer;
 
 #define printf(...) fprintf(stderr, __VA_ARGS__)
 
-#include "skeleton/texturegl.h"
+#include "platforms/gl/gl_texture.h"
 #include "platforms/nx/nx_renderer.h"
 #include "platforms/nx/nx_clock.h"
 #include "platforms/posix/posix_io.h"
@@ -150,7 +150,7 @@ extern c2d::Renderer *c2d_renderer;
 
 #elif __SDL2__
 
-#include "skeleton/texturegl.h"
+#include "platforms/gl/gl_texture.h"
 #include "platforms/sdl2/sdl2_renderer.h"
 #include "platforms/sdl2/sdl2_input.h"
 #include "platforms/sdl2/sdl2_audio.h"
@@ -191,7 +191,7 @@ extern c2d::Renderer *c2d_renderer;
 #elif __SDL1__
 
 #include "platforms/sdl1/sdl1_renderer.h"
-#include "skeleton/texturegl.h"
+#include "platforms/gl/gl_texture.h"
 #include "platforms/sdl1/sdl1_input.h"
 #include "platforms/sdl1/sdl1_audio.h"
 #include "platforms/posix/posix_io.h"

@@ -6,7 +6,7 @@
 #define SDL2_RENDERER_H
 
 #include <SDL2/SDL.h>
-#include "skeleton/renderergl.h"
+#include "platforms/gl/gl_renderer.h"
 
 namespace c2d {
 
