@@ -15,6 +15,7 @@ Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
     setFillColor(Color::Black);
 
     deltaClock = new C2DClock();
+    elapsedClock = new C2DClock();
     //printf("Renderer(%p)\n", this);
 }
 
@@ -88,12 +89,19 @@ void Renderer::flip() {
     C2DObject::draw(trans);
 
     deltaTime = deltaClock->restart();
+    elapsedTime = elapsedClock->getElapsedTime();
 }
 
 Time Renderer::getDeltaTime() const {
 
     return deltaTime;
 }
+
+Time Renderer::getElapsedTime() const {
+
+    return elapsedTime;
+}
+
 
 ShaderList *Renderer::getShaderList() {
     return shaderList;
@@ -103,4 +111,5 @@ Renderer::~Renderer() {
 
     //printf("~Renderer(%p)\n", this);
     delete (deltaClock);
+    delete (elapsedClock);
 }

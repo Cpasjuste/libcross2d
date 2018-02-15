@@ -54,11 +54,14 @@ namespace c2d {
 
         Time getDeltaTime() const;
 
+        Time getElapsedTime() const;
+
     protected:
 
         ShaderList *shaderList = NULL;
-        Clock *deltaClock = NULL;
-        Time deltaTime;
+
+        Clock *deltaClock = NULL, *elapsedClock = NULL;
+        Time deltaTime, elapsedTime;
     };
 }
 
