@@ -115,6 +115,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/gl/gl_texture.h"
 #include "platforms/nx/nx_renderer.h"
 #include "platforms/nx/nx_clock.h"
+#include "platforms/nx/nx_input.h"
 #include "platforms/posix/posix_io.h"
 
 #define C2DRenderer NXRenderer
@@ -124,7 +125,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DLine Line
 #define C2DFont Font
 #define C2DText Text
-#define C2DInput Input
+#define C2DInput NXInput
 #define C2DAudio Audio
 #define C2DIo POSIXIo
 #define C2DClock NXClock
