@@ -21,6 +21,19 @@ Texture::Texture(const char *p) : RectangleShape(Vector2f(0, 0)) {
     thisTransform = this;
 }
 
+Texture::Texture(const unsigned char *buffer, int bufferSize) : RectangleShape(Vector2f(0, 0)) {
+
+    printf("Texture(%p)\n", this);
+
+    format = C2D_TEXTURE_FMT_RGBA8;
+    bpp = 4;
+
+    setFillColor(Color::White);
+    setFiltering(C2D_TEXTURE_FILTER_LINEAR);
+
+    thisTransform = this;
+}
+
 Texture::Texture(const Vector2f &size, int fmt) : RectangleShape(size) {
 
     printf("Texture(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);

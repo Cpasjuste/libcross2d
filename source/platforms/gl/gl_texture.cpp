@@ -11,6 +11,7 @@
 #ifdef __TINYGL__
 
 #include "pTinyGL/pgl.h"
+
 #define GL_UNSIGNED_SHORT_5_6_5 GL_UNSIGNED_BYTE
 #else
 
@@ -27,6 +28,36 @@ GLTexture::GLTexture(const char *path) : Texture(path) {
     error = lodepng_decode32_file(&pixels, &w, &h, path);
     if (error) {
         printf("GLTexture::GLTexture: couldn't create texture:: %s\n", lodepng_error_text(error));
+        return;
+    }
+
+    format = C2D_TEXTURE_FMT_RGBA8;
+
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, w, h, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    if (texID) {
+        setSize(Vector2f(w, h));
+        setTextureRect(IntRect(0, 0, w, h));
+        bpp = 4;
+        pitch = (int) (getSize().x * bpp);
+        available = true;
+    } else {
+        printf("GLTexture::GLTexture: couldn't create texture: %s\n", path);
+    }
+}
+
+GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
+
+    unsigned int w, h, error = 0;
+
+    error = lodepng_decode32(&pixels, &w, &h, buffer, (size_t) bufferSize);
+    if (error) {
+        printf("GLTexture::GLTexture: couldn't create texture: %s\n", lodepng_error_text(error));
         return;
     }
 

@@ -23,6 +23,8 @@ namespace c2d {
         // START - to implement, device specific code
         Texture(const char *path);
 
+        Texture(const unsigned char *buffer, int bufferSize);
+
         Texture(const Vector2f &size = Vector2f(0, 0), int format = C2D_TEXTURE_FMT_RGBA8);
 
         virtual ~Texture();

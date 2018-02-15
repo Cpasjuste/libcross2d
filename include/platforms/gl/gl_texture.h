@@ -15,6 +15,8 @@ namespace c2d {
 
         GLTexture(const char *path);
 
+        GLTexture(const unsigned char *buffer, int bufferSize);
+
         GLTexture(const Vector2f &size = Vector2f(0, 0),
                   int format = C2D_TEXTURE_FMT_RGBA8);
 
