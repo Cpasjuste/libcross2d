@@ -9,7 +9,7 @@
 
 namespace c2d {
 
-    class SDL2Audio : Audio {
+    class SDL2Audio : public Audio {
 
     public:
 
