@@ -9,14 +9,14 @@
 #include "lcd3x_f.h"
 #include "texture_v.h"
 #include "texture_f.h"
-#include "advanced_aa_v.h"
-#include "advanced_aa_f.h"
-#include "scale2x_f.h"
-#include "scale2x_v.h"
+//#include "advanced_aa_v.h"
+//#include "advanced_aa_f.h"
+//#include "scale2x_f.h"
+//#include "scale2x_v.h"
 #include "sharp_bilinear_f.h"
 #include "sharp_bilinear_v.h"
-#include "sharp_bilinear_simple_f.h"
-#include "sharp_bilinear_simple_v.h"
+//#include "sharp_bilinear_simple_f.h"
+//#include "sharp_bilinear_simple_v.h"
 //#include "xbr_2x_noblend_f.h"
 //#include "xbr_2x_noblend_v.h"
 //#include "fxaa_v.h"
@@ -40,14 +40,8 @@ PSP2ShaderList::PSP2ShaderList(const std::string &shadersPath) : ShaderList(shad
 
     add("lcd3x",
         create((SceGxmProgram *) lcd3x_v, (SceGxmProgram *) lcd3x_f));
-    add("sharp",
-        create((SceGxmProgram *) sharp_bilinear_simple_v, (SceGxmProgram *) sharp_bilinear_simple_f));
     add("sharp+scan",
         create((SceGxmProgram *) sharp_bilinear_v, (SceGxmProgram *) sharp_bilinear_f));
-    add("aaa",
-        create((SceGxmProgram *) advanced_aa_v, (SceGxmProgram *) advanced_aa_f));
-    add("scale2x",
-        create((SceGxmProgram *) scale2x_v, (SceGxmProgram *) scale2x_f));
 
     printf("PSP2ShaderList: found %i shaders\n", getCount() - 1);
 }
