@@ -26,7 +26,7 @@ namespace c2d {
                   const Transform &transform,
                   const Texture *texture);
 
-        void flip();
+        void flip(bool draw = true);
 
         void delay(unsigned int ms);
     };

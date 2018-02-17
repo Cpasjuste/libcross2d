@@ -80,16 +80,27 @@ void Renderer::drawText(Text &text, Transform &transform) {
     draw(text.getVertices(), combined, &text.getFont()->getTexture(text.getCharacterSize()));
 }
 
-void Renderer::flip() {
+void Renderer::flip(bool draw) {
 
     //printf("Renderer(%p): flip\n", this);
 
     // call base class (draw childs)
-    Transform trans = getTransform();
-    C2DObject::draw(trans);
+    if (draw) {
+        Transform trans = getTransform();
+        C2DObject::draw(trans);
+    }
 
     deltaTime = deltaClock->restart();
     elapsedTime = elapsedClock->getElapsedTime();
+
+    frames++;
+
+    time_now = elapsedTime.asSeconds();
+    if (time_now - time_last >= 1.0f) {
+        fps = frames;
+        frames = 0;
+        time_last = time_now;
+    }
 }
 
 Time Renderer::getDeltaTime() const {
@@ -102,6 +113,10 @@ Time Renderer::getElapsedTime() const {
     return elapsedTime;
 }
 
+float Renderer::getFps() const {
+
+    return fps;
+}
 
 ShaderList *Renderer::getShaderList() {
     return shaderList;

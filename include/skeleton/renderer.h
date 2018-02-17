@@ -46,7 +46,7 @@ namespace c2d {
 
         virtual void drawCircle(Circle &circle, Transform &transform);
 
-        virtual void flip();
+        virtual void flip(bool draw = true);
 
         virtual void delay(unsigned int ms) {};
 
@@ -56,12 +56,16 @@ namespace c2d {
 
         Time getElapsedTime() const;
 
+        float getFps() const;
+
     protected:
 
         ShaderList *shaderList = NULL;
 
         Clock *deltaClock = NULL, *elapsedClock = NULL;
         Time deltaTime, elapsedTime;
+        float time_now = 0, time_last = 0, fps = 0;
+        int frames = 0;
     };
 }
 

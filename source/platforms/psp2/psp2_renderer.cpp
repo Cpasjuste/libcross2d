@@ -3,6 +3,7 @@
 //
 
 #include <SDL2/SDL.h>
+#include <psp2/display.h>
 #include <psp2/kernel/threadmgr.h>
 
 #include "platforms/psp2/psp2_renderer.h"
@@ -159,25 +160,28 @@ void PSP2Renderer::draw(const VertexArray &vertices,
     }
 }
 
-void PSP2Renderer::flip() {
+void PSP2Renderer::flip(bool draw) {
 
-    vita2d_start_drawing();
-
-    // clear screen
-    vita2d_set_clear_color(
-            RGBA8((unsigned int) getFillColor().r,
-                  (unsigned int) getFillColor().g,
-                  (unsigned int) getFillColor().b,
-                  (unsigned int) getFillColor().a));
-    vita2d_clear_screen();
+    if (draw) {
+        vita2d_start_drawing();
+        // clear screen
+        vita2d_set_clear_color(
+                RGBA8((unsigned int) getFillColor().r,
+                      (unsigned int) getFillColor().g,
+                      (unsigned int) getFillColor().b,
+                      (unsigned int) getFillColor().a));
+        vita2d_clear_screen();
+    }
 
     // call base class (draw childs)
-    Renderer::flip();
+    Renderer::flip(draw);
 
-    // flip
-    vita2d_end_drawing();
-    vita2d_wait_rendering_done();
-    vita2d_swap_buffers();
+    if (draw) {
+        // flip
+        vita2d_end_drawing();
+        vita2d_wait_rendering_done();
+        vita2d_swap_buffers();
+    }
 }
 
 void PSP2Renderer::delay(unsigned int ms) {
