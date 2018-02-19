@@ -15,6 +15,8 @@ using namespace c2d;
 NXRenderer::NXRenderer(const Vector2f &size) : GLRenderer(size) {
 
     pglInit((int) size.x, (int) size.y);
+
+    //usbCommsInitialize();
     //consoleInit(NULL);
     //consoleDebugInit(debugDevice_SVC);
 
@@ -22,9 +24,6 @@ NXRenderer::NXRenderer(const Vector2f &size) : GLRenderer(size) {
 }
 
 void NXRenderer::flip(bool draw) {
-
-    // called in input
-    //appletMainLoop();
 
     // call base class (draw childs)
     GLRenderer::flip(draw);
@@ -47,4 +46,15 @@ void NXRenderer::delay(unsigned int ms) {
 NXRenderer::~NXRenderer() {
 
     pglClose();
+    //usbCommsExit();
+}
+
+void nx_printf(const char *str, ...) {
+
+    va_list valist;
+    va_start(valist, str);
+    char buf[1024];
+    size_t len = (size_t) vsnprintf(buf, 1024, str, valist);
+    usbCommsWrite(buf, len);
+    va_end(valist);
 }

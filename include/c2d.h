@@ -110,13 +110,15 @@ extern c2d::Renderer *c2d_renderer;
 
 #elif __NX__
 
-#define printf(...) fprintf(stderr, __VA_ARGS__)
-
 #include "platforms/gl/gl_texture.h"
 #include "platforms/nx/nx_renderer.h"
 #include "platforms/nx/nx_clock.h"
 #include "platforms/nx/nx_input.h"
 #include "platforms/posix/posix_io.h"
+
+//#define printf(...) fprintf(stderr, __VA_ARGS__)
+//void nx_printf(const char *str, ...);
+//#define printf nx_printf
 
 #define C2DRenderer NXRenderer
 #define C2DTexture GLTexture
@@ -181,10 +183,10 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_FIRE4_DEFAULT   3
 #define KEY_JOY_FIRE5_DEFAULT   4
 #define KEY_JOY_FIRE6_DEFAULT   5
-#define KEY_JOY_COIN1_DEFAULT   6
-#define KEY_JOY_START1_DEFAULT  7
-#define KEY_JOY_MENU1_DEFAULT   7
-#define KEY_JOY_MENU2_DEFAULT   6
+#define KEY_JOY_COIN1_DEFAULT   7
+#define KEY_JOY_START1_DEFAULT  6
+#define KEY_JOY_MENU1_DEFAULT   6
+#define KEY_JOY_MENU2_DEFAULT   7
 #define KEY_JOY_AXIS_LX         0
 #define KEY_JOY_AXIS_LY         1
 #define KEY_JOY_AXIS_RX         4

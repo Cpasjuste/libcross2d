@@ -19,6 +19,8 @@ namespace c2d {
 
         virtual Player *update(int rotate = 0);
 
+        virtual int clear(int player);
+
         virtual int getButton(int player);
 
     private:

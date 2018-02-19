@@ -59,26 +59,35 @@ int NXInput::getButton(int player) {
     return -1;
 }
 
-Input::Player *NXInput::update(int rotate) {
+int NXInput::clear(int player) {
 
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-        players[i].state = 0;
+    hidReset();
+
+    while (appletMainLoop()) {
+        hidScanInput();
+        if (!hidKeysHeld(CONTROLLER_P1_AUTO)) {
+            break;
+        }
+        gfxFlushBuffers();
+        gfxSwapBuffers();
+        gfxWaitForVsync();
     }
+    return 0;
+}
 
+Input::Player *NXInput::update(int rotate) {
 
     if (!appletMainLoop()) {
         players[0].state |= EV_QUIT;
         return players;
     }
 
-    hidScanInput();
-
-    process_buttons(players[0], rotate);
-
-    // 3ds needs screen refresh/swap every frames ?
-    if (players[0].state <= 0) {
-        players[0].state = EV_REFRESH;
+    for (int i = 0; i < PLAYER_COUNT; i++) {
+        players[i].state = 0;
     }
+
+    hidScanInput();
+    process_buttons(players[0], rotate);
 
     return players;
 }
@@ -90,7 +99,7 @@ void NXInput::process_buttons(Input::Player &player, int rotate) {
     }
 
     u64 held = hidKeysHeld(CONTROLLER_P1_AUTO);
-    //printf("hidKeysHeld: %i\n", held);
+    //printf("hidKeysHeld: %lu\n", held);
 
     for (int i = 0; i < KEY_COUNT; i++) {
 
