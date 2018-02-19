@@ -17,7 +17,7 @@ namespace c2d {
 
         ~NXRenderer();
 
-        void flip();
+        void flip(bool draw = true);
 
         void delay(unsigned int ms);
     };

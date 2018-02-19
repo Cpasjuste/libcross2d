@@ -292,7 +292,7 @@ endif (BUILD_3DS)
 # NX (SWITCH) target
 #####################
 if (BUILD_NX)
-    set_target_properties(cross2d.elf PROPERTIES LINK_FLAGS "-specs=switch.specs")
+    set_target_properties(cross2d.elf PROPERTIES LINK_FLAGS "-specs=${DEVKITPRO}/libnx/switch.specs")
     add_custom_target(cross2d.nro
             DEPENDS cross2d.elf
             COMMAND elf2nro cross2d.elf cross2d.nro)

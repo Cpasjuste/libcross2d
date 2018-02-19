@@ -72,7 +72,7 @@ void GLRenderer::draw(const VertexArray &vertices,
     glPopMatrix();
 }
 
-void GLRenderer::flip() {
+void GLRenderer::flip(bool draw) {
 
     if (!gl_init) {
 
@@ -91,15 +91,17 @@ void GLRenderer::flip() {
         gl_init = true;
     }
 
-    // clear screen
-    glClearColor(getFillColor().r / 255.0f,
-                 getFillColor().g / 255.0f,
-                 getFillColor().b / 255.0f,
-                 getFillColor().a / 255.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    if (draw) {
+        // clear screen
+        glClearColor(getFillColor().r / 255.0f,
+                     getFillColor().g / 255.0f,
+                     getFillColor().b / 255.0f,
+                     getFillColor().a / 255.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
 
     // call base class (draw childs)
-    Renderer::flip();
+    Renderer::flip(draw);
 }
 
 GLRenderer::~GLRenderer() {

@@ -15,22 +15,28 @@ using namespace c2d;
 NXRenderer::NXRenderer(const Vector2f &size) : GLRenderer(size) {
 
     pglInit((int) size.x, (int) size.y);
-
-    consoleInit(NULL);
-    consoleDebugInit(debugDevice_SVC);
+    //consoleInit(NULL);
+    //consoleDebugInit(debugDevice_SVC);
 
     available = true;
 }
 
-void NXRenderer::flip() {
+void NXRenderer::flip(bool draw) {
 
-    appletMainLoop();
+    // called in input
+    //appletMainLoop();
 
     // call base class (draw childs)
-    GLRenderer::flip();
+    GLRenderer::flip(draw);
 
     // flip (draw buffer to screen)
-    pglSwap();
+    if (draw) {
+        pglSwap();
+    } else {
+        gfxFlushBuffers();
+        gfxSwapBuffers();
+        gfxWaitForVsync();
+    }
 }
 
 void NXRenderer::delay(unsigned int ms) {
