@@ -36,7 +36,7 @@ int KEYS[]{
 
 int KEYS[]{
         // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
-        13, 15, 12, 14, 10, 11, 0, 1, 2, 3, 6, 7, 0 // QUIT
+        13, 15, 12, 14, 10, 11, 0, 1, 2, 3, 7, 6, 0 // QUIT
 };
 #elif __SFML__
 

@@ -22,6 +22,7 @@ int main() {
     rect->setOutlineColor(Color::Orange);
     rect->setOutlineThickness(8);
 
+    /*
     // create a texture and add it to the rect
     Texture *tex = new C2DTexture(TEX_PATH);
     if (tex->available) {
@@ -42,6 +43,7 @@ int main() {
         text->setPosition(rect->getSize().x / 2, 32);
         rect->add(text);
     }
+    */
 
     // add all this crap to the renderer
     renderer->add(rect);
@@ -53,29 +55,26 @@ int main() {
 
     while (true) {
 
-        float delta = renderer->getDeltaTime().asSeconds();
-        printf("Time: %f (delta: %f)\n", clock.getElapsedTime().asSeconds(), delta);
-
-        rect->move(100 * delta, 0);
-        rect->setScale(rect->getScale().x - (0.1f * delta), rect->getScale().y - (0.1f * delta));
-        rect->rotate(50 * delta);
-
-        renderer->flip(false);
-
-        if (rect->getPosition().x > renderer->getSize().x) {
-            //break;
-        }
-
         // handle input
         unsigned int key = input->update()[0].state;
         if (key) {
             printf("input[0]: 0x%08X\n", key);
             input->clear(0);
+            if (key & Input::Key::KEY_FIRE2) {
+                break;
+            }
         }
 
-        if (key & Input::Key::KEY_FIRE2) {
-            break;
-        }
+        // time / delta time
+        float delta = renderer->getDeltaTime().asSeconds();
+        printf("Time: %f (delta: %f)\n", clock.getElapsedTime().asSeconds(), delta);
+
+        // render
+        rect->move(100 * delta, 0);
+        rect->setScale(rect->getScale().x - (0.1f * delta), rect->getScale().y - (0.1f * delta));
+        rect->rotate(50 * delta);
+
+        renderer->flip();
     }
 
     // will delete widgets recursively

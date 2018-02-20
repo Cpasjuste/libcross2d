@@ -116,9 +116,12 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/nx/nx_input.h"
 #include "platforms/posix/posix_io.h"
 
+//#define USB_DEBUG
+#ifdef USB_DEBUG
+void nx_printf(const char *str, ...);
+#define printf nx_printf
+#endif
 //#define printf(...) fprintf(stderr, __VA_ARGS__)
-//void nx_printf(const char *str, ...);
-//#define printf nx_printf
 
 #define C2DRenderer NXRenderer
 #define C2DTexture GLTexture

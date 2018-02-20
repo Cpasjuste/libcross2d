@@ -12,11 +12,22 @@
 
 using namespace c2d;
 
+#ifdef USB_DEBUG
+bool usb = false;
+#endif
+
 NXRenderer::NXRenderer(const Vector2f &size) : GLRenderer(size) {
 
     pglInit((int) size.x, (int) size.y);
-
-    //usbCommsInitialize();
+#ifdef USB_DEBUG
+    Result ret = usbCommsInitialize();
+    if (R_SUCCEEDED(ret)) {
+        printf("usbCommsInitialize OK\n");
+        usb = true;
+    } else {
+        printf("usbCommsInitialize FAIL\n");
+    }
+#endif
     //consoleInit(NULL);
     //consoleDebugInit(debugDevice_SVC);
 
@@ -46,15 +57,25 @@ void NXRenderer::delay(unsigned int ms) {
 NXRenderer::~NXRenderer() {
 
     pglClose();
-    //usbCommsExit();
+#ifdef USB_DEBUG
+    if (usb) {
+        usbCommsExit();
+    }
+#endif
 }
+
+#ifdef USB_DEBUG
 
 void nx_printf(const char *str, ...) {
 
-    va_list valist;
-    va_start(valist, str);
-    char buf[1024];
-    size_t len = (size_t) vsnprintf(buf, 1024, str, valist);
-    usbCommsWrite(buf, len);
-    va_end(valist);
+    if (usb) {
+        va_list valist;
+        va_start(valist, str);
+        char buf[256];
+        size_t len = (size_t) vsnprintf(buf, 256, str, valist);
+        usbCommsWrite(buf, len);
+        va_end(valist);
+    }
 }
+
+#endif
