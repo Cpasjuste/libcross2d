@@ -22,11 +22,6 @@ namespace c2d {
 
         virtual void Pause(int pause);
 
-    private:
-
-        AudioOutBuffer source_buffer;
-        AudioOutBuffer released_buffer;
-
     };
 }
 

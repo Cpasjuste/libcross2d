@@ -22,7 +22,12 @@ Audio::Audio(int freq, int fps) {
     }
 
     buffer_size = buffer_len * channels * 2;
+#ifdef __NX__
+    int size = (buffer_size + 4095) & ~4095;
+    buffer = (short *) malloc((size_t) size);
+#else
     buffer = (short *) malloc((size_t) buffer_size);
+#endif
     memset(buffer, 0, (size_t) buffer_size);
     available = true;
 

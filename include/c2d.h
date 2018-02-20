@@ -117,15 +117,9 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/nx/nx_audio.h"
 #include "platforms/posix/posix_io.h"
 
-//#define USB_DEBUG 1
-#define NET_DEBUG 1
-
-#ifdef USB_DEBUG
-void nx_printf(const char *str, ...);
-#define printf nx_printf
-#elif NET_DEBUG
+//#define NET_DEBUG 1
+#ifdef NET_DEBUG
 #include "nxnetprint.h"
-#define printf nx_net_print
 #elif SVC_DEBUG
 #define printf(...) fprintf(stderr, __VA_ARGS__)
 #endif
@@ -152,10 +146,10 @@ void nx_printf(const char *str, ...);
 #define KEY_JOY_FIRE4_DEFAULT   3
 #define KEY_JOY_FIRE5_DEFAULT   6
 #define KEY_JOY_FIRE6_DEFAULT   7
-#define KEY_JOY_COIN1_DEFAULT   10
-#define KEY_JOY_START1_DEFAULT  11
-#define KEY_JOY_MENU1_DEFAULT   11
-#define KEY_JOY_MENU2_DEFAULT   10
+#define KEY_JOY_COIN1_DEFAULT   11
+#define KEY_JOY_START1_DEFAULT  10
+#define KEY_JOY_MENU1_DEFAULT   10
+#define KEY_JOY_MENU2_DEFAULT   11
 // TODO
 #define KEY_JOY_AXIS_LX         0
 #define KEY_JOY_AXIS_LY         0
@@ -193,10 +187,10 @@ void nx_printf(const char *str, ...);
 #define KEY_JOY_FIRE4_DEFAULT   3
 #define KEY_JOY_FIRE5_DEFAULT   4
 #define KEY_JOY_FIRE6_DEFAULT   5
-#define KEY_JOY_COIN1_DEFAULT   7
-#define KEY_JOY_START1_DEFAULT  6
-#define KEY_JOY_MENU1_DEFAULT   6
-#define KEY_JOY_MENU2_DEFAULT   7
+#define KEY_JOY_COIN1_DEFAULT   6
+#define KEY_JOY_START1_DEFAULT  7
+#define KEY_JOY_MENU1_DEFAULT   7
+#define KEY_JOY_MENU2_DEFAULT   6
 #define KEY_JOY_AXIS_LX         0
 #define KEY_JOY_AXIS_LY         1
 #define KEY_JOY_AXIS_RX         4
