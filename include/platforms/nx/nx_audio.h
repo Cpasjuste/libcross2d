@@ -5,11 +5,12 @@
 #ifndef _NX_AUDIO_H_
 #define _NX_AUDIO_H_
 
+#include <switch.h>
 #include "skeleton/audio.h"
 
 namespace c2d {
 
-    class NXAudio : Audio {
+    class NXAudio : public Audio {
 
     public:
 
@@ -20,6 +21,11 @@ namespace c2d {
         virtual void Play();
 
         virtual void Pause(int pause);
+
+    private:
+
+        AudioOutBuffer source_buffer;
+        AudioOutBuffer released_buffer;
 
     };
 }

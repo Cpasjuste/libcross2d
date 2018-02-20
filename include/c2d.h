@@ -114,6 +114,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/nx/nx_renderer.h"
 #include "platforms/nx/nx_clock.h"
 #include "platforms/nx/nx_input.h"
+#include "platforms/nx/nx_audio.h"
 #include "platforms/posix/posix_io.h"
 
 //#define USB_DEBUG 1
@@ -137,7 +138,7 @@ void nx_printf(const char *str, ...);
 #define C2DFont Font
 #define C2DText Text
 #define C2DInput NXInput
-#define C2DAudio Audio
+#define C2DAudio NXAudio
 #define C2DIo POSIXIo
 #define C2DClock NXClock
 
