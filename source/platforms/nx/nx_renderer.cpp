@@ -18,7 +18,6 @@ bool usb = false;
 
 NXRenderer::NXRenderer(const Vector2f &size) : GLRenderer(size) {
 
-    pglInit((int) size.x, (int) size.y);
 #ifdef USB_DEBUG
     Result ret = usbCommsInitialize();
     if (R_SUCCEEDED(ret)) {
@@ -27,10 +26,15 @@ NXRenderer::NXRenderer(const Vector2f &size) : GLRenderer(size) {
     } else {
         printf("usbCommsInitialize FAIL\n");
     }
+#elif NET_DEBUG
+    nx_net_init("172.20.138.36", 3333);
+    printf("NX READY >\n");
+#elif SVC_DEBUG
+    consoleInit(NULL);
+    consoleDebugInit(debugDevice_SVC);
 #endif
-    //consoleInit(NULL);
-    //consoleDebugInit(debugDevice_SVC);
 
+    pglInit((int) size.x, (int) size.y);
     available = true;
 }
 
@@ -61,6 +65,8 @@ NXRenderer::~NXRenderer() {
     if (usb) {
         usbCommsExit();
     }
+#elif NET_DEBUG
+    nx_net_exit();
 #endif
 }
 

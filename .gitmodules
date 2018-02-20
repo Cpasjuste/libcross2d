@@ -1,3 +1,6 @@
 [submodule "source/skeleton/pTinyGL"]
 	path = source/skeleton/pTinyGL
 	url = git@github.com:Cpasjuste/pTinyGL.git
+[submodule "source/platforms/nx/nxnetprint"]
+	path = source/platforms/nx/nxnetprint
+	url = git@github.com:Cpasjuste/nxnetprint.git

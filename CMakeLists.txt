@@ -167,8 +167,10 @@ elseif (BUILD_3DS)
     #####################
 elseif (BUILD_NX)
     add_subdirectory(source/skeleton/pTinyGL)
+    add_subdirectory(source/platforms/nx/nxnetprint)
     set(PLATFORM_DIRS
             source/platforms/nx
+            source/platforms/nx/nxnetprint/include
             source/platforms/gl
             source/platforms/posix
             source/skeleton/pTinyGL/include
@@ -183,7 +185,7 @@ elseif (BUILD_NX)
     list(APPEND FLAGS -D__NX__ -D__GL__ -D__TINYGL__
             -ffunction-sections -fomit-frame-pointer
             )
-    set(PLATFORM_LIBS cross2d pTinyGL
+    set(PLATFORM_LIBS cross2d pTinyGL nxnetprint
             ${DEVKITPRO}/libnx/lib/libnx.a
             ${DEVKITPRO}/portlibs/armv8-a/lib/libfreetype.a
             ${DEVKITPRO}/portlibs/armv8-a/lib/libpng.a
