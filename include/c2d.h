@@ -117,7 +117,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/nx/nx_audio.h"
 #include "platforms/posix/posix_io.h"
 
-//#define NET_DEBUG 1
+#define NET_DEBUG 1
 #ifdef NET_DEBUG
 #include "nxnetprint.h"
 #elif SVC_DEBUG
