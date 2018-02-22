@@ -15,7 +15,7 @@ using namespace c2d;
 NXRenderer::NXRenderer(const Vector2f &size) : GLRenderer(size) {
 
 #ifdef NET_DEBUG
-    nx_net_init("172.20.138.36", 3333);
+    nx_net_init("192.168.0.13", 3333);
 #elif SVC_DEBUG
     consoleInit(NULL);
     consoleDebugInit(debugDevice_SVC);
