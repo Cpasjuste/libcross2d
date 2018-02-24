@@ -19,9 +19,9 @@ namespace c2d {
 
         virtual Player *update(int rotate = 0);
 
-        virtual int clear(int player);
+        virtual int clear(int player = 0);
 
-        virtual int getButton(int player);
+        virtual int getButton(int player = 0);
 
     private:
         virtual void process_buttons(Input::Player &player, int rotate = 0);

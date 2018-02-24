@@ -46,15 +46,11 @@ NXInput::~NXInput() {
 
 int NXInput::getButton(int player) {
 
-    // TODO:
-    /*
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_JOYBUTTONDOWN) {
-            return event.jbutton.button;
-        }
+    hidScanInput();
+    u64 held = hidKeysHeld(CONTROLLER_P1_AUTO);
+    if (held) {
+        return (int) held;
     }
-    */
 
     return -1;
 }

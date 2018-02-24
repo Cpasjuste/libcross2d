@@ -66,8 +66,7 @@ namespace c2d {
 
         virtual Player *update(int rotate = 0) { return players; }; // to implement
         virtual int getButton(int player = 0) { return -1; }; // to implement
-
-        virtual int clear(int player);
+        virtual int clear(int player = 0);
 
         virtual void setJoystickMapping(int player, int *mapping, int deadzone);
 
