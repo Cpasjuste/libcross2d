@@ -24,7 +24,7 @@ static int buffered_bytes = 0;
 static SDL_mutex *sound_mutex;
 static SDL_cond *sound_cv;
 
-static void write_buffer(unsigned char *data, int len) {
+static void write_buffer(const unsigned char *data, int len) {
 
     if (use_mutex) {
         SDL_LockMutex(sound_mutex);
@@ -49,6 +49,9 @@ static void write_buffer(unsigned char *data, int len) {
         buffered_bytes += 4;
     }
 
+    //printf("write_buffer(%i): buffered=%i, rpos=%i, wpos=%i\n",
+    //       len, buffered_bytes, buf_read_pos, buf_write_pos);
+
     if (use_mutex) {
         SDL_CondSignal(sound_cv);
         SDL_UnlockMutex(sound_mutex);
@@ -62,6 +65,9 @@ static void read_buffer(void *unused, unsigned char *data, int len) {
     if (use_mutex) {
         SDL_LockMutex(sound_mutex);
     }
+
+    //printf("read_buffer(%i): buffered=%i, rpos=%i, wpos=%i\n",
+    //       len, buffered_bytes, buf_read_pos, buf_write_pos);
 
     if (buffered_bytes >= len) {
         if ((int) (buf_read_pos + len) <= buf_size) {

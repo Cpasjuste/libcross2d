@@ -32,7 +32,7 @@ void C2DObject::draw(Transform &transform) {
     }
 
     for (auto &child : childs) {
-        if (child->visibility == C2D_VISIBILITY_VISIBLE) {
+        if (child->visibility == Visible) {
             child->draw(combinedTransform);
         }
     }
@@ -43,7 +43,7 @@ int C2DObject::getVisibility() {
     return visibility;
 }
 
-void C2DObject::setVisibility(int visibility) {
+void C2DObject::setVisibility(Visibility visibility) {
 
     this->visibility = visibility;
 }

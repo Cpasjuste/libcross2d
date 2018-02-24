@@ -40,7 +40,7 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
         add(buttons[i]);
     }
 
-    this->setVisibility(C2D_VISIBILITY_HIDDEN);
+    this->setVisibility(Hidden);
 }
 
 void MessageBox::setFillColor(const Color &color) {
@@ -61,7 +61,7 @@ void MessageBox::setOutlineColor(const Color &color) {
 }
 
 int MessageBox::show(const std::string &title, const std::string &message,
-                     const std::string &confirmText, const std::string &cancelText) {
+                     const std::string &buttonLeftText, const std::string &buttonRightText) {
 
     this->title->setString(title);
     this->title->setOriginCenter();
@@ -72,26 +72,26 @@ int MessageBox::show(const std::string &title, const std::string &message,
     buttons[0]->setFillColor(getOutlineColor());
     buttons[0]->setOutlineColor(Color::White);
 
-    if (cancelText.empty()) {
-        buttons[0]->setText(confirmText);
+    if (buttonRightText.empty()) {
+        buttons[0]->setText(buttonLeftText);
         buttons[0]->setPosition(getSize().x / 2, getSize().y - buttons[0]->getSize().y - 16);
-        buttons[1]->setVisibility(C2D_VISIBILITY_HIDDEN);
+        buttons[1]->setVisibility(Hidden);
     } else {
-        buttons[0]->setText(confirmText);
+        buttons[0]->setText(buttonLeftText);
         buttons[0]->setPosition((getSize().x / 3) - 8,
                                 getSize().y - buttons[0]->getSize().y - 16);
-        buttons[1]->setText(cancelText);
+        buttons[1]->setText(buttonRightText);
         buttons[1]->setPosition(((getSize().x / 3) * 2) + 8,
                                 getSize().y - buttons[1]->getSize().y - 16);
         buttons[1]->setFillColor(getFillColor());
-        buttons[1]->setVisibility(C2D_VISIBILITY_VISIBLE);
+        buttons[1]->setVisibility(Visible);
     }
 
-    setVisibility(C2D_VISIBILITY_VISIBLE);
+    setVisibility(Visible);
     setLayer(1000);
 
     int index = 0;
-    int choice_count = cancelText.empty() ? 1 : 2;
+    int choice_count = buttonRightText.empty() ? 1 : 2;
 
     input->clear(0);
 
@@ -109,15 +109,15 @@ int MessageBox::show(const std::string &title, const std::string &message,
                     index++;
                 }
             } else if (key & Input::Key::KEY_FIRE1) {
-                setVisibility(C2D_VISIBILITY_HIDDEN);
+                setVisibility(Hidden);
                 c2d_renderer->flip();
                 input->clear(0);
-                return index == 1 ? C2D_MESSAGEBOX_CANCEL : C2D_MESSAGEBOX_CONFIRM;
+                return index == 1 ? BTN_RIGHT : BTN_LEFT;
             } else if (key & Input::Key::KEY_FIRE2) {
-                setVisibility(C2D_VISIBILITY_HIDDEN);
+                setVisibility(Hidden);
                 c2d_renderer->flip();
                 input->clear(0);
-                return C2D_MESSAGEBOX_CANCEL;
+                return BTN_CANCEL;
             }
 
             setFillColor(getFillColor());

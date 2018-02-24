@@ -120,6 +120,7 @@ extern c2d::Renderer *c2d_renderer;
 #define NET_DEBUG 1
 #ifdef NET_DEBUG
 #include "nxnetprint.h"
+#define NET_DEBUG_IP "192.168.0.13"
 #elif SVC_DEBUG
 #define printf(...) fprintf(stderr, __VA_ARGS__)
 #endif

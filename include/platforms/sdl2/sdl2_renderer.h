@@ -18,7 +18,7 @@ namespace c2d {
 
         ~SDL2Renderer();
 
-        void flip();
+        void flip(bool draw = true);
 
         void delay(unsigned int ms);
 

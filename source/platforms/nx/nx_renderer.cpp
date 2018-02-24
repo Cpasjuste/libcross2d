@@ -15,13 +15,19 @@ using namespace c2d;
 NXRenderer::NXRenderer(const Vector2f &size) : GLRenderer(size) {
 
 #ifdef NET_DEBUG
-    nx_net_init("192.168.0.13", 3333);
+    nx_net_init(NET_DEBUG_IP, 3333);
 #elif SVC_DEBUG
     consoleInit(NULL);
     consoleDebugInit(debugDevice_SVC);
 #endif
 
+    // init video renderer
     pglInit((int) size.x, (int) size.y);
+
+    // init audio (as audio can't be reloaded ?!)
+    int ret = audoutInitialize();
+    printf("audoutInitialize: 0x%x\n", ret);
+
     available = true;
 }
 
@@ -47,6 +53,7 @@ void NXRenderer::delay(unsigned int ms) {
 
 NXRenderer::~NXRenderer() {
 
+    audoutExit();
     pglClose();
 #ifdef NET_DEBUG
     nx_net_exit();

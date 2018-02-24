@@ -56,11 +56,11 @@ void ListBox::setSelection(int idx) {
     for (int i = 0; i < max_lines; i++) {
 
         if (index_start + i >= (int) files.size()) {
-            lines[i]->setVisibility(C2D_VISIBILITY_HIDDEN);
+            lines[i]->setVisibility(Hidden);
         } else {
             // set file
             Io::File *file = files.at((unsigned long) (index_start + i));
-            lines[i]->setVisibility(C2D_VISIBILITY_VISIBLE);
+            lines[i]->setVisibility(Visible);
             lines[i]->setString(file->name);
             // set text color based on file color
             lines[i]->setFillColor(file->color);
@@ -83,9 +83,9 @@ void ListBox::setSelection(int idx) {
     }
 
     if (files.size() < 1) {
-        highlight->setVisibility(C2D_VISIBILITY_HIDDEN);
+        highlight->setVisibility(Hidden);
     } else {
-        highlight->setVisibility(C2D_VISIBILITY_VISIBLE);
+        highlight->setVisibility(Visible);
     }
 }
 
@@ -107,8 +107,8 @@ int ListBox::getIndex() {
 }
 
 void ListBox::setHighLight(bool enable) {
-    highlight->setVisibility(enable ? C2D_VISIBILITY_VISIBLE
-                                    : C2D_VISIBILITY_HIDDEN);
+    highlight->setVisibility(enable ? Visible
+                                    : Hidden);
 }
 
 int ListBox::getMaxLines() {

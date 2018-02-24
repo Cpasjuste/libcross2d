@@ -5,9 +5,6 @@
 #ifndef CROSS2D_DRAWABLE_H
 #define CROSS2D_DRAWABLE_H
 
-#define C2D_VISIBILITY_VISIBLE  0
-#define C2D_VISIBILITY_HIDDEN   1
-
 #include <cstdint>
 #include <vector>
 
@@ -20,6 +17,10 @@ namespace c2d {
     class C2DObject {
 
     public:
+
+        enum Visibility : int {
+            Visible = 0, Hidden = 1
+        };
 
         C2DObject();
 
@@ -37,7 +38,7 @@ namespace c2d {
         // visibility
         int getVisibility();
 
-        void setVisibility(int visibility);
+        void setVisibility(Visibility visibility);
 
         int getLayer();
 
@@ -47,12 +48,11 @@ namespace c2d {
 
     protected:
 
-        int visibility = C2D_VISIBILITY_VISIBLE;
-
         C2DObject *parent = NULL;
         Transformable *thisTransform = NULL;
         int layer = 0;
         std::vector<C2DObject *> childs;
+        Visibility visibility = Visible;
     };
 }
 

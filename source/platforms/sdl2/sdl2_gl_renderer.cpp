@@ -57,14 +57,15 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
     printf("SDL2Renderer(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }
 
-void SDL2Renderer::flip() {
+void SDL2Renderer::flip(bool draw) {
 
-    // call base class (draw childs)
-    GLRenderer::flip();
+    if(draw) {
+        // call base class (draw childs)
+        GLRenderer::flip();
 
-    // flip (draw mesa buffer to screen)
-    glFinish();
-
+        // flip (draw mesa buffer to screen)
+        glFinish();
+    }
     // flip
     SDL_GL_SwapWindow(window);
 }
