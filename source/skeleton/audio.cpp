@@ -18,14 +18,9 @@ Audio::Audio(int freq, int fps) {
     //if (frequency == 48000) {
     //    buffer_len = 801;
     //} else {
-        buffer_len = ((freq * 100) / fps);
-    //}
-#ifdef __NX__
     buffer_len = ((freq * 100) / fps);
+    //}
     buffer_size = buffer_len * channels * 2;
-#else
-    buffer_size = buffer_len * channels * 2;
-#endif
     buffer = (short *) malloc((size_t) buffer_size);
     if (buffer == NULL) {
         printf("Audio: error, can't alloc\n");

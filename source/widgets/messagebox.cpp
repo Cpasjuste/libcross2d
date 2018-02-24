@@ -40,6 +40,15 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
         add(buttons[i]);
     }
 
+    this->timeout = new Text("9", font, (unsigned int) fontSize);
+    this->timeout->setOutlineColor(Color::Black);
+    this->timeout->setOutlineThickness(1);
+    this->timeout->setSizeMax(getSize().x - 16, getSize().y - 8);
+    this->timeout->setPosition(getSize().x / 2, getSize().y - buttons[0]->getSize().y - 16);
+    this->timeout->setOriginCenter();
+    this->timeout->setLineSpacingModifier(4);
+    add(this->timeout);
+
     this->setVisibility(Hidden);
 }
 
@@ -61,73 +70,117 @@ void MessageBox::setOutlineColor(const Color &color) {
 }
 
 int MessageBox::show(const std::string &title, const std::string &message,
-                     const std::string &buttonLeftText, const std::string &buttonRightText) {
+                     const std::string &buttonLeftText, const std::string &buttonRightText,
+                     int *pressed, int timeout) { // if "pressed" is supplied, pressed is set to the pressed key..
+    int ret = 0;
+    int key = 0;
+    int index = 0;
+    int choices = 0;
+    C2DClock clock;
 
     this->title->setString(title);
     this->title->setOriginCenter();
     this->message->setString(message);
     this->message->setOriginCenter();
+    this->timeout->setVisibility(timeout > 0 ? Visible : Hidden);
 
     // buttons
-    buttons[0]->setFillColor(getOutlineColor());
-    buttons[0]->setOutlineColor(Color::White);
+    if (!buttonLeftText.empty() || !buttonRightText.empty()) {
 
-    if (buttonRightText.empty()) {
-        buttons[0]->setText(buttonLeftText);
-        buttons[0]->setPosition(getSize().x / 2, getSize().y - buttons[0]->getSize().y - 16);
-        buttons[1]->setVisibility(Hidden);
+        buttons[0]->setFillColor(getOutlineColor());
+        buttons[0]->setOutlineColor(Color::White);
+
+        if (buttonRightText.empty()) {
+            buttons[0]->setText(buttonLeftText);
+            buttons[0]->setPosition(getSize().x / 2, getSize().y - buttons[0]->getSize().y - 16);
+            buttons[1]->setVisibility(Hidden);
+            choices = 1;
+        } else {
+            buttons[0]->setText(buttonLeftText);
+            buttons[0]->setPosition((getSize().x / 3) - 8,
+                                    getSize().y - buttons[0]->getSize().y - 16);
+            buttons[1]->setText(buttonRightText);
+            buttons[1]->setPosition(((getSize().x / 3) * 2) + 8,
+                                    getSize().y - buttons[1]->getSize().y - 16);
+            buttons[1]->setFillColor(getFillColor());
+            buttons[1]->setVisibility(Visible);
+            choices = 2;
+        }
     } else {
-        buttons[0]->setText(buttonLeftText);
-        buttons[0]->setPosition((getSize().x / 3) - 8,
-                                getSize().y - buttons[0]->getSize().y - 16);
-        buttons[1]->setText(buttonRightText);
-        buttons[1]->setPosition(((getSize().x / 3) * 2) + 8,
-                                getSize().y - buttons[1]->getSize().y - 16);
-        buttons[1]->setFillColor(getFillColor());
-        buttons[1]->setVisibility(Visible);
+        buttons[0]->setVisibility(Hidden);
+        buttons[1]->setVisibility(Hidden);
     }
 
     setVisibility(Visible);
     setLayer(1000);
 
-    int index = 0;
-    int choice_count = buttonRightText.empty() ? 1 : 2;
-
     input->clear(0);
+
+    clock.restart();
 
     while (true) {
 
-        int key = input->update(0)[0].state;
-        if (key > 0) {
-
-            if (key & Input::Key::KEY_LEFT) {
-                if (index > 0) {
-                    index--;
-                }
-            } else if (key & Input::Key::KEY_RIGHT) {
-                if (index < choice_count - 1) {
-                    index++;
-                }
-            } else if (key & Input::Key::KEY_FIRE1) {
+        if (timeout > 0) {
+            int elapsed = (int) clock.getElapsedTime().asSeconds();
+            if (elapsed >= timeout) {
                 setVisibility(Hidden);
-                c2d_renderer->flip();
                 input->clear(0);
-                return index == 1 ? BTN_RIGHT : BTN_LEFT;
-            } else if (key & Input::Key::KEY_FIRE2) {
-                setVisibility(Hidden);
-                c2d_renderer->flip();
-                input->clear(0);
-                return BTN_CANCEL;
+                ret = TIMEOUT;
+                break;
             }
+            snprintf(timeout_str, 16, "%i", timeout - elapsed);
+            this->timeout->setString(timeout_str);
+            this->timeout->setOriginCenter();
+        }
 
-            setFillColor(getFillColor());
-            setOutlineColor(getOutlineColor());
-            buttons[index]->setFillColor(getOutlineColor());
-            buttons[index]->setOutlineColor(Color::White);
+        if (pressed) {
+            key = input->getButton();
+            if (key > -1) {
+                setVisibility(Hidden);
+                input->clear(0);
+                break;
+            }
+        } else {
+            key = input->update(0)[0].state;
+            if (key > 0) {
 
-            c2d_renderer->delay(150);
+                if (key & Input::Key::KEY_LEFT) {
+                    if (index > 0) {
+                        index--;
+                    }
+                } else if (key & Input::Key::KEY_RIGHT) {
+                    if (index < choices - 1) {
+                        index++;
+                    }
+                } else if (key & Input::Key::KEY_FIRE1) {
+                    setVisibility(Hidden);
+                    input->clear(0);
+                    ret = index == 1 ? RIGHT : LEFT;
+                    break;
+                } else if (key & Input::Key::KEY_FIRE2) {
+                    setVisibility(Hidden);
+                    input->clear(0);
+                    ret = CANCEL;
+                    break;
+                }
+
+                if (choices) {
+                    setFillColor(getFillColor());
+                    setOutlineColor(getOutlineColor());
+                    buttons[index]->setFillColor(getOutlineColor());
+                    buttons[index]->setOutlineColor(Color::White);
+                }
+
+                c2d_renderer->delay(150);
+            }
         }
 
         c2d_renderer->flip();
     }
+
+    if (pressed) {
+        *pressed = key;
+    }
+
+    return ret;
 }

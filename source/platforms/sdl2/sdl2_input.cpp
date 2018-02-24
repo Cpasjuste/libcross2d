@@ -77,12 +77,16 @@ SDL2Input::~SDL2Input() {
 }
 
 int SDL2Input::getButton(int player) {
+
     SDL_Event event = {};
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_JOYBUTTONDOWN) {
             return event.jbutton.button;
+        } else if (event.type == SDL_KEYDOWN) {
+            return event.key.keysym.scancode;
         }
     }
+
     return -1;
 }
 
@@ -291,7 +295,6 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
             }
         }
 #endif
-
         if (SDL_JoystickGetButton((SDL_Joystick *) player.data, mapping)) {
             if (rotate && key_id[i] == Input::Key::KEY_UP) {
                 if (rotate == 1) {
