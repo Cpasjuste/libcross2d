@@ -5,16 +5,22 @@
 #ifndef CROSS2D_MAIN_H
 #define CROSS2D_MAIN_H
 
+int KEYS[]{
+        // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
+        KEY_JOY_UP_DEFAULT, KEY_JOY_DOWN_DEFAULT, KEY_JOY_LEFT_DEFAULT, KEY_JOY_RIGHT_DEFAULT,
+        KEY_JOY_COIN1_DEFAULT, KEY_JOY_START1_DEFAULT,
+        KEY_JOY_FIRE1_DEFAULT, KEY_JOY_FIRE2_DEFAULT, KEY_JOY_FIRE3_DEFAULT,
+        KEY_JOY_FIRE4_DEFAULT, KEY_JOY_FIRE5_DEFAULT, KEY_JOY_FIRE6_DEFAULT,
+        0
+        // 13, 15, 12, 14, 10, 11, 0, 1, 2, 3, 7, 6, 0 // QUIT
+};
+
 #ifdef __PSP2__
 
 #define SCR_W 960
 #define SCR_H 544
 #define FONT_PATH   "app0:/default.ttf"
 #define TEX_PATH    "app0:/title.png"
-int KEYS[]{
-        // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
-        82, 81, 80, 79, 89, 90, 91, 92, 93, 94, 41, 40, 0 // KEY_QUIT
-};
 
 #elif __3DS__
 
@@ -22,10 +28,6 @@ int KEYS[]{
 #define SCR_H 240
 #define FONT_PATH   "/default.ttf"
 #define TEX_PATH    "/title.png"
-int KEYS[]{
-        // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
-        6, 7, 5, 4, 2, 3, 0, 1, 10, 11, 9, 8, 0 // KEY_QUIT
-};
 
 #elif __NX__
 
@@ -34,21 +36,12 @@ int KEYS[]{
 #define FONT_PATH   "/switch/pfba/skin/default.ttf"
 #define TEX_PATH    "/switch/pfba/skin/title.png"
 
-int KEYS[]{
-        // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
-        13, 15, 12, 14, 10, 11, 0, 1, 2, 3, 7, 6, 0 // QUIT
-};
 #elif __SFML__
 
 #define SCR_W 960
 #define SCR_H 544
 #define FONT_PATH   "../res/default.ttf"
 #define TEX_PATH    "../res/title.png"
-int KEYS[]{
-        // SFML_Scancode
-        // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
-        73, 74, 71, 72, 36, 58, 91, 92, 93, 94, 41, 40, 0
-};
 
 #elif __PS3__
 
@@ -56,22 +49,6 @@ int KEYS[]{
 #define SCR_H 720   // doesn't matter, virtual resolution used
 #define FONT_PATH   "/dev_hdd0/default.ttf"
 #define TEX_PATH    "/dev_hdd0/title.png"
-int KEYS[]{
-        3,  // UP
-        1,  // DOWN
-        0,  // LEFT
-        2,  // RIGHT
-        7,  // COINS (SELECT)
-        4,  // START
-        9,  // FIRE1
-        8,  // FIRE2
-        10, // FIRE3
-        11, // FIRE4
-        13, // FIRE5
-        12, // FIRE6
-        7,  // MENU1
-        4   // MENU2
-};
 
 #elif __SDL2__ || __SDL1__
 
@@ -79,11 +56,6 @@ int KEYS[]{
 #define SCR_H 544
 #define FONT_PATH   "../res/default.ttf"
 #define TEX_PATH    "../res/title.png"
-int KEYS[]{
-        // SDL_Scancode
-        // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
-        82, 81, 80, 79, 89, 90, 91, 92, 93, 94, 41, 40, 0 // QUIT
-};
 
 #endif
 

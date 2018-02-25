@@ -46,7 +46,7 @@ int main() {
     // add all this crap to the renderer
     renderer->add(rect);
 
-    C2DInput *input = new C2DInput(renderer);
+    Input *input = new C2DInput(NULL);
     input->setJoystickMapping(0, KEYS, 0);
 
     C2DClock clock;
@@ -57,7 +57,7 @@ int main() {
         unsigned int key = input->update()[0].state;
         if (key) {
             printf("input[0]: 0x%08X\n", key);
-            input->clear(0);
+            //input->clear(0);
             if (key & Input::Key::KEY_FIRE2) {
                 break;
             }
@@ -72,7 +72,7 @@ int main() {
         rect->setScale(rect->getScale().x - (0.1f * delta), rect->getScale().y - (0.1f * delta));
         rect->rotate(50 * delta);
 
-        renderer->flip(false);
+        renderer->flip();
     }
 
     // will delete widgets recursively

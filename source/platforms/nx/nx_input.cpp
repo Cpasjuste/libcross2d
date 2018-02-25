@@ -103,7 +103,7 @@ void NXInput::process_buttons(Input::Player &player, int rotate) {
         if (mapping < 0)
             mapping = 0;
 
-        if (held & BIT(mapping)) {
+        if (held & mapping) {
             if (rotate && key_id[i] == Input::Key::KEY_UP) {
                 if (rotate == 1) {
                     player.state |= Input::Key::KEY_RIGHT;
