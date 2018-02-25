@@ -117,9 +117,10 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/nx/nx_audio.h"
 #include "platforms/posix/posix_io.h"
 
-#define SVC_DEBUG 1
-//#define NET_DEBUG 1
+//#define SVC_DEBUG 1
+#define NET_DEBUG 1
 #ifdef NET_DEBUG
+
 #include "nxnetprint.h"
 //#define NET_DEBUG_IP "192.168.0.13"
 #define NET_DEBUG_IP "192.168.0.10"
@@ -140,18 +141,18 @@ extern c2d::Renderer *c2d_renderer;
 // https://github.com/switchbrew/libnx/blob/master/nx/include/switch/services/hid.h
 #define KEY_JOY_UP_DEFAULT      0x222000    // KEY_UP
 #define KEY_JOY_DOWN_DEFAULT    0x888000    // KEY_DOWN
-#define KEY_JOY_LEFT_DEFAULT    0x444000    // KEY_LEFT
-#define KEY_JOY_RIGHT_DEFAULT   0x111000    // KEY_RIGHT
+#define KEY_JOY_LEFT_DEFAULT    0x111000    // KEY_LEFT
+#define KEY_JOY_RIGHT_DEFAULT   0x444000    // KEY_RIGHT
 #define KEY_JOY_FIRE1_DEFAULT   0x1         // KEY_A
 #define KEY_JOY_FIRE2_DEFAULT   0x2         // KEY_B
 #define KEY_JOY_FIRE3_DEFAULT   0x4         // KEY_X
 #define KEY_JOY_FIRE4_DEFAULT   0x8         // KEY_Y
 #define KEY_JOY_FIRE5_DEFAULT   0x40        // KEY_L
 #define KEY_JOY_FIRE6_DEFAULT   0x80        // KEY_R
-#define KEY_JOY_COIN1_DEFAULT   0x400       // KEY_PLUS
-#define KEY_JOY_START1_DEFAULT  0x800       // KEY_MINUS
-#define KEY_JOY_MENU1_DEFAULT   0x800       // KEY_MINUS
-#define KEY_JOY_MENU2_DEFAULT   0x400       // KEY_PLUS
+#define KEY_JOY_COIN1_DEFAULT   0x800       // KEY_PLUS
+#define KEY_JOY_START1_DEFAULT  0x400       // KEY_MINUS
+#define KEY_JOY_MENU1_DEFAULT   0x400       // KEY_MINUS
+#define KEY_JOY_MENU2_DEFAULT   0x800       // KEY_PLUS
 // switch special keys
 #define KEY_JOY_ZL_DEFAULT      0x100       // KEY_ZL
 #define KEY_JOY_ZR_DEFAULT      0x200       // KEY_ZR
