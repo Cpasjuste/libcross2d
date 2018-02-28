@@ -9,7 +9,7 @@ using namespace c2d;
 
 C2DObject::C2DObject() {
 
-    //printf("Widget(%p)\n", this);
+    printf("Widget(%p)\n", this);
 }
 
 void C2DObject::add(C2DObject *object) {
@@ -86,10 +86,11 @@ C2DObject::~C2DObject() {
 
     // remove from parent
     if (parent) {
-        // printf("~Widget(%p): remove from parent(%p)\n", this, parent);
+        //printf("~Widget(%p): remove from parent(%p)\n", this, parent);
         parent->childs.erase(
                 std::remove(parent->childs.begin(), parent->childs.end(), this),
                 parent->childs.end());
     }
-    //printf("~Widget(%p)\n", this);
+
+    printf("~Widget(%p)\n", this);
 }

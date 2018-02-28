@@ -9,7 +9,7 @@
 
 namespace c2d {
 
-    class SDL1Audio : Audio {
+    class SDL1Audio : public Audio {
 
     public:
         SDL1Audio(int freq, int fps = 60);

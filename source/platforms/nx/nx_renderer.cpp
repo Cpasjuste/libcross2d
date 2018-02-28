@@ -26,9 +26,6 @@ NXRenderer::NXRenderer(const Vector2f &size) : GLRenderer(size) {
 #ifdef SVC_DEBUG
     gfxSetMode(GfxMode_TiledSingle);
 #endif
-    // init audio (as audio can't be reloaded ?!)
-    int ret = audoutInitialize();
-    printf("audoutInitialize: 0x%x\n", ret);
 
     available = true;
 }
@@ -55,7 +52,6 @@ void NXRenderer::delay(unsigned int ms) {
 
 NXRenderer::~NXRenderer() {
 
-    audoutExit();
     pglClose();
 #ifdef NET_DEBUG
     nx_net_exit();

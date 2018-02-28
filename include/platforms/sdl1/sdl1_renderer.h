@@ -6,7 +6,7 @@
 #define SDL1_RENDERER_H
 
 #include "SDL/SDL.h"
-#include "skeleton/renderergl.h"
+#include "platforms/gl/gl_renderer.h"
 
 namespace c2d {
 
@@ -18,7 +18,7 @@ namespace c2d {
 
         ~SDL1Renderer();
 
-        void flip();
+        void flip(bool draw = true);
 
         void delay(unsigned int ms);
 

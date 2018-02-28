@@ -19,10 +19,10 @@ SDL1Renderer::SDL1Renderer(const Vector2f &size) : GLRenderer(size) {
     available = true;
 }
 
-void SDL1Renderer::flip() {
+void SDL1Renderer::flip(bool draw) {
 
     // call base class (draw childs)
-    GLRenderer::flip();
+    GLRenderer::flip(draw);
 
     // flip (draw buffer to screen)
     pglSwap();

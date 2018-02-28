@@ -11,16 +11,16 @@
 
 namespace c2d {
 
-    class SDL1Input : Input {
+    class SDL1Input : public Input {
 
     public:
         SDL1Input(Renderer *renderer);
 
         virtual ~SDL1Input();
 
-        virtual Player *update(int rotate);
+        virtual Player *update(int rotate = 0);
 
-        virtual int getButton(int player);
+        virtual int getButton(int player = 0);
 
     private:
         virtual void process_axis(Input::Player &player, int rotate);

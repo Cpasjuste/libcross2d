@@ -26,8 +26,6 @@ static int key_id[KEY_COUNT]{
 
 NXInput::NXInput(Renderer *r) : Input(r) {
 
-    hidInitialize();
-
     players[0].enabled = true;
 
     for (int k = 0; k < KEY_COUNT; k++) {
@@ -40,8 +38,6 @@ NXInput::~NXInput() {
     for (int i = 0; i < PLAYER_COUNT; i++) {
         players[i].enabled = false;
     }
-
-    hidExit();
 }
 
 int NXInput::getButton(int player) {
@@ -100,8 +96,8 @@ void NXInput::process_buttons(Input::Player &player, int rotate) {
     for (int i = 0; i < KEY_COUNT; i++) {
 
         int mapping = player.mapping[i];
-        if (mapping < 0)
-            mapping = 0;
+        //if (mapping < 0)
+        //    mapping = 0;
 
         if (held & mapping) {
             if (rotate && key_id[i] == Input::Key::KEY_UP) {

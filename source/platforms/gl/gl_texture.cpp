@@ -49,6 +49,8 @@ GLTexture::GLTexture(const char *path) : Texture(path) {
     } else {
         printf("GLTexture::GLTexture: couldn't create texture: %s\n", path);
     }
+
+    printf("GLTexture(%p)\n", this);
 }
 
 GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
@@ -79,6 +81,8 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
     } else {
         printf("GLTexture::GLTexture: couldn't create texture: %s\n", path);
     }
+
+    printf("GLTexture(%p)\n", this);
 }
 
 GLTexture::GLTexture(const Vector2f &size, int format) : Texture(size, format) {
@@ -95,6 +99,8 @@ GLTexture::GLTexture(const Vector2f &size, int format) : Texture(size, format) {
     } else {
         printf("GLTexture::GLTexture: couldn't create texture");
     }
+
+    printf("GLTexture(%p)\n", this);
 }
 
 int GLTexture::resize(const Vector2f &size, bool copyPixels) {
@@ -200,11 +206,14 @@ void GLTexture::setFiltering(int filter) {
 
 GLTexture::~GLTexture() {
 
+    printf("~GLTexture(%p)\n", this);
     if (pixels) {
+        printf("free(pixels)\n");
         free(pixels);
     }
 
     if (texID) {
+        printf("glDeleteTextures(%i)\n", texID);
         glDeleteTextures(1, &texID);
     }
 }

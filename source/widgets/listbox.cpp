@@ -11,6 +11,8 @@ using namespace c2d;
 ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
                  const std::vector<Io::File *> &fileList) : Rectangle(rect) {
 
+    printf("ListBox\n");
+
     files = fileList;
 
     // set default bg colors
@@ -44,7 +46,8 @@ ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
 ListBox::~ListBox() {
     // no need to delete lines widgets (ptr),
     // will be delete by parent (widget)
-    lines.clear();
+    //lines.clear();
+    printf("~ListBox\n");
 }
 
 void ListBox::setSelection(int idx) {

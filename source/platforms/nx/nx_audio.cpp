@@ -10,10 +10,6 @@
 
 using namespace c2d;
 
-extern "C" {
-#include <switch/kernel/condvar.h>
-}
-
 #define BUFFERED_AUDIO 0
 
 typedef struct NXAudioBuffer {
@@ -161,8 +157,12 @@ NXAudio::NXAudio(int freq, int fps) : Audio(freq, fps) {
     printf("PCM format: 0x%x\n", audoutGetPcmFormat());
     printf("Device state: 0x%x\n", audoutGetDeviceState());
 
+    // init audio (audio can't be reloaded properly ?!)
+    int ret = audoutInitialize();
+    printf("audoutInitialize: 0x%x\n", ret);
+
     // Start audio playback.
-    int ret = audoutStartAudioOut();
+    ret = audoutStartAudioOut();
     printf("audoutStartAudioOut: 0x%x\n", ret);
     if (ret != 0) {
         available = false;
@@ -207,6 +207,8 @@ NXAudio::~NXAudio() {
 
     ret = audoutStopAudioOut();
     printf("audoutStopAudioOut: %i\n", ret);
+
+    audoutExit();
 }
 
 void NXAudio::Play() {

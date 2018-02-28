@@ -84,6 +84,8 @@ int SDL1Input::getButton(int player) {
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_JOYBUTTONDOWN) {
             return event.jbutton.button;
+        } else if (event.type == SDL_KEYDOWN) {
+            return event.key.keysym.scancode;
         }
     }
     return -1;

@@ -118,9 +118,8 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/posix/posix_io.h"
 
 //#define SVC_DEBUG 1
-#define NET_DEBUG 1
+//#define NET_DEBUG 1
 #ifdef NET_DEBUG
-
 #include "nxnetprint.h"
 #define NET_DEBUG_IP "192.168.0.13"
 //#define NET_DEBUG_IP "192.168.0.10"
@@ -163,32 +162,6 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_LY         0
 #define KEY_JOY_AXIS_RX         0
 #define KEY_JOY_AXIS_RY         0
-/*
-#define KEY_JOY_UP_DEFAULT      13
-#define KEY_JOY_DOWN_DEFAULT    15
-#define KEY_JOY_LEFT_DEFAULT    12
-#define KEY_JOY_RIGHT_DEFAULT   14
-#define KEY_JOY_FIRE1_DEFAULT   0
-#define KEY_JOY_FIRE2_DEFAULT   1
-#define KEY_JOY_FIRE3_DEFAULT   2
-#define KEY_JOY_FIRE4_DEFAULT   3
-#define KEY_JOY_FIRE5_DEFAULT   6
-#define KEY_JOY_FIRE6_DEFAULT   7
-#define KEY_JOY_COIN1_DEFAULT   11
-#define KEY_JOY_START1_DEFAULT  10
-#define KEY_JOY_MENU1_DEFAULT   10
-#define KEY_JOY_MENU2_DEFAULT   11
-// switch special keys
-#define KEY_JOY_ZL_DEFAULT      8
-#define KEY_JOY_ZR_DEFAULT      9
-#define KEY_JOY_SL_DEFAULT      24
-#define KEY_JOY_SR_DEFAULT      25
-// TODO
-#define KEY_JOY_AXIS_LX         0
-#define KEY_JOY_AXIS_LY         0
-#define KEY_JOY_AXIS_RX         0
-#define KEY_JOY_AXIS_RY         0
-*/
 
 #elif __SDL2__
 
@@ -364,21 +337,22 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_KB_MENU1_DEFAULT   40   // ENTER
 #define KEY_KB_MENU2_DEFAULT   44   // SPACE
 #elif defined(__SDL1__)
-// SDLKey from SDL_keysym.h
-#define KEY_KB_UP_DEFAULT      273
-#define KEY_KB_DOWN_DEFAULT    274
-#define KEY_KB_LEFT_DEFAULT    276
-#define KEY_KB_RIGHT_DEFAULT   275
-#define KEY_KB_FIRE1_DEFAULT   257
-#define KEY_KB_FIRE2_DEFAULT   258
-#define KEY_KB_FIRE3_DEFAULT   259
-#define KEY_KB_FIRE4_DEFAULT   260
-#define KEY_KB_FIRE5_DEFAULT   261
-#define KEY_KB_FIRE6_DEFAULT   262
-#define KEY_KB_COIN1_DEFAULT   32
-#define KEY_KB_START1_DEFAULT  13
-#define KEY_KB_MENU1_DEFAULT   38
-#define KEY_KB_MENU2_DEFAULT   233
+// SDLKey from :
+#include <SDL/SDL_keysym.h>
+#define KEY_KB_UP_DEFAULT      SDLK_UP
+#define KEY_KB_DOWN_DEFAULT    SDLK_DOWN
+#define KEY_KB_LEFT_DEFAULT    SDLK_LEFT
+#define KEY_KB_RIGHT_DEFAULT   SDLK_RIGHT
+#define KEY_KB_FIRE1_DEFAULT   SDLK_a
+#define KEY_KB_FIRE2_DEFAULT   SDLK_z
+#define KEY_KB_FIRE3_DEFAULT   SDLK_e
+#define KEY_KB_FIRE4_DEFAULT   SDLK_q
+#define KEY_KB_FIRE5_DEFAULT   SDLK_s
+#define KEY_KB_FIRE6_DEFAULT   SDLK_d
+#define KEY_KB_COIN1_DEFAULT   SDLK_SPACE
+#define KEY_KB_START1_DEFAULT  SDLK_RETURN
+#define KEY_KB_MENU1_DEFAULT   SDLK_SPACE
+#define KEY_KB_MENU2_DEFAULT   SDLK_RETURN
 #elif __SFML__
 #define KEY_KB_UP_DEFAULT      73
 #define KEY_KB_DOWN_DEFAULT    74
