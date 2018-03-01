@@ -13,8 +13,6 @@ using namespace c2d;
 #define BUFFERED_AUDIO 1
 
 typedef struct NXAudioBuffer {
-    //unsigned char *read_buffer;
-    //int read_buffer_size;
     unsigned char *write_buffer;
     int write_buffer_size;
     int len;
@@ -43,9 +41,6 @@ static int running = 1;
 
 static void read_buffer(unsigned char *data, int len) {
 
-#if !BUFFERED_AUDIO
-    condvarWakeOne(&cond.var);
-#else
     //printf("write_buffer: mutexLock\n");
     //mutexLock(&mutex);
 
@@ -69,7 +64,6 @@ static void read_buffer(unsigned char *data, int len) {
     //mutexUnlock(&mutex);
     //printf("write_buffer: mutexUnlock / condvarWakeAll\n");
     //condvarWakeOne(&cond.var);
-#endif
 }
 
 static void write_buffer(void *arg) {
@@ -78,19 +72,6 @@ static void write_buffer(void *arg) {
 
     while (running) {
 
-#if !BUFFERED_AUDIO
-        condvarWait(&cond.var);
-        if (!running) {
-            break;
-        }
-
-        source_buffer.next = 0;
-        source_buffer.buffer = audioBuffer.write_buffer;
-        source_buffer.buffer_size = (u64) audioBuffer.write_buffer_len;
-        source_buffer.data_size = (u64) audioBuffer.write_buffer_size;
-        source_buffer.data_offset = (u64) 0;
-        audoutPlayBuffer(&source_buffer, &released_buffer);
-#else
         //printf("write_buffer: condvarWait\n");
         //condvarWait(&cond.var);
         //mutexLock(&mutex);
@@ -122,13 +103,12 @@ static void write_buffer(void *arg) {
 
         } else {
             // should not happen as soon as audio is playing
-            // printf("buffered < len\n");
-            svcSleepThread(1000000 * 4); //
+            printf("buffered < len\n");
+            svcSleepThread(1000000 * 16); // 16 ms
         }
 
         //mutexUnlock(&mutex);
         //condvarWakeOne(&cond.var);
-#endif
     }
 
     printf("audio thread ended\n");
@@ -140,20 +120,6 @@ NXAudio::NXAudio(int freq, int fps) : Audio(freq, fps) {
         return;
     }
 
-#if !BUFFERED_AUDIO
-    if (buffer) {
-        free(buffer);
-    }
-    buffer_len = 800;
-    buffer_size = buffer_len * channels * 2;
-    u32 size_aligned = (u32) (buffer_size + 0xfff) & ~0xfff;
-    buffer = (short *) memalign(0x1000, size_aligned);
-    memset(buffer, 0, (size_t) size_aligned);
-
-    audioBuffer.write_buffer_len = buffer_len;
-    audioBuffer.write_buffer_size = buffer_size;
-    audioBuffer.write_buffer = (unsigned char *) buffer;
-#else
     if (buffer) {
         free(buffer);
     }
@@ -170,15 +136,9 @@ NXAudio::NXAudio(int freq, int fps) : Audio(freq, fps) {
     audioBuffer.write_buffer = (unsigned char *) memalign(0x1000, size_aligned);
     memset(audioBuffer.write_buffer, 0, (size_t) size_aligned);
 
-    // read buffer
-    //audioBuffer.read_buffer_size = buffer_size * 8;
-    //audioBuffer.read_buffer = (unsigned char *) malloc((size_t) buffer_size * 8);
-    //memset(audioBuffer.read_buffer, 0, (size_t) buffer_size * 8);
-
     audioBuffer.buffered = 0;
     audioBuffer.write_pos = 0;
     audioBuffer.read_pos = 0;
-#endif
 
     printf("Sample rate: 0x%x\n", audoutGetSampleRate());
     printf("Channel count: 0x%x\n", audoutGetChannelCount());
