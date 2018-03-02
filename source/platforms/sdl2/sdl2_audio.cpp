@@ -34,17 +34,18 @@ static void write_buffer(const unsigned char *data, int len) {
 
     for (int i = 0; i < len; i += 4) {
         if (!use_mutex) {
-            if (buffered_bytes == buf_size) {
+            if (buffered_bytes >= buf_size) {
                 //printf("audio drop: write_pos=%i - buffered=%i (write_len=%i)\n", buf_write_pos, buffered_bytes, len);
                 break; // drop samples
             }
         } else {
-            while (buffered_bytes == buf_size) {
+            while (buffered_bytes >= buf_size) {
                 SDL_CondWait(sound_cv, sound_mutex);
             }
         }
 
         *(int *) ((char *) (buffer_sdl + buf_write_pos)) = *(int *) ((char *) (data + i));
+        //memcpy(buffer_sdl + buf_write_pos, data + i, 4);
         buf_write_pos = (buf_write_pos + 4) % buf_size;
         buffered_bytes += 4;
     }
@@ -98,7 +99,9 @@ SDL2Audio::SDL2Audio(int freq, int fps) : Audio(freq, fps) {
 
     // Find the value which is slighly bigger than buffer_len*2
     for (sample_size = 512; sample_size < (buffer_len * 2); sample_size <<= 1);
+#ifdef __PSP2__
     sample_size /= 4; // fix audio delay
+#endif
     buf_size = sample_size * channels * 2 * 8;
     buffer_sdl = (unsigned char *) malloc((size_t) buf_size);
     memset(buffer_sdl, 0, (size_t) buf_size);

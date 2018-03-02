@@ -10,37 +10,26 @@
 
 using namespace c2d;
 
-typedef struct NXAudioBuffer {
-    unsigned char *read_buffer;
-    int read_buffer_size;
-    unsigned char *buffer;
-    int len;
-    int size;
-    int buffered;
-    int write_pos;
-    int read_pos;
-} NXAudioBuffer;
-
 static NXAudioBuffer audioBuffer;
-static AudioOutBuffer source_buffer;
-static AudioOutBuffer released_buffer;
-
 static Thread thread;
 static int running = 1;
 
 static void read_buffer(unsigned char *data, int len) {
 
-    for (int i = 0; i < len; i += 4) {
+    int size = len / 8;
 
-        while (audioBuffer.buffered == audioBuffer.read_buffer_size) {
+    for (int i = 0; i < len; i += size) {
+
+        if (audioBuffer.buffered >= audioBuffer.read_buffer_size - size) {
             // oops, audio thread too slow, drop audio
             // printf("write_buffer: buffered = buffer size\n");
             return;
         }
 
-        *(int *) ((char *) (audioBuffer.read_buffer + audioBuffer.read_pos)) = *(int *) ((char *) (data + i));
-        audioBuffer.read_pos = (audioBuffer.read_pos + 4) % audioBuffer.read_buffer_size;
-        audioBuffer.buffered += 4;
+        //*(int *) ((char *) (audioBuffer.read_buffer + audioBuffer.read_pos)) = *(int *) ((char *) (data + i));
+        memcpy(audioBuffer.read_buffer + audioBuffer.read_pos, data + i, (size_t) size);
+        audioBuffer.read_pos = (audioBuffer.read_pos + size) % audioBuffer.read_buffer_size;
+        audioBuffer.buffered += size;
     }
 }
 
@@ -50,32 +39,28 @@ static void write_buffer(void *arg) {
 
     while (running) {
 
-        if (!running) {
-            break;
-        }
-
         int len = audioBuffer.size;
 
         if (audioBuffer.buffered >= len) {
 
-            source_buffer.next = 0;
-            source_buffer.buffer_size = (u64) audioBuffer.len;
-            source_buffer.data_size = (u64) audioBuffer.size;
-            source_buffer.data_offset = (u64) 0;
+            audioBuffer.source_buffer.next = 0;
+            audioBuffer.source_buffer.buffer_size = 2048; // (u64) audioBuffer.len;
+            audioBuffer.source_buffer.data_size = (u64) audioBuffer.size;
+            audioBuffer.source_buffer.data_offset = (u64) 0;
             if (audioBuffer.write_pos + len < audioBuffer.read_buffer_size) {
                 memcpy(audioBuffer.buffer,
                        audioBuffer.read_buffer + audioBuffer.write_pos, (size_t) len);
-                source_buffer.buffer = audioBuffer.buffer;
+                audioBuffer.source_buffer.buffer = audioBuffer.buffer;
             } else {
-                // should not happen if we're all good
                 int tail = audioBuffer.read_buffer_size - audioBuffer.write_pos;
                 memcpy(audioBuffer.buffer,
                        audioBuffer.read_buffer + audioBuffer.write_pos, (size_t) tail);
                 memcpy(audioBuffer.buffer + tail, audioBuffer.read_buffer, (size_t) len - tail);
-                source_buffer.buffer = audioBuffer.buffer;
+                audioBuffer.source_buffer.buffer = audioBuffer.buffer;
             }
 
-            audoutPlayBuffer(&source_buffer, &released_buffer);
+            audioBuffer.released_buffer = NULL;
+            audoutPlayBuffer(&audioBuffer.source_buffer, &audioBuffer.released_buffer);
 
             audioBuffer.write_pos = (audioBuffer.write_pos + len) % audioBuffer.read_buffer_size;
             audioBuffer.buffered -= len;
@@ -84,6 +69,10 @@ static void write_buffer(void *arg) {
             // should not happen as soon as audio is playing
             // printf("buffered < len\n");
             svcSleepThread(1000000 * 16); // 16 ms
+        }
+
+        if (!running) {
+            break;
         }
     }
 
@@ -105,9 +94,8 @@ NXAudio::NXAudio(int freq, int fps) : Audio(freq, fps) {
     audioBuffer.size = buffer_size;
     audioBuffer.len = buffer_len;
     audioBuffer.read_buffer_size = buffer_size * 8;
-    u32 size_aligned = (u32) (audioBuffer.read_buffer_size + 0xfff) & ~0xfff;
-    audioBuffer.read_buffer = (unsigned char *) memalign(0x1000, size_aligned);
-    memset(audioBuffer.read_buffer, 0, (size_t) size_aligned);
+    audioBuffer.read_buffer = (unsigned char *) malloc((size_t) buffer_size * 8);
+    memset(audioBuffer.read_buffer, 0, (size_t) buffer_size * 8);
 
     audioBuffer.buffered = 0;
     audioBuffer.write_pos = 0;
@@ -125,6 +113,7 @@ NXAudio::NXAudio(int freq, int fps) : Audio(freq, fps) {
     ret = audoutStartAudioOut();
     printf("NXAudio: audoutStartAudioOut: 0x%x\n", ret);
     if (ret != 0) {
+        audoutExit();
         available = false;
         return;
     }
@@ -133,6 +122,7 @@ NXAudio::NXAudio(int freq, int fps) : Audio(freq, fps) {
     printf("NXAudio: threadCreate: 0x%x\n", ret);
     if (ret != 0) {
         audoutStopAudioOut();
+        audoutExit();
         available = false;
         return;
     }
@@ -141,6 +131,7 @@ NXAudio::NXAudio(int freq, int fps) : Audio(freq, fps) {
     printf("NXAudio: threadStart: %i\n", ret);
     if (ret != 0) {
         audoutStopAudioOut();
+        audoutExit();
         available = false;
         return;
     }
@@ -153,7 +144,6 @@ NXAudio::~NXAudio() {
     }
 
     running = false;
-
     int ret = threadWaitForExit(&thread);
     printf("NXAudio: threadWaitForExit: %i\n", ret);
 

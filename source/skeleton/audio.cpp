@@ -38,10 +38,7 @@ void Audio::Pause(int pause) {
 }
 
 Audio::~Audio() {
-    if (available) {
-        if (buffer != NULL) {
-            free(buffer);
-            buffer = NULL;
-        }
+    if (buffer != NULL) {
+        free(buffer);
     }
 }

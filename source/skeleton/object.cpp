@@ -9,7 +9,7 @@ using namespace c2d;
 
 C2DObject::C2DObject() {
 
-    printf("Widget(%p)\n", this);
+    //printf("Widget(%p)\n", this);
 }
 
 void C2DObject::add(C2DObject *object) {
@@ -92,5 +92,5 @@ C2DObject::~C2DObject() {
                 parent->childs.end());
     }
 
-    printf("~Widget(%p)\n", this);
+    //printf("~Widget(%p)\n", this);
 }
