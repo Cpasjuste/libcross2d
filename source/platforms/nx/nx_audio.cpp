@@ -175,9 +175,9 @@ NXAudio::NXAudio(int freq, int fps) : Audio(freq, fps) {
         return;
     }
 
-    mutexInit(&mutex);
-    mutexInit(&cond.mutex);
-    condvarInit(&cond.var, &cond.mutex);
+    //mutexInit(&mutex);
+    //mutexInit(&cond.mutex);
+    //condvarInit(&cond.var, &cond.mutex);
 
     ret = threadCreate(&thread, write_buffer, NULL, 0x1000, 0x20, -2);
     printf("threadCreate: 0x%x\n", ret);
