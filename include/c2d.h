@@ -122,7 +122,7 @@ extern c2d::Renderer *c2d_renderer;
 #ifdef NET_DEBUG
 #include "nxnetprint.h"
 //#define NET_DEBUG_IP "192.168.0.13"
-#define NET_DEBUG_IP "192.168.1.100"
+//#define NET_DEBUG_IP "192.168.1.100"
 //#define NET_DEBUG_IP "192.168.0.10"
 #endif
 
