@@ -61,8 +61,7 @@ namespace c2d {
     protected:
 
         ShaderList *shaderList = NULL;
-
-        Clock deltaClock, elapsedClock;
+        Clock *deltaClock = NULL, *elapsedClock = NULL;
         Time deltaTime, elapsedTime;
         float time_now = 0, time_last = 0, fps = 0;
         int frames = 0;

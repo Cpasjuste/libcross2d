@@ -6,10 +6,11 @@
 #include <SDL2/SDL.h>
 #include "platforms/sdl2/sdl2_audio.h"
 
-#ifdef __PSP2_DEBUG__
+//#ifdef __PSP2_DEBUG__
 #include <psp2/kernel/clib.h>
+
 #define printf sceClibPrintf
-#endif
+//#endif
 
 using namespace c2d;
 
@@ -35,7 +36,8 @@ static void write_buffer(const unsigned char *data, int len) {
     for (int i = 0; i < len; i += 4) {
         if (!use_mutex) {
             if (buffered_bytes >= buf_size) {
-                //printf("audio drop: write_pos=%i - buffered=%i (write_len=%i)\n", buf_write_pos, buffered_bytes, len);
+                printf("audio drop: write_pos=%i - buffered=%i (write_len=%i)\n",
+                       buf_write_pos, buffered_bytes, len);
                 break; // drop samples
             }
         } else {
@@ -44,8 +46,8 @@ static void write_buffer(const unsigned char *data, int len) {
             }
         }
 
-        *(int *) ((char *) (buffer_sdl + buf_write_pos)) = *(int *) ((char *) (data + i));
-        //memcpy(buffer_sdl + buf_write_pos, data + i, 4);
+        //*(int *) ((char *) (buffer_sdl + buf_write_pos)) = *(int *) ((char *) (data + i));
+        memcpy(buffer_sdl + buf_write_pos, data + i, 4);
         buf_write_pos = (buf_write_pos + 4) % buf_size;
         buffered_bytes += 4;
     }
@@ -72,11 +74,11 @@ static void read_buffer(void *unused, unsigned char *data, int len) {
 
     if (buffered_bytes >= len) {
         if ((int) (buf_read_pos + len) <= buf_size) {
-            memcpy(data, buffer_sdl + buf_read_pos, len);
+            memcpy(data, buffer_sdl + buf_read_pos, (size_t) len);
         } else {
             int tail = buf_size - buf_read_pos;
-            memcpy(data, buffer_sdl + buf_read_pos, tail);
-            memcpy(data + tail, buffer_sdl, len - tail);
+            memcpy(data, buffer_sdl + buf_read_pos, (size_t) tail);
+            memcpy(data + tail, buffer_sdl, (size_t) (len - tail));
         }
         buf_read_pos = (buf_read_pos + len) % buf_size;
         buffered_bytes -= len;
