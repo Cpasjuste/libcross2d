@@ -15,11 +15,7 @@ Audio::Audio(int freq, int fps) {
         return;
     }
 
-    //if (frequency == 48000) {
-    //    buffer_len = 801;
-    //} else {
-    buffer_len = ((freq * 100) / fps);
-    //}
+    buffer_len = freq / fps;
     buffer_size = buffer_len * channels * 2;
     buffer = (short *) malloc((size_t) buffer_size);
     if (buffer == NULL) {
@@ -33,7 +29,17 @@ Audio::Audio(int freq, int fps) {
     printf("Audio: rate = %i, buf size = %i, buf len = %i\n", freq, buffer_size, buffer_len);
 }
 
-void Audio::Pause(int pause) {
+void Audio::reset() {
+
+    if (buffer) {
+        memset(buffer, 0, (size_t) buffer_size);
+    }
+}
+
+void Audio::play() {
+}
+
+void Audio::pause(int pause) {
     paused = pause;
 }
 

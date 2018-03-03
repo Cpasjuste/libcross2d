@@ -118,7 +118,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/posix/posix_io.h"
 
 //#define SVC_DEBUG 1
-#define NET_DEBUG 1
+//#define NET_DEBUG 1
 #ifdef NET_DEBUG
 #include "nxnetprint.h"
 //#define NET_DEBUG_IP "192.168.0.13"

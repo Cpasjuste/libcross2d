@@ -17,9 +17,11 @@ namespace c2d {
 
         virtual ~Audio();
 
-        virtual void Play() {};
+        virtual void play();
 
-        virtual void Pause(int pause);
+        virtual void pause(int pause);
+
+        virtual void reset();
 
         int frequency = 48000;
         int channels = 2;

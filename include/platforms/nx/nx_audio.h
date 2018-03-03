@@ -23,6 +23,7 @@ namespace c2d {
         AudioOutBuffer source_buffer[2];
         AudioOutBuffer *released_buffer;
         u32 released_count;
+        Mutex mutex;
     } NXAudioBuffer;
 
     class NXAudio : public Audio {
@@ -31,11 +32,13 @@ namespace c2d {
 
         NXAudio(int freq, int fps = 60);
 
-        virtual ~NXAudio();
+        ~NXAudio();
 
-        virtual void Play();
+        void play();
 
-        virtual void Pause(int pause);
+        void pause(int pause);
+
+        void reset();
 
     };
 }
