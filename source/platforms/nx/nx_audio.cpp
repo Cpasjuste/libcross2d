@@ -14,54 +14,69 @@ static NXAudioBuffer audioBuffer;
 static Thread thread;
 static int running = 1;
 static int _paused = 0;
+static Mutex mutex;
 
 static void read_buffer(unsigned char *data, int len) {
 
-    int size = len / 8;
-    for (int i = 0; i < len; i += size) {
+    mutexLock(&mutex);
 
-        if (audioBuffer.buffered >= audioBuffer.read_buffer_size - size) {
-            // oops, audio thread too slow, drop audio
-            // printf("write_buffer: buffered = buffer size\n");
-            return;
+    for (int i = 0; i < len; i += 4) {
+
+        if (audioBuffer.buffered == audioBuffer.read_buffer_size) {
+            // oups
+            printf("write_buffer: buffered = buffer size\n");
+            break;
         }
 
         //*(int *) ((char *) (audioBuffer.read_buffer + audioBuffer.read_pos)) = *(int *) ((char *) (data + i));
-        memcpy(audioBuffer.read_buffer + audioBuffer.read_pos, data + i, (size_t) size);
-        audioBuffer.read_pos = (audioBuffer.read_pos + size) % audioBuffer.read_buffer_size;
-        audioBuffer.buffered += size;
+        memcpy(audioBuffer.read_buffer + audioBuffer.read_pos, data + i, 4);
+        audioBuffer.read_pos = (audioBuffer.read_pos + 4) % audioBuffer.read_buffer_size;
+        audioBuffer.buffered += 4;
     }
+
+    mutexUnlock(&mutex);
 }
 
 static void write_buffer(void *arg) {
 
     printf("NXAudio: audio thread started\n");
 
-    while (running) {
+    int len = 2048 * 4; // audioBuffer.size; // 2048 * 4;
 
-        int len = 2048 * 4; // audioBuffer.size;
+    for (int i = 0; i < 2; i++) {
+        u32 size = (u32) (len + 0xfff) & ~0xfff;
+        audioBuffer.buffer[i] = memalign(0x1000, size);
+        audioBuffer.source_buffer[i].next = NULL;
+        audioBuffer.source_buffer[i].buffer = audioBuffer.buffer[i];
+        audioBuffer.source_buffer[i].buffer_size = (u64) len; // (u64) audioBuffer.size; // (u64) len / 4;
+        audioBuffer.source_buffer[i].data_size = (u64) len; // (u64) audioBuffer.size; // (u64) len;
+        audioBuffer.source_buffer[i].data_offset = (u64) 0;
+        audoutAppendAudioOutBuffer(&audioBuffer.source_buffer[i]);
+    }
+
+    while (running) {
 
         if (!_paused && audioBuffer.buffered >= len) {
 
-            audioBuffer.source_buffer.next = 0;
-            audioBuffer.source_buffer.buffer_size = (u64) len / 4; // (u64) audioBuffer.len;
-            audioBuffer.source_buffer.data_size = (u64) len; // (u64) audioBuffer.size;
-            audioBuffer.source_buffer.data_offset = (u64) 0;
+            audoutWaitPlayFinish(&audioBuffer.released_buffer,
+                                 &audioBuffer.released_count, U64_MAX);
+
+            mutexLock(&mutex);
+
             if (audioBuffer.write_pos + len < audioBuffer.read_buffer_size) {
-                memcpy(audioBuffer.buffer,
+                memcpy(audioBuffer.released_buffer->buffer,
                        audioBuffer.read_buffer + audioBuffer.write_pos, (size_t) len);
-                audioBuffer.source_buffer.buffer = audioBuffer.buffer;
             } else {
                 int tail = audioBuffer.read_buffer_size - audioBuffer.write_pos;
-                memcpy(audioBuffer.buffer,
+                memcpy(audioBuffer.released_buffer->buffer,
                        audioBuffer.read_buffer + audioBuffer.write_pos, (size_t) tail);
-                memcpy(audioBuffer.buffer + tail, audioBuffer.read_buffer, (size_t) len - tail);
-                audioBuffer.source_buffer.buffer = audioBuffer.buffer;
+                memcpy((unsigned char *) audioBuffer.released_buffer->buffer + tail,
+                       audioBuffer.read_buffer, (size_t) len - tail);
             }
 
-            //audioBuffer.released_buffer = NULL;
-            audoutPlayBuffer(&audioBuffer.source_buffer, &audioBuffer.released_buffer);
+            mutexUnlock(&mutex);
 
+            audoutAppendAudioOutBuffer(audioBuffer.released_buffer);
             audioBuffer.write_pos = (audioBuffer.write_pos + len) % audioBuffer.read_buffer_size;
             audioBuffer.buffered -= len;
 
@@ -72,6 +87,9 @@ static void write_buffer(void *arg) {
         }
     }
 
+    free(audioBuffer.buffer[0]);
+    free(audioBuffer.buffer[1]);
+
     printf("NXAudio: audio thread ended\n");
 }
 
@@ -81,12 +99,6 @@ NXAudio::NXAudio(int freq, int fps) : Audio(freq, fps) {
         return;
     }
 
-    audioBuffer.buffer = NULL;
-    audioBuffer.read_buffer = NULL;
-
-    u32 s = (u32) (buffer_size + 0xfff) & ~0xfff;
-    audioBuffer.buffer = (unsigned char *) memalign(0x1000, s);
-    memset(audioBuffer.buffer, 0, (size_t) s);
     audioBuffer.size = buffer_size;
     audioBuffer.len = buffer_len;
     audioBuffer.read_buffer_size = buffer_size * 16;
@@ -114,7 +126,9 @@ NXAudio::NXAudio(int freq, int fps) : Audio(freq, fps) {
         return;
     }
 
-    ret = threadCreate(&thread, write_buffer, NULL, 0x1000, 0x20, -2);
+    mutexInit(&mutex);
+
+    ret = threadCreate(&thread, write_buffer, NULL, 0x5000, 0x2B, -2);
     printf("NXAudio: threadCreate: 0x%x\n", ret);
     if (ret != 0) {
         audoutStopAudioOut();
@@ -152,9 +166,6 @@ NXAudio::~NXAudio() {
     printf("NXAudio: audoutStopAudioOut: %i\n", ret);
     audoutExit();
 
-    if (audioBuffer.buffer) {
-        free(audioBuffer.buffer);
-    }
     if (audioBuffer.read_buffer) {
         free(audioBuffer.read_buffer);
     }

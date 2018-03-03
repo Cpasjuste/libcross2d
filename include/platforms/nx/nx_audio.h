@@ -13,14 +13,16 @@ namespace c2d {
     typedef struct NXAudioBuffer {
         unsigned char *read_buffer;
         int read_buffer_size;
-        unsigned char *buffer;
+        //unsigned char *buffer;
         int len;
         int size;
         int buffered;
         int write_pos;
         int read_pos;
-        AudioOutBuffer source_buffer;
+        void *buffer[2];
+        AudioOutBuffer source_buffer[2];
         AudioOutBuffer *released_buffer;
+        u32 released_count;
     } NXAudioBuffer;
 
     class NXAudio : public Audio {
