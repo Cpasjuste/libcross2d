@@ -13,6 +13,7 @@ using namespace c2d;
 static NXAudioBuffer audioBuffer;
 static Thread thread;
 static int running = 1;
+static int _paused = 0;
 
 static void read_buffer(unsigned char *data, int len) {
 
@@ -22,7 +23,7 @@ static void read_buffer(unsigned char *data, int len) {
 
         if (audioBuffer.buffered == audioBuffer.read_buffer_size) {
             // oups
-            printf("write_buffer: buffered = buffer size\n");
+            // printf("write_buffer: buffered = buffer size\n");
             break;
         }
 
@@ -58,7 +59,7 @@ static void write_buffer(void *arg) {
             break;
         }
 
-        if (audioBuffer.buffered >= len) {
+        if (!_paused && audioBuffer.buffered >= len) {
 
             audoutWaitPlayFinish(&audioBuffer.released_buffer,
                                  &audioBuffer.released_count, U64_MAX);
@@ -160,9 +161,8 @@ void NXAudio::play() {
 
 void NXAudio::pause(int pause) {
 
-    if (pause) {
-        audioBuffer.buffered = 0;
-    }
+    _paused = pause;
+    Audio::pause(pause);
 }
 
 void NXAudio::reset() {
@@ -181,6 +181,7 @@ void NXAudio::reset() {
     }
 
     Audio::reset();
+    _paused = 0;
 }
 
 NXAudio::~NXAudio() {
