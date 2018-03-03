@@ -140,7 +140,6 @@ void SDL2Audio::reset() {
     Audio::reset();
 }
 
-
 void SDL2Audio::pause(int pause) {
 
     if (!available) {

@@ -8,55 +8,31 @@
 
 using namespace c2d;
 
-static bool use_mutex = false;
-
 static int buf_size;
 static unsigned char *buffer_sdl;
 static unsigned int buf_read_pos = 0;
 static unsigned int buf_write_pos = 0;
 static int buffered_bytes = 0;
 
-static SDL_mutex *sound_mutex;
-static SDL_cond *sound_cv;
-
 static void write_buffer(unsigned char *data, int len) {
 
-    if (use_mutex) {
-        SDL_LockMutex(sound_mutex);
-    } else {
-        SDL_LockAudio();
-    }
+    SDL_LockAudio();
 
     for (int i = 0; i < len; i += 4) {
-        if (!use_mutex) {
-            if (buffered_bytes == buf_size) {
-                //printf("audio drop: write_pos=%i - buffered=%i (write_len=%i)\n", buf_write_pos, buffered_bytes, len);
-                break; // drop samples
-            }
-        } else {
-            while (buffered_bytes == buf_size) {
-                SDL_CondWait(sound_cv, sound_mutex);
-            }
+
+        if (buffered_bytes == buf_size) {
+            break;
         }
 
-        *(int *) ((char *) (buffer_sdl + buf_write_pos)) = *(int *) ((char *) (data + i));
+        memcpy(buffer_sdl + buf_write_pos, data + i, 4);
         buf_write_pos = (buf_write_pos + 4) % buf_size;
         buffered_bytes += 4;
     }
 
-    if (use_mutex) {
-        SDL_CondSignal(sound_cv);
-        SDL_UnlockMutex(sound_mutex);
-    } else {
-        SDL_UnlockAudio();
-    }
+    SDL_UnlockAudio();
 }
 
 static void read_buffer(void *unused, unsigned char *data, int len) {
-
-    if (use_mutex) {
-        SDL_LockMutex(sound_mutex);
-    }
 
     if (buffered_bytes >= len) {
         if ((int) (buf_read_pos + len) <= buf_size) {
@@ -68,11 +44,6 @@ static void read_buffer(void *unused, unsigned char *data, int len) {
         }
         buf_read_pos = (buf_read_pos + len) % buf_size;
         buffered_bytes -= len;
-    }
-
-    if (use_mutex) {
-        SDL_CondSignal(sound_cv);
-        SDL_UnlockMutex(sound_mutex);
     }
 }
 
@@ -115,12 +86,6 @@ SDL1Audio::SDL1Audio(int freq, int fps) : Audio(freq, fps) {
         return;
     }
 
-    if (use_mutex) {
-        sound_mutex = SDL_CreateMutex();
-        sound_cv = SDL_CreateCond();
-        printf("SDL1Audio: using mutexes for synchro\n");
-    }
-
     printf("SDL1Audio: format %d (wanted: %d)\n", obtained.format, aspec.format);
     printf("SDL1Audio: frequency %d (wanted: %d)\n", obtained.freq, aspec.freq);
     printf("SDL1Audio: samples %d (wanted: %d)\n", obtained.samples, aspec.samples);
@@ -134,61 +99,38 @@ SDL1Audio::~SDL1Audio() {
     if (!available) {
         return;
     }
+
     SDL_PauseAudio(1);
-
-    if (use_mutex) {
-        SDL_LockMutex(sound_mutex);
-        buffered_bytes = buf_size;
-        SDL_CondSignal(sound_cv);
-        SDL_UnlockMutex(sound_mutex);
-        SDL_Delay(100);
-
-        SDL_DestroyCond(sound_cv);
-        SDL_DestroyMutex(sound_mutex);
-    }
-
     SDL_CloseAudio();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
-    if (buffer_sdl != NULL) {
+    if (buffer_sdl) {
         free(buffer_sdl);
-        buffer_sdl = NULL;
     }
 }
 
-void SDL1Audio::Play() {
+void SDL1Audio::play() {
 
-    if (!available) {
-        return;
+    if (available && !paused) {
+        write_buffer((unsigned char *) buffer, buffer_size);
     }
-
-    write_buffer((unsigned char *) buffer, buffer_size);
 
 }
 
-void SDL1Audio::Pause(int pause) {
+void SDL1Audio::pause(int pause) {
 
-    if (!available) {
-        return;
+    if (available) {
+        Audio::pause(pause);
+        SDL_PauseAudio(pause);
     }
+}
 
-    Audio::Pause(pause);
-    SDL_PauseAudio(pause);
+void SDL1Audio::reset() {
 
-    if (use_mutex) {
-        if (pause) {
-            SDL_LockMutex(sound_mutex);
-            buffered_bytes = 0;
-            SDL_CondSignal(sound_cv);
-            SDL_UnlockMutex(sound_mutex);
-            SDL_Delay(100);
+    buffered_bytes = 0;
+    buf_write_pos = 0;
+    buf_read_pos = 0;
+    memset(buffer_sdl, 0, (size_t) buf_size);
 
-            SDL_DestroyCond(sound_cv);
-            sound_cv = NULL;
-            SDL_DestroyMutex(sound_mutex);
-            sound_mutex = NULL;
-        } else {
-            sound_mutex = SDL_CreateMutex();
-            sound_cv = SDL_CreateCond();
-        }
-    }
+    SDL_PauseAudio(0);
+    Audio::reset();
 }
