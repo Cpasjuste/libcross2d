@@ -34,6 +34,8 @@ void Audio::reset() {
     if (buffer) {
         memset(buffer, 0, (size_t) buffer_size);
     }
+
+    paused = 0;
 }
 
 void Audio::play() {
