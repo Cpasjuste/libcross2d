@@ -15,8 +15,8 @@
 //#include "scale2x_v.h"
 #include "sharp_bilinear_f.h"
 #include "sharp_bilinear_v.h"
-//#include "sharp_bilinear_simple_f.h"
-//#include "sharp_bilinear_simple_v.h"
+#include "sharp_bilinear_simple_f.h"
+#include "sharp_bilinear_simple_v.h"
 //#include "xbr_2x_noblend_f.h"
 //#include "xbr_2x_noblend_v.h"
 //#include "fxaa_v.h"
@@ -42,6 +42,8 @@ PSP2ShaderList::PSP2ShaderList(const std::string &shadersPath) : ShaderList(shad
         create((SceGxmProgram *) lcd3x_v, (SceGxmProgram *) lcd3x_f));
     add("sharp+scan",
         create((SceGxmProgram *) sharp_bilinear_v, (SceGxmProgram *) sharp_bilinear_f));
+    add("sharp",
+        create((SceGxmProgram *) sharp_bilinear_simple_v, (SceGxmProgram *) sharp_bilinear_simple_f));
 
     printf("PSP2ShaderList: found %i shaders\n", getCount() - 1);
 }
