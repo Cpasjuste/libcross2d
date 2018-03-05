@@ -3,8 +3,7 @@
 //
 
 #include <cmath>
-#include "skeleton/renderer.h"
-#include "platforms/sdl2/sdl2_input.h"
+#include "c2d.h"
 
 using namespace c2d;
 
@@ -257,38 +256,38 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
 
         int mapping = player.mapping[i];
 
-#ifdef __PSP2__
+#ifdef __HANDLED_CABMODE__
         // rotate buttons on ps vita to play in portrait mode
         if (rotate == 1) {
             switch (mapping) {
-                case 2: // PSP2_CROSS (SDL-Vita)
-                    mapping = 1; // PSP2_CIRCLE (SDL-Vita)
+                case KEY_JOY_FIRE1_DEFAULT: // PSP2_CROSS (SDL-Vita)
+                    mapping = KEY_JOY_FIRE2_DEFAULT; // PSP2_CIRCLE (SDL-Vita)
                     break;
-                case 3: // PSP2_SQUARE (SDL-Vita)
-                    mapping = 2; // PSP2_CROSS (SDL-Vita)
+                case KEY_JOY_FIRE3_DEFAULT: // PSP2_SQUARE (SDL-Vita)
+                    mapping = KEY_JOY_FIRE1_DEFAULT; // PSP2_CROSS (SDL-Vita)
                     break;
-                case 0: // PSP2_TRIANGLE (SDL-Vita)
-                    mapping = 3; // PSP2_SQUARE (SDL-Vita)
+                case KEY_JOY_FIRE4_DEFAULT: // PSP2_TRIANGLE (SDL-Vita)
+                    mapping = KEY_JOY_FIRE3_DEFAULT; // PSP2_SQUARE (SDL-Vita)
                     break;
-                case 1: // PSP2_CIRCLE (SDL-Vita)
-                    mapping = 0; // PSP2_TRIANGLE (SDL-Vita)
+                case KEY_JOY_FIRE2_DEFAULT: // PSP2_CIRCLE (SDL-Vita)
+                    mapping = KEY_JOY_FIRE4_DEFAULT; // PSP2_TRIANGLE (SDL-Vita)
                     break;
                 default:
                     break;
             }
         } else if (rotate == 3) {
             switch (mapping) {
-                case 2: // PSP2_CROSS (SDL-Vita)
-                    mapping = 3; // PSP2_SQUARE (SDL-Vita)
+                case KEY_JOY_FIRE1_DEFAULT: // PSP2_CROSS (SDL-Vita)
+                    mapping = KEY_JOY_FIRE3_DEFAULT; // PSP2_SQUARE (SDL-Vita)
                     break;
-                case 3: // PSP2_SQUARE (SDL-Vita)
-                    mapping = 0; // PSP2_TRIANGLE (SDL-Vita)
+                case KEY_JOY_FIRE3_DEFAULT: // PSP2_SQUARE (SDL-Vita)
+                    mapping = KEY_JOY_FIRE4_DEFAULT; // PSP2_TRIANGLE (SDL-Vita)
                     break;
-                case 0: // PSP2_TRIANGLE (SDL-Vita)
-                    mapping = 1; // PSP2_CIRCLE (SDL-Vita)
+                case KEY_JOY_FIRE4_DEFAULT: // PSP2_TRIANGLE (SDL-Vita)
+                    mapping = KEY_JOY_FIRE2_DEFAULT; // PSP2_CIRCLE (SDL-Vita)
                     break;
-                case 1: // PSP2_CIRCLE (SDL-Vita)
-                    mapping = 2; // PSP2_CROSS (SDL-Vita)
+                case KEY_JOY_FIRE2_DEFAULT: // PSP2_CIRCLE (SDL-Vita)
+                    mapping = KEY_JOY_FIRE1_DEFAULT; // PSP2_CROSS (SDL-Vita)
                     break;
                 default:
                     break;
