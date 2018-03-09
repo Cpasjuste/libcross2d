@@ -110,8 +110,8 @@ extern c2d::Renderer *c2d_renderer;
 
 #elif __NX__
 
-#include "platforms/gl/gl_texture.h"
-#include "platforms/nx/nx_renderer.h"
+#include "platforms/sdl2/sdl2_renderer.h"
+#include "platforms/sdl2/sdl2_texture.h"
 #include "platforms/nx/nx_clock.h"
 #include "platforms/nx/nx_input.h"
 #include "platforms/nx/nx_audio.h"
@@ -126,8 +126,8 @@ extern c2d::Renderer *c2d_renderer;
 //#define NET_DEBUG_IP "192.168.0.10"
 #endif
 
-#define C2DRenderer NXRenderer
-#define C2DTexture GLTexture
+#define C2DRenderer SDL2Renderer
+#define C2DTexture SDL2Texture
 #define C2DRectangle Rectangle
 #define C2DCircle Circle
 #define C2DLine Line

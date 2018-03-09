@@ -5,6 +5,8 @@
 #ifndef SDL2_RENDERER_H
 #define SDL2_RENDERER_H
 
+#include "SDL2/SDL.h"
+
 namespace c2d {
 
     class SDL2Renderer : public Renderer {

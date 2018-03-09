@@ -48,6 +48,45 @@ SDL2Texture::SDL2Texture(const char *path) : Texture(path) {
     printf("SDL2Texture(%p)\n", this);
 }
 
+SDL2Texture::SDL2Texture(const unsigned char *buffer, int bufferSize) {
+
+    unsigned int w, h, error = 0;
+
+    unsigned char *pixels;
+    error = lodepng_decode32(&pixels, &w, &h, buffer, (size_t) bufferSize);
+    if (error) {
+        printf("SDL2Texture: couldn't create texture: %s\n", lodepng_error_text(error));
+        return;
+    }
+
+    setSize(Vector2f(w, h));
+    setTextureRect(IntRect(0, 0, w, h));
+    format = C2D_TEXTURE_FMT_RGBA8;
+    bpp = 4;
+    pitch = (int) (getSize().x * bpp);
+
+    SDL_Surface *tmp = SDL_CreateRGBSurfaceWithFormatFrom(
+            pixels, w, h, 32, pitch, SDL_PIXELFORMAT_RGBA32);
+    if (!tmp) {
+        printf("SDL2Texture: couldn't create texture: %s\n", SDL_GetError());
+        return;
+    }
+    tex = SDL_CreateTextureFromSurface(((SDL2Renderer *) c2d_renderer)->renderer, tmp);
+    SDL_FreeSurface(tmp);
+    free(pixels);
+    if (!tex) {
+        printf("SDL2Texture: couldn't create texture: %s\n", SDL_GetError());
+        return;
+    }
+
+    SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
+
+    available = true;
+
+    printf("SDL2Texture(%p)\n", this);
+
+}
+
 SDL2Texture::SDL2Texture(const Vector2f &size, int format) : Texture(size, format) {
 
     tex = SDL_CreateTexture(

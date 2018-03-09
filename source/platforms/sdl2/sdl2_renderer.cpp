@@ -40,8 +40,12 @@ static void dump_rendererinfo(SDL_Renderer *rdr) {
 
 SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
 
+#ifdef __NX__
+    consoleDebugInit(debugDevice_SVC);
+    stdout = stderr;
+#endif
+
     if ((SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
-        printf("Couldn't init sdl: %s\n", SDL_GetError());
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't init sdl: %s\n", SDL_GetError());
         return;
     }
@@ -60,7 +64,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
                 "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                 (int) getSize().x, (int) getSize().y, 0);
         if (window == nullptr) {
-            printf("Couldn't create window: %s\n", SDL_GetError());
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
             return;
         }
@@ -68,9 +71,14 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer) {
-        printf("Couldn't create software renderer: %s\n", SDL_GetError());
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create renderer: %s\n", SDL_GetError());
-        return;
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                     "Couldn't create hw renderer: %s, trying sw renderer\n", SDL_GetError());
+        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+        if (!renderer) {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                         "Couldn't create sw renderer: %s, giving up...\n", SDL_GetError());
+            return;
+        }
     }
 
     textureShape = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, 32, 32);
@@ -90,7 +98,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
     SDL_SetTextureBlendMode(textureShape, SDL_BLENDMODE_BLEND);
 
     dump_rendererinfo(renderer);
-    //exit(0);
 
     available = true;
 }

@@ -15,6 +15,8 @@ namespace c2d {
 
         SDL2Texture(const char *path);
 
+        SDL2Texture(const unsigned char *buffer, int bufferSize);
+
         SDL2Texture(const Vector2f &size = Vector2f(0, 0),
                     int format = C2D_TEXTURE_FMT_RGBA8);
 

@@ -14,8 +14,7 @@ option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs B
 option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
-option(BUILD_NX "Build with NX (SWITCH) support" OFF)
-#option(BUILD_SWITCH_TRANSISTOR "Build with NX (SWITCH) support" ON)
+option(BUILD_NX "Build with NX (SWITCH) support" ON)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
@@ -167,38 +166,32 @@ elseif (BUILD_3DS)
     # NX PLATORM
     #####################
 elseif (BUILD_NX)
-    add_subdirectory(source/skeleton/pTinyGL)
     add_subdirectory(source/platforms/nx/nxnetprint)
     set(PLATFORM_DIRS
             source/platforms/nx
             source/platforms/nx/nxnetprint/include
-            source/platforms/gl
             source/platforms/posix
-            source/skeleton/pTinyGL/include
             ${DEVKITPRO}/libnx/include
+            ${DEVKITPRO}/portlibs/switch/include
+            ${DEVKITPRO}/portlibs/switch/include/SDL2
             ${DEVKITPRO}/portlibs/armv8-a/include/freetype2
             )
     file(GLOB PLATFORM_SRC
             source/platforms/nx/*.c*
-            source/platforms/gl/*.c*
+            source/platforms/sdl2/sdl2_renderer.cpp
+            source/platforms/sdl2/sdl2_texture.cpp
             source/platforms/posix/posix_io.cpp
             )
-    list(APPEND FLAGS -D__NX__ -D__GL__ -D__TINYGL__
+    list(APPEND FLAGS -D__NX__ -D__SWITCH__
             -ffunction-sections -fomit-frame-pointer
             )
-    set(PLATFORM_LIBS cross2d pTinyGL nxnetprint
+    set(PLATFORM_LIBS
+            cross2d nxnetprint
+            ${DEVKITPRO}/portlibs/switch/lib/libSDL2.a
             ${DEVKITPRO}/libnx/lib/libnx.a
             ${DEVKITPRO}/portlibs/armv8-a/lib/libfreetype.a
             ${DEVKITPRO}/portlibs/armv8-a/lib/libpng.a
             ${DEVKITPRO}/portlibs/armv8-a/lib/libz.a)
-elseif (BUILD_SWITCH_TRANSISTOR)
-    set(PLATFORM_DIRS
-            )
-    file(GLOB PLATFORM_SRC
-            )
-    list(APPEND FLAGS -D__TRANSISTOR__
-            -ffunction-sections -fomit-frame-pointer
-            )
     #####################
     # SDL2 PLATORM
     #####################
