@@ -5,12 +5,9 @@
 #ifndef SDL2_RENDERER_H
 #define SDL2_RENDERER_H
 
-#include <SDL2/SDL.h>
-#include "platforms/gl/gl_renderer.h"
-
 namespace c2d {
 
-    class SDL2Renderer : public GLRenderer {
+    class SDL2Renderer : public Renderer {
 
     public:
 
@@ -18,16 +15,21 @@ namespace c2d {
 
         ~SDL2Renderer();
 
+        void draw(const VertexArray &vertices,
+                  const Transform &transform,
+                  const Texture *texture);
+
         void flip(bool draw = true);
 
         void delay(unsigned int ms);
 
+        SDL_Renderer *renderer = NULL;
+        SDL_Texture *textureShape = NULL;
+
     private:
 
-        SDL_Window *window = nullptr;
-        SDL_Renderer *renderer = nullptr;
-        SDL_Surface *surface = nullptr;
+        SDL_Window *window = NULL;
     };
 }
 
-#endif //SDL2_RENDERER_H
+#endif // SDL2_RENDERER_H

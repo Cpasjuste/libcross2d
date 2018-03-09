@@ -6,7 +6,7 @@
 // SDL1 with OSMesa (OpenGL software wrapper) for rendering
 //
 
-#if !defined(__SDL1_GL__) && !defined(__TINYGL__)
+#ifdef __MESAGL__
 
 #include <GL/gl.h>
 #include <GL/osmesa.h>
@@ -51,17 +51,17 @@ SDL1Renderer::SDL1Renderer(const Vector2f &size) : GLRenderer(size) {
     OSMesaPixelStore(OSMESA_Y_UP, 0);
 
     available = true;
-
-    this->shaders = new Shaders("");
 }
 
-void SDL1Renderer::flip() {
+void SDL1Renderer::flip(bool draw) {
 
-    // call base class (draw childs)
-    GLRenderer::flip();
+    if (draw) {
+        // call base class (draw childs)
+        GLRenderer::flip();
 
-    // flip (draw mesa buffer to screen)
-    glFinish();
+        // flip (draw mesa buffer to screen)
+        glFinish();
+    }
 
     SDL_Flip(screen);
 }
@@ -84,4 +84,4 @@ SDL1Renderer::~SDL1Renderer() {
     SDL_Quit();
 }
 
-#endif // __SDL1_GL__
+#endif // __MESAGL__

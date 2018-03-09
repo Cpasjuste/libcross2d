@@ -6,7 +6,6 @@
 #define _SDL2_INPUT_H
 
 #include "skeleton/input.h"
-#include <SDL2/SDL.h>
 
 namespace c2d {
 

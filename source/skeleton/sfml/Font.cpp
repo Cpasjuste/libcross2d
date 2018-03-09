@@ -573,7 +573,7 @@ namespace c2d {
             Uint8 *current = &m_pixelBuffer[0];
             Uint8 *end = current + width * height * 4;
 
-#ifdef __PS3__
+#ifdef __C2D_ARGB__
             while (current != end) {
                 (*current++) = 0;
                 (*current++) = 255;
@@ -596,7 +596,7 @@ namespace c2d {
                     for (unsigned int x = padding; x < width - padding; ++x) {
                         // The color channels remain white, just fill the alpha channel
                         std::size_t index = static_cast<size_t>(x + y * width);
-#ifdef __PS3__
+#ifdef __C2D_ARGB__
                         m_pixelBuffer[index * 4 + 0] =
                                 static_cast<unsigned char>(((pixels[(x - padding) / 8]) &
                                                             (1 << (7 - ((x - padding) % 8))))
@@ -616,7 +616,7 @@ namespace c2d {
                     for (unsigned int x = padding; x < width - padding; ++x) {
                         // The color channels remain white, just fill the alpha channel
                         std::size_t index = x + y * width;
-#ifdef __PS3__
+#ifdef __C2D_ARGB__
                         m_pixelBuffer[index * 4 + 0] = pixels[x - padding];
 #else
                         m_pixelBuffer[index * 4 + 3] = pixels[x - padding];
@@ -714,8 +714,11 @@ namespace c2d {
                         dst += dst_pitch;
                     }
 
+                    texture->unlock();
+
                     delete (page.texture);
                     page.texture = texture;
+
                 } else {
                     // Oops, we've reached the maximum texture size...
                     printf("Failed to add a new character to the font: the maximum texture size has been reached\n");

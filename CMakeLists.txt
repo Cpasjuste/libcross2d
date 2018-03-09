@@ -8,7 +8,8 @@ option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
 option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" OFF)
 option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" OFF)
 option(BUILD_SDL1_TINYGL "Build with SDL1 support (software rendering, slow, needs BUILD_SDL1=OFF)" OFF)
-option(BUILD_SDL2 "Build with SDL2 support (software, osmesa) support" OFF)
+option(BUILD_SDL2 "Build with SDL2 support (software)" OFF)
+#option(BUILD_SDL2 "Build with SDL2 support (software, osmesa) support" OFF)
 option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" OFF)
 option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
@@ -204,21 +205,24 @@ elseif (BUILD_SWITCH_TRANSISTOR)
 elseif (BUILD_SDL2)
     set(PLATFORM_DIRS
             source/platforms/sdl2
-            source/platforms/gl
             source/platforms/posix
             /usr/include/freetype2
             )
     file(GLOB PLATFORM_SRC
             source/platforms/sdl2/*.c*
-            source/platforms/gl/*.c*
             source/platforms/posix/*.c*
             )
-    list(APPEND FLAGS -D__SDL2__ -D__GL__)
+    list(APPEND FLAGS -D__SDL2__) #-D__C2D_ARGB__)
     if (BUILD_SDL2_GL)
-        list(APPEND FLAGS -D__SDL2_GL__)
+        list(APPEND PLATFORM_DIRS source/platforms/gl)
+        list(APPEND PLATFORM_SRC
+                source/platforms/gl/gl_renderer.cpp
+                source/platforms/gl/gl_texture.cpp)
+        list(APPEND FLAGS -D__SDL2_GL__ -D__GL__)
         set(PLATFORM_LIBS cross2d GL SDL2 freetype png z)
     else ()
-        set(PLATFORM_LIBS cross2d OSMesa pthread SDL2 freetype png z)
+        set(PLATFORM_LIBS cross2d SDL2 freetype png z)
+        #set(PLATFORM_LIBS cross2d OSMesa pthread SDL2 freetype png z)
     endif (BUILD_SDL2_GL)
     #####################
     # SDL1 PLATORM

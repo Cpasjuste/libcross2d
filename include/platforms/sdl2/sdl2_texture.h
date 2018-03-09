@@ -15,17 +15,17 @@ namespace c2d {
 
         SDL2Texture(const char *path);
 
-        SDL2Texture(const Vector2f &size = Vector2f(0, 0));
+        SDL2Texture(const Vector2f &size = Vector2f(0, 0),
+                    int format = C2D_TEXTURE_FMT_RGBA8);
 
         ~SDL2Texture();
 
-        int lock(const FloatRect &rect, void **pixels, int *pitch);
+        int lock(FloatRect *rect, void **pixels, int *pitch);
 
         void unlock();
 
         void setFiltering(int filter);
 
-        //private:
         SDL_Texture *tex = nullptr;
     };
 }

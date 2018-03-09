@@ -2,7 +2,7 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#ifndef __SDL2_GL__
+#ifdef __SDL2_MESAGL__
 
 #include <GL/gl.h>
 #include <GL/osmesa.h>

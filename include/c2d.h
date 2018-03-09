@@ -166,15 +166,24 @@ extern c2d::Renderer *c2d_renderer;
 
 #elif __SDL2__
 
+#include <SDL2/SDL.h>
+
+#if defined(__SDL2_GL__)
+#include "platforms/sdl2/sdl2_gl_renderer.h"
 #include "platforms/gl/gl_texture.h"
+#define C2DTexture GLTexture
+#else
 #include "platforms/sdl2/sdl2_renderer.h"
+#include "platforms/sdl2/sdl2_texture.h"
+#define C2DTexture SDL2Texture
+#endif
+
 #include "platforms/sdl2/sdl2_input.h"
 #include "platforms/sdl2/sdl2_audio.h"
 #include "platforms/posix/posix_io.h"
 #include "platforms/posix/posix_clock.h"
 
 #define C2DRenderer SDL2Renderer
-#define C2DTexture GLTexture
 #define C2DRectangle Rectangle
 #define C2DCircle Circle
 #define C2DLine Line
@@ -205,8 +214,7 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         5
 
 #elif __SDL1__
-
-#include "platforms/sdl1/sdl1_renderer.h"
+#include "platforms/sdl1/sdl1_gl_renderer.h"
 #include "platforms/gl/gl_texture.h"
 #include "platforms/sdl1/sdl1_input.h"
 #include "platforms/sdl1/sdl1_audio.h"
@@ -340,6 +348,7 @@ extern c2d::Renderer *c2d_renderer;
 #elif defined(__SDL1__)
 // SDLKey from :
 #include <SDL/SDL_keysym.h>
+
 #define KEY_KB_UP_DEFAULT      SDLK_UP
 #define KEY_KB_DOWN_DEFAULT    SDLK_DOWN
 #define KEY_KB_LEFT_DEFAULT    SDLK_LEFT
