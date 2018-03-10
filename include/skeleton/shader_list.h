@@ -25,7 +25,7 @@ namespace c2d {
             }
         };
 
-        ShaderList(const std::string &shadersPath) {
+        ShaderList(const std::string &shadersPath = "") {
             list.push_back(Shader("NONE", NULL));
         }
 

@@ -139,7 +139,7 @@ void SDL2Texture::setFiltering(int filter) {
 
 SDL2Texture::~SDL2Texture() {
 
-    printf("~SDL1Texture(%p)\n", this);
+    printf("~SDL2Texture(%p)\n", this);
     if (tex) {
         SDL_DestroyTexture(tex);
     }

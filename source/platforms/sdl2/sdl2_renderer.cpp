@@ -12,7 +12,7 @@
 
 using namespace c2d;
 
-static void dump_rendererinfo(SDL_Renderer *rdr) {
+static void rendere_rinfo(SDL_Renderer *rdr) {
     SDL_RendererInfo info;
     int i, n;
 
@@ -80,8 +80,12 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
             return;
         }
     }
+    rendere_rinfo(renderer);
 
-    dump_rendererinfo(renderer);
+    // basic software effect, only used/usefull on switch for now
+    shaderList = new ShaderList();
+    shaderList->add("SCANLINE", NULL);
+    shaderList->add("SCANLINE+", NULL);
 
     available = true;
 }
@@ -248,6 +252,7 @@ void SDL2Renderer::delay(unsigned int ms) {
 
 SDL2Renderer::~SDL2Renderer() {
 
+    delete (shaderList);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
