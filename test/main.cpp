@@ -5,6 +5,9 @@
 #include "c2d.h"
 #include "main.h"
 
+#include "../res/default.h"
+#include "../res/title.h"
+
 using namespace c2d;
 
 int main() {
@@ -23,7 +26,7 @@ int main() {
     rect->setOutlineThickness(8);
 
     // create a texture and add it to the rect
-    Texture *tex = new C2DTexture(TEX_PATH);
+    Texture *tex = new C2DTexture((const unsigned char *) pfba_title, pfba_title_length);
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
         tex->setScale(0.5f, 0.5f);
@@ -33,7 +36,7 @@ int main() {
 
     // create a font
     Font font;
-    if (font.loadFromFile(FONT_PATH)) {
+    if (font.loadFromMemory(pfba_font, pfba_font_length)) {
         // create a text and add it to the rect
         Text *text = new Text("Hello world", font);
         text->setOutlineColor(Color::Blue);
@@ -68,8 +71,8 @@ int main() {
         printf("Time: %f (delta: %f)\n", clock.getElapsedTime().asSeconds(), delta);
 
         // render
-        rect->move(100 * delta, 0);
-        rect->setScale(rect->getScale().x - (0.1f * delta), rect->getScale().y - (0.1f * delta));
+        rect->move(10 * delta, 0);
+        rect->setScale(rect->getScale().x - (0.01f * delta), rect->getScale().y - (0.01f * delta));
         rect->rotate(50 * delta);
 
         renderer->flip();

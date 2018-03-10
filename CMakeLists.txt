@@ -174,7 +174,7 @@ elseif (BUILD_NX)
             ${DEVKITPRO}/libnx/include
             ${DEVKITPRO}/portlibs/switch/include
             ${DEVKITPRO}/portlibs/switch/include/SDL2
-            ${DEVKITPRO}/portlibs/armv8-a/include/freetype2
+            ${DEVKITPRO}/portlibs/switch/include/freetype2
             )
     file(GLOB PLATFORM_SRC
             source/platforms/nx/*.c*
@@ -189,9 +189,10 @@ elseif (BUILD_NX)
             cross2d nxnetprint
             ${DEVKITPRO}/portlibs/switch/lib/libSDL2.a
             ${DEVKITPRO}/libnx/lib/libnx.a
-            ${DEVKITPRO}/portlibs/armv8-a/lib/libfreetype.a
-            ${DEVKITPRO}/portlibs/armv8-a/lib/libpng.a
-            ${DEVKITPRO}/portlibs/armv8-a/lib/libz.a)
+            ${DEVKITPRO}/portlibs/switch/lib/libfreetype.a
+            ${DEVKITPRO}/portlibs/switch/lib/libpng.a
+            ${DEVKITPRO}/portlibs/switch/lib/libbz2.a
+            ${DEVKITPRO}/portlibs/switch/lib/libz.a)
     #####################
     # SDL2 PLATORM
     #####################
