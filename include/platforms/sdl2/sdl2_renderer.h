@@ -26,7 +26,6 @@ namespace c2d {
         void delay(unsigned int ms);
 
         SDL_Renderer *renderer = NULL;
-        SDL_Texture *textureShape = NULL;
 
     private:
 

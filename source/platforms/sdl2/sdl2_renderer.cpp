@@ -81,22 +81,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
         }
     }
 
-    textureShape = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, 32, 32);
-    Uint8 *pix;
-    int p;
-    SDL_LockTexture(textureShape, NULL, reinterpret_cast<void **>(&pix), &p);
-    for (int x = 0; x < 32; ++x) {
-        for (int y = 0; y < 32; ++y) {
-            Uint8 *pixel = &pix[(x + y * 32) * 4];
-            *pixel++ = 255;
-            *pixel++ = 255;
-            *pixel++ = 255;
-            *pixel++ = 255;
-        }
-    }
-    SDL_UnlockTexture(textureShape);
-    SDL_SetTextureBlendMode(textureShape, SDL_BLENDMODE_BLEND);
-
     dump_rendererinfo(renderer);
 
     available = true;
@@ -115,11 +99,14 @@ void SDL2Renderer::draw(const VertexArray &vertices,
     if (type == 4) {
         // TriangleStrip (outline)
         // TODO: fix this ugly crap
-        SDL_SetTextureAlphaMod(textureShape, vertices[0].color.a);
-        SDL_SetTextureColorMod(textureShape,
-                               vertices[0].color.r,
+
+        if (vertices[0].color.a < 255) {
+            SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+        }
+        SDL_SetRenderDrawColor(renderer, vertices[0].color.r,
                                vertices[0].color.g,
-                               vertices[0].color.b);
+                               vertices[0].color.b,
+                               vertices[0].color.a);
 
         Vector2f p[2] = {
                 {transform.transformPoint(
@@ -131,8 +118,7 @@ void SDL2Renderer::draw(const VertexArray &vertices,
         };
         SDL_Rect dst = {(int) p[0].x, (int) p[0].y,
                         (int) (p[1].x - p[0].x), (int) (p[1].y - p[0].y)};
-        SDL_RenderCopy(renderer, textureShape, NULL, &dst);
-
+        SDL_RenderFillRect(renderer, &dst);
 
         p[0] = {transform.transformPoint(
                 (int) vertices[2].position.x,
@@ -142,7 +128,7 @@ void SDL2Renderer::draw(const VertexArray &vertices,
                 (int) vertices[5].position.y)};
         dst = {(int) p[0].x, (int) p[0].y,
                (int) (p[1].x - p[0].x), (int) (p[1].y - p[0].y)};
-        SDL_RenderCopy(renderer, textureShape, NULL, &dst);
+        SDL_RenderFillRect(renderer, &dst);
 
         p[0] = {transform.transformPoint(
                 (int) vertices[7].position.x,
@@ -152,8 +138,7 @@ void SDL2Renderer::draw(const VertexArray &vertices,
                 (int) vertices[5].position.y)};
         dst = {(int) p[0].x, (int) p[0].y,
                (int) (p[1].x - p[0].x), (int) (p[1].y - p[0].y)};
-        SDL_RenderCopy(renderer, textureShape, NULL, &dst);
-
+        SDL_RenderFillRect(renderer, &dst);
 
         p[0] = {transform.transformPoint(
                 (int) vertices[9].position.x,
@@ -163,7 +148,15 @@ void SDL2Renderer::draw(const VertexArray &vertices,
                 (int) vertices[7].position.y)};
         dst = {(int) p[0].x, (int) p[0].y,
                (int) (p[1].x - p[0].x), (int) (p[1].y - p[0].y)};
-        SDL_RenderCopy(renderer, textureShape, NULL, &dst);
+        SDL_RenderFillRect(renderer, &dst);
+
+        SDL_SetRenderDrawColor(renderer, getFillColor().r,
+                               getFillColor().g,
+                               getFillColor().b,
+                               getFillColor().a);
+        if (vertices[0].color.a < 255) {
+            SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+        }
 
     } else if (type == 3 || type == 5) {
 
@@ -210,12 +203,21 @@ void SDL2Renderer::draw(const VertexArray &vertices,
                                        vertices[i].color.b);
                 SDL_RenderCopy(renderer, tex->tex, &src, &dst);
             } else {
-                SDL_SetTextureAlphaMod(textureShape, vertices[i].color.a);
-                SDL_SetTextureColorMod(textureShape,
-                                       vertices[i].color.r,
+                if (vertices[i].color.a < 255) {
+                    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+                }
+                SDL_SetRenderDrawColor(renderer, vertices[i].color.r,
                                        vertices[i].color.g,
-                                       vertices[i].color.b);
-                SDL_RenderCopy(renderer, textureShape, NULL, &dst);
+                                       vertices[i].color.b,
+                                       vertices[i].color.a);
+                SDL_RenderFillRect(renderer, &dst);
+                SDL_SetRenderDrawColor(renderer, getFillColor().r,
+                                       getFillColor().g,
+                                       getFillColor().b,
+                                       getFillColor().a);
+                if (vertices[i].color.a < 255) {
+                    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+                }
             }
         }
     }
@@ -246,7 +248,6 @@ void SDL2Renderer::delay(unsigned int ms) {
 
 SDL2Renderer::~SDL2Renderer() {
 
-    SDL_DestroyTexture(textureShape);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
