@@ -112,8 +112,8 @@ extern c2d::Renderer *c2d_renderer;
 
 #include "platforms/sdl2/sdl2_renderer.h"
 #include "platforms/sdl2/sdl2_texture.h"
+#include "platforms/sdl2/sdl2_input.h"
 #include "platforms/nx/nx_clock.h"
-#include "platforms/nx/nx_input.h"
 #include "platforms/nx/nx_audio.h"
 #include "platforms/posix/posix_io.h"
 
@@ -133,36 +133,37 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DLine Line
 #define C2DFont Font
 #define C2DText Text
-#define C2DInput NXInput
+#define C2DInput SDL2Input
 #define C2DAudio NXAudio
 #define C2DIo POSIXIo
 #define C2DClock NXClock
 
-// https://github.com/switchbrew/libnx/blob/master/nx/include/switch/services/hid.h
-#define KEY_JOY_UP_DEFAULT      0x222000    // KEY_UP
-#define KEY_JOY_DOWN_DEFAULT    0x888000    // KEY_DOWN
-#define KEY_JOY_LEFT_DEFAULT    0x111000    // KEY_LEFT
-#define KEY_JOY_RIGHT_DEFAULT   0x444000    // KEY_RIGHT
-#define KEY_JOY_FIRE1_DEFAULT   0x1         // KEY_A
-#define KEY_JOY_FIRE2_DEFAULT   0x2         // KEY_B
-#define KEY_JOY_FIRE3_DEFAULT   0x4         // KEY_X
-#define KEY_JOY_FIRE4_DEFAULT   0x8         // KEY_Y
-#define KEY_JOY_FIRE5_DEFAULT   0x40        // KEY_L
-#define KEY_JOY_FIRE6_DEFAULT   0x80        // KEY_R
-#define KEY_JOY_COIN1_DEFAULT   0x800       // KEY_PLUS
-#define KEY_JOY_START1_DEFAULT  0x400       // KEY_MINUS
-#define KEY_JOY_MENU1_DEFAULT   0x400       // KEY_MINUS
-#define KEY_JOY_MENU2_DEFAULT   0x800       // KEY_PLUS
+// https://github.com/devkitPro/SDL/blob/a8fa9ec02c3c77106207cd84fc230523c5c30c81/src/joystick/switch/SDL_sysjoystick.c#L51
+
+#define KEY_JOY_UP_DEFAULT      13          // KEY_UP
+#define KEY_JOY_DOWN_DEFAULT    15          // KEY_DOWN
+#define KEY_JOY_LEFT_DEFAULT    12          // KEY_LEFT
+#define KEY_JOY_RIGHT_DEFAULT   14          // KEY_RIGHT
+#define KEY_JOY_FIRE1_DEFAULT   0           // KEY_A
+#define KEY_JOY_FIRE2_DEFAULT   1           // KEY_B
+#define KEY_JOY_FIRE3_DEFAULT   2           // KEY_X
+#define KEY_JOY_FIRE4_DEFAULT   3           // KEY_Y
+#define KEY_JOY_FIRE5_DEFAULT   6           // KEY_L
+#define KEY_JOY_FIRE6_DEFAULT   7           // KEY_R
+#define KEY_JOY_COIN1_DEFAULT   10          // KEY_PLUS
+#define KEY_JOY_START1_DEFAULT  11          // KEY_MINUS
+#define KEY_JOY_MENU1_DEFAULT   11          // KEY_MINUS
+#define KEY_JOY_MENU2_DEFAULT   10          // KEY_PLUS
 // switch special keys
-#define KEY_JOY_ZL_DEFAULT      0x100       // KEY_ZL
-#define KEY_JOY_ZR_DEFAULT      0x200       // KEY_ZR
-#define KEY_JOY_SL_DEFAULT      0x1000000   // KEY_SL
-#define KEY_JOY_SR_DEFAULT      0x2000000   // KEY_SR
+#define KEY_JOY_ZL_DEFAULT      8           // KEY_ZL
+#define KEY_JOY_ZR_DEFAULT      9           // KEY_ZR
+#define KEY_JOY_SL_DEFAULT      24          // KEY_SL
+#define KEY_JOY_SR_DEFAULT      25          // KEY_SR
 // TODO
 #define KEY_JOY_AXIS_LX         0
-#define KEY_JOY_AXIS_LY         0
-#define KEY_JOY_AXIS_RX         0
-#define KEY_JOY_AXIS_RY         0
+#define KEY_JOY_AXIS_LY         1
+#define KEY_JOY_AXIS_RX         2
+#define KEY_JOY_AXIS_RY         3
 
 #elif __SDL2__
 

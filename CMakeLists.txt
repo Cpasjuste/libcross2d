@@ -178,6 +178,7 @@ elseif (BUILD_NX)
             )
     file(GLOB PLATFORM_SRC
             source/platforms/nx/*.c*
+            source/platforms/sdl2/sdl2_input.cpp
             source/platforms/sdl2/sdl2_renderer.cpp
             source/platforms/sdl2/sdl2_texture.cpp
             source/platforms/posix/posix_io.cpp
