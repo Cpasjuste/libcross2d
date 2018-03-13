@@ -46,6 +46,8 @@ namespace c2d {
 
         virtual void drawCircle(Circle &circle, Transform &transform);
 
+        virtual void clear() {};
+
         virtual void flip(bool draw = true);
 
         virtual void delay(unsigned int ms) {};

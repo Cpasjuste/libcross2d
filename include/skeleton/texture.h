@@ -35,7 +35,7 @@ namespace c2d {
 
         virtual void unlock() {};
 
-        virtual void setFiltering(int filter) {};
+        virtual void setFiltering(int filter) { filtering = filter; };
 
         virtual void setShader(int shaderIndex) {};
 

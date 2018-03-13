@@ -86,6 +86,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
     shaderList = new ShaderList();
     shaderList->add("SCANLINE", NULL);
     shaderList->add("SCANLINE+", NULL);
+    shaderList->add("SCANLINE++", NULL);
 
     available = true;
 }
@@ -224,6 +225,20 @@ void SDL2Renderer::draw(const VertexArray &vertices,
                 }
             }
         }
+    }
+}
+
+void SDL2Renderer::clear() {
+
+    SDL_SetRenderDrawColor(renderer,
+                           getFillColor().r,
+                           getFillColor().g,
+                           getFillColor().b,
+                           getFillColor().a);
+
+    for (int i = 0; i < 2; i++) {
+        SDL_RenderClear(renderer);
+        SDL_RenderPresent(renderer);
     }
 }
 
