@@ -150,10 +150,10 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_FIRE4_DEFAULT   3           // KEY_Y
 #define KEY_JOY_FIRE5_DEFAULT   6           // KEY_L
 #define KEY_JOY_FIRE6_DEFAULT   7           // KEY_R
-#define KEY_JOY_COIN1_DEFAULT   10          // KEY_PLUS
-#define KEY_JOY_START1_DEFAULT  11          // KEY_MINUS
-#define KEY_JOY_MENU1_DEFAULT   11          // KEY_MINUS
-#define KEY_JOY_MENU2_DEFAULT   10          // KEY_PLUS
+#define KEY_JOY_COIN1_DEFAULT   11          // KEY_PLUS
+#define KEY_JOY_START1_DEFAULT  10          // KEY_MINUS
+#define KEY_JOY_MENU1_DEFAULT   10          // KEY_MINUS
+#define KEY_JOY_MENU2_DEFAULT   11          // KEY_PLUS
 // switch special keys
 #define KEY_JOY_ZL_DEFAULT      8           // KEY_ZL
 #define KEY_JOY_ZR_DEFAULT      9           // KEY_ZR

@@ -256,7 +256,7 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
 
         int mapping = player.mapping[i];
 
-#ifdef __HANDLED_CABMODE__
+#ifdef __PSP2__
         // rotate buttons on ps vita to play in portrait mode
         if (rotate == 1) {
             switch (mapping) {
