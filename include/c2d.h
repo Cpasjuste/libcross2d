@@ -113,9 +113,11 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/sdl2/sdl2_renderer.h"
 #include "platforms/sdl2/sdl2_texture.h"
 #include "platforms/sdl2/sdl2_input.h"
+#include "platforms/sdl2/sdl2_audio.h"
 #include "platforms/nx/nx_clock.h"
-#include "platforms/nx/nx_audio.h"
 #include "platforms/posix/posix_io.h"
+
+#include <switch.h>
 
 //#define SVC_DEBUG 1
 //#define NET_DEBUG 1
@@ -134,7 +136,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DFont Font
 #define C2DText Text
 #define C2DInput SDL2Input
-#define C2DAudio NXAudio
+#define C2DAudio SDL2Audio
 #define C2DIo POSIXIo
 #define C2DClock NXClock
 

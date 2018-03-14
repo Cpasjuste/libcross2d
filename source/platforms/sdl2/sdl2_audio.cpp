@@ -104,7 +104,7 @@ SDL2Audio::SDL2Audio(int freq, int fps) : Audio(freq, fps) {
     printf("SDL2Audio: samples %d\n", obtained.samples);
     printf("SDL2Audio: channels %d\n", obtained.channels);
 
-    SDL_PauseAudio(0);
+    SDL_PauseAudio(1);
 }
 
 SDL2Audio::~SDL2Audio() {
@@ -124,19 +124,22 @@ SDL2Audio::~SDL2Audio() {
 void SDL2Audio::play() {
 
     if (available && !paused) {
+        if (SDL_GetAudioStatus() == SDL_AUDIO_PAUSED) {
+            SDL_PauseAudio(0);
+        }
         write_buffer((unsigned char *) buffer, buffer_size);
     }
-
 }
 
 void SDL2Audio::reset() {
+
+    SDL_PauseAudio(1);
 
     buffered_bytes = 0;
     buf_write_pos = 0;
     buf_read_pos = 0;
     memset(buffer_sdl, 0, (size_t) buf_size);
 
-    SDL_PauseAudio(0);
     Audio::reset();
 }
 
