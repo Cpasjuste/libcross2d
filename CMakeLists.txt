@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.0)
 
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
-option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" ON)
-option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" ON)
+option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" OFF)
+option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" OFF)
 option(BUILD_SDL2 "Build with SDL2 support (software)" OFF)
 option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" OFF)
 option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
@@ -195,25 +195,28 @@ elseif (BUILD_NX)
     # SDL2 PLATORM
     #####################
 elseif (BUILD_SDL2)
+    find_package(ZLIB REQUIRED)
+    find_package(PNG REQUIRED)
+    find_package(Freetype REQUIRED)
     set(PLATFORM_DIRS
             source/platforms/sdl2
             source/platforms/posix
-            /usr/include/freetype2
-            )
+            ${FREETYPE_INCLUDE_DIRS}
+            ${PNG_INCLUDE_DIRS}
+            ${ZLIB_INCLUDE_DIRS})
     file(GLOB PLATFORM_SRC
             source/platforms/sdl2/*.c*
             source/platforms/posix/*.c*
             )
-    list(APPEND FLAGS -D__SDL2__)
+    list(APPEND FLAGS -D__SDL2__ -Wno-narrowing)
+    set(PLATFORM_LIBS cross2d SDL2 ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
     if (BUILD_SDL2_GL)
         list(APPEND PLATFORM_DIRS source/platforms/gl)
         list(APPEND PLATFORM_SRC
                 source/platforms/gl/gl_renderer.cpp
                 source/platforms/gl/gl_texture.cpp)
         list(APPEND FLAGS -D__SDL2_GL__ -D__GL__)
-        set(PLATFORM_LIBS cross2d GL SDL2 freetype png z)
-    else ()
-        set(PLATFORM_LIBS cross2d SDL2 freetype png z)
+        list(APPEND PLATFORM_LIBS GL)
     endif (BUILD_SDL2_GL)
     #####################
     # SDL1 PLATORM
