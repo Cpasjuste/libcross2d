@@ -34,7 +34,7 @@ ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
         Text *text = new Text("LINE", font, (unsigned int) fontSize);
         text->setOutlineThickness(getSize().y < MIN_SIZE_Y ? 1 : 2);
         text->setOutlineColor(Color::Black);
-        text->setPosition(8, MARGIN_Y + line_height * i);
+        text->setPosition(8, 2 + MARGIN_Y + line_height * i);
         text->setSizeMax(Vector2f(getSize().x, 0));
         add(text);
         lines.push_back(text);

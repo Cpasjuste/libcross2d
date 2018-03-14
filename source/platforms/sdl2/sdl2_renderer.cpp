@@ -12,32 +12,6 @@
 
 using namespace c2d;
 
-static void rendere_rinfo(SDL_Renderer *rdr) {
-    SDL_RendererInfo info;
-    int i, n;
-
-    n = SDL_GetNumRenderDrivers();
-
-    SDL_GetRendererInfo(rdr, &info);
-    printf("SDL Rendering info: n=%d, current=%s\n", n, info.name);
-
-    for (i = 0; i < n; i++) {
-        uint32_t j;
-
-        SDL_GetRenderDriverInfo(i, &info);
-        printf("    %d: %s flags=%08x num_formats=%u",
-               i, info.name, info.flags,
-               info.num_texture_formats);
-
-        for (j = 0; j < info.num_texture_formats; j++) {
-            uint32_t fmt = info.texture_formats[j];
-            printf(" %s", SDL_GetPixelFormatName(fmt));
-        }
-
-        printf("\n");
-    }
-}
-
 SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
 
 #ifdef __NX__
@@ -69,7 +43,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
         }
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!renderer) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                      "Couldn't create hw renderer: %s, trying sw renderer\n", SDL_GetError());
@@ -80,7 +54,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
             return;
         }
     }
-    rendere_rinfo(renderer);
 
     // basic software effect, only used/usefull on switch for now
     shaderList = new ShaderList();
