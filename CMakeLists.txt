@@ -5,8 +5,8 @@ set(CMAKE_SYSTEM_NAME "Generic")
 
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
-option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" OFF)
-option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" OFF)
+option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" ON)
+option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" ON)
 option(BUILD_SDL2 "Build with SDL2 support (software)" OFF)
 option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" OFF)
 option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
@@ -221,22 +221,26 @@ elseif (BUILD_SDL2)
     # SDL1 PLATORM
     #####################
 elseif (BUILD_SDL1)
+    find_package(ZLIB REQUIRED)
+    find_package(PNG REQUIRED)
+    find_package(Freetype REQUIRED)
     set(PLATFORM_DIRS
             source/platforms/sdl1
             source/platforms/gl
             source/platforms/posix
-            /usr/include/freetype2)
+            ${FREETYPE_INCLUDE_DIRS})
     file(GLOB PLATFORM_SRC
             source/platforms/sdl1/*.c*
             source/platforms/gl/*.c*
             source/platforms/posix/*.c*)
     list(APPEND FLAGS -D__SDL1__ -D__GL__ -Wno-narrowing)
+    set(PLATFORM_LIBS cross2d SDL ${FREETYPE_LIBRARIES} png z)
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)
-        set(PLATFORM_LIBS cross2d GL SDL freetype png z)
+        set(PLATFORM_LIBS GL)
     else ()
         list(APPEND FLAGS -D__MESAGL__)
-        set(PLATFORM_LIBS cross2d OSMesa pthread SDL freetype png z)
+        set(PLATFORM_LIBS OSMesa pthread)
     endif (BUILD_SDL1_GL)
 endif (BUILD_SFML)
 
