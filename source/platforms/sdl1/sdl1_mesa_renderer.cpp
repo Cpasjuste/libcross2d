@@ -19,6 +19,8 @@ static OSMesaContext mesa_ctx;
 
 SDL1Renderer::SDL1Renderer(const Vector2f &size) : GLRenderer(size) {
 
+    printf("SDL1Renderer: using software rendering (osmesa)\n");
+
     if (SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
         printf("Couldn't init SDL: %s\n", SDL_GetError());
         return;

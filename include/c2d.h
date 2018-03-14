@@ -217,7 +217,7 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         5
 
 #elif __SDL1__
-#include "platforms/sdl1/sdl1_gl_renderer.h"
+#include "platforms/sdl1/sdl1_renderer.h"
 #include "platforms/gl/gl_texture.h"
 #include "platforms/sdl1/sdl1_input.h"
 #include "platforms/sdl1/sdl1_audio.h"

@@ -230,11 +230,12 @@ elseif (BUILD_SDL1)
             source/platforms/sdl1/*.c*
             source/platforms/gl/*.c*
             source/platforms/posix/*.c*)
-    list(APPEND FLAGS -D__SDL1__ -D__GL__)
+    list(APPEND FLAGS -D__SDL1__ -D__GL__ -Wno-narrowing)
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)
         set(PLATFORM_LIBS cross2d GL SDL freetype png z)
     else ()
+        list(APPEND FLAGS -D__MESAGL__)
         set(PLATFORM_LIBS cross2d OSMesa pthread SDL freetype png z)
     endif (BUILD_SDL1_GL)
 endif (BUILD_SFML)

@@ -5,16 +5,7 @@
 #ifdef __GL__
 
 #include "c2d.h"
-
-#ifdef __TINYGL__
-
-#include "pTinyGL/pgl.h"
-
-#else
-
-#include "GL/gl.h"
-
-#endif
+#include <GL/gl.h>
 
 using namespace c2d;
 

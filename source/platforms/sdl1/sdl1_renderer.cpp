@@ -15,6 +15,8 @@ using namespace c2d;
 
 SDL1Renderer::SDL1Renderer(const Vector2f &size) : GLRenderer(size) {
 
+    printf("SDL1Renderer: using hardware rendering (opengl)\n");
+
     if (SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
         printf("Couldn't init SDL: %s\n", SDL_GetError());
         return;
@@ -28,14 +30,14 @@ SDL1Renderer::SDL1Renderer(const Vector2f &size) : GLRenderer(size) {
     }
 
     available = true;
-
-    this->shaders = new Shaders("");
 }
 
-void SDL1Renderer::flip() {
+void SDL1Renderer::flip(bool draw) {
 
-    // call base class (draw childs)
-    GLRenderer::flip();
+    if (draw) {
+        // call base class (draw childs)
+        GLRenderer::flip();
+    }
 
     SDL_GL_SwapBuffers();
 }

@@ -4,20 +4,9 @@
 
 #ifdef __GL__
 
-#include <png.h>
 #include "c2d.h"
+#include <GL/gl.h>
 #include "skeleton/lodepng.h"
-
-#ifdef __TINYGL__
-
-#include "pTinyGL/pgl.h"
-
-#define GL_UNSIGNED_SHORT_5_6_5 GL_UNSIGNED_BYTE
-#else
-
-#include "GL/gl.h"
-
-#endif
 
 using namespace c2d;
 
@@ -167,20 +156,6 @@ int GLTexture::lock(FloatRect *rect, void **pix, int *p) {
 
 void GLTexture::unlock() {
 
-#ifdef __TINYGL__
-    // TODO: implement glTexSubImage2D in pTinyGL
-    glDeleteTextures(1, &texID);
-    glGenTextures(1, &texID);
-    if (texID) {
-        glBindTexture(GL_TEXTURE_2D, texID);
-        glTexImage2D(GL_TEXTURE_2D, 0, bpp == 4 ? 4 : 3, (GLsizei) getSize().x, (GLsizei) getSize().y, 0,
-                     bpp == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, pixels);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                        filtering == C2D_TEXTURE_FILTER_LINEAR ? GL_LINEAR : GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                        filtering == C2D_TEXTURE_FILTER_LINEAR ? GL_LINEAR : GL_NEAREST);
-    }
-#else
     glBindTexture(GL_TEXTURE_2D, texID);
 
     if (format == C2D_TEXTURE_FMT_RGBA8) {
@@ -190,7 +165,6 @@ void GLTexture::unlock() {
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, (GLsizei) getSize().x, (GLsizei) getSize().y,
                         GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
     }
-#endif
 }
 
 void GLTexture::setFiltering(int filter) {

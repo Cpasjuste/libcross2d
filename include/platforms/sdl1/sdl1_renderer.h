@@ -28,4 +28,4 @@ namespace c2d {
     };
 }
 
-#endif //PSP2GL_RENDERER_H
+#endif //SDL1_RENDERER_H
