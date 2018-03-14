@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
-set(CMAKE_SYSTEM_NAME "Generic")
-
 # delete cmake cache folder before changing this options
 option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
 option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" ON)
@@ -228,19 +226,21 @@ elseif (BUILD_SDL1)
             source/platforms/sdl1
             source/platforms/gl
             source/platforms/posix
-            ${FREETYPE_INCLUDE_DIRS})
+            ${FREETYPE_INCLUDE_DIRS}
+            ${PNG_INCLUDE_DIRS}
+            ${ZLIB_INCLUDE_DIRS})
     file(GLOB PLATFORM_SRC
             source/platforms/sdl1/*.c*
             source/platforms/gl/*.c*
             source/platforms/posix/*.c*)
     list(APPEND FLAGS -D__SDL1__ -D__GL__ -Wno-narrowing)
-    set(PLATFORM_LIBS cross2d SDL ${FREETYPE_LIBRARIES} png z)
+    set(PLATFORM_LIBS cross2d SDL ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)
-        set(PLATFORM_LIBS GL)
+        list(APPEND PLATFORM_LIBS GL)
     else ()
         list(APPEND FLAGS -D__MESAGL__)
-        set(PLATFORM_LIBS OSMesa pthread)
+        list(APPEND PLATFORM_LIBS OSMesa pthread)
     endif (BUILD_SDL1_GL)
 endif (BUILD_SFML)
 
