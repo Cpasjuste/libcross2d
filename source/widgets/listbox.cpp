@@ -34,7 +34,7 @@ ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
         Text *text = new Text("LINE", font, (unsigned int) fontSize);
         text->setOutlineThickness(getSize().y < MIN_SIZE_Y ? 1 : 2);
         text->setOutlineColor(Color::Black);
-        text->setPosition(8, 2 + MARGIN_Y + line_height * i);
+        text->setPosition(8, 3 + MARGIN_Y + line_height * i);
         text->setSizeMax(Vector2f(getSize().x, 0));
         add(text);
         lines.push_back(text);
@@ -71,7 +71,7 @@ void ListBox::setSelection(int idx) {
 
             // set highlight position and color
             if (index_start + i == index) {
-                highlight->setPosition(2, lines[i]->getPosition().y - MARGIN_Y);
+                highlight->setPosition(2, lines[i]->getPosition().y - MARGIN_Y - 1);
                 Color color = file->color;
                 highlight->setOutlineColor(color);
 #ifdef __TINYGL__
