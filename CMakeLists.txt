@@ -56,7 +56,7 @@ if (BUILD_SFML)
             -I/usr/include/freetype2
             )
     set(PLATFORM_LIBS
-            cross2d SDL2
+            SDL2
             sfml-graphics sfml-window sfml-system
             GL freetype png z)
     #####################
@@ -75,7 +75,7 @@ elseif (BUILD_PSP2)
             source/platforms/psp2/vita-shader-collection/lib/*.o
             )
     set(PLATFORM_LIBS
-            cross2d SDL2 vita2d freetype
+            SDL2 vita2d freetype
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub
@@ -147,7 +147,6 @@ elseif (BUILD_3DS)
             )
 
     set(PLATFORM_LIBS
-            cross2d
             ${DEVKITPRO}/portlibs/3ds/lib/libSDL2.a
             ${DEVKITPRO}/portlibs/armv6k/lib/libpng.a
             ${DEVKITPRO}/portlibs/armv6k/lib/libz.a
@@ -184,7 +183,7 @@ elseif (BUILD_NX)
             -ffunction-sections -fomit-frame-pointer
             )
     set(PLATFORM_LIBS
-            cross2d nxnetprint
+            nxnetprint
             ${DEVKITPRO}/portlibs/switch/lib/libSDL2.a
             ${DEVKITPRO}/libnx/lib/libnx.a
             ${DEVKITPRO}/portlibs/switch/lib/libfreetype.a
@@ -206,10 +205,9 @@ elseif (BUILD_SDL2)
             ${ZLIB_INCLUDE_DIRS})
     file(GLOB PLATFORM_SRC
             source/platforms/sdl2/*.c*
-            source/platforms/posix/*.c*
-            )
+            source/platforms/posix/*.c*)
+    set(PLATFORM_LIBS SDL2 ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
     list(APPEND FLAGS -D__SDL2__ -Wno-narrowing)
-    set(PLATFORM_LIBS cross2d SDL2 ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
     if (BUILD_SDL2_GL)
         list(APPEND PLATFORM_DIRS source/platforms/gl)
         list(APPEND PLATFORM_SRC
@@ -236,19 +234,20 @@ elseif (BUILD_SDL1)
             source/platforms/sdl1/*.c*
             source/platforms/gl/*.c*
             source/platforms/posix/*.c*)
+    set(PLATFORM_LIBS SDL ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
     list(APPEND FLAGS -D__SDL1__ -D__GL__ -Wno-narrowing)
-    set(PLATFORM_LIBS cross2d SDL ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)
         list(APPEND PLATFORM_LIBS GL)
     else ()
         list(APPEND FLAGS -D__MESAGL__)
-        list(APPEND PLATFORM_LIBS OSMesa pthread)
+        list(APPEND PLATFORM_LIBS OSMesa pthread ${ZLIB_LIBRARIES})
     endif (BUILD_SDL1_GL)
 endif (BUILD_SFML)
 
 add_library(cross2d ${CROSS2D_SRC} ${PLATFORM_SRC})
 target_include_directories(cross2d PUBLIC ${CROSS2D_DIR} ${PLATFORM_DIRS})
+target_link_libraries(cross2d PUBLIC ${PLATFORM_LIBS})
 target_compile_options(cross2d PUBLIC ${FLAGS})
 
 install(FILES ${CMAKE_BINARY_DIR}/libcross2d.a DESTINATION lib)
@@ -258,8 +257,7 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/include DESTINATION include/cross2d)
 # test executable
 #####################
 add_executable(cross2d.elf test/main.cpp)
-target_compile_options(cross2d.elf PRIVATE ${FLAGS})
-target_link_libraries(cross2d.elf ${PLATFORM_LIBS})
+target_link_libraries(cross2d.elf cross2d)
 
 #####################
 # PS3 target
