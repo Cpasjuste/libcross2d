@@ -142,26 +142,26 @@ extern c2d::Renderer *c2d_renderer;
 
 // https://github.com/devkitPro/SDL/blob/a8fa9ec02c3c77106207cd84fc230523c5c30c81/src/joystick/switch/SDL_sysjoystick.c#L51
 
-#define KEY_JOY_UP_DEFAULT      13          // KEY_UP
-#define KEY_JOY_DOWN_DEFAULT    15          // KEY_DOWN
-#define KEY_JOY_LEFT_DEFAULT    12          // KEY_LEFT
-#define KEY_JOY_RIGHT_DEFAULT   14          // KEY_RIGHT
+#define KEY_JOY_UP_DEFAULT      13          // KEY_DUP
+#define KEY_JOY_DOWN_DEFAULT    15          // KEY_DDOWN
+#define KEY_JOY_LEFT_DEFAULT    12          // KEY_DLEFT
+#define KEY_JOY_RIGHT_DEFAULT   14          // KEY_DRIGHT
 #define KEY_JOY_FIRE1_DEFAULT   0           // KEY_A
 #define KEY_JOY_FIRE2_DEFAULT   1           // KEY_B
 #define KEY_JOY_FIRE3_DEFAULT   2           // KEY_X
 #define KEY_JOY_FIRE4_DEFAULT   3           // KEY_Y
 #define KEY_JOY_FIRE5_DEFAULT   6           // KEY_L
 #define KEY_JOY_FIRE6_DEFAULT   7           // KEY_R
-#define KEY_JOY_COIN1_DEFAULT   11          // KEY_PLUS
-#define KEY_JOY_START1_DEFAULT  10          // KEY_MINUS
-#define KEY_JOY_MENU1_DEFAULT   10          // KEY_MINUS
-#define KEY_JOY_MENU2_DEFAULT   11          // KEY_PLUS
+#define KEY_JOY_COIN1_DEFAULT   11          // KEY_MINUS
+#define KEY_JOY_START1_DEFAULT  10          // KEY_PLUS
+#define KEY_JOY_MENU1_DEFAULT   10          // KEY_PLUS
+#define KEY_JOY_MENU2_DEFAULT   11          // KEY_MINUS
 // switch special keys
 #define KEY_JOY_ZL_DEFAULT      8           // KEY_ZL
 #define KEY_JOY_ZR_DEFAULT      9           // KEY_ZR
 #define KEY_JOY_SL_DEFAULT      24          // KEY_SL
 #define KEY_JOY_SR_DEFAULT      25          // KEY_SR
-// TODO
+// joysticks axis
 #define KEY_JOY_AXIS_LX         0
 #define KEY_JOY_AXIS_LY         1
 #define KEY_JOY_AXIS_RX         2
