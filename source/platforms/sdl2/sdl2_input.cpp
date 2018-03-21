@@ -6,6 +6,10 @@
 #include <SDL2/SDL.h>
 #include "c2d.h"
 
+#ifdef __SWITCH__
+#include <switch.h>
+#endif
+
 using namespace c2d;
 
 static int key_id[KEY_COUNT]{
@@ -321,6 +325,14 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
                     player.state |= Input::Key::KEY_UP;
                 }
             } else {
+#ifdef __SWITCH__
+                // change (-) and (+) buttons on >
+#error TODO
+                if(!hidGetHandheldMode()) {
+                    if(key_id[i] == Input::Key::KEY_RIGHT) {
+                    }
+                }
+#endif
                 player.state |= key_id[i];
             }
         }

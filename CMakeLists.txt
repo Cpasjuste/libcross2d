@@ -164,9 +164,6 @@ elseif (BUILD_NX)
     set(PLATFORM_DIRS
             source/platforms/nx
             source/platforms/posix
-            ${DEVKITPRO}/libnx/include
-            ${DEVKITPRO}/portlibs/switch/include
-            ${DEVKITPRO}/portlibs/switch/include/SDL2
             ${DEVKITPRO}/portlibs/switch/include/freetype2
             )
     file(GLOB PLATFORM_SRC
