@@ -161,10 +161,8 @@ elseif (BUILD_3DS)
     # NX PLATORM
     #####################
 elseif (BUILD_NX)
-    add_subdirectory(source/platforms/nx/nxnetprint)
     set(PLATFORM_DIRS
             source/platforms/nx
-            source/platforms/nx/nxnetprint/include
             source/platforms/posix
             ${DEVKITPRO}/libnx/include
             ${DEVKITPRO}/portlibs/switch/include
@@ -183,13 +181,7 @@ elseif (BUILD_NX)
             -ffunction-sections -fomit-frame-pointer
             )
     set(PLATFORM_LIBS
-            nxnetprint
-            ${DEVKITPRO}/portlibs/switch/lib/libSDL2.a
-            ${DEVKITPRO}/libnx/lib/libnx.a
-            ${DEVKITPRO}/portlibs/switch/lib/libfreetype.a
-            ${DEVKITPRO}/portlibs/switch/lib/libpng.a
-            ${DEVKITPRO}/portlibs/switch/lib/libbz2.a
-            ${DEVKITPRO}/portlibs/switch/lib/libz.a)
+            nxlink_print SDL2 nx freetype png bz2 z)
     #####################
     # SDL2 PLATORM
     #####################

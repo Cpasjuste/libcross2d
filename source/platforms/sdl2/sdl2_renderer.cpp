@@ -15,8 +15,12 @@ using namespace c2d;
 SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
 
 #ifdef __NX__
+#ifdef NET_DEBUG
+    nxlink_print_init();
+#else
     consoleDebugInit(debugDevice_SVC);
     stdout = stderr;
+#endif
 #endif
 
     if ((SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
@@ -244,6 +248,13 @@ SDL2Renderer::~SDL2Renderer() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+
+#ifdef __NX__
+#ifdef NET_DEBUG
+    nxlink_print_exit();
+#endif
+#endif
+
 }
 
 #endif

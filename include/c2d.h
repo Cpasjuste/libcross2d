@@ -120,12 +120,9 @@ extern c2d::Renderer *c2d_renderer;
 #include <switch.h>
 
 //#define SVC_DEBUG 1
-//#define NET_DEBUG 1
+#define NET_DEBUG 1
 #ifdef NET_DEBUG
-#include "nxnetprint.h"
-//#define NET_DEBUG_IP "192.168.0.13"
-#define NET_DEBUG_IP "192.168.1.100"
-//#define NET_DEBUG_IP "192.168.0.10"
+#include "nxlink_print.h"
 #endif
 
 #define C2DRenderer SDL2Renderer
@@ -159,8 +156,6 @@ extern c2d::Renderer *c2d_renderer;
 // switch special keys
 #define KEY_JOY_ZL_DEFAULT      8           // KEY_ZL
 #define KEY_JOY_ZR_DEFAULT      9           // KEY_ZR
-#define KEY_JOY_SL_DEFAULT      24          // KEY_SL
-#define KEY_JOY_SR_DEFAULT      25          // KEY_SR
 // joysticks axis
 #define KEY_JOY_AXIS_LX         0
 #define KEY_JOY_AXIS_LY         1
