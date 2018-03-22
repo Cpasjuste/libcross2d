@@ -13,8 +13,8 @@ using namespace c2d;
 SDL2Texture::SDL2Texture(const char *path) : Texture(path) {
 
     unsigned int w, h, error = 0;
-
     unsigned char *pixels;
+
     error = lodepng_decode32_file(&pixels, &w, &h, path);
     if (error) {
         printf("SDL2Texture: couldn't create texture: %s\n", lodepng_error_text(error));
@@ -23,16 +23,16 @@ SDL2Texture::SDL2Texture(const char *path) : Texture(path) {
 
     setSize(Vector2f(w, h));
     setTextureRect(IntRect(0, 0, w, h));
-    format = C2D_TEXTURE_FMT_RGBA8;
-    bpp = 4;
     pitch = (int) (getSize().x * bpp);
 
-    SDL_Surface *tmp = SDL_CreateRGBSurfaceWithFormatFrom(
-            pixels, w, h, 32, pitch, SDL_PIXELFORMAT_RGBA32);
+    SDL_Surface *tmp =
+            SDL_CreateRGBSurfaceWithFormatFrom(pixels, w, h, 32, pitch, SDL_PIXELFORMAT_RGBA32);
     if (!tmp) {
         printf("SDL2Texture: couldn't create texture: %s\n", SDL_GetError());
+        free(pixels);
         return;
     }
+
     tex = SDL_CreateTextureFromSurface(((SDL2Renderer *) c2d_renderer)->renderer, tmp);
     SDL_FreeSurface(tmp);
     free(pixels);
@@ -48,11 +48,11 @@ SDL2Texture::SDL2Texture(const char *path) : Texture(path) {
     printf("SDL2Texture(%p)\n", this);
 }
 
-SDL2Texture::SDL2Texture(const unsigned char *buffer, int bufferSize) {
+SDL2Texture::SDL2Texture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
 
     unsigned int w, h, error = 0;
-
     unsigned char *pixels;
+
     error = lodepng_decode32(&pixels, &w, &h, buffer, (size_t) bufferSize);
     if (error) {
         printf("SDL2Texture: couldn't create texture: %s\n", lodepng_error_text(error));
@@ -61,16 +61,16 @@ SDL2Texture::SDL2Texture(const unsigned char *buffer, int bufferSize) {
 
     setSize(Vector2f(w, h));
     setTextureRect(IntRect(0, 0, w, h));
-    format = C2D_TEXTURE_FMT_RGBA8;
-    bpp = 4;
     pitch = (int) (getSize().x * bpp);
 
-    SDL_Surface *tmp = SDL_CreateRGBSurfaceWithFormatFrom(
-            pixels, w, h, 32, pitch, SDL_PIXELFORMAT_RGBA32);
+    SDL_Surface *tmp =
+            SDL_CreateRGBSurfaceWithFormatFrom(pixels, w, h, 32, pitch, SDL_PIXELFORMAT_RGBA32);
     if (!tmp) {
         printf("SDL2Texture: couldn't create texture: %s\n", SDL_GetError());
+        free(pixels);
         return;
     }
+
     tex = SDL_CreateTextureFromSurface(((SDL2Renderer *) c2d_renderer)->renderer, tmp);
     SDL_FreeSurface(tmp);
     free(pixels);

@@ -8,7 +8,7 @@
 #include "skeleton/renderer.h"
 
 #define PLAYER_COUNT 4
-#define KEY_COUNT 14
+#define KEY_COUNT 12
 
 #define EV_RESIZE 0x4000
 #define EV_QUIT 0x8000
@@ -32,9 +32,7 @@ namespace c2d {
             KEY_FIRE3 = 0x0100,
             KEY_FIRE4 = 0x0200,
             KEY_FIRE5 = 0x0400,
-            KEY_FIRE6 = 0x0800,
-            KEY_MENU1 = 0x1000,
-            KEY_MENU2 = 0x2000,
+            KEY_FIRE6 = 0x0800
         };
 
         struct Axis {

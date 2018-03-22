@@ -120,7 +120,7 @@ extern c2d::Renderer *c2d_renderer;
 #include <switch.h>
 
 //#define SVC_DEBUG 1
-#define NET_DEBUG 1
+//#define NET_DEBUG 1
 #ifdef NET_DEBUG
 #include "nxlink_print.h"
 #endif
@@ -151,17 +151,16 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_FIRE6_DEFAULT   7           // KEY_R
 #define KEY_JOY_COIN1_DEFAULT   11          // KEY_MINUS
 #define KEY_JOY_START1_DEFAULT  10          // KEY_PLUS
-#define KEY_JOY_MENU1_DEFAULT   10          // KEY_PLUS
-#define KEY_JOY_MENU2_DEFAULT   11          // KEY_MINUS
 // switch special keys
 #define KEY_JOY_ZL_DEFAULT      8           // KEY_ZL
 #define KEY_JOY_ZR_DEFAULT      9           // KEY_ZR
+#define KEY_JOY_LSTICK_DEFAULT  4           // KEY_LSTICK
+#define KEY_JOY_RSTICK_DEFAULT  5           // KEY_RSTICK
 // joysticks axis
 #define KEY_JOY_AXIS_LX         0
 #define KEY_JOY_AXIS_LY         1
 #define KEY_JOY_AXIS_RX         2
 #define KEY_JOY_AXIS_RY         3
-
 #elif __SDL2__
 
 #include <SDL2/SDL.h>

@@ -6,10 +6,6 @@
 #include <SDL2/SDL.h>
 #include "c2d.h"
 
-#ifdef __SWITCH__
-#include <switch.h>
-#endif
-
 using namespace c2d;
 
 static int key_id[KEY_COUNT]{
@@ -24,12 +20,11 @@ static int key_id[KEY_COUNT]{
         Input::Key::KEY_FIRE3,
         Input::Key::KEY_FIRE4,
         Input::Key::KEY_FIRE5,
-        Input::Key::KEY_FIRE6,
-        Input::Key::KEY_MENU1,
-        Input::Key::KEY_MENU2
+        Input::Key::KEY_FIRE6
 };
 
-SDL2Input::SDL2Input(Renderer *r) : Input(r) {
+SDL2Input::SDL2Input(Renderer *r)
+        : Input(r) {
 
     if (SDL_WasInit(SDL_INIT_JOYSTICK) == 0) {
         printf("SDL2Input: SDL_INIT_JOYSTICK\n");
@@ -299,6 +294,17 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
             }
         }
 #endif
+#ifdef __SWITCH__
+        // change missing (-) or (+) buttons on joycons by (LSTICK)
+        // TODO: identifiy controller to only apply changes to joycons
+        if (!hidGetHandheldMode()) {
+            if (player.id == 0 && key_id[i] == Input::Key::KEY_START) {
+                mapping = KEY_JOY_LSTICK_DEFAULT;
+            } else if (player.id == 1 && key_id[i] == Input::Key::KEY_COIN) {
+                mapping = KEY_JOY_LSTICK_DEFAULT;
+            }
+        }
+#endif
         if (SDL_JoystickGetButton((SDL_Joystick *) player.data, mapping)) {
             if (rotate && key_id[i] == Input::Key::KEY_UP) {
                 if (rotate == 1) {
@@ -325,14 +331,6 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
                     player.state |= Input::Key::KEY_UP;
                 }
             } else {
-#ifdef __SWITCH__
-                // change (-) and (+) buttons on >
-#error TODO
-                if(!hidGetHandheldMode()) {
-                    if(key_id[i] == Input::Key::KEY_RIGHT) {
-                    }
-                }
-#endif
                 player.state |= key_id[i];
             }
         }
