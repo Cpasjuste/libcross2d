@@ -59,12 +59,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
         }
     }
 
-    // basic software effect, only used/usefull on switch for now
-    shaderList = new ShaderList();
-    shaderList->add("SCANLINE", NULL);
-    shaderList->add("SCANLINE+", NULL);
-    shaderList->add("SCANLINE++", NULL);
-
     available = true;
 }
 
@@ -222,19 +216,20 @@ void SDL2Renderer::clear() {
 void SDL2Renderer::flip(bool draw) {
 
     if (draw) {
-
         SDL_SetRenderDrawColor(renderer,
                                getFillColor().r,
                                getFillColor().g,
                                getFillColor().b,
                                getFillColor().a);
         SDL_RenderClear(renderer);
-
-        // call base class (draw childs)
-        Renderer::flip();
     }
 
-    SDL_RenderPresent(renderer);
+    // call base class (draw childs)
+    Renderer::flip(draw);
+
+    if (draw) {
+        SDL_RenderPresent(renderer);
+    }
 }
 
 void SDL2Renderer::delay(unsigned int ms) {
@@ -244,7 +239,6 @@ void SDL2Renderer::delay(unsigned int ms) {
 
 SDL2Renderer::~SDL2Renderer() {
 
-    delete (shaderList);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

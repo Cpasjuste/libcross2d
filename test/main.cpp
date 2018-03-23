@@ -52,8 +52,6 @@ int main() {
     Input *input = new C2DInput(NULL);
     input->setJoystickMapping(0, KEYS, 0);
 
-    C2DClock clock;
-
     while (true) {
 
         // handle input
@@ -68,7 +66,8 @@ int main() {
 
         // time / delta time
         float delta = renderer->getDeltaTime().asSeconds();
-        printf("Time: %f (delta: %f)\n", clock.getElapsedTime().asSeconds(), delta);
+        printf("Time: %f (delta: %f), fps: %2g\n",
+               renderer->getElapsedTime().asSeconds(), delta, renderer->getFps());
 
         // render
         rect->move(10 * delta, 0);

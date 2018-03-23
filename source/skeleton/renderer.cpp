@@ -94,7 +94,6 @@ void Renderer::flip(bool draw) {
     elapsedTime = elapsedClock->getElapsedTime();
 
     frames++;
-
     time_now = elapsedTime.asSeconds();
     if (time_now - time_last >= 1.0f) {
         fps = frames;
