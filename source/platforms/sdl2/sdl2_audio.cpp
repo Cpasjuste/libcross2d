@@ -21,8 +21,9 @@ static int buffered_bytes = 0;
 
 static void write_buffer(const unsigned char *data, int len) {
 
+#ifndef __SWITCH__
     SDL_LockAudio();
-
+#endif
     for (int i = 0; i < len; i += 4) {
 
         if (buffered_bytes >= buf_size) {
@@ -38,7 +39,9 @@ static void write_buffer(const unsigned char *data, int len) {
     //printf("write_buffer(%i): buffered=%i, rpos=%i, wpos=%i\n",
     //       len, buffered_bytes, buf_read_pos, buf_write_pos);
 
+#ifndef __SWITCH__
     SDL_UnlockAudio();
+#endif
 }
 
 static void read_buffer(void *unused, unsigned char *data, int len) {
