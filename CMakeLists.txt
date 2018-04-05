@@ -11,6 +11,7 @@ option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
+option(BUILD_NX_GL "Build with NX support (software, osmesa)" OFF)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
@@ -170,8 +171,6 @@ elseif (BUILD_NX)
             source/platforms/nx/*.c*
             source/platforms/sdl2/sdl2_input.cpp
             source/platforms/sdl2/sdl2_audio.cpp
-            source/platforms/sdl2/sdl2_renderer.cpp
-            source/platforms/sdl2/sdl2_texture.cpp
             source/platforms/posix/posix_io.cpp
             )
     list(APPEND FLAGS -D__NX__ -D__SWITCH__
@@ -179,6 +178,18 @@ elseif (BUILD_NX)
             )
     set(PLATFORM_LIBS
             nxlink_print SDL2 nx freetype png bz2 z)
+    if (BUILD_NX_GL)
+        list(APPEND PLATFORM_DIRS source/platforms/gl)
+        list(APPEND PLATFORM_SRC
+                source/platforms/gl/gl_renderer.cpp
+                source/platforms/gl/gl_texture.cpp)
+        list(APPEND FLAGS -D__GL__ -D__MESAGL__)
+        list(APPEND PLATFORM_LIBS OSMesa)
+    else ()
+        list(APPEND PLATFORM_SRC
+                source/platforms/sdl2/sdl2_renderer.cpp
+                source/platforms/sdl2/sdl2_texture.cpp)
+    endif (BUILD_NX_GL)
     #####################
     # SDL2 PLATORM
     #####################

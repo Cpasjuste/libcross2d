@@ -35,6 +35,11 @@ void GLRenderer::draw(const VertexArray &vertices,
         glBindTexture(GL_TEXTURE_2D, tex->texID);
     }
 
+    if (tex || vertices[0].color.a < 255) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+
     static const GLenum modes[] =
             {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
              GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
@@ -60,6 +65,10 @@ void GLRenderer::draw(const VertexArray &vertices,
         glDisable(GL_TEXTURE_2D);
     }
 
+    if (tex || vertices[0].color.a < 255) {
+        glDisable(GL_BLEND);
+    }
+
     glPopMatrix();
 }
 
@@ -70,9 +79,6 @@ void GLRenderer::flip(bool draw) {
         glDisable(GL_LIGHTING);
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
