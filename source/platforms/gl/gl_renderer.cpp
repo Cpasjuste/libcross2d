@@ -9,10 +9,9 @@
 
 using namespace c2d;
 
-static bool gl_init = false;
-
 GLRenderer::GLRenderer(const Vector2f &size) : Renderer(size) {
 
+    setSize(size.x, size.y);
 }
 
 void GLRenderer::draw(const VertexArray &vertices,
@@ -72,21 +71,25 @@ void GLRenderer::draw(const VertexArray &vertices,
     glPopMatrix();
 }
 
+void GLRenderer::setSize(const c2d::Vector2f &size) {
+    setSize(size.x, size.y);
+}
+
+void GLRenderer::setSize(float width, float height) {
+
+    RectangleShape::setSize(width, height);
+
+    glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0f, width, height, 0.0f, 0.0f, 1.0f);
+    glMatrixMode(GL_MODELVIEW);
+}
+
 void GLRenderer::flip(bool draw) {
-
-    if (!gl_init) {
-
-        glDisable(GL_LIGHTING);
-        glDisable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
-
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
-        glMatrixMode(GL_MODELVIEW);
-
-        gl_init = true;
-    }
 
     if (draw) {
         // clear screen

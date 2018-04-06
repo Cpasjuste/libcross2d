@@ -13,8 +13,9 @@
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL.h>
 
-
+#ifdef NET_DEBUG
 #include <nxlink_print.h>
+#endif
 
 #include "c2d.h"
 
@@ -22,12 +23,18 @@ using namespace c2d;
 
 static OSMesaContext mesa_ctx = NULL;
 
-NXMESARenderer::NXMESARenderer(const Vector2f &size) : GLRenderer(size)
-{
+NXMESARenderer::NXMESARenderer(const Vector2f &size) : GLRenderer(size) {
+
+#ifdef NET_DEBUG
+    nxlink_print_init();
+#elif SVC_DEBUG
+    consoleDebugInit(debugDevice_SVC);
+    stdout = stderr;
+#endif
+
     printf("NXMESARenderer: using software rendering (osmesa)\n");
 
     // we need an sdl window for input..
-    SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
     if ((SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't init sdl: %s\n", SDL_GetError());
         return;
@@ -35,16 +42,37 @@ NXMESARenderer::NXMESARenderer(const Vector2f &size) : GLRenderer(size)
     window = SDL_CreateWindow(
             "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
             (int) getSize().x, (int) getSize().y, 0);
+    if (!window) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
+        return;
+    }
 
-    //gfxInitDefault();
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    if (!renderer) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                     "Couldn't create sw renderer: %s, giving up...\n", SDL_GetError());
+        return;
+    }
+
+    setSize(size.x, size.y);
+
+    available = true;
+}
+
+void NXMESARenderer::setSize(const c2d::Vector2f &size) {
+
+    setSize(size.x, size.y);
+}
+
+void NXMESARenderer::setSize(float width, float height) {
+
     gfxSetMode(GfxMode_LinearDouble);
+    gfxConfigureResolution((s32) width, (s32) height);
+    fb = gfxGetFramebuffer(NULL, NULL);
 
-#ifdef NET_DEBUG
-    nxlink_print_init();
-#else
-    consoleDebugInit(debugDevice_SVC);
-    stdout = stderr;
-#endif
+    if (mesa_ctx) {
+        OSMesaDestroyContext(mesa_ctx);
+    }
 
     mesa_ctx = OSMesaCreateContextExt(OSMESA_RGBA, 0, 0, 0, NULL);
     if (!mesa_ctx) {
@@ -53,11 +81,8 @@ NXMESARenderer::NXMESARenderer(const Vector2f &size) : GLRenderer(size)
         return;
     }
 
-    gfxConfigureResolution((s32) size.x, (s32) size.y);
-    fb = gfxGetFramebuffer(NULL, NULL);
-
     if (!OSMesaMakeCurrent(mesa_ctx, fb,
-                           GL_UNSIGNED_BYTE, (GLsizei) getSize().x, (GLsizei) getSize().y)) {
+                           GL_UNSIGNED_BYTE, (GLsizei) width, (GLsizei) height)) {
         printf("OSMesaMakeCurrent() failed!\n");
         OSMesaDestroyContext(mesa_ctx);
         available = false;
@@ -65,12 +90,11 @@ NXMESARenderer::NXMESARenderer(const Vector2f &size) : GLRenderer(size)
     }
 
     OSMesaPixelStore(OSMESA_Y_UP, 0);
-
-    available = true;
+    GLRenderer::setSize(width, height);
 }
 
-void NXMESARenderer::flip(bool draw)
-{
+void NXMESARenderer::flip(bool draw) {
+
     if (draw) {
         // call base class (draw childs)
         GLRenderer::flip();
@@ -88,18 +112,21 @@ void NXMESARenderer::flip(bool draw)
     fb = gfxGetFramebuffer(NULL, NULL);
 }
 
-void NXMESARenderer::delay(unsigned int ms)
-{
+void NXMESARenderer::delay(unsigned int ms) {
     svcSleepThread((u64) 1000000 * ms);
 }
 
-NXMESARenderer::~NXMESARenderer()
-{
+NXMESARenderer::~NXMESARenderer() {
+
     if (mesa_ctx) {
         OSMesaDestroyContext(mesa_ctx);
     }
 
-    if(window) {
+    if (renderer) {
+        SDL_DestroyRenderer(renderer);
+    }
+
+    if (window) {
         SDL_DestroyWindow(window);
     }
 

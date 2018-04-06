@@ -22,10 +22,15 @@ namespace c2d {
 
         void delay(unsigned int ms);
 
+        void setSize(const c2d::Vector2f &size);
+
+        void setSize(float width, float height);
+
     private:
 
         u8 *fb = NULL;
         SDL_Window *window;
+        SDL_Renderer *renderer;
     };
 }
 

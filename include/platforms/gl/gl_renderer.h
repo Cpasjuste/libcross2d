@@ -22,6 +22,10 @@ namespace c2d {
                           const Texture *texture);
 
         virtual void flip(bool draw = true);
+
+        virtual void setSize(const c2d::Vector2f &size);
+
+        virtual void setSize(float width, float height);
     };
 }
 
