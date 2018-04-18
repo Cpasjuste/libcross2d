@@ -51,10 +51,12 @@ PSP2Texture::PSP2Texture(const char *p) : Texture(p) {
 
 PSP2Texture::PSP2Texture(const Vector2f &size, int fmt) : Texture(size, fmt) {
 
+    vita2d_texture_set_alloc_memblock_type(SCE_KERNEL_MEMBLOCK_TYPE_USER_RW);
     tex = vita2d_create_empty_texture_format(
             (unsigned int) size.x, (unsigned int) size.y,
             fmt == C2D_TEXTURE_FMT_RGBA8 ? SCE_GXM_TEXTURE_FORMAT_A8B8G8R8
                                          : SCE_GXM_TEXTURE_FORMAT_R5G6B5);
+    vita2d_texture_set_alloc_memblock_type(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW);
 
     if (!tex) {
         printf("PSP2Texture: couldn't create texture\n");
