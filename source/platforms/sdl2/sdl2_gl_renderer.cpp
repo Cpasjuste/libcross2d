@@ -52,6 +52,8 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
         return;
     }
 
+    setSize(getSize());
+
     available = true;
 
     printf("SDL2Renderer(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
