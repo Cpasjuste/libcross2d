@@ -128,11 +128,8 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/nx/nx_clock.h"
 #include "platforms/posix/posix_io.h"
 
-#define SVC_DEBUG 1
+//#define SVC_DEBUG 1
 //#define NET_DEBUG 1
-#ifdef NET_DEBUG
-#include "nxlink_print.h"
-#endif
 
 #define C2DRectangle Rectangle
 #define C2DCircle Circle

@@ -16,7 +16,8 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
 
 #ifdef __NX__
 #ifdef NET_DEBUG
-    nxlink_print_init();
+    socketInitializeDefault();
+    nxlinkStdio();
 #else
     consoleDebugInit(debugDevice_SVC);
     stdout = stderr;
@@ -245,10 +246,9 @@ SDL2Renderer::~SDL2Renderer() {
 
 #ifdef __NX__
 #ifdef NET_DEBUG
-    nxlink_print_exit();
+    socketExit();
 #endif
 #endif
-
 }
 
 #endif
