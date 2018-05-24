@@ -294,6 +294,7 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
             }
         }
 #endif
+/*
 #ifdef __SWITCH__
         // change missing (-) or (+) buttons on joycons by (LSTICK)
         // TODO: identifiy controller to only apply changes to joycons
@@ -305,6 +306,7 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
             }
         }
 #endif
+*/
         if (SDL_JoystickGetButton((SDL_Joystick *) player.data, mapping)) {
             if (rotate && key_id[i] == Input::Key::KEY_UP) {
                 if (rotate == 1) {
