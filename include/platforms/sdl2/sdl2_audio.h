@@ -13,7 +13,7 @@ namespace c2d {
 
     public:
 
-        SDL2Audio(int freq, int fps = 60);
+        SDL2Audio(int freq, int fps = 60, C2DAudioCallback cb = NULL);
 
         virtual ~SDL2Audio();
 
@@ -23,6 +23,9 @@ namespace c2d {
 
         virtual void reset();
 
+        virtual void lock();
+
+        virtual void unlock();
     };
 }
 

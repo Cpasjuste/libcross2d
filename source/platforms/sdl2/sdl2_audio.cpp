@@ -62,7 +62,7 @@ static void read_buffer(void *unused, unsigned char *data, int len) {
     }
 }
 
-SDL2Audio::SDL2Audio(int freq, int fps) : Audio(freq, fps) {
+SDL2Audio::SDL2Audio(int freq, int fps, C2DAudioCallback cb) : Audio(freq, fps, cb) {
 
     if (!available) {
         return;
@@ -76,19 +76,20 @@ SDL2Audio::SDL2Audio(int freq, int fps) : Audio(freq, fps) {
 #ifdef __PSP2__
     sample_size /= 4; // fix audio delay
 #endif
-    buf_size = sample_size * channels * 2 * 8;
-    buffer_sdl = (unsigned char *) malloc((size_t) buf_size);
-    memset(buffer_sdl, 0, (size_t) buf_size);
-
-    buffered_bytes = 0;
-    buf_read_pos = 0;
-    buf_write_pos = 0;
+    if (cb == NULL) {
+        buf_size = sample_size * channels * 2 * 8;
+        buffer_sdl = (unsigned char *) malloc((size_t) buf_size);
+        memset(buffer_sdl, 0, (size_t) buf_size);
+        buffered_bytes = 0;
+        buf_read_pos = 0;
+        buf_write_pos = 0;
+    }
 
     aspec.format = AUDIO_S16;
     aspec.freq = freq;
     aspec.channels = (Uint8) channels;
     aspec.samples = (Uint16) sample_size;
-    aspec.callback = read_buffer;
+    aspec.callback = cb == nullptr ? (SDL_AudioCallback) read_buffer : cb;
     aspec.userdata = NULL;
 
     if (SDL_InitSubSystem(SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE)) {
@@ -119,7 +120,8 @@ SDL2Audio::~SDL2Audio() {
     SDL_PauseAudio(1);
     SDL_CloseAudio();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
-    if (buffer_sdl) {
+
+    if (callback == nullptr && buffer_sdl) {
         free(buffer_sdl);
     }
 }
@@ -130,18 +132,21 @@ void SDL2Audio::play() {
         if (SDL_GetAudioStatus() == SDL_AUDIO_PAUSED) {
             SDL_PauseAudio(0);
         }
-        write_buffer((unsigned char *) buffer, buffer_size);
+        if (callback == nullptr) {
+            write_buffer((unsigned char *) buffer, buffer_size);
+        }
     }
 }
 
 void SDL2Audio::reset() {
 
-    SDL_PauseAudio(1);
-
-    buffered_bytes = 0;
-    buf_write_pos = 0;
-    buf_read_pos = 0;
-    memset(buffer_sdl, 0, (size_t) buf_size);
+    if (callback == nullptr && available) {
+        SDL_PauseAudio(1);
+        buffered_bytes = 0;
+        buf_write_pos = 0;
+        buf_read_pos = 0;
+        memset(buffer_sdl, 0, (size_t) buf_size);
+    }
 
     Audio::reset();
 }
@@ -154,4 +159,22 @@ void SDL2Audio::pause(int pause) {
 
     Audio::pause(pause);
     SDL_PauseAudio(pause);
+}
+
+void SDL2Audio::lock() {
+
+    if (!available) {
+        return;
+    }
+
+    SDL_LockAudio();
+}
+
+void SDL2Audio::unlock() {
+
+    if (!available) {
+        return;
+    }
+
+    SDL_UnlockAudio();
 }
