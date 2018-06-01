@@ -12,7 +12,7 @@ namespace c2d {
     class SDL2Input : public Input {
 
     public:
-        SDL2Input(Renderer *renderer);
+        SDL2Input(Renderer *renderer = nullptr);
 
         virtual ~SDL2Input();
 

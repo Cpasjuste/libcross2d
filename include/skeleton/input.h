@@ -46,7 +46,7 @@ namespace c2d {
             Axis ly{1, 0};
             Axis rx{2, 0};
             Axis ry{3, 0};
-            unsigned int state{};
+            unsigned int state = 0;
             int dead_zone = 8000;
             bool enabled = false;
             void *data = nullptr;
@@ -58,7 +58,7 @@ namespace c2d {
             int mapping[KEY_COUNT];
         };
 
-        explicit Input(Renderer *renderer);
+        explicit Input(Renderer *renderer = nullptr);
 
         virtual ~Input() {};
 
