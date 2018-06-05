@@ -82,7 +82,7 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static const Time Zero; ///< Predefined "zero" time value
+    static const Time Zero_; ///< Predefined "zero" time value
 
 private:
 
