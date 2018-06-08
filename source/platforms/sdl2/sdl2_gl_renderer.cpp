@@ -54,6 +54,8 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
 
     setSize(getSize());
 
+    SDL_GL_SetSwapInterval(1);
+
     available = true;
 
     printf("SDL2Renderer(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
@@ -61,7 +63,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
 
 void SDL2Renderer::flip(bool draw) {
 
-    if(draw) {
+    if (draw) {
         // call base class (draw childs)
         GLRenderer::flip();
 
