@@ -33,7 +33,7 @@ namespace c2d {
 
         // remove a widget without calling
         // it's destructor
-        void remove(C2DObject *object);
+        void removeChild(C2DObject *object);
 
         // visibility
         int getVisibility();

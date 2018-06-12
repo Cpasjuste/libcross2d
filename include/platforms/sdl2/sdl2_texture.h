@@ -26,6 +26,8 @@ namespace c2d {
 
         void unlock();
 
+        int save(const char *path);
+
         void setFiltering(int filter);
 
         SDL_Texture *tex = nullptr;

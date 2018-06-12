@@ -35,6 +35,8 @@ namespace c2d {
 
         virtual void unlock() {};
 
+        virtual int save(const char *path) { return -1; };
+
         virtual void setFiltering(int filter) { filtering = filter; };
 
         virtual void setShader(int shaderIndex) {};

@@ -66,7 +66,7 @@ void C2DObject::setLayer(int layer) {
     }
 }
 
-void C2DObject::remove(C2DObject *widget) {
+void C2DObject::removeChild(C2DObject *widget) {
 
     childs.erase(std::remove(
             childs.begin(), childs.end(), widget),
