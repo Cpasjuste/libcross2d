@@ -340,7 +340,7 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
 }
 
 void SDL2Input::process_keyboard(Input::Player &player, int rotate) {
-
+#ifndef __SWITCH__
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
     for (int i = 0; i < KEY_COUNT; i++) {
@@ -374,4 +374,5 @@ void SDL2Input::process_keyboard(Input::Player &player, int rotate) {
             }
         }
     }
+#endif
 }
