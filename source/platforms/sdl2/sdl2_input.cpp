@@ -32,8 +32,8 @@ SDL2Input::SDL2Input(Renderer *r)
     }
 
     int joystick_count = SDL_NumJoysticks();
-    if (joystick_count > 4) {
-        joystick_count = 4;
+    if (joystick_count > PLAYER_COUNT) {
+        joystick_count = PLAYER_COUNT;
     }
     printf("%d Joystick(s) Found\n", joystick_count);
 
@@ -294,19 +294,7 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
             }
         }
 #endif
-/*
-#ifdef __SWITCH__
-        // change missing (-) or (+) buttons on joycons by (LSTICK)
-        // TODO: identifiy controller to only apply changes to joycons
-        if (!hidGetHandheldMode()) {
-            if (player.id == 0 && key_id[i] == Input::Key::KEY_START) {
-                mapping = KEY_JOY_LSTICK_DEFAULT;
-            } else if (player.id == 1 && key_id[i] == Input::Key::KEY_COIN) {
-                mapping = KEY_JOY_LSTICK_DEFAULT;
-            }
-        }
-#endif
-*/
+
         if (SDL_JoystickGetButton((SDL_Joystick *) player.data, mapping)) {
             if (rotate && key_id[i] == Input::Key::KEY_UP) {
                 if (rotate == 1) {
