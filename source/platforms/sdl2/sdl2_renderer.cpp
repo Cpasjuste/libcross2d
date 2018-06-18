@@ -14,16 +14,6 @@ using namespace c2d;
 
 SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
 
-#ifdef __NX__
-#ifdef NET_DEBUG
-    socketInitializeDefault();
-    nxlinkStdio();
-#else
-    consoleDebugInit(debugDevice_SVC);
-    stdout = stderr;
-#endif
-#endif
-
     if ((SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't init sdl: %s\n", SDL_GetError());
         return;
@@ -59,6 +49,16 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
             return;
         }
     }
+
+#ifdef __NX__
+#ifdef NET_DEBUG
+    socketInitializeDefault();
+    nxlinkStdio();
+#elif SVC_DEBUG
+    consoleDebugInit(debugDevice_SVC);
+    stdout = stderr;
+#endif
+#endif
 
     available = true;
 }
