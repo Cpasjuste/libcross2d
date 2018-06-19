@@ -32,8 +32,6 @@ namespace c2d {
 
         unsigned int texID = 0;
 
-    private:
-
         unsigned char *pixels = NULL;
     };
 }
