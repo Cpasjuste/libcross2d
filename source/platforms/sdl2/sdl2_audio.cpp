@@ -14,7 +14,7 @@
 using namespace c2d;
 
 static int buf_size;
-static unsigned char *buffer_sdl;
+static unsigned char *buffer_sdl = nullptr;
 static unsigned int buf_read_pos = 0;
 static unsigned int buf_write_pos = 0;
 static int buffered_bytes = 0;
@@ -92,10 +92,12 @@ SDL2Audio::SDL2Audio(int freq, int fps, C2DAudioCallback cb) : Audio(freq, fps, 
     aspec.callback = cb == nullptr ? (SDL_AudioCallback) read_buffer : cb;
     aspec.userdata = NULL;
 
-    if (SDL_InitSubSystem(SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE)) {
-        printf("SDL2Audio: Initialize failed: %s.\n", SDL_GetError());
-        available = false;
-        return;
+    if (!SDL_WasInit(SDL_INIT_AUDIO)) {
+        if (SDL_InitSubSystem(SDL_INIT_AUDIO)) {
+            printf("SDL2Audio: Initialize failed: %s.\n", SDL_GetError());
+            available = false;
+            return;
+        }
     }
 
     if (SDL_OpenAudio(&aspec, &obtained) < 0) {
@@ -121,7 +123,7 @@ SDL2Audio::~SDL2Audio() {
     SDL_CloseAudio();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
 
-    if (callback == nullptr && buffer_sdl) {
+    if (buffer_sdl) {
         free(buffer_sdl);
     }
 }
