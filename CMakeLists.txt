@@ -172,6 +172,7 @@ elseif (BUILD_NX)
             source/platforms/sdl2/sdl2_input.cpp
             source/platforms/sdl2/sdl2_audio.cpp
             source/platforms/posix/posix_io.cpp
+            source/platforms/posix/posix_clock.cpp
             )
     list(APPEND FLAGS -D__NX__ -D__SWITCH__
             -ffunction-sections -fomit-frame-pointer

@@ -125,11 +125,11 @@ extern c2d::Renderer *c2d_renderer;
 
 #include "platforms/sdl2/sdl2_input.h"
 #include "platforms/sdl2/sdl2_audio.h"
-#include "platforms/nx/nx_clock.h"
 #include "platforms/posix/posix_io.h"
+#include "platforms/posix/posix_clock.h"
 
 //#define SVC_DEBUG 1
-//#define NET_DEBUG 1
+#define NET_DEBUG 1
 
 #define C2DRectangle Rectangle
 #define C2DCircle Circle
@@ -139,7 +139,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DInput SDL2Input
 #define C2DAudio SDL2Audio
 #define C2DIo POSIXIo
-#define C2DClock NXClock
+#define C2DClock POSIXClock
 
 // https://github.com/devkitPro/SDL/blob/a8fa9ec02c3c77106207cd84fc230523c5c30c81/src/joystick/switch/SDL_sysjoystick.c#L51
 
