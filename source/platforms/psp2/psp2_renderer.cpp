@@ -197,5 +197,4 @@ PSP2Renderer::~PSP2Renderer() {
 
     vita2d_wait_rendering_done();
     vita2d_fini();
-    delete (shaderList);
 }

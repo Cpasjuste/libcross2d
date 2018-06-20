@@ -29,7 +29,7 @@ namespace c2d {
 
         virtual ~Texture();
 
-        virtual int resize(const Vector2f &size, bool copyPixels = true) { return -1; };
+        virtual int resize(const Vector2f &size, bool copyPixels = false) { return -1; };
 
         virtual int lock(FloatRect *rect, void **pixels, int *pitch) { return -1; };
 

@@ -94,8 +94,6 @@ GLTexture::GLTexture(const Vector2f &size, int format) : Texture(size, format) {
 
 int GLTexture::resize(const Vector2f &size, bool copyPixels) {
 
-    // TODO
-    /*
     printf("GLTexture::resize: %i x %i\n", (int) size.x, (int) size.y);
 
     if (size.x == getSize().x && size.y == getSize().y) {
@@ -134,7 +132,6 @@ int GLTexture::resize(const Vector2f &size, bool copyPixels) {
     setFiltering(filtering);
 
     printf("GLTexture::resize\n");
-    */
 
     return -1;
 }
@@ -184,6 +181,7 @@ GLTexture::~GLTexture() {
     if (pixels) {
         printf("free(pixels)\n");
         free(pixels);
+        pixels = nullptr;
     }
 
     if (texID) {

@@ -117,6 +117,10 @@ float Renderer::getFps() const {
     return fps;
 }
 
+void Renderer::setShaderList(ShaderList *list) {
+    shaderList = list;
+}
+
 ShaderList *Renderer::getShaderList() {
     return shaderList;
 }
@@ -126,4 +130,7 @@ Renderer::~Renderer() {
     printf("~Renderer(%p)\n", this);
     delete (deltaClock);
     delete (elapsedClock);
+    if (shaderList) {
+        delete (shaderList);
+    }
 }

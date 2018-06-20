@@ -54,6 +54,8 @@ namespace c2d {
 
         virtual ShaderList *getShaderList();
 
+        virtual void setShaderList(ShaderList *list);
+
         Time getDeltaTime() const;
 
         Time getElapsedTime() const;

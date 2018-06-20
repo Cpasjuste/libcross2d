@@ -22,7 +22,7 @@ namespace c2d {
 
         ~GLTexture();
 
-        int resize(const Vector2f &size, bool copyPixels = true);
+        int resize(const Vector2f &size, bool copyPixels = false);
 
         int lock(FloatRect *rect, void **pixels, int *pitch);
 
