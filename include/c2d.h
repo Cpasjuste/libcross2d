@@ -128,7 +128,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/posix/posix_io.h"
 #include "platforms/posix/posix_clock.h"
 
-//#define SVC_DEBUG 1
+#define SVC_DEBUG 1
 //#define NET_DEBUG 1
 
 #define C2DRectangle Rectangle
@@ -141,8 +141,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
 
-// https://github.com/devkitPro/SDL/blob/a8fa9ec02c3c77106207cd84fc230523c5c30c81/src/joystick/switch/SDL_sysjoystick.c#L51
-
+// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
 #define KEY_JOY_UP_DEFAULT      13          // KEY_DUP
 #define KEY_JOY_DOWN_DEFAULT    15          // KEY_DDOWN
 #define KEY_JOY_LEFT_DEFAULT    12          // KEY_DLEFT
