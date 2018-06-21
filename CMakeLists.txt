@@ -207,7 +207,7 @@ elseif (BUILD_SDL2)
             source/platforms/sdl2/*.c*
             source/platforms/posix/*.c*)
     set(PLATFORM_LIBS SDL2 ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
-    list(APPEND FLAGS -D__SDL2__ -Wno-narrowing)
+    list(APPEND FLAGS -D__SDL2__)
     if (BUILD_SDL2_GL)
         list(APPEND PLATFORM_DIRS source/platforms/gl)
         list(APPEND PLATFORM_SRC
@@ -235,7 +235,7 @@ elseif (BUILD_SDL1)
             source/platforms/gl/*.c*
             source/platforms/posix/*.c*)
     set(PLATFORM_LIBS SDL ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
-    list(APPEND FLAGS -D__SDL1__ -D__GL__ -Wno-narrowing)
+    list(APPEND FLAGS -D__SDL1__ -D__GL__)
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)
         list(APPEND PLATFORM_LIBS GL)
