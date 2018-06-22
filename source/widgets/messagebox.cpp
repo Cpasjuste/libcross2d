@@ -74,7 +74,7 @@ int MessageBox::show(const std::string &title, const std::string &message,
                      int *pressed, int timeout) { // if "pressed" is supplied, pressed is set to the pressed key..
 
     int ret = 0, index = 0, choices = 0;
-    unsigned int key = 0;
+    int key = 0;
     C2DClock clock;
 
     this->title->setString(title);
