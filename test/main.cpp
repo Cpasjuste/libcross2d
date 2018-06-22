@@ -49,19 +49,15 @@ int main() {
     // add all this crap to the renderer
     renderer->add(rect);
 
-    Input *input = new C2DInput(NULL);
+    Input *input = new C2DInput(nullptr);
     input->setJoystickMapping(0, KEYS, 0);
 
-    while (true) {
+    while (renderer->getElapsedTime().asSeconds() < 5) {
 
         // handle input
         unsigned int key = input->update()[0].state;
         if (key) {
             printf("input[0]: 0x%08X\n", key);
-            //input->clear(0);
-            if (key & Input::Key::KEY_FIRE2) {
-                break;
-            }
         }
 
         // time / delta time
@@ -78,6 +74,7 @@ int main() {
     }
 
     // will delete widgets recursively
+    delete (input);
     delete (renderer);
 
     return 0;

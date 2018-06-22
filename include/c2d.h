@@ -381,4 +381,7 @@ extern c2d::Renderer *c2d_renderer;
 #endif
 #endif
 
+//#define _DEBUG_NEW_EMULATE_MALLOC 1
+#include "debug_new.h"
+
 #endif //_C2D_H_

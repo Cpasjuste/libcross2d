@@ -29,12 +29,15 @@ set(FLAGS -Wall)
 # CROSS2D
 ##############
 set(CROSS2D_DIR
-        include)
+        include
+        include/debug)
 
 file(GLOB CROSS2D_SRC
         source/widgets/*.c*
         source/skeleton/*.c*
-        source/skeleton/sfml/*.c*)
+        source/skeleton/sfml/*.c*
+        source/debug/*.c*
+        )
 
 #####################
 # PLATORM SPECIFIC
@@ -248,7 +251,7 @@ endif (BUILD_SFML)
 add_library(cross2d ${CROSS2D_SRC} ${PLATFORM_SRC})
 target_include_directories(cross2d PUBLIC ${CROSS2D_DIR} ${PLATFORM_DIRS})
 target_link_libraries(cross2d PUBLIC ${PLATFORM_LIBS})
-target_compile_options(cross2d PUBLIC ${FLAGS})
+target_compile_options(cross2d PUBLIC ${FLAGS} -Wno-narrowing)
 
 install(FILES ${CMAKE_BINARY_DIR}/libcross2d.a DESTINATION lib)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include DESTINATION include/cross2d)
