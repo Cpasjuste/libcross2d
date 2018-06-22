@@ -72,10 +72,9 @@ void MessageBox::setOutlineColor(const Color &color) {
 int MessageBox::show(const std::string &title, const std::string &message,
                      const std::string &buttonLeftText, const std::string &buttonRightText,
                      int *pressed, int timeout) { // if "pressed" is supplied, pressed is set to the pressed key..
-    int ret = 0;
-    int key = 0;
-    int index = 0;
-    int choices = 0;
+
+    int ret = 0, index = 0, choices = 0;
+    unsigned int key = 0;
     C2DClock clock;
 
     this->title->setString(title);
@@ -93,12 +92,14 @@ int MessageBox::show(const std::string &title, const std::string &message,
         if (buttonRightText.empty()) {
             buttons[0]->setText(buttonLeftText);
             buttons[0]->setPosition(getSize().x / 2, getSize().y - buttons[0]->getSize().y - 16);
+            buttons[0]->setVisibility(Visible);
             buttons[1]->setVisibility(Hidden);
             choices = 1;
         } else {
             buttons[0]->setText(buttonLeftText);
             buttons[0]->setPosition((getSize().x / 3) - 8,
                                     getSize().y - buttons[0]->getSize().y - 16);
+            buttons[0]->setVisibility(Visible);
             buttons[1]->setText(buttonRightText);
             buttons[1]->setPosition(((getSize().x / 3) * 2) + 8,
                                     getSize().y - buttons[1]->getSize().y - 16);
