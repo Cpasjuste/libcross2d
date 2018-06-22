@@ -15,6 +15,7 @@
 #include "skeleton/circle.h"
 #include "skeleton/texture.h"
 #include "skeleton/text.h"
+#include "skeleton/utility.h"
 #include "widgets/button.h"
 #include "widgets/textbox.h"
 #include "widgets/listbox.h"
