@@ -20,6 +20,10 @@
 #include "widgets/listbox.h"
 #include "widgets/messagebox.h"
 
+#ifdef __DEBUG_NVWA__
+#include "debug_new.h"
+#endif
+
 // for internal usage
 extern c2d::Renderer *c2d_renderer;
 
@@ -380,8 +384,5 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_KB_MENU2_DEFAULT   36
 #endif
 #endif
-
-//#define _DEBUG_NEW_EMULATE_MALLOC 1
-#include "debug_new.h"
 
 #endif //_C2D_H_

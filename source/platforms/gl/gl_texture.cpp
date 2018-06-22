@@ -39,7 +39,7 @@ GLTexture::GLTexture(const char *path) : Texture(path) {
         printf("GLTexture::GLTexture: couldn't create texture: %s\n", path);
     }
 
-    printf("GLTexture(%p)\n", this);
+    printf("GLTexture(%p): pixels=%p\n", this, (void *) pixels);
 }
 
 GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
@@ -177,9 +177,8 @@ void GLTexture::setFiltering(int filter) {
 
 GLTexture::~GLTexture() {
 
-    printf("~GLTexture(%p)\n", this);
+    printf("~GLTexture(%p): pixels=%p\n", this, (void *) pixels);
     if (pixels) {
-        printf("free(pixels)\n");
         free(pixels);
         pixels = nullptr;
     }

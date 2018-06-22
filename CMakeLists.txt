@@ -28,16 +28,12 @@ set(FLAGS -Wall)
 ##############
 # CROSS2D
 ##############
-set(CROSS2D_DIR
-        include
-        include/debug)
+set(CROSS2D_DIR include)
 
 file(GLOB CROSS2D_SRC
         source/widgets/*.c*
         source/skeleton/*.c*
-        source/skeleton/sfml/*.c*
-        source/debug/*.c*
-        )
+        source/skeleton/sfml/*.c*)
 
 #####################
 # PLATORM SPECIFIC
@@ -247,6 +243,14 @@ elseif (BUILD_SDL1)
         list(APPEND PLATFORM_LIBS OSMesa pthread ${ZLIB_LIBRARIES})
     endif (BUILD_SDL1_GL)
 endif (BUILD_SFML)
+
+#if (BUILD_DEBUG)
+#    list(APPEND CROSS2D_DIR debug/nvwa/nvwa)
+#    file(GLOB NVWA_SRC debug/nvwa/nvwa/*.c*)
+#    list(APPEND CROSS2D_SRC ${NVWA_SRC})
+#    list(APPEND FLAGS -g -O0 -D__DEBUG_NVWA__ -D_DEBUG_NEW_FILENAME_LEN=128)
+    #-D_DEBUG_NEW_EMULATE_MALLOC
+#endif (BUILD_DEBUG)
 
 add_library(cross2d ${CROSS2D_SRC} ${PLATFORM_SRC})
 target_include_directories(cross2d PUBLIC ${CROSS2D_DIR} ${PLATFORM_DIRS})
