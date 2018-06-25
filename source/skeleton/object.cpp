@@ -8,14 +8,13 @@
 using namespace c2d;
 
 C2DObject::C2DObject() {
-
-    //printf("Widget(%p)\n", this);
+    //printf("C2DObject(%p)\n", this);
 }
 
 void C2DObject::add(C2DObject *object) {
 
     if (object) {
-        //printf("Widget(%p): add(%p)\n", this, widget);
+        //printf("C2DObject(%p): add(%p)\n", this, C2DObject);
         object->parent = this;
         childs.push_back(object);
     }
@@ -23,7 +22,7 @@ void C2DObject::add(C2DObject *object) {
 
 void C2DObject::draw(Transform &transform) {
 
-    //printf("Widget(%p): draw\n", this);
+    //printf("C2DObject(%p): draw\n", this);
 
     Transform combinedTransform = transform;
 
@@ -32,8 +31,10 @@ void C2DObject::draw(Transform &transform) {
     }
 
     for (auto &child : childs) {
-        if (child->visibility == Visible) {
-            child->draw(combinedTransform);
+        if (child) {
+            if (child->visibility == Visible) {
+                child->draw(combinedTransform);
+            }
         }
     }
 }
@@ -43,17 +44,28 @@ int C2DObject::getVisibility() {
     return visibility;
 }
 
-void C2DObject::setVisibility(Visibility visibility) {
+void C2DObject::setVisibility(Visibility v) {
 
-    this->visibility = visibility;
+    visibility = v;
+}
+
+int C2DObject::getDeleteMode() {
+    return deleteMode;
+}
+
+void C2DObject::setDeleteMode(DeleteMode mode) {
+    deleteMode = mode;
 }
 
 int C2DObject::getLayer() {
     return layer;
 }
 
-static bool sortByLayer(C2DObject *w1, C2DObject *w2) {
-    return w1->getLayer() < w2->getLayer();
+static bool sortByLayer(C2DObject *o1, C2DObject *o2) {
+    if (!o1 || !o2) {
+        return false;
+    }
+    return o1->getLayer() < o2->getLayer();
 }
 
 void C2DObject::setLayer(int layer) {
@@ -66,11 +78,13 @@ void C2DObject::setLayer(int layer) {
     }
 }
 
-void C2DObject::removeChild(C2DObject *widget) {
+void C2DObject::removeChild(C2DObject *object) {
 
-    childs.erase(std::remove(
-            childs.begin(), childs.end(), widget),
-                 childs.end());
+    if (!childs.empty()) {
+        childs.erase(std::remove(
+                childs.begin(), childs.end(), object),
+                     childs.end());
+    }
 }
 
 C2DObject::~C2DObject() {
@@ -78,19 +92,20 @@ C2DObject::~C2DObject() {
     // delete childs
     for (auto widget = childs.begin(); widget != childs.end();) {
         if (*widget) {
-            //printf("~Widget(%p): delete child(%p)\n", this, *widget);
-            delete (*widget);
+            if ((*widget)->deleteMode == Auto) {
+                //printf("~Widget(%p): delete child(%p)\n", this, *widget);
+                delete (*widget);
+            } else {
+                childs.erase(widget);
+            }
         }
     }
     childs.clear();
 
     // remove from parent
     if (parent) {
-        //printf("~Widget(%p): remove from parent(%p)\n", this, parent);
-        parent->childs.erase(
-                std::remove(parent->childs.begin(), parent->childs.end(), this),
-                parent->childs.end());
+        //printf("~C2DObject(%p): remove from parent(%p)\n", this, parent);
+        parent->removeChild(this);
     }
-
-    //printf("~Widget(%p)\n", this);
+    //printf("~C2DObject(%p)\n", this);
 }

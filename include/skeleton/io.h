@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include "skeleton/sfml/Color.hpp"
+#include "skeleton/texture.h"
 
 #define C2D_IO_FILE 0
 #define C2D_IO_DIR  1
@@ -27,6 +28,7 @@ namespace c2d {
             int type;
             // for ui
             Color color = Color::White;
+            Texture *icon = nullptr;
         };
 
         Io() {};

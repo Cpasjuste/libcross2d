@@ -410,6 +410,14 @@ namespace c2d {
         }
     }
 
+    void Font::setYOffset(float offset) {
+        y_offset = offset;
+    }
+
+    float Font::getYOffset() const {
+        return y_offset;
+    }
+
 ////////////////////////////////////////////////////////////
     Font &Font::operator=(const Font &right) {
         Font temp(right);

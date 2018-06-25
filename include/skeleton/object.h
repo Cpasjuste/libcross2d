@@ -22,6 +22,10 @@ namespace c2d {
             Visible = 0, Hidden = 1
         };
 
+        enum DeleteMode : int {
+            Auto = 0, Manual = 1
+        };
+
         C2DObject();
 
         virtual ~C2DObject();
@@ -40,6 +44,11 @@ namespace c2d {
 
         void setVisibility(Visibility visibility);
 
+        // deletion mode
+        int getDeleteMode();
+
+        void setDeleteMode(DeleteMode mode);
+
         int getLayer();
 
         void setLayer(int layer);
@@ -50,9 +59,10 @@ namespace c2d {
 
         C2DObject *parent = NULL;
         Transformable *thisTransform = NULL;
-        int layer = 0;
         std::vector<C2DObject *> childs;
         Visibility visibility = Visible;
+        DeleteMode deleteMode = Auto;
+        int layer = 0;
     };
 }
 

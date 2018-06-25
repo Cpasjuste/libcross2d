@@ -258,6 +258,10 @@ namespace c2d {
 
         void setFiltering(int filter);
 
+        void setYOffset(float offset);
+
+        float getYOffset() const;
+
         ////////////////////////////////////////////////////////////
         /// \brief Overload of assignment operator
         ///
@@ -360,6 +364,7 @@ namespace c2d {
         mutable PageTable m_pages;       ///< Table containing the glyphs pages by character size
         mutable std::vector<Uint8> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
         int m_filtering = 1; // C2D_TEXTURE_FILTER_LINEAR
+        float y_offset = 0;
 
 #ifdef SFML_SYSTEM_ANDROID
         void*                      m_stream; ///< Asset file streamer (if loaded from file)

@@ -61,7 +61,7 @@ void Renderer::drawTexture(Texture &texture, Transform &transform) {
     if (texture.getOutlineColor().a != 0 && texture.getOutlineThickness() > 0) {
         draw(texture.getOutlineVertices(), combined, nullptr);
     }
-    if (texture.getFillColor().a != 0) {
+    if (texture.available && texture.getFillColor().a != 0) {
         draw(texture.getVertices(), combined, &texture);
     }
 }
@@ -70,9 +70,11 @@ void Renderer::drawText(Text &text, Transform &transform) {
 
     //printf("drawText: %s\n", text.getString().toAnsiString().c_str());
     Transform combined = transform * text.getTransform();
-    // TODO: why ?
-    combined.translate(0, -(text.getFont()->getLineSpacing(text.getCharacterSize()) / 2)
-                          + text.getOutlineThickness());
+
+    // fix top not at 0 if needed (font->setYOffset)
+    float scale = text.getCharacterSize() / (float) C2D_DEFAULT_CHAR_SIZE;
+    combined.translate(0, (text.getFont()->getYOffset() * scale) + text.getOutlineThickness());
+
     //
     if (text.getOutlineThickness() > 0) {
         draw(text.getOutlineVertices(), combined, &text.getFont()->getTexture(text.getCharacterSize()));

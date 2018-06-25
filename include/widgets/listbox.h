@@ -13,10 +13,35 @@ namespace c2d {
 
     public:
 
-        ListBox(const Font &font, int fontSize,
-                const FloatRect &rect, const std::vector<Io::File *> &fileList);
+        class ListBoxLine : public Rectangle {
+
+        public:
+
+            ListBoxLine(const FloatRect &rect, const std::string &str, const Font &font,
+                        unsigned int fontSize, Texture *icon = nullptr, bool use_icons = false);
+
+            ~ListBoxLine();
+
+            void setString(const std::string &string);
+
+            void setColor(const Color &color);
+
+            void setIcon(Texture *icon);
+
+        private:
+
+            Rectangle *iconRect = nullptr;
+            Texture *icon = nullptr;
+            Text *text = nullptr;
+            bool use_icons = false;
+        };
+
+        ListBox(const Font &font, int fontSize, const FloatRect &rect,
+                const std::vector<Io::File *> &fileList, bool use_icons = false);
 
         ~ListBox();
+
+        void setFiles(const std::vector<Io::File *> &fileList);
 
         void setSelection(int index);
 
@@ -24,7 +49,7 @@ namespace c2d {
 
         int getMaxLines();
 
-        std::vector<c2d::Text *> getLines();
+        std::vector<ListBoxLine *> getLines();
 
         std::vector<c2d::Io::File *> getFiles();
 
@@ -35,11 +60,12 @@ namespace c2d {
     private:
 
         std::vector<Io::File *> files;
-        std::vector<c2d::Text *> lines;
+        std::vector<ListBoxLine *> lines;
         Rectangle *highlight;
-        int line_height;
+        float line_height;
         int max_lines;
         int index = 0;
+        bool use_icons = false;
     };
 }
 
