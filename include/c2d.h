@@ -116,14 +116,17 @@ extern c2d::Renderer *c2d_renderer;
 #elif __NX__
 
 #include <switch.h>
+
 #if defined(__GL__)
 #include "platforms/nx/nx_mesa_renderer.h"
 #include "platforms/gl/gl_texture.h"
 #define C2DRenderer NXMESARenderer
 #define C2DTexture GLTexture
 #else
+
 #include "platforms/sdl2/sdl2_renderer.h"
 #include "platforms/sdl2/sdl2_texture.h"
+
 #define C2DRenderer SDL2Renderer
 #define C2DTexture SDL2Texture
 #endif

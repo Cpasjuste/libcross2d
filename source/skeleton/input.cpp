@@ -14,7 +14,7 @@ Input::Input(Renderer *r) : keyboard() {
 int Input::clear(int player) {
     while (true) {
         Player p = update(0)[player];
-        if (!p.enabled || p.state <= 0
+        if (!p.enabled || !p.state
             || p.state & EV_REFRESH || p.state & EV_QUIT) {
             break;
         }
