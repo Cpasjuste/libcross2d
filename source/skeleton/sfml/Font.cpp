@@ -533,12 +533,12 @@ namespace c2d {
             return glyph;
         }
 
-        FT_Bitmap &bitmap = ((FT_BitmapGlyph) (glyphDesc))->bitmap;
+        FT_Bitmap *bitmap = &((FT_BitmapGlyph) (glyphDesc))->bitmap;
 
         // Apply bold if necessary -- fallback technique using bitmap (lower quality)
         if (!outline) {
             if (bold)
-                FT_Bitmap_Embolden(static_cast<FT_Library>(m_library), &bitmap, weight, weight);
+                FT_Bitmap_Embolden(static_cast<FT_Library>(m_library), bitmap, weight, weight);
 
             if (outlineThickness != 0)
                 printf("Failed to outline glyph (no fallback available)\n");
@@ -549,8 +549,8 @@ namespace c2d {
         if (bold)
             glyph.advance += static_cast<float>(weight) / static_cast<float>(1 << 6);
 
-        int width = bitmap.width;
-        int height = bitmap.rows;
+        int width = bitmap->width;
+        int height = bitmap->rows;
 
         if ((width > 0) && (height > 0)) {
             // Leave a small padding around characters, so that filtering doesn't
@@ -604,8 +604,8 @@ namespace c2d {
             }
 #endif
             // Extract the glyph's pixels from the bitmap
-            const Uint8 *pixels = bitmap.buffer;
-            if (bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
+            const Uint8 *pixels = bitmap->buffer;
+            if (bitmap->pixel_mode == FT_PIXEL_MODE_MONO) {
                 // Pixels are 1 bit monochrome values
                 for (unsigned int y = padding; y < height - padding; ++y) {
                     for (unsigned int x = padding; x < width - padding; ++x) {
@@ -623,7 +623,7 @@ namespace c2d {
                                                            ? 255 : 0);
 #endif
                     }
-                    pixels += bitmap.pitch;
+                    pixels += bitmap->pitch;
                 }
             } else {
                 // Pixels are 8 bits gray levels
@@ -637,7 +637,7 @@ namespace c2d {
                         m_pixelBuffer[index * 4 + 3] = pixels[x - padding];
 #endif
                     }
-                    pixels += bitmap.pitch;
+                    pixels += bitmap->pitch;
                 }
             }
 
