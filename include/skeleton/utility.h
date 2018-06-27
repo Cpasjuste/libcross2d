@@ -11,7 +11,9 @@ namespace c2d {
 
     public:
 
-        static char *remove_ext(const char *str, char sep);
+        static char *removeExt(const char *str, char sep);
+
+        static bool endsWith(const std::string &value, const std::string &ending);
     };
 
 }

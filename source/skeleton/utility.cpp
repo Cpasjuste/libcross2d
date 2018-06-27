@@ -6,7 +6,7 @@
 
 using namespace c2d;
 
-char *Utility::remove_ext(const char *str, char sep) {
+char *Utility::removeExt(const char *str, char sep) {
 
     char *retstr, *lastdot, *lastsep;
 
@@ -37,4 +37,9 @@ char *Utility::remove_ext(const char *str, char sep) {
 
     // Return the modified string.
     return retstr;
+}
+
+bool Utility::endsWith(const std::string &value, const std::string &ending) {
+    if (ending.size() > value.size()) return false;
+    return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }
