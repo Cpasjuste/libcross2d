@@ -502,9 +502,11 @@ namespace c2d {
             return glyph;
 
         // Retrieve the glyph
-        FT_Glyph glyphDesc;
-        if (FT_Get_Glyph(face->glyph, &glyphDesc) != 0)
+        FT_Glyph glyphDesc = nullptr;
+        if (FT_Get_Glyph(face->glyph, &glyphDesc)) {
+            printf("Font::loadGlyph: FT_Get_Glyph error\n");
             return glyph;
+        }
 
         // Apply bold and outline (there is no fallback for outline) if necessary -- first technique using outline (highest quality)
         FT_Pos weight = 1 << 6;
@@ -525,8 +527,13 @@ namespace c2d {
         }
 
         // Convert the glyph to a bitmap (i.e. rasterize it)
-        FT_Glyph_To_Bitmap(&glyphDesc, FT_RENDER_MODE_NORMAL, 0, 1);
-        FT_Bitmap &bitmap = reinterpret_cast<FT_BitmapGlyph>(glyphDesc)->bitmap;
+        if (FT_Glyph_To_Bitmap(&glyphDesc, FT_RENDER_MODE_NORMAL, nullptr, 1)) {
+            printf("Font::loadGlyph: FT_Glyph_To_Bitmap error\n");
+            FT_Done_Glyph(glyphDesc);
+            return glyph;
+        }
+
+        FT_Bitmap &bitmap = ((FT_BitmapGlyph) (glyphDesc))->bitmap;
 
         // Apply bold if necessary -- fallback technique using bitmap (lower quality)
         if (!outline) {
