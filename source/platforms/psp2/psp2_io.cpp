@@ -8,19 +8,19 @@
 
 using namespace c2d;
 
-bool PSP2Io::exist(const char *file) {
+bool PSP2Io::exist(const std::string &path) {
 
     struct stat buf;
-    return (stat(file, &buf) == 0);
+    return (stat(path.c_str(), &buf) == 0);
 }
 
-std::vector<std::string> PSP2Io::getDirList(const char *path) {
+std::vector <std::string> PSP2Io::getDirList(const std::string &path) {
 
-    std::vector<std::string> files;
+    std::vector <std::string> files;
 
     DIR *dir;
     struct dirent *ent;
-    if ((dir = opendir(path)) != NULL) {
+    if ((dir = opendir(path.c_str())) != NULL) {
         while ((ent = readdir(dir)) != NULL) {
             if (SCE_S_ISREG(ent->d_stat.st_mode)) {
                 files.push_back(std::string(ent->d_name));

@@ -35,9 +35,9 @@ namespace c2d {
 
         virtual ~Io() {};
 
-        virtual bool exist(const char *path) { return false; };
+        virtual bool exist(const std::string &path) { return false; };
 
-        virtual std::vector<std::string> getDirList(const char *path) { return {}; };
+        virtual std::vector<std::string> getDirList(const std::string &path) { return std::vector<std::string>(); };
 
     };
 }
