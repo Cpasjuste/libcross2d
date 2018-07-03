@@ -14,9 +14,11 @@ namespace c2d {
 
     public:
 
-        virtual bool exist(const std::string &path);
+        virtual bool exist(const std::string &path) override;
 
-        virtual std::vector<std::string> getDirList(const std::string &path);
+        virtual bool createDir(const std::string &path) override;
+
+        virtual std::vector<std::string> getDirList(const std::string &path) override;
 
     };
 }

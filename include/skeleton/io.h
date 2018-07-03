@@ -37,6 +37,8 @@ namespace c2d {
 
         virtual bool exist(const std::string &path) { return false; };
 
+        virtual bool createDir(const std::string &path) { return false; };
+
         virtual std::vector<std::string> getDirList(const std::string &path) { return std::vector<std::string>(); };
 
     };

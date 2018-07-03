@@ -12,6 +12,10 @@ bool POSIXIo::exist(const std::string &path) {
     return (stat(path.c_str(), &buf) == 0);
 }
 
+bool POSIXIo::createDir(const std::string &path) {
+    return mkdir(path.c_str(), 0755) == 0;
+}
+
 std::vector<std::string> POSIXIo::getDirList(const std::string &path) {
 
     std::vector<std::string> files;
