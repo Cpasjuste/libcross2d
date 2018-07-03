@@ -13,6 +13,7 @@
 
 #define C2D_TEXTURE_FMT_RGB565      0
 #define C2D_TEXTURE_FMT_RGBA8       1
+#define C2D_TEXTURE_FMT_ARGB8       2
 
 namespace c2d {
 

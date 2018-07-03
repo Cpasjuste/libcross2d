@@ -39,7 +39,7 @@ Texture::Texture(const Vector2f &size, int fmt) : RectangleShape(size) {
     printf("Texture(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 
     format = fmt;
-    bpp = fmt == C2D_TEXTURE_FMT_RGBA8 ? 4 : 2;
+    bpp = (fmt == C2D_TEXTURE_FMT_RGBA8 || fmt == C2D_TEXTURE_FMT_ARGB8) ? 4 : 2;
     pitch = (int) (size.x * bpp);
 
     setSize(size);
