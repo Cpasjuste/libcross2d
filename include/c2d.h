@@ -115,7 +115,7 @@ extern c2d::Renderer *c2d_renderer;
 
 #elif __NX__
 
-#include <switch.h>
+//#include <switch.h>
 
 #if defined(__GL__)
 #include "platforms/nx/nx_mesa_renderer.h"

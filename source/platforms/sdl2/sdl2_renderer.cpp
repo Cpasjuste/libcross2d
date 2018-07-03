@@ -8,6 +8,10 @@
 
 #ifndef __SDL2_GL__
 
+#ifdef __SWITCH__
+#include <switch.h>
+#endif
+
 #include "c2d.h"
 
 using namespace c2d;
@@ -50,7 +54,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
         }
     }
 
-#ifdef __NX__
+#ifdef __SWITCH__
 #ifdef NET_DEBUG
     socketInitializeDefault();
     nxlinkStdio();
@@ -244,7 +248,7 @@ SDL2Renderer::~SDL2Renderer() {
     SDL_DestroyWindow(window);
     SDL_Quit();
 
-#ifdef __NX__
+#ifdef __SWITCH__
 #ifdef NET_DEBUG
     socketExit();
 #endif
