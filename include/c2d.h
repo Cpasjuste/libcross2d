@@ -179,10 +179,17 @@ extern c2d::Renderer *c2d_renderer;
 #if defined(__SDL2_GL__)
 #include "platforms/sdl2/sdl2_gl_renderer.h"
 #include "platforms/gl/gl_texture.h"
+#define C2DRenderer SDL2Renderer
+#define C2DTexture GLTexture
+#elif defined(__SDL2_GLES__)
+#include "platforms/sdl2/sdl2_gles_renderer.h"
+#include "platforms/gl/gl_texture.h"
+#define C2DRenderer SDL2GLESRenderer
 #define C2DTexture GLTexture
 #else
 #include "platforms/sdl2/sdl2_renderer.h"
 #include "platforms/sdl2/sdl2_texture.h"
+#define C2DRenderer SDL2Renderer
 #define C2DTexture SDL2Texture
 #endif
 
@@ -191,7 +198,6 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/posix/posix_io.h"
 #include "platforms/posix/posix_clock.h"
 
-#define C2DRenderer SDL2Renderer
 #define C2DRectangle Rectangle
 #define C2DCircle Circle
 #define C2DLine Line

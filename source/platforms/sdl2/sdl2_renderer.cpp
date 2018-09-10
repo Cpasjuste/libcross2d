@@ -7,6 +7,7 @@
 //
 
 #ifndef __SDL2_GL__
+#ifndef __SDL2_GLES__
 
 #ifdef __SWITCH__
 #include <switch.h>
@@ -29,12 +30,14 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
     }
 
     window = SDL_CreateWindow(
-            "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            (int) getSize().x, (int) getSize().y, flags);
+            "CROSS2D_SDL2_GL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+            (int) getSize().x, (int) getSize().y, flags | SDL_WINDOW_OPENGL);
 
     if (window == nullptr) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                     "Couldn't create an opengl window: %s, trying software...\n", SDL_GetError());
         window = SDL_CreateWindow(
-                "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                "CROSS2D_SDL2_SW", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                 (int) getSize().x, (int) getSize().y, 0);
         if (window == nullptr) {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
@@ -255,4 +258,5 @@ SDL2Renderer::~SDL2Renderer() {
 #endif
 }
 
-#endif
+#endif // __SDL2_GLES__
+#endif // __SDL2_GL__

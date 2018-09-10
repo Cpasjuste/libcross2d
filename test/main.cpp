@@ -62,8 +62,8 @@ int main() {
 
         // time / delta time
         float delta = renderer->getDeltaTime().asSeconds();
-        printf("Time: %f (delta: %f), fps: %2g\n",
-               renderer->getElapsedTime().asSeconds(), delta, renderer->getFps());
+        //printf("Time: %f (delta: %f), fps: %2g\n",
+        //       renderer->getElapsedTime().asSeconds(), delta, renderer->getFps());
 
         // render
         rect->move(10 * delta, 0);
