@@ -266,6 +266,7 @@ void SDL2Texture::unlock() {
 
 void SDL2Texture::setFiltering(int filter) {
 
+#if 0
     if (!tex || filter == filtering) {
         return;
     }
@@ -307,6 +308,7 @@ void SDL2Texture::setFiltering(int filter) {
     tex = newTex;
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+#endif
 }
 
 SDL2Texture::~SDL2Texture() {
@@ -314,6 +316,7 @@ SDL2Texture::~SDL2Texture() {
     printf("~SDL2Texture(%p)\n", this);
     if (tex) {
         SDL_DestroyTexture(tex);
+        tex = nullptr;
     }
 }
 

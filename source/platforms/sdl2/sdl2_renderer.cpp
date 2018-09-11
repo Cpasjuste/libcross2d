@@ -10,7 +10,9 @@
 #ifndef __SDL2_GLES__
 
 #ifdef __SWITCH__
+
 #include <switch.h>
+
 #endif
 
 #include "c2d.h"
@@ -19,15 +21,34 @@ using namespace c2d;
 
 SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
 
+#ifdef __SWITCH__
+#ifdef NET_DEBUG
+    socketInitializeDefault();
+    nxlinkStdio();
+#elif SVC_DEBUG
+    consoleDebugInit(debugDevice_SVC);
+    stdout = stderr;
+#endif
+#endif
+
     if ((SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't init sdl: %s\n", SDL_GetError());
         return;
     }
 
+#ifdef __SWITCH__
+    Uint32 flags = SDL_WINDOW_FULLSCREEN;
+#else
     Uint32 flags = 0;
     if (!getSize().x || !getSize().y) { // force fullscreen if window size == 0
         flags |= SDL_WINDOW_FULLSCREEN;
     }
+#endif
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
     window = SDL_CreateWindow(
             "CROSS2D_SDL2_GL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -43,6 +64,8 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
             return;
         }
+    } else {
+
     }
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -59,16 +82,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
 
     // set default scale quality to linear filtering
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-
-#ifdef __SWITCH__
-#ifdef NET_DEBUG
-    socketInitializeDefault();
-    nxlinkStdio();
-#elif SVC_DEBUG
-    consoleDebugInit(debugDevice_SVC);
-    stdout = stderr;
-#endif
-#endif
 
     available = true;
 }
@@ -250,10 +263,10 @@ void SDL2Renderer::delay(unsigned int ms) {
 
 SDL2Renderer::~SDL2Renderer() {
 
-    if(renderer) {
+    if (renderer) {
         SDL_DestroyRenderer(renderer);
     }
-    if(window) {
+    if (window) {
         SDL_DestroyWindow(window);
     }
 
