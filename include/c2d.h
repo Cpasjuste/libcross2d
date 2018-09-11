@@ -137,7 +137,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/posix/posix_clock.h"
 
 //#define SVC_DEBUG 1
-//#define NET_DEBUG 1
+#define NET_DEBUG 1
 
 #define C2DRectangle Rectangle
 #define C2DCircle Circle

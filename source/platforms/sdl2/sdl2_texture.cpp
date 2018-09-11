@@ -131,6 +131,11 @@ int SDL2Texture::lock(FloatRect *rect, void **pix, int *p) {
     return ret;
 }
 
+void SDL2Texture::unlock() {
+
+    SDL_UnlockTexture(tex);
+}
+
 int SDL2Texture::save(const char *path) {
 
     unsigned char *pixels = nullptr;
@@ -257,11 +262,6 @@ int SDL2Texture::save(const char *path) {
     }
 
     return 0;
-}
-
-void SDL2Texture::unlock() {
-
-    SDL_UnlockTexture(tex);
 }
 
 void SDL2Texture::setFiltering(int filter) {

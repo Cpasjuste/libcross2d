@@ -22,10 +22,7 @@ using namespace c2d;
 SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
 
 #ifdef __SWITCH__
-#ifdef NET_DEBUG
-    socketInitializeDefault();
-    nxlinkStdio();
-#elif SVC_DEBUG
+#ifdef SVC_DEBUG
     consoleDebugInit(debugDevice_SVC);
     stdout = stderr;
 #endif
@@ -271,13 +268,48 @@ SDL2Renderer::~SDL2Renderer() {
     }
 
     SDL_Quit();
+}
+
+//-----------------------------------------------------------------------------
+// nxlink support
+//-----------------------------------------------------------------------------
 
 #ifdef __SWITCH__
 #ifdef NET_DEBUG
-    socketExit();
-#endif
-#endif
+
+#include <unistd.h>
+
+static int s_nxlinkSock = -1;
+
+static void initNxLink() {
+    if (R_FAILED(socketInitializeDefault()))
+        return;
+
+    s_nxlinkSock = nxlinkStdio();
+    if (s_nxlinkSock >= 0)
+        printf("printf output now goes to nxlink server");
+    else
+        socketExit();
 }
+
+static void deinitNxLink() {
+    if (s_nxlinkSock >= 0) {
+        close(s_nxlinkSock);
+        socketExit();
+        s_nxlinkSock = -1;
+    }
+}
+
+extern "C" void userAppInit() {
+    initNxLink();
+}
+
+extern "C" void userAppExit() {
+    deinitNxLink();
+}
+
+#endif
+#endif
 
 #endif // __SDL2_GLES__
 #endif // __SDL2_GL__
