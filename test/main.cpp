@@ -68,7 +68,7 @@ int main() {
         // render
         rect->move(10 * delta, 0);
         rect->setScale(rect->getScale().x - (0.01f * delta), rect->getScale().y - (0.01f * delta));
-        rect->rotate(50 * delta);
+        //rect->rotate(50 * delta);
 
         renderer->flip();
     }

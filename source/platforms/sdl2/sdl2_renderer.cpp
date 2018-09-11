@@ -57,6 +57,9 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
         }
     }
 
+    // set default scale quality to linear filtering
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+
 #ifdef __SWITCH__
 #ifdef NET_DEBUG
     socketInitializeDefault();
@@ -247,8 +250,13 @@ void SDL2Renderer::delay(unsigned int ms) {
 
 SDL2Renderer::~SDL2Renderer() {
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    if(renderer) {
+        SDL_DestroyRenderer(renderer);
+    }
+    if(window) {
+        SDL_DestroyWindow(window);
+    }
+
     SDL_Quit();
 
 #ifdef __SWITCH__

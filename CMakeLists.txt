@@ -177,7 +177,7 @@ elseif (BUILD_NX)
     list(APPEND FLAGS -D__NX__ -D__SWITCH__
             -ffunction-sections -fomit-frame-pointer
             )
-    set(PLATFORM_LIBS SDL2 nx freetype png bz2 z)
+    set(PLATFORM_LIBS SDL2 glad EGL glapi drm_nouveau nx freetype png bz2 z)
     if (BUILD_NX_GL)
         list(APPEND PLATFORM_DIRS source/platforms/gl)
         list(APPEND PLATFORM_SRC
