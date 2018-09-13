@@ -178,6 +178,7 @@ extern c2d::Renderer *c2d_renderer;
 
 #if defined(__SDL2_GL__)
 #include "platforms/sdl2/sdl2_gl_renderer.h"
+#include "platforms/gl/gl_shaders.h"
 #include "platforms/gl/gl_texture.h"
 #define C2DRenderer SDL2Renderer
 #define C2DTexture GLTexture

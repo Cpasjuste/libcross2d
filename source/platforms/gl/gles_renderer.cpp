@@ -25,7 +25,9 @@ void GLESRenderer::draw(const VertexArray &vertices,
         return;
     }
 
+    if(!texture) {
 
+    }
 
     /*
     size_t count = vertices.getVertexCount();
@@ -92,8 +94,8 @@ void GLESRenderer::setSize(float width, float height) {
     RectangleShape::setSize(width, height);
 
     //glDisable(GL_LIGHTING);
-    //glDisable(GL_DEPTH_TEST);
-    //glDepthMask(GL_FALSE);
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
 
     glViewport(0, 0, static_cast<GLsizei>(getSize().x), static_cast<GLsizei>(getSize().y));
     /*

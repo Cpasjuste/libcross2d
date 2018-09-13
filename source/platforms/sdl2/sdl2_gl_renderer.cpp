@@ -4,8 +4,6 @@
 
 #ifdef __SDL2_GL__
 
-#include <GL/gl.h>
-
 #include "c2d.h"
 
 using namespace c2d;
@@ -13,6 +11,8 @@ using namespace c2d;
 static SDL_GLContext ctx;
 
 SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
+
+    GLenum err;
 
     if ((SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
         printf("Couldn't init sdl: %s\n", SDL_GetError());
@@ -25,9 +25,10 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
         flags |= SDL_WINDOW_FULLSCREEN;
     }
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    //SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
 
     window = SDL_CreateWindow(
@@ -52,9 +53,55 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
         return;
     }
 
-    setSize(getSize());
-
     SDL_GL_SetSwapInterval(1);
+
+    int major, minor;
+    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
+    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &minor);
+    printf("OpenGL: %i.%i\n", major, minor);
+
+    // vao
+    glGenVertexArrays(1, &vao);
+    if ((err = glGetError()) != GL_NO_ERROR) {
+        printf("glGenVertexArrays: 0x%x\n", err);
+        return;
+    }
+    glBindVertexArray(0);
+
+    // vbo
+    glGenBuffers(1, &vbo);
+    if ((err = glGetError()) != GL_NO_ERROR) {
+        printf("glGenBuffers: 0x%x\n", err);
+        return;
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    if ((err = glGetError()) != GL_NO_ERROR) {
+        printf("glBindBuffer: 0x%x\n", err);
+        return;
+    }
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 1024, nullptr, GL_STREAM_DRAW);
+    if ((err = glGetError()) != GL_NO_ERROR) {
+        printf("glBufferData: 0x%x\n", err);
+        return;
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    if ((err = glGetError()) != GL_NO_ERROR) {
+        printf("glBindBuffer: 0x%x\n", err);
+        return;
+    }
+
+    glDisable(GL_DEPTH_TEST);
+    if ((err = glGetError()) != GL_NO_ERROR) {
+        printf("glDisable(GL_DEPTH_TEST): 0x%x\n", err);
+        return;
+    }
+    glDepthMask(GL_FALSE);
+    if ((err = glGetError()) != GL_NO_ERROR) {
+        printf("glDepthMask(GL_FALSE): 0x%x\n", err);
+        return;
+    }
+
+    shaderList = (ShaderList *) new GLShaderList("");
 
     available = true;
 
@@ -66,11 +113,10 @@ void SDL2Renderer::flip(bool draw) {
     if (draw) {
         // call base class (draw childs)
         GLRenderer::flip();
-
-        // flip (draw mesa buffer to screen)
-        glFinish();
     }
+
     // flip
+    glFinish();
     SDL_GL_SwapWindow(window);
 }
 

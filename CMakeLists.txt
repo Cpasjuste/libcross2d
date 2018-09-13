@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 3.0)
 option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
 option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" OFF)
 option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" OFF)
-option(BUILD_SDL2 "Build with SDL2 support (software)" OFF)
-option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" OFF)
+option(BUILD_SDL2 "Build with SDL2 support (software)" ON)
+option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" ON)
 option(BUILD_SDL2_GLES "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" OFF)
 option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
@@ -212,6 +212,7 @@ elseif (BUILD_SDL2)
         list(APPEND PLATFORM_DIRS source/platforms/gl)
         list(APPEND PLATFORM_SRC
                 source/platforms/gl/gl_renderer.cpp
+                source/platforms/gl/gl_shaders.cpp
                 source/platforms/gl/gl_texture.cpp)
         list(APPEND FLAGS -D__SDL2_GL__ -D__GL__)
         list(APPEND PLATFORM_LIBS GL)

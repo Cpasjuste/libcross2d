@@ -23,9 +23,9 @@ namespace c2d {
 
         virtual void flip(bool draw = true);
 
-        virtual void setSize(const c2d::Vector2f &size);
-
-        virtual void setSize(float width, float height);
+        unsigned int vbo = 0;
+        unsigned int vbo_offset = 0;
+        unsigned int vao = 0;
     };
 }
 

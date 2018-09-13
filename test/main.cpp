@@ -18,13 +18,22 @@ int main() {
 
     // create a rect
     Rectangle *rect = new C2DRectangle(
-            FloatRect(0, renderer->getSize().y / 2,
+            FloatRect(64, 64,
                       renderer->getSize().x / 2, renderer->getSize().y / 2));
-    rect->setOriginCenter();
+    //rect->setOriginCenter();
     rect->setFillColor(Color::Gray);
     rect->setOutlineColor(Color::Orange);
     rect->setOutlineThickness(8);
 
+    Rectangle *rect2 = new C2DRectangle(
+            FloatRect(300, 300,
+                      renderer->getSize().x / 4, renderer->getSize().y / 4));
+    //rect->setOriginCenter();
+    rect2->setFillColor(Color::GrayLight);
+    rect2->setOutlineColor(Color::Yellow);
+    rect2->setOutlineThickness(8);
+
+    /*
     // create a texture and add it to the rect
     Texture *tex = new C2DTexture((const unsigned char *) pfba_title, pfba_title_length);
     if (tex->available) {
@@ -45,14 +54,16 @@ int main() {
         text->setPosition(rect->getSize().x / 2, 32);
         rect->add(text);
     }
+    */
 
     // add all this crap to the renderer
     renderer->add(rect);
+    renderer->add(rect2);
 
     Input *input = new C2DInput(nullptr);
     input->setJoystickMapping(0, KEYS, 0);
 
-    while (renderer->getElapsedTime().asSeconds() < 5) {
+    while (renderer->getElapsedTime().asSeconds() < 2) {
 
         // handle input
         unsigned int key = input->update()[0].state;
@@ -67,7 +78,7 @@ int main() {
 
         // render
         rect->move(10 * delta, 0);
-        rect->setScale(rect->getScale().x - (0.01f * delta), rect->getScale().y - (0.01f * delta));
+        //rect->setScale(rect->getScale().x - (0.01f * delta), rect->getScale().y - (0.01f * delta));
         //rect->rotate(50 * delta);
 
         renderer->flip();
