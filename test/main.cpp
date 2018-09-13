@@ -33,16 +33,16 @@ int main() {
     rect2->setOutlineColor(Color::Yellow);
     rect2->setOutlineThickness(8);
 
-    /*
     // create a texture and add it to the rect
     Texture *tex = new C2DTexture((const unsigned char *) pfba_title, pfba_title_length);
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
-        tex->setScale(0.5f, 0.5f);
-        tex->setOriginCenter();
-        rect->add(tex);
+        //tex->setScale(0.5f, 0.5f);
+        //tex->setOriginCenter();
+        //rect->add(tex);
     }
 
+    /*
     // create a font
     Font font;
     if (font.loadFromMemory(pfba_font, pfba_font_length)) {
@@ -57,8 +57,9 @@ int main() {
     */
 
     // add all this crap to the renderer
-    renderer->add(rect);
-    renderer->add(rect2);
+    //renderer->add(rect);
+    //renderer->add(rect2);
+    renderer->add(tex);
 
     Input *input = new C2DInput(nullptr);
     input->setJoystickMapping(0, KEYS, 0);

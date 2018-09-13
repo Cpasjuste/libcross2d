@@ -7,7 +7,7 @@
 using namespace c2d;
 
 // vertex color shader
-static const char *const vertexShaderSource = R"text(
+static const char *const vertexColor = R"text(
     #version 330 core
 
     layout (location = 0) in vec2 aPos;
@@ -24,7 +24,7 @@ static const char *const vertexShaderSource = R"text(
     }
 )text";
 
-static const char *const fragmentShaderSource = R"text(
+static const char *const fragmentColor = R"text(
     #version 330 core
 
     in vec4 ourColor;
@@ -33,6 +33,80 @@ static const char *const fragmentShaderSource = R"text(
     void main()
     {
         fragColor = vec4(ourColor);
+    }
+)text";
+
+// texture
+static const char *const vertexTexture_ = R"text(
+    #version 330 core
+
+    layout (location = 0) in vec3 aPos;
+    layout (location = 1) in vec2 aTexCoord;
+    out vec2 vTexCoord;
+    uniform mat4 mdlvMtx;
+    uniform mat4 projMtx;
+
+    void main()
+    {
+        vec4 pos = mdlvMtx * vec4(aPos.x, aPos.y, 1.0, 1.0);
+        gl_Position = projMtx * pos;
+        vTexCoord = aTexCoord;
+    }
+)text";
+
+static const char *const fragmentTexture_ = R"text(
+    #version 330
+
+    in vec2 vTexCoord;
+    out vec4 fragColor;
+    uniform sampler2D tex;
+
+    void main()
+    {
+        fragColor = texture2D(tex, vTexCoord.xy);
+    }
+)text";
+
+// texture
+static const char *const vertexTexture = R"text(
+    #version 330 core
+
+    layout (location = 0) in vec2 aPos;
+    layout (location = 1) in vec4 aColor;
+    layout (location = 2) in vec2 aTexCoord;
+
+    out vec4 ourColor;
+    out vec2 TexCoord;
+
+    uniform mat4 mdlvMtx;
+    uniform mat4 projMtx;
+    uniform mat4 texMtx;
+
+    void main()
+    {
+        vec4 pos = mdlvMtx * vec4(aPos.x, aPos.y, 1.0, 1.0);
+        gl_Position = projMtx * pos;
+
+        ourColor = aColor;
+        vec4 coord = vec4(aTexCoord, 1.0, 1.0) * texMtx;
+        TexCoord = coord.yx;
+        TexCoord = aTexCoord;
+    }
+)text";
+
+static const char *const fragmentTexture = R"text(
+    #version 330
+
+    out vec4 FragColor;
+
+    in vec4 ourColor;
+    in vec2 TexCoord;
+
+    uniform sampler2D ourTexture;
+
+    void main()
+    {
+        FragColor = texture2D(ourTexture, TexCoord) * ourColor;
     }
 )text";
 
@@ -101,8 +175,16 @@ GLShader::~GLShader() {
 
 GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersPath) {
 
-    auto *colorShader = new GLShader(vertexShaderSource, fragmentShaderSource);
+    auto *colorShader = new GLShader(vertexColor, fragmentColor);
     color = new Shader("color", colorShader);
+
+    get(0)->data = new GLShader(vertexTexture, fragmentTexture);
+
+    GLuint err;
+    if ((err = glGetError()) != GL_NO_ERROR) {
+        printf("glUseProgram: 0x%x\n", err);
+        return;
+    }
 
     /*
     // parent class add a "NONE" shader, we set it to a simple texture shader

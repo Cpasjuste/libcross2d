@@ -12,8 +12,6 @@ static SDL_GLContext ctx;
 
 SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
 
-    GLenum err;
-
     if ((SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
         printf("Couldn't init sdl: %s\n", SDL_GetError());
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't init sdl: %s\n", SDL_GetError());
@@ -28,7 +26,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    //SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
 
     window = SDL_CreateWindow(
@@ -61,47 +59,19 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
     printf("OpenGL: %i.%i\n", major, minor);
 
     // vao
-    glGenVertexArrays(1, &vao);
-    if ((err = glGetError()) != GL_NO_ERROR) {
-        printf("glGenVertexArrays: 0x%x\n", err);
-        return;
-    }
-    glBindVertexArray(0);
+    GL_CHECK(glGenVertexArrays(1, &vao));
+    GL_CHECK(glBindVertexArray(0));
 
     // vbo
-    glGenBuffers(1, &vbo);
-    if ((err = glGetError()) != GL_NO_ERROR) {
-        printf("glGenBuffers: 0x%x\n", err);
-        return;
-    }
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    if ((err = glGetError()) != GL_NO_ERROR) {
-        printf("glBindBuffer: 0x%x\n", err);
-        return;
-    }
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 1024, nullptr, GL_STREAM_DRAW);
-    if ((err = glGetError()) != GL_NO_ERROR) {
-        printf("glBufferData: 0x%x\n", err);
-        return;
-    }
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    if ((err = glGetError()) != GL_NO_ERROR) {
-        printf("glBindBuffer: 0x%x\n", err);
-        return;
-    }
+    GL_CHECK(glGenBuffers(1, &vbo));
+    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+    GL_CHECK(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 1024, nullptr, GL_STREAM_DRAW));
+    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
-    glDisable(GL_DEPTH_TEST);
-    if ((err = glGetError()) != GL_NO_ERROR) {
-        printf("glDisable(GL_DEPTH_TEST): 0x%x\n", err);
-        return;
-    }
-    glDepthMask(GL_FALSE);
-    if ((err = glGetError()) != GL_NO_ERROR) {
-        printf("glDepthMask(GL_FALSE): 0x%x\n", err);
-        return;
-    }
+    GL_CHECK(glDisable(GL_DEPTH_TEST));
+    GL_CHECK(glDepthMask(GL_FALSE));
 
-    shaderList = (ShaderList *) new GLShaderList("");
+    shaderList = (ShaderList *) new GLShaderList();
 
     available = true;
 
@@ -116,7 +86,7 @@ void SDL2Renderer::flip(bool draw) {
     }
 
     // flip
-    glFinish();
+    // GL_CHECK(glFinish());
     SDL_GL_SwapWindow(window);
 }
 
@@ -126,6 +96,9 @@ void SDL2Renderer::delay(unsigned int ms) {
 }
 
 SDL2Renderer::~SDL2Renderer() {
+
+    GL_CHECK(glDeleteBuffers(1, &vbo));
+    GL_CHECK(glDeleteVertexArrays(1, &vao));
 
     printf("~SDL2Renderer\n");
     SDL_GL_DeleteContext(ctx);

@@ -31,7 +31,7 @@ namespace c2d {
 
     public:
 
-        GLShaderList(const std::string &shadersPath);
+        GLShaderList(const std::string &shadersPath = "");
 
         virtual ~GLShaderList();
 

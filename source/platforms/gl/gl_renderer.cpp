@@ -24,134 +24,84 @@ void GLRenderer::draw(const VertexArray &vertexArray,
                       const Transform &transform,
                       const Texture *texture) {
 
-    GLenum err;
-    GLShader *shader = (GLShader *) ((GLShaderList *) shaderList)->color->data;
     Vertex *vertices = vertexArray.getVertices().data();
     size_t count = vertexArray.getVertexCount();
+    GLTexture *tex = ((GLTexture *) texture);
+    GLShader *shader = tex && tex->available ? (GLShader *) shaderList->get(0)->data :
+                       (GLShader *) ((GLShaderList *) shaderList)->color->data;
 
-    //printf("draw: mode=%i\n", vertexArray.getPrimitiveType());
+    setFillColor(Color::Red);
+    GL_CHECK(glBindVertexArray(vao));
 
-    if (!texture) {
+    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+    GL_CHECK(glBufferSubData(GL_ARRAY_BUFFER, sizeof(Vertex) * vbo_offset, sizeof(Vertex) * count, vertices));
 
-        glBindVertexArray(vao);
-        if ((err = glGetError()) != GL_NO_ERROR) {
-            printf("glBindVertexArray: 0x%x\n", err);
-            return;
-        }
+    GL_CHECK(glUseProgram(shader->program));
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        if ((err = glGetError()) != GL_NO_ERROR) {
-            printf("glBindBuffer: 0x%x\n", err);
-            return;
-        }
+    // set vertex position
+    GL_CHECK(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                                   (void *) offsetof(Vertex, position)));
+    GL_CHECK(glEnableVertexAttribArray(0));
 
-        glBufferSubData(GL_ARRAY_BUFFER, sizeof(Vertex) * vbo_offset, sizeof(Vertex) * count, vertices);
-        if ((err = glGetError()) != GL_NO_ERROR) {
-            printf("glBufferSubData: 0x%x\n", err);
-            return;
-        }
+    // set vertex colors
+    GL_CHECK(glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex),
+                                   (void *) offsetof(Vertex, color)));
+    GL_CHECK(glEnableVertexAttribArray(1));
 
-        // set vertex position
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, position));
-        if ((err = glGetError()) != GL_NO_ERROR) {
-            printf("glVertexAttribPointer 0: 0x%x\n", err);
-            return;
-        }
-        glEnableVertexAttribArray(0);
+    //printf("%f %f\n", texture->get, vertices->texCoords.y);
 
-        // set vertex colors
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void *) offsetof(Vertex, color));
-        if ((err = glGetError()) != GL_NO_ERROR) {
-            printf("glVertexAttribPointer 1: 0x%x\n", err);
-            return;
-        }
-        glEnableVertexAttribArray(1);
+    if (tex && tex->available) {
 
-        // select shader
-        glUseProgram(shader->program);
-        if ((err = glGetError()) != GL_NO_ERROR) {
-            printf("glUseProgram: 0x%x\n", err);
-            return;
-        }
+        //GL_CHECK(glActiveTexture(GL_TEXTURE0));
+        GL_CHECK(glBindTexture(GL_TEXTURE_2D, tex->texID));
 
-        // set projection matrix
-        GLint loc_projMtx = glGetUniformLocation(shader->program, "projMtx");
-        auto projMtx = glm::orthoLH(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
-        glUniformMatrix4fv(loc_projMtx, 1, GL_FALSE, glm::value_ptr(projMtx));
+        // set tex coords
+        GL_CHECK(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                                       (void *) offsetof(Vertex, texCoords)));
+        GL_CHECK(glEnableVertexAttribArray(2));
 
-        // set model matrix
-        GLint loc_mdlvMtx = glGetUniformLocation(shader->program, "mdlvMtx");
-        glUniformMatrix4fv(loc_mdlvMtx, 1, GL_FALSE, transform.getMatrix());
-
-
-        if (texture || vertices[0].color.a < 255) {
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
-
-        // draw
-        const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
-                                GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
-        GLenum mode = modes[vertexArray.getPrimitiveType()];
-
-        glDrawArrays(mode, vbo_offset, (GLsizei) count);
-        if ((err = glGetError()) != GL_NO_ERROR) {
-            printf("glDrawArrays: 0x%x\n", err);
-            return;
-        }
-
-        if (texture || vertices[0].color.a < 255) {
-            glDisable(GL_BLEND);
-        }
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+        // set texture unit
+        //GLint loc_tex;
+        //GL_CHECK(loc_tex = glGetUniformLocation(shader->program, "tex"));
+        //GL_CHECK(glUniform1i(loc_tex, 0));
 
     }
+
+    // set projection matrix
+    GLint loc_projMtx;
+    GL_CHECK(loc_projMtx = glGetUniformLocation(shader->program, "projMtx"));
+    auto projMtx = glm::orthoLH(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
+    GL_CHECK(glUniformMatrix4fv(loc_projMtx, 1, GL_FALSE, glm::value_ptr(projMtx)));
+
+    // set model matrix
+    GLint loc_mdlvMtx;
+    GL_CHECK(loc_mdlvMtx = glGetUniformLocation(shader->program, "mdlvMtx"));
+    GL_CHECK(glUniformMatrix4fv(loc_mdlvMtx, 1, GL_FALSE, transform.getMatrix()));
+
+    // transform texture coordinates by the texture matrix
+    GLint loc_texMtx;
+    GL_CHECK(loc_texMtx = glGetUniformLocation(shader->program, "texMtx"));
+    GL_CHECK(glUniformMatrix4fv(loc_texMtx, 1, GL_FALSE, texture->getTransform().getMatrix()));
+
+    if (tex || vertices[0].color.a < 255) {
+        GL_CHECK(glEnable(GL_BLEND));
+        GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    }
+
+    // draw
+    const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
+                            GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
+    GLenum mode = modes[vertexArray.getPrimitiveType()];
+    GL_CHECK(glDrawArrays(mode, vbo_offset, (GLsizei) count));
+
+    if (tex || vertices[0].color.a < 255) {
+        GL_CHECK(glDisable(GL_BLEND));
+    }
+
+    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GL_CHECK(glBindVertexArray(0));
 
     vbo_offset += count;
-
-    /*
-    GLTexture *tex = ((GLTexture *) texture);
-    if (tex && tex->available) {
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, tex->texID);
-    }
-
-    if (tex || vertices[0].color.a < 255) {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    static const GLenum modes[] =
-            {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
-             GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
-    GLenum mode = modes[vertexArray.getPrimitiveType()];
-
-    glBegin(mode);
-
-    for (unsigned int i = 0; i < count; i++) {
-        if (tex && tex->available) {
-            glTexCoord2f(vertices[i].texCoords.x / texture->getSize().x,
-                         vertices[i].texCoords.y / texture->getSize().y);
-        }
-        glColor4f(vertices[i].color.r / 255.0f,
-                  vertices[i].color.g / 255.0f,
-                  vertices[i].color.b / 255.0f,
-                  vertices[i].color.a / 255.0f);
-        glVertex2f(vertices[i].position.x, vertices[i].position.y);
-    }
-
-    glEnd();
-
-    if (tex && tex->available) {
-        glDisable(GL_TEXTURE_2D);
-    }
-
-    if (tex || vertices[0].color.a < 255) {
-        glDisable(GL_BLEND);
-    }
-    */
 }
 
 void GLRenderer::flip(bool draw) {
@@ -159,11 +109,11 @@ void GLRenderer::flip(bool draw) {
     if (draw) {
 
         // clear screen
-        glClearColor(getFillColor().r / 255.0f,
-                     getFillColor().g / 255.0f,
-                     getFillColor().b / 255.0f,
-                     getFillColor().a / 255.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        GL_CHECK(glClearColor(getFillColor().r / 255.0f,
+                              getFillColor().g / 255.0f,
+                              getFillColor().b / 255.0f,
+                              getFillColor().a / 255.0f));
+        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
     }
 
     // call base class (draw childs)
@@ -176,5 +126,18 @@ void GLRenderer::flip(bool draw) {
 GLRenderer::~GLRenderer() {
 
 }
+
+#ifndef NDEBUG
+
+namespace c2d {
+    void CheckOpenGLError(const char *stmt, const char *fname, int line) {
+        GLenum err = glGetError();
+        if (err != GL_NO_ERROR) {
+            printf("OpenGL error %08x, at %s:%i - for %s\n", err, fname, line, stmt);
+            abort();
+        }
+    }
+}
+#endif
 
 #endif // __GL__

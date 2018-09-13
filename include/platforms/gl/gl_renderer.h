@@ -27,6 +27,18 @@ namespace c2d {
         unsigned int vbo_offset = 0;
         unsigned int vao = 0;
     };
+
+    void CheckOpenGLError(const char *stmt, const char *fname, int line);
+
+#ifndef NDEBUG
+#define GL_CHECK(stmt) do { \
+            stmt; \
+            CheckOpenGLError(#stmt, __FILE__, __LINE__); \
+        } while (0)
+#else
+#define GL_CHECK(stmt) stmt
+#endif
+
 }
 
 #endif //CROSS2D_RENDERERGL_H
