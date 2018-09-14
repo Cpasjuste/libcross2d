@@ -58,10 +58,12 @@ void Renderer::drawTexture(Texture &texture, Transform &transform) {
 
     //printf("drawTexture: %ix%i (%s)\n", (int)texture.getSize().x, (int)texture.getSize().y, texture.path);
     Transform combined = transform * texture.getTransform();
-    if (texture.getOutlineColor().a != 0 && texture.getOutlineThickness() > 0) {
-        draw(texture.getOutlineVertices(), combined, nullptr);
-    }
-    if (texture.available && texture.getFillColor().a != 0) {
+
+    // TODO
+    //if (texture.getOutlineColor().a != 0 && texture.getOutlineThickness() > 0) {
+    //    draw(texture.getOutlineVertices(), combined, nullptr);
+    //}
+    if (texture.available && texture.getColor().a != 0) {
         draw(texture.getVertices(), combined, &texture);
     }
 }

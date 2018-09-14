@@ -55,10 +55,7 @@ static const char *const vertexTexture = R"text(
     void main()
     {
         gl_Position = projectionMatrix * (modelViewMatrix * vec4(positionAttribute.x, positionAttribute.y, 0.0, 1.0));
-
         frontColor = colorAttribute;
-
-        //vec4 coord = vec4(texCoordAttribute, 1.0, 1.0) * textureMatrix;
         texCoord = textureMatrix * vec4(texCoordAttribute, 0.0, 1.0);
     }
 )text";

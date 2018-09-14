@@ -30,10 +30,9 @@ GLTexture::GLTexture(const char *path) : Texture(path) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     if (texID) {
-        setSize(Vector2f(w, h));
         setTextureRect(IntRect(0, 0, w, h));
         bpp = 4;
-        pitch = (int) (getSize().x * bpp);
+        pitch = getTextureRect().width * bpp;
         available = true;
     } else {
         printf("GLTexture::GLTexture: couldn't create texture: %s\n", path);
@@ -63,10 +62,9 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
                           GL_RGBA, GL_UNSIGNED_BYTE, pixels));
 
     if (texID) {
-        setSize(Vector2f(w, h));
         setTextureRect(IntRect(0, 0, w, h));
         bpp = 4;
-        pitch = (int) (getSize().x * bpp);
+        pitch = getTextureRect().width * bpp;
         available = true;
     } else {
         printf("GLTexture::GLTexture: couldn't create texture: %s\n", path);
@@ -98,6 +96,7 @@ GLTexture::GLTexture(const Vector2f &size, int format) : Texture(size, format) {
         }
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
         available = true;
     } else {
         printf("GLTexture::GLTexture: couldn't create texture");
@@ -110,7 +109,7 @@ int GLTexture::resize(const Vector2f &size, bool copyPixels) {
 
     printf("GLTexture::resize: %i x %i\n", (int) size.x, (int) size.y);
 
-    if (size.x == getSize().x && size.y == getSize().y) {
+    if (size.x == getTextureRect().width && size.y == getTextureRect().height) {
         return -1;
     }
 
@@ -121,8 +120,8 @@ int GLTexture::resize(const Vector2f &size, bool copyPixels) {
     if (copyPixels) {
 
         Vector2i dst_size = Vector2i(
-                std::min((int) getSize().x, (int) size.x),
-                std::min((int) getSize().y, (int) size.y));
+                std::min(getTextureRect().width, (int) size.x),
+                std::min(getTextureRect().height, (int) size.y));
 
         // TODO: crash here, why ?
         for (int i = 0; i < dst_size.y; i++) {
@@ -152,7 +151,7 @@ int GLTexture::resize(const Vector2f &size, bool copyPixels) {
                          GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
             break;
     }
-    setSize(size);
+
     setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     setFiltering(filtering);
 
@@ -182,15 +181,18 @@ void GLTexture::unlock() {
 
     switch (format) {
         case C2D_TEXTURE_FMT_RGBA8:
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, (GLsizei) getSize().x, (GLsizei) getSize().y,
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+                            (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                             GL_RGBA, GL_UNSIGNED_BYTE, pixels);
             break;
         case C2D_TEXTURE_FMT_ARGB8:
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, (GLsizei) getSize().x, (GLsizei) getSize().y,
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+                            (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                             GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
             break;
         default:
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, (GLsizei) getSize().x, (GLsizei) getSize().y,
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+                            (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                             GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
             break;
     }

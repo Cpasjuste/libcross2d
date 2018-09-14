@@ -18,7 +18,7 @@ int main() {
 
     // create a rect
     Rectangle *rect = new C2DRectangle(
-            FloatRect(64, 64,
+            FloatRect(256, 256,
                       renderer->getSize().x / 2, renderer->getSize().y / 2));
     //rect->setOriginCenter();
     rect->setFillColor(Color::Gray);
@@ -57,14 +57,14 @@ int main() {
     */
 
     // add all this crap to the renderer
-    renderer->add(rect);
-    renderer->add(rect2);
+    //renderer->add(rect);
+    //renderer->add(rect2);
     renderer->add(tex);
 
     Input *input = new C2DInput(nullptr);
     input->setJoystickMapping(0, KEYS, 0);
 
-    while (renderer->getElapsedTime().asSeconds() < 2) {
+    while (renderer->getElapsedTime().asSeconds() < 2000) {
 
         // handle input
         unsigned int key = input->update()[0].state;
@@ -80,7 +80,7 @@ int main() {
         // render
         rect->move(10 * delta, 0);
         //rect->setScale(rect->getScale().x - (0.01f * delta), rect->getScale().y - (0.01f * delta));
-        //rect->rotate(50 * delta);
+        rect->rotate(50 * delta);
 
         renderer->flip();
     }

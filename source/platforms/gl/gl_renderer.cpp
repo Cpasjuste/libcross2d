@@ -42,19 +42,20 @@ void GLRenderer::draw(const VertexArray &vertexArray,
                       const Texture *texture) {
 
     Vertex *vertices = vertexArray.getVertices().data();
-    size_t count = vertexArray.getVertexCount();
-    GLTexture *tex = ((GLTexture *) texture);
-    GLShader *shader = tex && tex->available ? (GLShader *) shaderList->get(0)->data :
+    size_t vertexCount = vertexArray.getVertexCount();
+    GLTexture *glTexture = ((GLTexture *) texture);
+    GLShader *shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(0)->data :
                        (GLShader *) ((GLShaderList *) shaderList)->color->data;
 
-    // bind vao/vbo
-    if (vbo_offset + count >= MAX_VERTEX) {
+    // reset vbo stream index
+    if (vbo_offset + vertexCount >= MAX_VERTEX) {
         vbo_offset = 0;
     }
-
+    // bind vao/vbo
     //GL_CHECK(glBindVertexArray(vao));
     //GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-    GL_CHECK(glBufferSubData(GL_ARRAY_BUFFER, sizeof(Vertex) * vbo_offset, sizeof(Vertex) * count, vertices));
+    GL_CHECK(glBufferSubData(GL_ARRAY_BUFFER, sizeof(Vertex) * vbo_offset,
+                             sizeof(Vertex) * vertexCount, vertices));
 
     // set shader
     GL_CHECK(glUseProgram(shader->GetProgram()));
@@ -69,10 +70,10 @@ void GLRenderer::draw(const VertexArray &vertexArray,
                                    (void *) offsetof(Vertex, color)));
     GL_CHECK(glEnableVertexAttribArray(1));
 
-    if (tex && tex->available) {
+    if (glTexture && glTexture->available) {
 
         // bind texture
-        GL_CHECK(glBindTexture(GL_TEXTURE_2D, tex->texID));
+        GL_CHECK(glBindTexture(GL_TEXTURE_2D, glTexture->texID));
 
         // set tex coords
         GL_CHECK(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
@@ -84,13 +85,12 @@ void GLRenderer::draw(const VertexArray &vertexArray,
                               0.f, 1.f, 0.f, 0.f,
                               0.f, 0.f, 1.f, 0.f,
                               0.f, 0.f, 0.f, 1.f};
-        texMtx[0] = 1.f / texture->getSize().x;
-        texMtx[5] = 1.f / texture->getSize().y;
-        //texMtx[10] = 1.f / texture->getSize().x;
-        //texMtx[15] = 1.f / texture->getSize().y;
-
+        texMtx[0] = 1.f / texture->getTextureRect().width;
+        texMtx[5] = 1.f / texture->getTextureRect().height;
         shader->SetUniformMatrix("textureMatrix", texMtx);
 
+    } else {
+        GL_CHECK(glDisableVertexArrayAttrib(vao, 2));
     }
 
     // set projection matrix
@@ -101,7 +101,7 @@ void GLRenderer::draw(const VertexArray &vertexArray,
     shader->SetUniformMatrix("modelViewMatrix", transform.getMatrix());
 
     // enable blending if needed
-    if (tex || vertices[0].color.a < 255) {
+    if (glTexture || vertices[0].color.a < 255) {
         GL_CHECK(glEnable(GL_BLEND));
         GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     }
@@ -110,9 +110,10 @@ void GLRenderer::draw(const VertexArray &vertexArray,
     const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
                             GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
     GLenum mode = modes[vertexArray.getPrimitiveType()];
-    GL_CHECK(glDrawArrays(mode, vbo_offset, (GLsizei) count));
+    GL_CHECK(glDrawArrays(mode, vbo_offset, (GLsizei) vertexCount));
+    //printf("glDrawArrays(0x%x, 0x%x, %i\n", mode, vbo_offset, vertexCount);
 
-    if (tex || vertices[0].color.a < 255) {
+    if (glTexture || vertices[0].color.a < 255) {
         GL_CHECK(glDisable(GL_BLEND));
     }
 
@@ -120,7 +121,7 @@ void GLRenderer::draw(const VertexArray &vertexArray,
     //GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
     //GL_CHECK(glBindVertexArray(0));
 
-    vbo_offset += count;
+    vbo_offset += vertexCount;
 }
 
 void GLRenderer::flip(bool draw) {
@@ -137,9 +138,6 @@ void GLRenderer::flip(bool draw) {
 
     // call base class (draw childs)
     Renderer::flip(draw);
-
-    //printf("flip: buffer offset = %i\n", (int) (sizeof(Vertex) * offset));
-    // vbo_offset = 0;
 }
 
 GLRenderer::~GLRenderer() {

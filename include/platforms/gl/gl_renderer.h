@@ -28,8 +28,8 @@ namespace c2d {
         virtual void flip(bool draw = true);
 
         unsigned int vbo = 0;
-        unsigned int vbo_offset = 0;
         unsigned int vao = 0;
+        unsigned int vbo_offset = 0;
     };
 
     void CheckOpenGLError(const char *stmt, const char *fname, int line);
