@@ -49,6 +49,8 @@ namespace c2d {
 
         void setOriginCenter();
 
+        void setOriginTopLeft();
+
         void setColor(const Color &color);
 
         const IntRect &getTextureRect() const;

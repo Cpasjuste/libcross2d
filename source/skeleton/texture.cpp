@@ -71,6 +71,10 @@ void Texture::setOriginCenter() {
     setOrigin((float) m_textureRect.width / 2, (float) m_textureRect.height / 2);
 }
 
+void Texture::setOriginTopLeft() {
+    setOrigin(0, 0);
+}
+
 void Texture::setColor(const Color &color) {
     m_vertices[0].color = color;
     m_vertices[1].color = color;
