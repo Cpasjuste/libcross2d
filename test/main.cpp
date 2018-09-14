@@ -36,7 +36,7 @@ int main() {
     // create a texture and add it to the rect
     Texture *tex = new C2DTexture((const unsigned char *) pfba_title, pfba_title_length);
     if (tex->available) {
-        tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
+        tex->setPosition(0, 0);
         //tex->setScale(0.5f, 0.5f);
         //tex->setOriginCenter();
         //rect->add(tex);
@@ -57,8 +57,8 @@ int main() {
     */
 
     // add all this crap to the renderer
-    //renderer->add(rect);
-    //renderer->add(rect2);
+    renderer->add(rect);
+    renderer->add(rect2);
     renderer->add(tex);
 
     Input *input = new C2DInput(nullptr);

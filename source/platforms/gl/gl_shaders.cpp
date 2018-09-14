@@ -10,60 +10,30 @@ using namespace c2d;
 static const char *const vertexColor = R"text(
     #version 330 core
 
-    layout (location = 0) in vec2 aPos;
-    layout (location = 1) in vec4 aColor;
-    out vec4 ourColor;
-    uniform mat4 mdlvMtx;
-    uniform mat4 projMtx;
+    layout (location = 0) in vec2 positionAttribute;
+    layout (location = 1) in vec4 colorAttribute;
+
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+
+    out vec4 frontColor;
 
     void main()
     {
-        vec4 pos = mdlvMtx * vec4(aPos.x, aPos.y, 1.0, 1.0);
-        gl_Position = projMtx * pos;
-        ourColor = aColor;
+        gl_Position = projectionMatrix * (modelViewMatrix * vec4(positionAttribute.x, positionAttribute.y, 0.0, 1.0));
+        frontColor = colorAttribute;
     }
 )text";
 
 static const char *const fragmentColor = R"text(
     #version 330 core
 
-    in vec4 ourColor;
+    in vec4 frontColor;
     out vec4 fragColor;
 
     void main()
     {
-        fragColor = vec4(ourColor);
-    }
-)text";
-
-// texture
-static const char *const vertexTexture_ = R"text(
-    #version 330 core
-
-    layout (location = 0) in vec3 aPos;
-    layout (location = 1) in vec2 aTexCoord;
-    out vec2 vTexCoord;
-    uniform mat4 mdlvMtx;
-    uniform mat4 projMtx;
-
-    void main()
-    {
-        vec4 pos = mdlvMtx * vec4(aPos.x, aPos.y, 1.0, 1.0);
-        gl_Position = projMtx * pos;
-        vTexCoord = aTexCoord;
-    }
-)text";
-
-static const char *const fragmentTexture_ = R"text(
-    #version 330
-
-    in vec2 vTexCoord;
-    out vec4 fragColor;
-    uniform sampler2D tex;
-
-    void main()
-    {
-        fragColor = texture2D(tex, vTexCoord.xy);
+        fragColor = vec4(frontColor);
     }
 )text";
 
@@ -71,42 +41,41 @@ static const char *const fragmentTexture_ = R"text(
 static const char *const vertexTexture = R"text(
     #version 330 core
 
-    layout (location = 0) in vec2 aPos;
-    layout (location = 1) in vec4 aColor;
-    layout (location = 2) in vec2 aTexCoord;
+    layout (location = 0) in vec2 positionAttribute;
+    layout (location = 1) in vec4 colorAttribute;
+    layout (location = 2) in vec2 texCoordAttribute;
 
-    out vec4 ourColor;
-    out vec2 TexCoord;
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+    uniform mat4 textureMatrix;
 
-    uniform mat4 mdlvMtx;
-    uniform mat4 projMtx;
-    uniform mat4 texMtx;
+    out vec4 frontColor;
+    out vec4 texCoord;
 
     void main()
     {
-        vec4 pos = mdlvMtx * vec4(aPos.x, aPos.y, 1.0, 1.0);
-        gl_Position = projMtx * pos;
+        gl_Position = projectionMatrix * (modelViewMatrix * vec4(positionAttribute.x, positionAttribute.y, 0.0, 1.0));
 
-        ourColor = aColor;
-        vec4 coord = vec4(aTexCoord, 1.0, 1.0) * texMtx;
-        TexCoord = coord.yx;
-        TexCoord = aTexCoord;
+        frontColor = colorAttribute;
+
+        //vec4 coord = vec4(texCoordAttribute, 1.0, 1.0) * textureMatrix;
+        texCoord = textureMatrix * vec4(texCoordAttribute, 0.0, 1.0);
     }
 )text";
 
 static const char *const fragmentTexture = R"text(
     #version 330
 
-    out vec4 FragColor;
+    in vec4 frontColor;
+    in vec4 texCoord;
 
-    in vec4 ourColor;
-    in vec2 TexCoord;
+    uniform sampler2D texture;
 
-    uniform sampler2D ourTexture;
+    out vec4 fragColor;
 
     void main()
     {
-        FragColor = texture2D(ourTexture, TexCoord) * ourColor;
+        fragColor = texture2D(texture, texCoord.xy) * frontColor;
     }
 )text";
 
@@ -115,15 +84,17 @@ static GLuint createAndCompileShader(GLenum type, const char *source) {
 
     GLint success;
     GLchar msg[512];
+    GLuint handle;
 
-    GLuint handle = glCreateShader(type);
+    GL_CHECK(handle = glCreateShader(type));
     if (!handle) {
         printf("%u: cannot create shader\n", type);
         return 0;
     }
-    glShaderSource(handle, 1, &source, nullptr);
-    glCompileShader(handle);
-    glGetShaderiv(handle, GL_COMPILE_STATUS, &success);
+
+    GL_CHECK(glShaderSource(handle, 1, &source, nullptr));
+    GL_CHECK(glCompileShader(handle));
+    GL_CHECK(glGetShaderiv(handle, GL_COMPILE_STATUS, &success));
 
     if (!success) {
         glGetShaderInfoLog(handle, sizeof(msg), nullptr, msg);
@@ -137,39 +108,53 @@ static GLuint createAndCompileShader(GLenum type, const char *source) {
 
 GLShader::GLShader(const char *vertex, const char *fragment) {
 
-    GLuint vsh = createAndCompileShader(GL_VERTEX_SHADER, vertex);
+    GLuint vsh, fsh;
+
+    GL_CHECK(vsh = createAndCompileShader(GL_VERTEX_SHADER, vertex));
     if (!vsh) {
         return;
     }
 
-    GLuint fsh = createAndCompileShader(GL_FRAGMENT_SHADER, fragment);
+    GL_CHECK(fsh = createAndCompileShader(GL_FRAGMENT_SHADER, fragment));
     if (!fsh) {
         glDeleteShader(vsh);
         return;
     }
 
-    program = glCreateProgram();
-    glAttachShader(program, vsh);
-    glAttachShader(program, fsh);
-    glLinkProgram(program);
+    GL_CHECK(program = glCreateProgram());
+    GL_CHECK(glAttachShader(program, vsh));
+    GL_CHECK(glAttachShader(program, fsh));
+    GL_CHECK(glLinkProgram(program));
 
     GLint success;
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    GL_CHECK(glGetProgramiv(program, GL_LINK_STATUS, &success));
     if (!success) {
         char buf[512];
         glGetProgramInfoLog(program, sizeof(buf), nullptr, buf);
         printf("Link error: %s\n", buf);
     }
 
-    glDeleteShader(vsh);
-    glDeleteShader(fsh);
+    GL_CHECK(glDeleteShader(vsh));
+    GL_CHECK(glDeleteShader(fsh));
 
     available = true;
 }
 
+void GLShader::SetUniformMatrix(const GLchar *name, const GLfloat *value) {
+
+    GLint loc;
+    GL_CHECK(loc = glGetUniformLocation(program, name));
+    GL_CHECK(glUniformMatrix4fv(loc, 1, GL_FALSE, value));
+}
+
+GLuint GLShader::GetProgram() {
+
+    return program;
+}
+
 GLShader::~GLShader() {
     if (program) {
-        glDeleteProgram(program);
+        GL_CHECK(glDeleteProgram(program));
     }
 }
 
@@ -179,28 +164,19 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
     color = new Shader("color", colorShader);
 
     get(0)->data = new GLShader(vertexTexture, fragmentTexture);
-
-    GLuint err;
-    if ((err = glGetError()) != GL_NO_ERROR) {
-        printf("glUseProgram: 0x%x\n", err);
-        return;
-    }
-
-    /*
-    // parent class add a "NONE" shader, we set it to a simple texture shader
-    get(0)->data = create((SceGxmProgram *) texture_v, (SceGxmProgram *) texture_f);
-
-    add("lcd3x",
-        create((SceGxmProgram *) lcd3x_v, (SceGxmProgram *) lcd3x_f));
-    add("sharp+scan",
-        create((SceGxmProgram *) sharp_bilinear_v, (SceGxmProgram *) sharp_bilinear_f));
-    add("sharp",
-        create((SceGxmProgram *) sharp_bilinear_simple_v, (SceGxmProgram *) sharp_bilinear_simple_f));
-
-    printf("PSP2ShaderList: found %i shaders\n", getCount() - 1);
-    */
 }
 
 GLShaderList::~GLShaderList() {
 
+    if (color) {
+        delete (color);
+        color = nullptr;
+    }
+
+    for (int i = 0; i < getCount(); i++) {
+        if (get(i)->data != nullptr) {
+            delete ((GLShader *) get(i)->data);
+            get(i)->data = nullptr;
+        }
+    }
 }

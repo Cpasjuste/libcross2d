@@ -7,6 +7,8 @@
 
 #include "skeleton/renderer.h"
 
+#define MAX_VERTEX 0x10000
+
 namespace c2d {
 
     class GLRenderer : public Renderer {
@@ -16,6 +18,8 @@ namespace c2d {
         GLRenderer(const Vector2f &size = Vector2f(0, 0));
 
         ~GLRenderer();
+
+        virtual void initGL();
 
         virtual void draw(const VertexArray &vertices,
                           const Transform &transform,

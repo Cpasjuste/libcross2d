@@ -2,8 +2,8 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#ifndef SDL2_RENDERER_H
-#define SDL2_RENDERER_H
+#ifndef SDL2_GL_RENDERER_H
+#define SDL2_GL_RENDERER_H
 
 #include <SDL2/SDL.h>
 #include "platforms/gl/gl_renderer.h"
@@ -25,9 +25,8 @@ namespace c2d {
     private:
 
         SDL_Window *window = nullptr;
-        SDL_Renderer *renderer = nullptr;
-        SDL_Surface *surface = nullptr;
+        SDL_GLContext ctx = nullptr;
     };
 }
 
-#endif //SDL2_RENDERER_H
+#endif // SDL2_GL_RENDERER_H

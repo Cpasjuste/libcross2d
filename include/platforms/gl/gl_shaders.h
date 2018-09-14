@@ -21,6 +21,11 @@ namespace c2d {
 
         ~GLShader();
 
+        void SetUniformMatrix(const GLchar *name, const GLfloat *value);
+
+        GLuint GetProgram();
+
+    private:
         GLuint program;
 
         bool available = false;

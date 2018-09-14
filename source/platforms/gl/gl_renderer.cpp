@@ -10,14 +10,31 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
-#include <err.h>
 
 using namespace c2d;
 
 GLRenderer::GLRenderer(const Vector2f &size) : Renderer(size) {
 
     setSize(size.x, size.y);
+}
+
+void GLRenderer::initGL() {
+
+    // init shaders
+    shaderList = (ShaderList *) new GLShaderList();
+
+    // vao
+    GL_CHECK(glGenVertexArrays(1, &vao));
+    GL_CHECK(glBindVertexArray(vao));
+
+    // vbo
+    GL_CHECK(glGenBuffers(1, &vbo));
+    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+    GL_CHECK(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * MAX_VERTEX, nullptr, GL_STREAM_DRAW));
+    //GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
+
+    GL_CHECK(glDisable(GL_DEPTH_TEST));
+    GL_CHECK(glDepthMask(GL_FALSE));
 }
 
 void GLRenderer::draw(const VertexArray &vertexArray,
@@ -30,13 +47,17 @@ void GLRenderer::draw(const VertexArray &vertexArray,
     GLShader *shader = tex && tex->available ? (GLShader *) shaderList->get(0)->data :
                        (GLShader *) ((GLShaderList *) shaderList)->color->data;
 
-    setFillColor(Color::Red);
-    GL_CHECK(glBindVertexArray(vao));
+    // bind vao/vbo
+    if (vbo_offset + count >= MAX_VERTEX) {
+        vbo_offset = 0;
+    }
 
-    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+    //GL_CHECK(glBindVertexArray(vao));
+    //GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
     GL_CHECK(glBufferSubData(GL_ARRAY_BUFFER, sizeof(Vertex) * vbo_offset, sizeof(Vertex) * count, vertices));
 
-    GL_CHECK(glUseProgram(shader->program));
+    // set shader
+    GL_CHECK(glUseProgram(shader->GetProgram()));
 
     // set vertex position
     GL_CHECK(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
@@ -48,11 +69,9 @@ void GLRenderer::draw(const VertexArray &vertexArray,
                                    (void *) offsetof(Vertex, color)));
     GL_CHECK(glEnableVertexAttribArray(1));
 
-    //printf("%f %f\n", texture->get, vertices->texCoords.y);
-
     if (tex && tex->available) {
 
-        //GL_CHECK(glActiveTexture(GL_TEXTURE0));
+        // bind texture
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, tex->texID));
 
         // set tex coords
@@ -60,29 +79,28 @@ void GLRenderer::draw(const VertexArray &vertexArray,
                                        (void *) offsetof(Vertex, texCoords)));
         GL_CHECK(glEnableVertexAttribArray(2));
 
-        // set texture unit
-        //GLint loc_tex;
-        //GL_CHECK(loc_tex = glGetUniformLocation(shader->program, "tex"));
-        //GL_CHECK(glUniform1i(loc_tex, 0));
+        // normalize texture coords
+        GLfloat texMtx[16] = {1.f, 0.f, 0.f, 0.f,
+                              0.f, 1.f, 0.f, 0.f,
+                              0.f, 0.f, 1.f, 0.f,
+                              0.f, 0.f, 0.f, 1.f};
+        texMtx[0] = 1.f / texture->getSize().x;
+        texMtx[5] = 1.f / texture->getSize().y;
+        //texMtx[10] = 1.f / texture->getSize().x;
+        //texMtx[15] = 1.f / texture->getSize().y;
+
+        shader->SetUniformMatrix("textureMatrix", texMtx);
 
     }
 
     // set projection matrix
-    GLint loc_projMtx;
-    GL_CHECK(loc_projMtx = glGetUniformLocation(shader->program, "projMtx"));
-    auto projMtx = glm::orthoLH(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
-    GL_CHECK(glUniformMatrix4fv(loc_projMtx, 1, GL_FALSE, glm::value_ptr(projMtx)));
+    auto mtx = glm::orthoLH(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
+    shader->SetUniformMatrix("projectionMatrix", glm::value_ptr(mtx));
 
-    // set model matrix
-    GLint loc_mdlvMtx;
-    GL_CHECK(loc_mdlvMtx = glGetUniformLocation(shader->program, "mdlvMtx"));
-    GL_CHECK(glUniformMatrix4fv(loc_mdlvMtx, 1, GL_FALSE, transform.getMatrix()));
+    // set model view matrix
+    shader->SetUniformMatrix("modelViewMatrix", transform.getMatrix());
 
-    // transform texture coordinates by the texture matrix
-    GLint loc_texMtx;
-    GL_CHECK(loc_texMtx = glGetUniformLocation(shader->program, "texMtx"));
-    GL_CHECK(glUniformMatrix4fv(loc_texMtx, 1, GL_FALSE, texture->getTransform().getMatrix()));
-
+    // enable blending if needed
     if (tex || vertices[0].color.a < 255) {
         GL_CHECK(glEnable(GL_BLEND));
         GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -98,8 +116,9 @@ void GLRenderer::draw(const VertexArray &vertexArray,
         GL_CHECK(glDisable(GL_BLEND));
     }
 
-    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
-    GL_CHECK(glBindVertexArray(0));
+    // disable vbo/vao
+    //GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    //GL_CHECK(glBindVertexArray(0));
 
     vbo_offset += count;
 }
@@ -120,11 +139,25 @@ void GLRenderer::flip(bool draw) {
     Renderer::flip(draw);
 
     //printf("flip: buffer offset = %i\n", (int) (sizeof(Vertex) * offset));
-    vbo_offset = 0;
+    // vbo_offset = 0;
 }
 
 GLRenderer::~GLRenderer() {
 
+    printf("~GLRenderer\n");
+
+    if (shaderList) {
+        delete (shaderList);
+        shaderList = nullptr;
+    }
+
+    if (vbo) {
+        GL_CHECK(glDeleteBuffers(1, &vbo));
+    }
+
+    if (vao) {
+        GL_CHECK(glDeleteVertexArrays(1, &vao));
+    }
 }
 
 #ifndef NDEBUG

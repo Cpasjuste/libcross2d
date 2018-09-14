@@ -8,8 +8,6 @@
 
 using namespace c2d;
 
-static SDL_GLContext ctx;
-
 SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
 
     if ((SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
@@ -30,18 +28,11 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
 
     window = SDL_CreateWindow(
-            "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+            "CROSS2D_SDL2_GL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
             (int) getSize().x, (int) getSize().y, flags);
-
-    if (window == nullptr) {
-        window = SDL_CreateWindow(
-                "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                (int) getSize().x, (int) getSize().y, 0);
-        if (window == nullptr) {
-            printf("Couldn't create window: %s\n", SDL_GetError());
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
-            return;
-        }
+    if (!window) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
+        return;
     }
 
     ctx = SDL_GL_CreateContext(window);
@@ -58,20 +49,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &minor);
     printf("OpenGL: %i.%i\n", major, minor);
 
-    // vao
-    GL_CHECK(glGenVertexArrays(1, &vao));
-    GL_CHECK(glBindVertexArray(0));
-
-    // vbo
-    GL_CHECK(glGenBuffers(1, &vbo));
-    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-    GL_CHECK(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 1024, nullptr, GL_STREAM_DRAW));
-    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
-
-    GL_CHECK(glDisable(GL_DEPTH_TEST));
-    GL_CHECK(glDepthMask(GL_FALSE));
-
-    shaderList = (ShaderList *) new GLShaderList();
+    initGL();
 
     available = true;
 
@@ -86,7 +64,6 @@ void SDL2Renderer::flip(bool draw) {
     }
 
     // flip
-    // GL_CHECK(glFinish());
     SDL_GL_SwapWindow(window);
 }
 
@@ -97,12 +74,16 @@ void SDL2Renderer::delay(unsigned int ms) {
 
 SDL2Renderer::~SDL2Renderer() {
 
-    GL_CHECK(glDeleteBuffers(1, &vbo));
-    GL_CHECK(glDeleteVertexArrays(1, &vao));
-
     printf("~SDL2Renderer\n");
-    SDL_GL_DeleteContext(ctx);
-    SDL_DestroyWindow(window);
+
+    if (ctx) {
+        SDL_GL_DeleteContext(ctx);
+    }
+
+    if (window) {
+        SDL_DestroyWindow(window);
+    }
+
     SDL_Quit();
 }
 
