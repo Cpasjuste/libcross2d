@@ -25,14 +25,24 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "skeleton/sfml/VertexArray.hpp"
+#ifdef __GL__
 
+#define GL_GLEXT_PROTOTYPES 1
+
+#include <GL/gl.h>
+#include <GL/glext.h>
+#include <platforms/gl/gl_renderer.h>
+
+#endif
+
+#include "skeleton/sfml/VertexArray.hpp"
 
 namespace c2d {
 ////////////////////////////////////////////////////////////
     VertexArray::VertexArray() :
             m_vertices(),
             m_primitiveType(Points) {
+        updateVbo();
     }
 
 
@@ -40,6 +50,7 @@ namespace c2d {
     VertexArray::VertexArray(PrimitiveType type, std::size_t vertexCount) :
             m_vertices(vertexCount),
             m_primitiveType(type) {
+        updateVbo();
     }
 
 
@@ -64,18 +75,21 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void VertexArray::clear() {
         m_vertices.clear();
+        updateVbo();
     }
 
 
 ////////////////////////////////////////////////////////////
     void VertexArray::resize(std::size_t vertexCount) {
         m_vertices.resize(vertexCount);
+        updateVbo();
     }
 
 
 ////////////////////////////////////////////////////////////
     void VertexArray::append(const Vertex &vertex) {
         m_vertices.push_back(vertex);
+        updateVbo();
     }
 
 
@@ -122,16 +136,39 @@ namespace c2d {
         }
     }
 
-    std::vector <Vertex> VertexArray::getVertices() const {
+    std::vector<Vertex> VertexArray::getVertices() const {
         return m_vertices;
     }
 
-////////////////////////////////////////////////////////////
-    // TODO:
-    /*
-    void VertexArray::draw(RenderTarget &target, RenderStates states) const {
-        if (!m_vertices.empty())
-            target.draw(&m_vertices[0], m_vertices.size(), m_primitiveType, states);
+#ifdef __GL__
+
+    void VertexArray::updateVbo() {
+        if (!vbo) {
+            GL_CHECK(glGenBuffers(1, &vbo));
+        }
+
+        GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+        GL_CHECK(glBufferData(GL_ARRAY_BUFFER,
+                              sizeof(Vertex) * m_vertices.size(), m_vertices.data(), GL_STATIC_DRAW));
+        GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
     }
-    */
-} // namespace sf
+
+    void VertexArray::bindVbo() const {
+
+        GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+    }
+
+    void VertexArray::unbindVbo() const {
+
+        GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    }
+
+    VertexArray::~VertexArray() {
+        if (vbo) {
+            GL_CHECK(glDeleteBuffers(1, &vbo));
+        }
+    }
+
+#endif
+
+} // namespace c2d

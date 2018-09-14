@@ -30,9 +30,17 @@ namespace c2d {
 
         void setFiltering(int filter);
 
+        //void bindBuffer(bool generate = false);
+        //void unBindBuffer();
+
         unsigned int texID = 0;
 
         unsigned char *pixels = NULL;
+
+    private:
+
+        //unsigned int vbo = 0;
+
     };
 }
 

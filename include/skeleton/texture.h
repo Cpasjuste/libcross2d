@@ -45,15 +45,21 @@ namespace c2d {
         virtual void applyShader() {};
         // END - to implement, device specific code
 
-        ////////////////// NEW //////////
-        void setTextureRect(const IntRect& rectangle);
-        void setColor(const Color& color);
+        void setTextureRect(const IntRect &rectangle);
 
-        const IntRect& getTextureRect() const;
-        const Color& getColor() const;
+        void setOriginCenter();
+
+        void setColor(const Color &color);
+
+        const IntRect &getTextureRect() const;
+
+        const Color &getColor() const;
+
         FloatRect getLocalBounds() const;
+
         FloatRect getGlobalBounds() const;
-        VertexArray getVertices() const;
+
+        VertexArray *getVertices();
 
         char path[512];
         int format = C2D_TEXTURE_FMT_RGBA8;
@@ -61,17 +67,18 @@ namespace c2d {
         int pitch = 0;
         int filtering = C2D_TEXTURE_FILTER_LINEAR;
         ShaderList::Shader *shader = NULL;
-        //bool available = false;
 
     private:
 
         virtual void draw(Transform &transform);
 
         void updatePositions();
+
         void updateTexCoords();
-        VertexArray m_vertices; ///< Vertices defining the sprite's geometry
-        const Texture *m_texture;     ///< Texture of the sprite
-        IntRect m_textureRect; ///< Rectangle defining the area of the source texture to display
+
+        VertexArray m_vertices;
+        const Texture *m_texture;
+        IntRect m_textureRect;
 
     };
 }

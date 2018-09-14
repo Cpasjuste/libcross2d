@@ -42,8 +42,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
         return;
     }
 
-    SDL_GL_SetSwapInterval(1);
-
     int major, minor;
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &minor);

@@ -331,34 +331,17 @@ namespace sfml {
         setOrigin(getLocalBounds().width, getLocalBounds().height);
     }
 
-    VertexArray Text::getVertices() const {
+    VertexArray *Text::getVertices() {
         ensureGeometryUpdate();
-        return m_vertices;
+        return &m_vertices;
     }
 
-    VertexArray Text::getOutlineVertices() const {
+    VertexArray *Text::getOutlineVertices() {
         ensureGeometryUpdate();
-        return m_outlineVertices;
+        return &m_outlineVertices;
     }
 
 ////////////////////////////////////////////////////////////
-    /*
-    void Text::draw(Renderer *render, const Transform &transform) {
-        if (m_font) {
-
-            ensureGeometryUpdate();
-
-            Transform combined = transform * getTransform();
-
-            // Only draw the outline if there is something to draw
-            if (m_outlineThickness != 0)
-                render->draw(m_outlineVertices, combined, &m_font->getTexture(m_characterSize));
-
-            render->draw(m_vertices, combined, &m_font->getTexture(m_characterSize));
-            //render->drawTexture((Texture &) m_font->getTexture(m_characterSize), combined);
-        }
-    }
-    */
 
     void Text::setSizeMax(const c2d::Vector2f &size) {
         maxSize = size;

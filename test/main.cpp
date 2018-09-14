@@ -18,31 +18,22 @@ int main() {
 
     // create a rect
     Rectangle *rect = new C2DRectangle(
-            FloatRect(256, 256,
+            FloatRect(renderer->getSize().x / 2, renderer->getSize().y / 2,
                       renderer->getSize().x / 2, renderer->getSize().y / 2));
-    //rect->setOriginCenter();
+    rect->setOriginCenter();
     rect->setFillColor(Color::Gray);
     rect->setOutlineColor(Color::Orange);
     rect->setOutlineThickness(8);
 
-    Rectangle *rect2 = new C2DRectangle(
-            FloatRect(300, 300,
-                      renderer->getSize().x / 4, renderer->getSize().y / 4));
-    //rect->setOriginCenter();
-    rect2->setFillColor(Color::GrayLight);
-    rect2->setOutlineColor(Color::Yellow);
-    rect2->setOutlineThickness(8);
-
     // create a texture and add it to the rect
     Texture *tex = new C2DTexture((const unsigned char *) pfba_title, pfba_title_length);
     if (tex->available) {
-        tex->setPosition(0, 0);
-        //tex->setScale(0.5f, 0.5f);
-        //tex->setOriginCenter();
-        //rect->add(tex);
+        tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
+        tex->setScale(0.5f, 0.5f);
+        tex->setOriginCenter();
+        rect->add(tex);
     }
 
-    /*
     // create a font
     Font font;
     if (font.loadFromMemory(pfba_font, pfba_font_length)) {
@@ -54,17 +45,14 @@ int main() {
         text->setPosition(rect->getSize().x / 2, 32);
         rect->add(text);
     }
-    */
 
     // add all this crap to the renderer
-    //renderer->add(rect);
-    //renderer->add(rect2);
-    renderer->add(tex);
+    renderer->add(rect);
 
     Input *input = new C2DInput(nullptr);
     input->setJoystickMapping(0, KEYS, 0);
 
-    while (renderer->getElapsedTime().asSeconds() < 2000) {
+    while (renderer->getElapsedTime().asSeconds() < 5) {
 
         // handle input
         unsigned int key = input->update()[0].state;
@@ -74,12 +62,12 @@ int main() {
 
         // time / delta time
         float delta = renderer->getDeltaTime().asSeconds();
-        //printf("Time: %f (delta: %f), fps: %2g\n",
-        //       renderer->getElapsedTime().asSeconds(), delta, renderer->getFps());
+        printf("Time: %f (delta: %f), fps: %2g\n",
+               renderer->getElapsedTime().asSeconds(), delta, renderer->getFps());
 
         // render
         rect->move(10 * delta, 0);
-        //rect->setScale(rect->getScale().x - (0.01f * delta), rect->getScale().y - (0.01f * delta));
+        rect->setScale(rect->getScale().x + (0.1f * delta), rect->getScale().y + (0.1f * delta));
         rect->rotate(50 * delta);
 
         renderer->flip();

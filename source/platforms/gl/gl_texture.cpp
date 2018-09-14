@@ -30,9 +30,9 @@ GLTexture::GLTexture(const char *path) : Texture(path) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     if (texID) {
-        setTextureRect(IntRect(0, 0, w, h));
         bpp = 4;
         pitch = getTextureRect().width * bpp;
+        setTextureRect(IntRect(0, 0, w, h));
         available = true;
     } else {
         printf("GLTexture::GLTexture: couldn't create texture: %s\n", path);
@@ -62,9 +62,9 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
                           GL_RGBA, GL_UNSIGNED_BYTE, pixels));
 
     if (texID) {
-        setTextureRect(IntRect(0, 0, w, h));
         bpp = 4;
         pitch = getTextureRect().width * bpp;
+        setTextureRect(IntRect(0, 0, w, h));
         available = true;
     } else {
         printf("GLTexture::GLTexture: couldn't create texture: %s\n", path);
@@ -212,6 +212,7 @@ void GLTexture::setFiltering(int filter) {
 GLTexture::~GLTexture() {
 
     printf("~GLTexture(%p)\n", this);
+
     if (pixels) {
         free(pixels);
         pixels = nullptr;

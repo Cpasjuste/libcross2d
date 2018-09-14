@@ -21,15 +21,13 @@ namespace c2d {
 
         virtual void initGL();
 
-        virtual void draw(const VertexArray &vertices,
+        virtual void draw(VertexArray *vertexArray,
                           const Transform &transform,
                           const Texture *texture);
 
         virtual void flip(bool draw = true);
 
-        unsigned int vbo = 0;
         unsigned int vao = 0;
-        unsigned int vbo_offset = 0;
     };
 
     void CheckOpenGLError(const char *stmt, const char *fname, int line);

@@ -20,55 +20,41 @@ GLRenderer::GLRenderer(const Vector2f &size) : Renderer(size) {
 
 void GLRenderer::initGL() {
 
-    // init shaders
-    shaderList = (ShaderList *) new GLShaderList();
-
     // vao
     GL_CHECK(glGenVertexArrays(1, &vao));
     GL_CHECK(glBindVertexArray(vao));
 
-    // vbo
-    GL_CHECK(glGenBuffers(1, &vbo));
-    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-    GL_CHECK(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * MAX_VERTEX, nullptr, GL_STREAM_DRAW));
-    //GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
-
     GL_CHECK(glDisable(GL_DEPTH_TEST));
     GL_CHECK(glDepthMask(GL_FALSE));
+
+    // init shaders
+    shaderList = (ShaderList *) new GLShaderList();
 }
 
-void GLRenderer::draw(const VertexArray &vertexArray,
+void GLRenderer::draw(VertexArray *vertexArray,
                       const Transform &transform,
                       const Texture *texture) {
 
-    Vertex *vertices = vertexArray.getVertices().data();
-    size_t vertexCount = vertexArray.getVertexCount();
+    Vertex *vertices = vertexArray->getVertices().data();
+    size_t vertexCount = vertexArray->getVertexCount();
     GLTexture *glTexture = ((GLTexture *) texture);
     GLShader *shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(0)->data :
                        (GLShader *) ((GLShaderList *) shaderList)->color->data;
 
-    // reset vbo stream index
-    if (vbo_offset + vertexCount >= MAX_VERTEX) {
-        vbo_offset = 0;
-    }
-    // bind vao/vbo
-    //GL_CHECK(glBindVertexArray(vao));
-    //GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-    GL_CHECK(glBufferSubData(GL_ARRAY_BUFFER, sizeof(Vertex) * vbo_offset,
-                             sizeof(Vertex) * vertexCount, vertices));
-
     // set shader
     GL_CHECK(glUseProgram(shader->GetProgram()));
 
+    vertexArray->bindVbo();
+
     // set vertex position
+    GL_CHECK(glEnableVertexAttribArray(0));
     GL_CHECK(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                                    (void *) offsetof(Vertex, position)));
-    GL_CHECK(glEnableVertexAttribArray(0));
 
     // set vertex colors
+    GL_CHECK(glEnableVertexAttribArray(1));
     GL_CHECK(glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex),
                                    (void *) offsetof(Vertex, color)));
-    GL_CHECK(glEnableVertexAttribArray(1));
 
     if (glTexture && glTexture->available) {
 
@@ -76,9 +62,9 @@ void GLRenderer::draw(const VertexArray &vertexArray,
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, glTexture->texID));
 
         // set tex coords
+        GL_CHECK(glEnableVertexAttribArray(2));
         GL_CHECK(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                                        (void *) offsetof(Vertex, texCoords)));
-        GL_CHECK(glEnableVertexAttribArray(2));
 
         // normalize texture coords
         GLfloat texMtx[16] = {1.f, 0.f, 0.f, 0.f,
@@ -90,7 +76,7 @@ void GLRenderer::draw(const VertexArray &vertexArray,
         shader->SetUniformMatrix("textureMatrix", texMtx);
 
     } else {
-        GL_CHECK(glDisableVertexArrayAttrib(vao, 2));
+        GL_CHECK(glDisableVertexAttribArray(2));
     }
 
     // set projection matrix
@@ -109,19 +95,17 @@ void GLRenderer::draw(const VertexArray &vertexArray,
     // draw
     const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
                             GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
-    GLenum mode = modes[vertexArray.getPrimitiveType()];
-    GL_CHECK(glDrawArrays(mode, vbo_offset, (GLsizei) vertexCount));
-    //printf("glDrawArrays(0x%x, 0x%x, %i\n", mode, vbo_offset, vertexCount);
+    GLenum mode = modes[vertexArray->getPrimitiveType()];
+    GL_CHECK(glDrawArrays(mode, 0, (GLsizei) vertexCount));
+
+    GL_CHECK(glDisableVertexAttribArray(0));
+    GL_CHECK(glDisableVertexAttribArray(1));
+
+    vertexArray->unbindVbo();
 
     if (glTexture || vertices[0].color.a < 255) {
         GL_CHECK(glDisable(GL_BLEND));
     }
-
-    // disable vbo/vao
-    //GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
-    //GL_CHECK(glBindVertexArray(0));
-
-    vbo_offset += vertexCount;
 }
 
 void GLRenderer::flip(bool draw) {
@@ -147,10 +131,6 @@ GLRenderer::~GLRenderer() {
     if (shaderList) {
         delete (shaderList);
         shaderList = nullptr;
-    }
-
-    if (vbo) {
-        GL_CHECK(glDeleteBuffers(1, &vbo));
     }
 
     if (vao) {

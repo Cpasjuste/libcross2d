@@ -6,7 +6,7 @@
 
 using namespace c2d;
 
-Texture::Texture(const char *p) : Transformable()/*: RectangleShape(Vector2f(0, 0))*/ {
+Texture::Texture(const char *p) : Transformable() {
 
     printf("Texture(%p): %s\n", this, p);
 
@@ -23,7 +23,7 @@ Texture::Texture(const char *p) : Transformable()/*: RectangleShape(Vector2f(0, 
     thisTransform = this;
 }
 
-Texture::Texture(const unsigned char *buffer, int bufferSize) : Transformable()/*: RectangleShape(Vector2f(0, 0))*/ {
+Texture::Texture(const unsigned char *buffer, int bufferSize) : Transformable() {
 
     printf("Texture(%p)\n", this);
 
@@ -38,7 +38,7 @@ Texture::Texture(const unsigned char *buffer, int bufferSize) : Transformable()/
     thisTransform = this;
 }
 
-Texture::Texture(const Vector2f &size, int fmt) : Transformable()/*: RectangleShape(size)*/ {
+Texture::Texture(const Vector2f &size, int fmt) : Transformable() {
 
     printf("Texture(%p)\n", this);
 
@@ -54,20 +54,29 @@ Texture::Texture(const Vector2f &size, int fmt) : Transformable()/*: RectangleSh
     thisTransform = this;
 }
 
+Texture::~Texture() {
+    printf("~Texture(%p)\n", this);
+}
+
 void Texture::setTextureRect(const IntRect &rectangle) {
     if (rectangle != m_textureRect) {
         m_textureRect = rectangle;
         updatePositions();
         updateTexCoords();
+        m_vertices.updateVbo();
     }
 }
 
+void Texture::setOriginCenter() {
+    setOrigin((float) m_textureRect.width / 2, (float) m_textureRect.height / 2);
+}
 
 void Texture::setColor(const Color &color) {
     m_vertices[0].color = color;
     m_vertices[1].color = color;
     m_vertices[2].color = color;
     m_vertices[3].color = color;
+    m_vertices.updateVbo();
 }
 
 const IntRect &Texture::getTextureRect() const {
@@ -90,9 +99,13 @@ FloatRect Texture::getGlobalBounds() const {
     return getTransform().transformRect(getLocalBounds());
 }
 
-VertexArray Texture::getVertices() const {
-    return m_vertices;
+VertexArray *Texture::getVertices() {
+    return &m_vertices;
 }
+
+////////////////////////////////////////////////////////////
+//// PRIVATE
+////////////////////////////////////////////////////////////
 
 void Texture::updatePositions() {
     FloatRect bounds = getLocalBounds();
@@ -103,8 +116,6 @@ void Texture::updatePositions() {
     m_vertices[3].position = Vector2f(bounds.width, bounds.height);
 }
 
-
-////////////////////////////////////////////////////////////
 void Texture::updateTexCoords() {
     float left = static_cast<float>(m_textureRect.left);
     float right = left + m_textureRect.width;
@@ -124,8 +135,4 @@ void Texture::draw(Transform &transform) {
 
     // call base class (draw childs)
     C2DObject::draw(transform);
-}
-
-Texture::~Texture() {
-    printf("~Texture(%p)\n", this);
 }
