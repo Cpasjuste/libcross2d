@@ -44,7 +44,7 @@ void GLRenderer::draw(VertexArray *vertexArray,
     size_t vertexCount = vertexArray->getVertexCount();
     GLTexture *glTexture = ((GLTexture *) texture);
 
-    GLShader *shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(1)->data :
+    GLShader *shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(0)->data :
                        (GLShader *) ((GLShaderList *) shaderList)->color->data;
 
     // set shader

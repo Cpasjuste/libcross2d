@@ -143,7 +143,7 @@ GLShader::GLShader(const char *vertex, const char *fragment) {
 void GLShader::SetUniformMatrix(const GLchar *n, const GLfloat *v) {
     GLint loc;
     GL_CHECK(loc = glGetUniformLocation(program, n));
-    if (loc) {
+    if (loc > -1) {
         GL_CHECK(glUniformMatrix4fv(loc, 1, GL_FALSE, v));
     }
 }
@@ -151,7 +151,7 @@ void GLShader::SetUniformMatrix(const GLchar *n, const GLfloat *v) {
 void GLShader::SetUniform(const GLchar *n, const Vector2f &v) {
     GLint loc;
     GL_CHECK(loc = glGetUniformLocation(program, n));
-    if (loc) {
+    if (loc > -1) {
         GL_CHECK(glUniform2f(loc, v.x, v.y));
     }
 }
@@ -159,7 +159,7 @@ void GLShader::SetUniform(const GLchar *n, const Vector2f &v) {
 void GLShader::SetUniform(const GLchar *n, const float v0, const float v1) {
     GLint loc;
     GL_CHECK(loc = glGetUniformLocation(program, n));
-    if (loc) {
+    if (loc > -1) {
         GL_CHECK(glUniform2f(loc, v0, v1));
     }
 }
@@ -167,7 +167,7 @@ void GLShader::SetUniform(const GLchar *n, const float v0, const float v1) {
 void GLShader::SetUniform(const GLchar *n, int v) {
     GLint loc;
     GL_CHECK(loc = glGetUniformLocation(program, n));
-    if (loc) {
+    if (loc > -1) {
         GL_CHECK(glUniform1i(loc, v));
     }
 }
