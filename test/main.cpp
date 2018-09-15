@@ -67,9 +67,9 @@ int main() {
                renderer->getElapsedTime().asSeconds(), delta, renderer->getFps());
 
         // render
-        rect->move(10 * delta, 0);
-        rect->setScale(rect->getScale().x + (0.1f * delta), rect->getScale().y + (0.1f * delta));
-        rect->rotate(50 * delta);
+        //rect->move(10 * delta, 0);
+        //rect->setScale(rect->getScale().x + (0.1f * delta), rect->getScale().y + (0.1f * delta));
+        //rect->rotate(50 * delta);
 
         renderer->flip();
     }

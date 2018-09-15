@@ -43,7 +43,8 @@ void GLRenderer::draw(VertexArray *vertexArray,
     Vertex *vertices = vertexArray->getVertices().data();
     size_t vertexCount = vertexArray->getVertexCount();
     GLTexture *glTexture = ((GLTexture *) texture);
-    GLShader *shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(0)->data :
+
+    GLShader *shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(1)->data :
                        (GLShader *) ((GLShaderList *) shaderList)->color->data;
 
     // set shader
@@ -79,6 +80,11 @@ void GLRenderer::draw(VertexArray *vertexArray,
         texMtx[0] = 1.f / texture->getTextureRect().width;
         texMtx[5] = 1.f / texture->getTextureRect().height;
         shader->SetUniformMatrix("textureMatrix", texMtx);
+
+        // TODO: call only if available
+        shader->SetUniform("textureSize", texture->getTextureRect().width, texture->getTextureRect().height);
+        shader->SetUniform("inputSize", texture->getTextureRect().width, texture->getTextureRect().height);
+        shader->SetUniform("outputSize", texture->getLocalBounds().width, texture->getLocalBounds().height);
 
     } else {
         GL_CHECK(glDisableVertexAttribArray(2));

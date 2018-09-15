@@ -16,7 +16,13 @@ namespace c2d {
 
         ~GLShader();
 
-        void SetUniformMatrix(const GLchar *name, const GLfloat *value);
+        void SetUniformMatrix(const GLchar *n, const GLfloat *v);
+
+        void SetUniform(const GLchar *n, const Vector2f &v);
+
+        void SetUniform(const GLchar *n, const float v0, const float v1);
+
+        void SetUniform(const GLchar *n, const int v);
 
         GLuint GetProgram();
 
