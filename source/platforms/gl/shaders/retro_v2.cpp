@@ -67,7 +67,5 @@ const char *fragment_retro_v2 = R"text(
 
         // Product interpolation
         fragColor = vec4(clamp( pow(res, vec3(1.0 / 2.2)), 0.0, 1.0 ), 1.0);
-
-        //fragColor = texture2D(texture, texCoord.xy) * frontColor;
     }
 )text";
