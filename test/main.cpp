@@ -4,6 +4,7 @@
 
 #include "c2d.h"
 #include "main.h"
+#include <unistd.h>
 
 #include "../res/default.h"
 #include "../res/title.h"

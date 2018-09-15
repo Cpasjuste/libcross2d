@@ -29,7 +29,7 @@ int KEYS[]{
 #define FONT_PATH   "/default.ttf"
 #define TEX_PATH    "/title.png"
 
-#elif __NX__
+#elif __SWITCH__
 
 #define SCR_W 1280
 #define SCR_H 720

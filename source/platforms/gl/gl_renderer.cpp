@@ -5,7 +5,8 @@
 #ifdef __GL__
 
 #include "c2d.h"
-#include <GL/gl.h>
+
+#define GLM_FORCE_PURE
 
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -15,10 +16,14 @@ using namespace c2d;
 
 GLRenderer::GLRenderer(const Vector2f &size) : Renderer(size) {
 
-    setSize(size.x, size.y);
+    printf("GLRenderer\n");
 }
 
 void GLRenderer::initGL() {
+
+#ifdef __SWITCH__
+    gladLoadGL();
+#endif
 
     // vao
     GL_CHECK(glGenVertexArrays(1, &vao));

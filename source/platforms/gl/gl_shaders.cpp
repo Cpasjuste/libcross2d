@@ -2,6 +2,8 @@
 // Created by cpasjuste on 27/01/17.
 //
 
+#ifdef __GL__
+
 #include "c2d.h"
 
 using namespace c2d;
@@ -177,3 +179,5 @@ GLShaderList::~GLShaderList() {
         }
     }
 }
+
+#endif // __GL__

@@ -3,7 +3,6 @@
 //
 
 #ifndef __SDL2_GL__
-#ifndef __SDL2_GLES__
 
 #include <png.h>
 #include "c2d.h"
@@ -319,5 +318,4 @@ SDL2Texture::~SDL2Texture() {
     }
 }
 
-#endif // __SDL2_GLES__
 #endif // __SDL2_GL__

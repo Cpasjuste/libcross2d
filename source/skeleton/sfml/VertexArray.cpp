@@ -25,16 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#ifdef __GL__
 
-#define GL_GLEXT_PROTOTYPES 1
-
-#include <GL/gl.h>
-#include <GL/glext.h>
-#include <platforms/gl/gl_renderer.h>
-
-#endif
-
+#include "c2d.h"
 #include "skeleton/sfml/VertexArray.hpp"
 
 namespace c2d {
@@ -142,6 +134,10 @@ namespace c2d {
 
     void VertexArray::updateVbo() {
 #ifdef __GL__
+        if (!c2d_renderer || !c2d_renderer->available) {
+            return;
+        }
+
         if (!vbo) {
             GL_CHECK(glGenBuffers(1, &vbo));
         }
@@ -155,18 +151,27 @@ namespace c2d {
 
     void VertexArray::bindVbo() const {
 #ifdef __GL__
+        if (!c2d_renderer || !c2d_renderer->available) {
+            return;
+        }
         GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
 #endif
     }
 
     void VertexArray::unbindVbo() const {
 #ifdef __GL__
+        if (!c2d_renderer || !c2d_renderer->available) {
+            return;
+        }
         GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
 #endif
     }
 
     VertexArray::~VertexArray() {
 #ifdef __GL__
+        if (!c2d_renderer || !c2d_renderer->available) {
+            return;
+        }
         if (vbo) {
             GL_CHECK(glDeleteBuffers(1, &vbo));
         }

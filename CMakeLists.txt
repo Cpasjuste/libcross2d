@@ -11,7 +11,6 @@ option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
-option(BUILD_NX_GL "Build with NX support (software, osmesa)" OFF)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
@@ -162,33 +161,28 @@ elseif (BUILD_3DS)
     #####################
 elseif (BUILD_NX)
     set(PLATFORM_DIRS
-            source/platforms/nx
+            source/platforms/gl
+            source/platforms/sdl2
             source/platforms/posix
+            source/platforms/switch
             ${DEVKITPRO}/portlibs/switch/include/freetype2
             )
     file(GLOB PLATFORM_SRC
-            source/platforms/nx/*.c*
-            source/platforms/sdl2/sdl2_input.cpp
-            source/platforms/sdl2/sdl2_audio.cpp
+            source/platforms/gl/*.c*
+            source/platforms/sdl2/*.c*
             source/platforms/posix/posix_io.cpp
             source/platforms/posix/posix_clock.cpp
+            source/platforms/switch/*.c*
             )
-    list(APPEND FLAGS -D__NX__ -D__SWITCH__
+    list(APPEND FLAGS
             -ffunction-sections -fomit-frame-pointer
+            -D__SDL2_GL__ -D__GL__ -D__SWITCH__
+            -D_GLIBCXX_USE_C99_MATH_TR1 -D_LDBL_EQ_DBL
             )
-    set(PLATFORM_LIBS SDL2 EGL glapi drm_nouveau nx freetype png bz2 z)
-    if (BUILD_NX_GL)
-        list(APPEND PLATFORM_DIRS source/platforms/gl)
-        list(APPEND PLATFORM_SRC
-                source/platforms/gl/gl_renderer.cpp
-                source/platforms/gl/gl_texture.cpp)
-        list(APPEND FLAGS -D__GL__ -D__MESAGL__)
-        list(APPEND PLATFORM_LIBS OSMesa)
-    else ()
-        list(APPEND PLATFORM_SRC
-                source/platforms/sdl2/sdl2_renderer.cpp
-                source/platforms/sdl2/sdl2_texture.cpp)
-    endif (BUILD_NX_GL)
+    set(PLATFORM_LIBS
+            SDL2 glad EGL glapi drm_nouveau nx
+            freetype png bz2 z
+            )
     #####################
     # SDL2 PLATORM
     #####################

@@ -5,7 +5,6 @@
 #ifdef __GL__
 
 #include "c2d.h"
-#include <GL/gl.h>
 #include "skeleton/lodepng.h"
 
 using namespace c2d;

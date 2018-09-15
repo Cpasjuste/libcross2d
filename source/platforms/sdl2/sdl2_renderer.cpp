@@ -7,7 +7,6 @@
 //
 
 #ifndef __SDL2_GL__
-#ifndef __SDL2_GLES__
 
 #ifdef __SWITCH__
 
@@ -313,5 +312,4 @@ extern "C" void userAppExit() {
 #endif
 #endif
 
-#endif // __SDL2_GLES__
 #endif // __SDL2_GL__
