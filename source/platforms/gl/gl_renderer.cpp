@@ -84,7 +84,10 @@ void GLRenderer::draw(VertexArray *vertexArray,
         // TODO: call only if available
         shader->SetUniform("textureSize", texture->getTextureRect().width, texture->getTextureRect().height);
         shader->SetUniform("inputSize", texture->getTextureRect().width, texture->getTextureRect().height);
-        shader->SetUniform("outputSize", texture->getLocalBounds().width, texture->getLocalBounds().height);
+        shader->SetUniform("outputSize", texture->getGlobalBounds().width, texture->getGlobalBounds().height);
+
+        //printf("tex: %ix%i, out: %fx%f\n",texture->getTextureRect().width, texture->getTextureRect().height,
+        //       texture->getGlobalBounds().width, texture->getGlobalBounds().height);
 
     } else {
         GL_CHECK(glDisableVertexAttribArray(2));

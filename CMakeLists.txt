@@ -208,6 +208,7 @@ elseif (BUILD_SDL2)
                 source/platforms/gl/gl_texture.cpp
                 source/platforms/gl/gl_shaders.cpp
                 source/platforms/gl/shaders/retro_v2.cpp
+                source/platforms/gl/shaders/sharp_bilinear_scanlines.cpp
                 )
         list(APPEND FLAGS -D__SDL2_GL__ -D__GL__)
         list(APPEND PLATFORM_LIBS GL)

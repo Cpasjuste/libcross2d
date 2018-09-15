@@ -6,6 +6,7 @@
 
 #include "c2d.h"
 #include "shaders/retro_v2.h"
+#include "shaders/sharp_bilinear_scanlines.h"
 
 using namespace c2d;
 
@@ -192,6 +193,8 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
 
     // retro v2
     add("retro v2", new GLShader(vertex_retro_v2, fragmentTexture));
+    add("sharp bilinear scanlines", new GLShader(vertex_sharp_bilinear_scanlines,
+                                                 fragment_sharp_bilinear_scanlines));
 }
 
 GLShaderList::~GLShaderList() {

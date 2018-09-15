@@ -33,8 +33,6 @@ const char *fragment_retro_v2 = R"text(
     in vec4 frontColor;
     in vec4 texCoord;
 
-    uniform int frameDirection;
-    uniform int frameCount;
     uniform vec2 outputSize;
     uniform vec2 textureSize;
     uniform vec2 inputSize;
