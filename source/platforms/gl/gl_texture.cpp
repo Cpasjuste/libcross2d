@@ -31,8 +31,8 @@ GLTexture::GLTexture(const char *path) : Texture(path) {
 
     if (texID) {
         bpp = 4;
-        pitch = getTextureRect().width * bpp;
         setTextureRect(IntRect(0, 0, w, h));
+        pitch = getTextureRect().width * bpp;
         available = true;
     } else {
         printf("GLTexture::GLTexture: couldn't create texture: %s\n", path);
@@ -63,8 +63,8 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
 
     if (texID) {
         bpp = 4;
-        pitch = getTextureRect().width * bpp;
         setTextureRect(IntRect(0, 0, w, h));
+        pitch = getTextureRect().width * bpp;
         available = true;
     } else {
         printf("GLTexture::GLTexture: couldn't create texture: %s\n", path);

@@ -172,15 +172,11 @@ namespace c2d {
 
         std::vector<Vertex> getVertices() const;
 
-#ifdef __GL__
-
         void bindVbo() const;
 
         void unbindVbo() const;
 
         void updateVbo();
-
-#endif
 
     private:
 
@@ -189,9 +185,7 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         std::vector<Vertex> m_vertices;      ///< Vertices contained in the array
         PrimitiveType m_primitiveType; ///< Type of primitives to draw
-#ifdef __GL__
         unsigned int vbo = 0;
-#endif
     };
 
 } // namespace c2d

@@ -83,12 +83,13 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
     available = true;
 }
 
-void SDL2Renderer::draw(const VertexArray &vertices,
+void SDL2Renderer::draw(VertexArray *vertexArray,
                         const Transform &transform,
                         const Texture *texture) {
 
-    size_t count = vertices.getVertexCount();
-    int type = vertices.getPrimitiveType();
+    size_t count = vertexArray->getVertexCount();
+    int type = vertexArray->getPrimitiveType();
+    Vertex *vertices = vertexArray->getVertices().data();
 
     //printf("draw: type=%i | vertex=%i\n", type, (int) count);
 
@@ -157,6 +158,7 @@ void SDL2Renderer::draw(const VertexArray &vertices,
 
     } else if (type == 3 || type == 5) {
 
+        // TODO: fix new texcoords
         // Triangles // TriangleFan
         int p0 = type == 3 ? 0 : 5;
         int p1 = type == 3 ? 5 : 3;

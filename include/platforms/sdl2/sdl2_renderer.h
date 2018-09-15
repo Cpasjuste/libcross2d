@@ -17,7 +17,7 @@ namespace c2d {
 
         ~SDL2Renderer();
 
-        void draw(const VertexArray &vertices,
+        void draw(VertexArray *vertices,
                   const Transform &transform,
                   const Texture *texture);
 

@@ -22,9 +22,8 @@ SDL2Texture::SDL2Texture(const char *path) : Texture(path) {
         return;
     }
 
-    setSize(Vector2f(w, h));
     setTextureRect(IntRect(0, 0, w, h));
-    pitch = (int) (getSize().x * bpp);
+    pitch = getTextureRect().width * bpp;
 
     SDL_Surface *tmp =
             SDL_CreateRGBSurfaceWithFormatFrom(pixels, w, h, 32, pitch, SDL_PIXELFORMAT_RGBA32);
@@ -60,9 +59,8 @@ SDL2Texture::SDL2Texture(const unsigned char *buffer, int bufferSize) : Texture(
         return;
     }
 
-    setSize(Vector2f(w, h));
     setTextureRect(IntRect(0, 0, w, h));
-    pitch = (int) (getSize().x * bpp);
+    pitch = getTextureRect().width * bpp;
 
     SDL_Surface *tmp =
             SDL_CreateRGBSurfaceWithFormatFrom(pixels, w, h, 32, pitch, SDL_PIXELFORMAT_RGBA32);
@@ -101,6 +99,7 @@ SDL2Texture::SDL2Texture(const Vector2f &size, int format) : Texture(size, forma
         return;
     }
 
+    setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
 
     available = true;
@@ -154,7 +153,7 @@ int SDL2Texture::save(const char *path) {
     time_t currentTime;
     png_time_struct png_time_now;
 
-    int w = (int) getSize().x, h = (int) getSize().y;
+    int w = getTextureRect().width, h = getTextureRect().height;
 
     png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     if (!png_ptr) {

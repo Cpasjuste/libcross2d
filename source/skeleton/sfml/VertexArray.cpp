@@ -140,9 +140,8 @@ namespace c2d {
         return m_vertices;
     }
 
-#ifdef __GL__
-
     void VertexArray::updateVbo() {
+#ifdef __GL__
         if (!vbo) {
             GL_CHECK(glGenBuffers(1, &vbo));
         }
@@ -151,24 +150,27 @@ namespace c2d {
         GL_CHECK(glBufferData(GL_ARRAY_BUFFER,
                               sizeof(Vertex) * m_vertices.size(), m_vertices.data(), GL_STATIC_DRAW));
         GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
+#endif
     }
 
     void VertexArray::bindVbo() const {
-
+#ifdef __GL__
         GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+#endif
     }
 
     void VertexArray::unbindVbo() const {
-
+#ifdef __GL__
         GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
+#endif
     }
 
     VertexArray::~VertexArray() {
+#ifdef __GL__
         if (vbo) {
             GL_CHECK(glDeleteBuffers(1, &vbo));
         }
-    }
-
 #endif
+    }
 
 } // namespace c2d
