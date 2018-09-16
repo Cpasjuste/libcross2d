@@ -192,7 +192,7 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
     get(0)->data = new GLShader(vertexTexture, fragmentTexture);
 
     // retro v2
-    add("retro v2", new GLShader(vertex_retro_v2, fragmentTexture));
+    add("retro v2", new GLShader(vertex_retro_v2, fragment_retro_v2));
     add("sharp bilinear scanlines", new GLShader(vertex_sharp_bilinear_scanlines,
                                                  fragment_sharp_bilinear_scanlines));
 }

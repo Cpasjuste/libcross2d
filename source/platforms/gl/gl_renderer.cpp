@@ -46,6 +46,9 @@ void GLRenderer::draw(VertexArray *vertexArray,
 
     GLShader *shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(0)->data :
                        (GLShader *) ((GLShaderList *) shaderList)->color->data;
+    if (glTexture && glTexture->shader) {
+        shader = (GLShader *) glTexture->shader->data;
+    }
 
     // set shader
     GL_CHECK(glUseProgram(shader->GetProgram()));
@@ -87,7 +90,7 @@ void GLRenderer::draw(VertexArray *vertexArray,
         shader->SetUniform("outputSize", texture->getGlobalBounds().width, texture->getGlobalBounds().height);
 
         //printf("tex: %ix%i, out: %fx%f\n",texture->getTextureRect().width, texture->getTextureRect().height,
-        //       texture->getGlobalBounds().width, texture->getGlobalBounds().height);
+        //       texture->getGlobalBounds().width, texture->getLocalBounds().height);
 
     } else {
         GL_CHECK(glDisableVertexAttribArray(2));
