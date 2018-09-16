@@ -32,6 +32,10 @@ void GLRenderer::initGL() {
     GL_CHECK(glDisable(GL_DEPTH_TEST));
     GL_CHECK(glDepthMask(GL_FALSE));
 
+    // enable position and color array by default
+    GL_CHECK(glEnableVertexAttribArray(0));
+    GL_CHECK(glEnableVertexAttribArray(1));
+
     // init shaders
     shaderList = (ShaderList *) new GLShaderList();
 }
@@ -50,18 +54,17 @@ void GLRenderer::draw(VertexArray *vertexArray,
         shader = (GLShader *) glTexture->shader->data;
     }
 
+    // bind object vao
+    vertexArray->bindVbo();
+
     // set shader
     GL_CHECK(glUseProgram(shader->GetProgram()));
 
-    vertexArray->bindVbo();
-
     // set vertex position
-    GL_CHECK(glEnableVertexAttribArray(0));
     GL_CHECK(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                                    (void *) offsetof(Vertex, position)));
 
     // set vertex colors
-    GL_CHECK(glEnableVertexAttribArray(1));
     GL_CHECK(glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex),
                                    (void *) offsetof(Vertex, color)));
 
@@ -84,13 +87,15 @@ void GLRenderer::draw(VertexArray *vertexArray,
         texMtx[5] = 1.f / texture->getTextureRect().height;
         shader->SetUniformMatrix("textureMatrix", texMtx);
 
-        // TODO: call only if available
+        // set retroarch shader params
         shader->SetUniform("textureSize", texture->getTextureRect().width, texture->getTextureRect().height);
         shader->SetUniform("inputSize", texture->getTextureRect().width, texture->getTextureRect().height);
         shader->SetUniform("outputSize", texture->getGlobalBounds().width, texture->getGlobalBounds().height);
 
-        //printf("tex: %ix%i, out: %fx%f\n",texture->getTextureRect().width, texture->getTextureRect().height,
-        //       texture->getGlobalBounds().width, texture->getLocalBounds().height);
+        if (glTexture->shader) {
+            //printf("tex: %i %i, out: %f %f\n", texture->getTextureRect().width, texture->getTextureRect().height,
+            //       texture->getGlobalBounds().width, texture->getGlobalBounds().height);
+        }
 
     } else {
         GL_CHECK(glDisableVertexAttribArray(2));
@@ -115,14 +120,12 @@ void GLRenderer::draw(VertexArray *vertexArray,
     GLenum mode = modes[vertexArray->getPrimitiveType()];
     GL_CHECK(glDrawArrays(mode, 0, (GLsizei) vertexCount));
 
-    GL_CHECK(glDisableVertexAttribArray(0));
-    GL_CHECK(glDisableVertexAttribArray(1));
-
-    vertexArray->unbindVbo();
-
     if (glTexture || vertices[0].color.a < 255) {
         GL_CHECK(glDisable(GL_BLEND));
     }
+
+    // unbind object vao
+    vertexArray->unbindVbo();
 }
 
 void GLRenderer::flip(bool draw) {
