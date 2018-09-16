@@ -30,8 +30,7 @@ namespace c2d {
 
         void setFiltering(int filter);
 
-        //void bindBuffer(bool generate = false);
-        //void unBindBuffer();
+        void setShader(int shaderIndex);
 
         unsigned int texID = 0;
 

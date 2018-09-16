@@ -169,6 +169,8 @@ elseif (BUILD_NX)
             )
     file(GLOB PLATFORM_SRC
             source/platforms/gl/*.c*
+            source/platforms/gl/shaders/retro_v2.cpp
+            source/platforms/gl/shaders/sharp_bilinear_scanlines.cpp
             source/platforms/sdl2/*.c*
             source/platforms/posix/posix_io.cpp
             source/platforms/posix/posix_clock.cpp

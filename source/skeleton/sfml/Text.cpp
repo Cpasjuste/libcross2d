@@ -171,6 +171,7 @@ namespace sfml {
             if (!m_geometryNeedUpdate) {
                 for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
                     m_vertices[i].color = m_fillColor;
+                m_vertices.updateVbo();
             }
         }
     }
@@ -536,6 +537,9 @@ namespace sfml {
         m_bounds.top = minY;
         m_bounds.width = maxX - minX;
         m_bounds.height = maxY - minY;
+
+        m_vertices.updateVbo();
+        m_outlineVertices.updateVbo();
     }
 
 } // namespace sf
