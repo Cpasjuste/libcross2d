@@ -1,9 +1,8 @@
 //
-// Created by cpasjuste on 15/09/18.
+// Created by cpasjuste on 17/09/18.
 //
 
-// texture
-const char *retro_v2_v = R"text(
+const char *sharp_bilinear_v = R"text(
     #version 330 core
 
     #if __VERSION__ >= 130
@@ -48,6 +47,9 @@ const char *retro_v2_v = R"text(
     #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
     #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
+    COMPAT_VARYING vec2 precalc_texel;
+    COMPAT_VARYING vec2 precalc_scale;
+
     void main()
     {
         // CROSS2D
@@ -57,12 +59,15 @@ const char *retro_v2_v = R"text(
         // CROSS2D
         // TEX0.xy = TexCoord.xy;
         TEX0 = textureMatrix * vec4(VertexCoord.x, VertexCoord.y, 0.0, 1.0);
+
+        precalc_texel = vTexCoord * SourceSize.xy;
+        precalc_scale = max(floor(outsize.xy / InputSize.xy), vec2(1.0, 1.0));
     }
 
 )text";
 
-const char *retro_v2_f = R"text(
-    #version 330
+const char *sharp_bilinear_f = R"text(
+    #version 330 core
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING in
@@ -100,29 +105,27 @@ const char *retro_v2_f = R"text(
     #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
     #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
-    #ifdef PARAMETER_UNIFORM
-    uniform COMPAT_PRECISION float RETRO_PIXEL_SIZE;
-    #else
-    #define RETRO_PIXEL_SIZE 0.84
-    #endif
+    COMPAT_VARYING vec2 precalc_texel;
+    COMPAT_VARYING vec2 precalc_scale;
 
     void main()
     {
-        // Reading the texel
-        vec3 E = pow(COMPAT_TEXTURE(Source, vTexCoord).xyz, vec3(2.4));
+       vec2 texel = precalc_texel;
+       vec2 scale = precalc_scale;
 
-        vec2 fp = fract(vTexCoord*SourceSize.xy);
-        vec2 ps = InputSize.xy * outsize.zw;
+       vec2 texel_floored = floor(texel);
+       vec2 s = fract(texel);
+       vec2 region_range = 0.5 - 0.5 / scale;
 
-        vec2 f = clamp(clamp(fp + 0.5*ps, 0.0, 1.0) - RETRO_PIXEL_SIZE, vec2(0.0), ps)/ps;
+       // Figure out where in the texel to sample to get correct pre-scaled bilinear.
+       // Uses the hardware bilinear interpolator to avoid having to sample 4 times manually.
 
-        float max_coord =  max(f.x, f.y);
+       vec2 center_dist = s - 0.5;
+       vec2 f = (center_dist - clamp(center_dist, -region_range, region_range)) * scale + 0.5;
 
-        vec3 res = mix(E*(1.04+fp.x*fp.y), E*0.36, max_coord);
+       vec2 mod_texel = texel_floored + f;
 
-        // Product interpolation
-        FragColor = vec4(clamp( pow(res, vec3(1.0 / 2.2)), 0.0, 1.0 ), 1.0);
+       FragColor = vec4(COMPAT_TEXTURE(Source, mod_texel / SourceSize.xy).rgb, 1.0);
     }
+
 )text";
-
-

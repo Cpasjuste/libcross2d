@@ -88,9 +88,9 @@ void GLRenderer::draw(VertexArray *vertexArray,
         shader->SetUniformMatrix("textureMatrix", texMtx);
 
         // set retroarch shader params
-        shader->SetUniform("textureSize", texture->getTextureRect().width, texture->getTextureRect().height);
-        shader->SetUniform("inputSize", texture->getTextureRect().width, texture->getTextureRect().height);
-        shader->SetUniform("outputSize", texture->getGlobalBounds().width, texture->getGlobalBounds().height);
+        shader->SetUniform("TextureSize", texture->getTextureRect().width, texture->getTextureRect().height);
+        shader->SetUniform("InputSize", texture->getTextureRect().width, texture->getTextureRect().height);
+        shader->SetUniform("OutputSize", texture->getGlobalBounds().width, texture->getGlobalBounds().height);
 
         if (glTexture->shader) {
             //printf("tex: %i %i, out: %f %f\n", texture->getTextureRect().width, texture->getTextureRect().height,
@@ -101,10 +101,14 @@ void GLRenderer::draw(VertexArray *vertexArray,
         GL_CHECK(glDisableVertexAttribArray(2));
     }
 
+    //auto pMtx = glm::orthoLH(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
+    //auto mMtx = glm::make_mat4(transform.getMatrix());
+    //auto pmMtx = glm::matrixCompMult(pMtx, mMtx);
+    //shader->SetUniformMatrix("MVPMatrix", glm::value_ptr(pmMtx));
+
     // set projection matrix
     auto mtx = glm::orthoLH(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
     shader->SetUniformMatrix("projectionMatrix", glm::value_ptr(mtx));
-
     // set model view matrix
     shader->SetUniformMatrix("modelViewMatrix", transform.getMatrix());
 

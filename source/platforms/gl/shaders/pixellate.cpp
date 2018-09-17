@@ -1,10 +1,11 @@
 //
-// Created by cpasjuste on 15/09/18.
+// Created by cpasjuste on 17/09/18.
 //
 
-// texture
-const char *retro_v2_v = R"text(
+const char *pixellate_v = R"text(
     #version 330 core
+
+    #pragma parameter INTERPOLATE_IN_LINEAR_GAMMA "Linear Gamma Weight" 1.0 0.0 1.0 1.0
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING out
@@ -61,8 +62,10 @@ const char *retro_v2_v = R"text(
 
 )text";
 
-const char *retro_v2_f = R"text(
-    #version 330
+const char *pixellate_f = R"text(
+    #version 330 core
+
+    #pragma parameter INTERPOLATE_IN_LINEAR_GAMMA "Linear Gamma Weight" 1.0 0.0 1.0 1.0
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING in
@@ -80,7 +83,7 @@ const char *retro_v2_f = R"text(
     #else
     precision mediump float;
     #endif
-    #define COMPAT_PRECISION mediump
+    #define COMPAT_PRECISION highp
     #else
     #define COMPAT_PRECISION
     #endif
@@ -101,28 +104,46 @@ const char *retro_v2_f = R"text(
     #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
     #ifdef PARAMETER_UNIFORM
-    uniform COMPAT_PRECISION float RETRO_PIXEL_SIZE;
+    uniform COMPAT_PRECISION float INTERPOLATE_IN_LINEAR_GAMMA;
     #else
-    #define RETRO_PIXEL_SIZE 0.84
+    #define INTERPOLATE_IN_LINEAR_GAMMA 1.0
     #endif
 
     void main()
     {
-        // Reading the texel
-        vec3 E = pow(COMPAT_TEXTURE(Source, vTexCoord).xyz, vec3(2.4));
+       vec2 texelSize = SourceSize.zw;
 
-        vec2 fp = fract(vTexCoord*SourceSize.xy);
-        vec2 ps = InputSize.xy * outsize.zw;
+       vec2 range = vec2(abs(InputSize.x / (outsize.x * SourceSize.x)), abs(InputSize.y / (outsize.y * SourceSize.y)));
+       range = range / 2.0 * 0.999;
 
-        vec2 f = clamp(clamp(fp + 0.5*ps, 0.0, 1.0) - RETRO_PIXEL_SIZE, vec2(0.0), ps)/ps;
+       float left   = vTexCoord.x - range.x;
+       float top    = vTexCoord.y + range.y;
+       float right  = vTexCoord.x + range.x;
+       float bottom = vTexCoord.y - range.y;
 
-        float max_coord =  max(f.x, f.y);
+       vec3 topLeftColor     = COMPAT_TEXTURE(Source, (floor(vec2(left, top)     / texelSize) + 0.5) * texelSize).rgb;
+       vec3 bottomRightColor = COMPAT_TEXTURE(Source, (floor(vec2(right, bottom) / texelSize) + 0.5) * texelSize).rgb;
+       vec3 bottomLeftColor  = COMPAT_TEXTURE(Source, (floor(vec2(left, bottom)  / texelSize) + 0.5) * texelSize).rgb;
+       vec3 topRightColor    = COMPAT_TEXTURE(Source, (floor(vec2(right, top)    / texelSize) + 0.5) * texelSize).rgb;
 
-        vec3 res = mix(E*(1.04+fp.x*fp.y), E*0.36, max_coord);
+       if (INTERPOLATE_IN_LINEAR_GAMMA > 0.5){
+        topLeftColor     = pow(topLeftColor, vec3(2.2));
+        bottomRightColor = pow(bottomRightColor, vec3(2.2));
+        bottomLeftColor  = pow(bottomLeftColor, vec3(2.2));
+        topRightColor    = pow(topRightColor, vec3(2.2));
+       }
 
-        // Product interpolation
-        FragColor = vec4(clamp( pow(res, vec3(1.0 / 2.2)), 0.0, 1.0 ), 1.0);
+       vec2 border = clamp(floor((vTexCoord / texelSize) + vec2(0.5)) * texelSize, vec2(left, bottom), vec2(right, top));
+
+       float totalArea = 4.0 * range.x * range.y;
+
+       vec3 averageColor;
+       averageColor  = ((border.x - left)  * (top - border.y)    / totalArea) * topLeftColor;
+       averageColor += ((right - border.x) * (border.y - bottom) / totalArea) * bottomRightColor;
+       averageColor += ((border.x - left)  * (border.y - bottom) / totalArea) * bottomLeftColor;
+       averageColor += ((right - border.x) * (top - border.y)    / totalArea) * topRightColor;
+
+       FragColor = (INTERPOLATE_IN_LINEAR_GAMMA > 0.5) ? vec4(pow(averageColor, vec3(1.0 / 2.2)), 1.0) : vec4(averageColor, 1.0);
     }
+
 )text";
-
-

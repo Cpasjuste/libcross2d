@@ -1,10 +1,15 @@
 //
-// Created by cpasjuste on 15/09/18.
+// Created by cpasjuste on 17/09/18.
 //
 
-// texture
-const char *retro_v2_v = R"text(
+const char *scanlines_v = R"text(
     #version 330 core
+
+    #pragma parameter SCANLINE_BASE_BRIGHTNESS "Scanline Base Brightness" 0.95 0.0 1.0 0.01
+    #pragma parameter SCANLINE_SINE_COMP_A "Scanline Sine Comp A" 0.0 0.0 0.10 0.01
+    #pragma parameter SCANLINE_SINE_COMP_B "Scanline Sine Comp B" 0.15 0.0 1.0 0.05
+
+    #define pi 3.141592654
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING out
@@ -35,18 +40,15 @@ const char *retro_v2_v = R"text(
     // CROSS2D
     COMPAT_VARYING vec4 COL0;
     COMPAT_VARYING vec4 TEX0;
+    COMPAT_VARYING vec2 omega;
 
+    vec4 _oPosition1;
     uniform mat4 MVPMatrix;
     uniform COMPAT_PRECISION int FrameDirection;
     uniform COMPAT_PRECISION int FrameCount;
     uniform COMPAT_PRECISION vec2 OutputSize;
     uniform COMPAT_PRECISION vec2 TextureSize;
     uniform COMPAT_PRECISION vec2 InputSize;
-
-    // vertex compatibility #defines
-    #define vTexCoord TEX0.xy
-    #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
-    #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
     void main()
     {
@@ -57,12 +59,19 @@ const char *retro_v2_v = R"text(
         // CROSS2D
         // TEX0.xy = TexCoord.xy;
         TEX0 = textureMatrix * vec4(VertexCoord.x, VertexCoord.y, 0.0, 1.0);
+        omega = vec2(pi * OutputSize.x, 2.0 * pi * TextureSize.y);
     }
 
 )text";
 
-const char *retro_v2_f = R"text(
-    #version 330
+const char *scanlines_f = R"text(
+    #version 330 core
+
+    #pragma parameter SCANLINE_BASE_BRIGHTNESS "Scanline Base Brightness" 0.95 0.0 1.0 0.01
+    #pragma parameter SCANLINE_SINE_COMP_A "Scanline Sine Comp A" 0.0 0.0 0.10 0.01
+    #pragma parameter SCANLINE_SINE_COMP_B "Scanline Sine Comp B" 0.15 0.0 1.0 0.05
+
+    #define pi 3.141592654
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING in
@@ -92,37 +101,31 @@ const char *retro_v2_f = R"text(
     uniform COMPAT_PRECISION vec2 InputSize;
     uniform sampler2D Texture;
     COMPAT_VARYING vec4 TEX0;
+    COMPAT_VARYING vec2 omega;
 
-    // fragment compatibility #defines
+    // compatibility #defines
     #define Source Texture
     #define vTexCoord TEX0.xy
 
     #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
-    #define outsize vec4(OutputSize, 1.0 / OutputSize)
+    #define OutputSize vec4(OutputSize, 1.0 / OutputSize)
 
     #ifdef PARAMETER_UNIFORM
-    uniform COMPAT_PRECISION float RETRO_PIXEL_SIZE;
+    // All parameter floats need to have COMPAT_PRECISION in front of them
+    uniform COMPAT_PRECISION float SCANLINE_BASE_BRIGHTNESS;
+    uniform COMPAT_PRECISION float SCANLINE_SINE_COMP_A;
+    uniform COMPAT_PRECISION float SCANLINE_SINE_COMP_B;
     #else
-    #define RETRO_PIXEL_SIZE 0.84
+    #define SCANLINE_BASE_BRIGHTNESS 0.95
+    #define SCANLINE_SINE_COMP_A 0.0
+    #define SCANLINE_SINE_COMP_B 0.15
     #endif
 
     void main()
     {
-        // Reading the texel
-        vec3 E = pow(COMPAT_TEXTURE(Source, vTexCoord).xyz, vec3(2.4));
-
-        vec2 fp = fract(vTexCoord*SourceSize.xy);
-        vec2 ps = InputSize.xy * outsize.zw;
-
-        vec2 f = clamp(clamp(fp + 0.5*ps, 0.0, 1.0) - RETRO_PIXEL_SIZE, vec2(0.0), ps)/ps;
-
-        float max_coord =  max(f.x, f.y);
-
-        vec3 res = mix(E*(1.04+fp.x*fp.y), E*0.36, max_coord);
-
-        // Product interpolation
-        FragColor = vec4(clamp( pow(res, vec3(1.0 / 2.2)), 0.0, 1.0 ), 1.0);
+       vec2 sine_comp = vec2(SCANLINE_SINE_COMP_A, SCANLINE_SINE_COMP_B);
+       vec3 res = COMPAT_TEXTURE(Source, vTexCoord).xyz;
+       vec3 scanline = res * (SCANLINE_BASE_BRIGHTNESS + dot(sine_comp * sin(vTexCoord * omega), vec2(1.0, 1.0)));
+       FragColor = vec4(scanline.x, scanline.y, scanline.z, 1.0);
     }
 )text";
-
-

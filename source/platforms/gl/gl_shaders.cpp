@@ -5,80 +5,9 @@
 #ifdef __GL__
 
 #include "c2d.h"
-#include "shaders/retro_v2.h"
-#include "shaders/sharp_bilinear_scanlines.h"
+#include "shaders/shaders.h"
 
 using namespace c2d;
-
-// vertex color shader
-static const char *const vertexColor = R"text(
-    #version 330 core
-
-    layout (location = 0) in vec2 positionAttribute;
-    layout (location = 1) in vec4 colorAttribute;
-
-    uniform mat4 modelViewMatrix;
-    uniform mat4 projectionMatrix;
-
-    out vec4 frontColor;
-
-    void main()
-    {
-        gl_Position = projectionMatrix * (modelViewMatrix * vec4(positionAttribute.x, positionAttribute.y, 0.0, 1.0));
-        frontColor = colorAttribute;
-    }
-)text";
-
-static const char *const fragmentColor = R"text(
-    #version 330 core
-
-    in vec4 frontColor;
-    out vec4 fragColor;
-
-    void main()
-    {
-        fragColor = vec4(frontColor);
-    }
-)text";
-
-// texture
-static const char *const vertexTexture = R"text(
-    #version 330 core
-
-    layout (location = 0) in vec2 positionAttribute;
-    layout (location = 1) in vec4 colorAttribute;
-    layout (location = 2) in vec2 texCoordAttribute;
-
-    uniform mat4 modelViewMatrix;
-    uniform mat4 projectionMatrix;
-    uniform mat4 textureMatrix;
-
-    out vec4 frontColor;
-    out vec4 texCoord;
-
-    void main()
-    {
-        gl_Position = projectionMatrix * (modelViewMatrix * vec4(positionAttribute.x, positionAttribute.y, 0.0, 1.0));
-        frontColor = colorAttribute;
-        texCoord = textureMatrix * vec4(texCoordAttribute, 0.0, 1.0);
-    }
-)text";
-
-static const char *const fragmentTexture = R"text(
-    #version 330
-
-    in vec4 frontColor;
-    in vec4 texCoord;
-
-    uniform sampler2D texture;
-
-    out vec4 fragColor;
-
-    void main()
-    {
-        fragColor = texture2D(texture, texCoord.xy) * frontColor;
-    }
-)text";
 
 // @fincs: https://github.com/switchbrew/switch-examples/blob/master/graphics/opengl/simple_triangle/source/main.cpp#L197
 static GLuint createAndCompileShader(GLenum type, const char *source) {
@@ -186,15 +115,21 @@ GLShader::~GLShader() {
 
 GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersPath) {
 
-    auto *colorShader = new GLShader(vertexColor, fragmentColor);
+    auto *colorShader = new GLShader(color_v, color_f);
     color = new Shader("color", colorShader);
 
-    get(0)->data = new GLShader(vertexTexture, fragmentTexture);
+    get(0)->data = new GLShader(texture_v, texture_f);
 
     // retro v2
-    add("retro v2", new GLShader(vertex_retro_v2, fragment_retro_v2));
-    add("sharp bilinear scanlines", new GLShader(vertex_sharp_bilinear_scanlines,
-                                                 fragment_sharp_bilinear_scanlines));
+    add("retro v2", new GLShader(retro_v2_v, retro_v2_f));
+    add("scanlines", new GLShader(scanlines_v, scanlines_f));
+    add("sharp bilinear", new GLShader(sharp_bilinear_v,
+                                       sharp_bilinear_f));
+    add("sharp bilinear scanlines", new GLShader(sharp_bilinear_scanlines_v,
+                                                 sharp_bilinear_scanlines_f));
+    add("pixellate", new GLShader(pixellate_v, pixellate_f));
+    add("xbr lv3", new GLShader(xbr_lv3_v, xbr_lv3_f));
+    add("supereagle", new GLShader(supereagle_v, supereagle_f));
 }
 
 GLShaderList::~GLShaderList() {

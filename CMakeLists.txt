@@ -169,8 +169,7 @@ elseif (BUILD_NX)
             )
     file(GLOB PLATFORM_SRC
             source/platforms/gl/*.c*
-            source/platforms/gl/shaders/retro_v2.cpp
-            source/platforms/gl/shaders/sharp_bilinear_scanlines.cpp
+            source/platforms/gl/shaders/*.c*
             source/platforms/sdl2/*.c*
             source/platforms/posix/posix_io.cpp
             source/platforms/posix/posix_clock.cpp
@@ -209,7 +208,15 @@ elseif (BUILD_SDL2)
                 source/platforms/gl/gl_renderer.cpp
                 source/platforms/gl/gl_texture.cpp
                 source/platforms/gl/gl_shaders.cpp
+                source/platforms/gl/shaders/color.cpp
+                source/platforms/gl/shaders/texture.cpp
                 source/platforms/gl/shaders/retro_v2.cpp
+                source/platforms/gl/shaders/pixellate.cpp
+                source/platforms/gl/shaders/scanlines.cpp
+                source/platforms/gl/shaders/xbr_lv2.cpp
+                source/platforms/gl/shaders/xbr_lv3.cpp
+                source/platforms/gl/shaders/supereagle.cpp
+                source/platforms/gl/shaders/sharp_bilinear.cpp
                 source/platforms/gl/shaders/sharp_bilinear_scanlines.cpp
                 )
         list(APPEND FLAGS -D__SDL2_GL__ -D__GL__)
