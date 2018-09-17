@@ -211,10 +211,14 @@ elseif (BUILD_SDL2)
                 source/platforms/gl/shaders/color.cpp
                 source/platforms/gl/shaders/texture.cpp
                 source/platforms/gl/shaders/retro_v2.cpp
+                source/platforms/gl/shaders/crt_easymode.cpp
+                source/platforms/gl/shaders/crt_geom.cpp
+                source/platforms/gl/shaders/xbrz_freescale.cpp
                 source/platforms/gl/shaders/pixellate.cpp
                 source/platforms/gl/shaders/scanlines.cpp
                 source/platforms/gl/shaders/xbr_lv2.cpp
                 source/platforms/gl/shaders/xbr_lv3.cpp
+                source/platforms/gl/shaders/sabr_v3.cpp
                 source/platforms/gl/shaders/supereagle.cpp
                 source/platforms/gl/shaders/sharp_bilinear.cpp
                 source/platforms/gl/shaders/sharp_bilinear_scanlines.cpp

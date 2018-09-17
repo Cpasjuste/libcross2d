@@ -29,10 +29,22 @@ extern const char *sharp_bilinear_scanlines_f;
 // TODO: not working
 // extern const char *xbr_lv2_v;
 // extern const char *xbr_lv2_f;
-extern const char *xbr_lv3_v;
-extern const char *xbr_lv3_f;
+// extern const char *xbr_lv3_v;
+// extern const char *xbr_lv3_f;
+
+extern const char *sabr_v3_v;
+extern const char *sabr_v3_f;
 
 extern const char *supereagle_v;
 extern const char *supereagle_f;
+
+extern const char *crt_easymode_v;
+extern const char *crt_easymode_f;
+
+extern const char *crt_geom_v;
+extern const char *crt_geom_f;
+
+extern const char *xbrz_freescale_v;
+extern const char *xbrz_freescale_f;
 
 #endif //_CROSS2D_SHADERS_H_
