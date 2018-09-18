@@ -199,6 +199,7 @@ int SDL2Texture::save(const char *path) {
             }
         }
         converted = pTemp;
+        pixels = converted;
     }
 
     // Get the time
@@ -244,7 +245,7 @@ int SDL2Texture::save(const char *path) {
     png_set_bgr(png_ptr);
     rows = (png_bytep *) malloc(h * sizeof(png_bytep));
     for (int y = 0; y < h; y++) {
-        rows[y] = converted + (y * w * sizeof(int));
+        rows[y] = pixels + (y * w * sizeof(int));
     }
     png_write_image(png_ptr, rows);
     png_write_end(png_ptr, info_ptr);

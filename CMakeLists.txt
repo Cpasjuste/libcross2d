@@ -57,7 +57,8 @@ if (BUILD_SFML)
     set(PLATFORM_LIBS
             SDL2
             sfml-graphics sfml-window sfml-system
-            GL freetype png z)
+            GL freetype z)
+        #png
     #####################
     # PSP2 PLATORM
     #####################
@@ -78,8 +79,9 @@ elseif (BUILD_PSP2)
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub
-            png jpeg z m c
+            jpeg z m c
             )
+        #png
     list(APPEND FLAGS -Wl,-q -D__PSP2__
             -Wno-uninitialized
             -ftree-vectorize -mword-relocations
@@ -110,14 +112,14 @@ elseif (BUILD_PS3)
             )
     set(PLATFORM_LIBS
             ${PSL1GHT}/portlibs/ppu/lib/libfreetype.a
-            ${PSL1GHT}/portlibs/ppu/lib/libpng.a
+            #${PSL1GHT}/portlibs/ppu/lib/libpng.a
             ${PSL1GHT}/portlibs/ppu/lib/libtiff.a
             ${PSL1GHT}/portlibs/ppu/lib/libjpeg.a
             ${PSL1GHT}/ppu/lib/libgcm_sys.a
             ${PSL1GHT}/ppu/lib/librsx.a
             ${PSL1GHT}/ppu/lib/libsysutil.a
             ${PSL1GHT}/ppu/lib/libsysmodule.a
-            ${PSL1GHT}/ppu/lib/libpngdec.a
+            #${PSL1GHT}/ppu/lib/libpngdec.a
             ${PSL1GHT}/ppu/lib/libio.a
             ${PSL1GHT}/ppu/lib/libaudio.a
             ${PSL1GHT}/portlibs/ppu/lib/libz.a
@@ -147,7 +149,7 @@ elseif (BUILD_3DS)
 
     set(PLATFORM_LIBS
             ${DEVKITPRO}/portlibs/3ds/lib/libSDL2.a
-            ${DEVKITPRO}/portlibs/armv6k/lib/libpng.a
+            #${DEVKITPRO}/portlibs/armv6k/lib/libpng.a
             ${DEVKITPRO}/portlibs/armv6k/lib/libz.a
             ${DEVKITPRO}/libctru/lib/libcitro3d.a
             ${DEVKITPRO}/libctru/lib/libctru.a
@@ -182,25 +184,26 @@ elseif (BUILD_NX)
             )
     set(PLATFORM_LIBS
             SDL2 glad EGL glapi drm_nouveau nx
-            freetype png bz2 z
+            freetype bz2 z #png
             )
     #####################
     # SDL2 PLATORM
     #####################
 elseif (BUILD_SDL2)
     find_package(ZLIB REQUIRED)
-    find_package(PNG REQUIRED)
+    #find_package(PNG REQUIRED)
     find_package(Freetype REQUIRED)
     set(PLATFORM_DIRS
             source/platforms/sdl2
             source/platforms/posix
             ${FREETYPE_INCLUDE_DIRS}
-            ${PNG_INCLUDE_DIRS}
+            #${PNG_INCLUDE_DIRS}
             ${ZLIB_INCLUDE_DIRS})
     file(GLOB PLATFORM_SRC
             source/platforms/sdl2/*.c*
             source/platforms/posix/*.c*)
-    set(PLATFORM_LIBS SDL2 ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
+    set(PLATFORM_LIBS SDL2 ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
+        #${PNG_LIBRARIES}
     list(APPEND FLAGS -D__SDL2__)
     if (BUILD_SDL2_GL)
         list(APPEND PLATFORM_DIRS source/platforms/gl)
@@ -231,20 +234,21 @@ elseif (BUILD_SDL2)
     #####################
 elseif (BUILD_SDL1)
     find_package(ZLIB REQUIRED)
-    find_package(PNG REQUIRED)
+    #find_package(PNG REQUIRED)
     find_package(Freetype REQUIRED)
     set(PLATFORM_DIRS
             source/platforms/sdl1
             source/platforms/gl
             source/platforms/posix
             ${FREETYPE_INCLUDE_DIRS}
-            ${PNG_INCLUDE_DIRS}
+            #${PNG_INCLUDE_DIRS}
             ${ZLIB_INCLUDE_DIRS})
     file(GLOB PLATFORM_SRC
             source/platforms/sdl1/*.c*
             source/platforms/gl/*.c*
             source/platforms/posix/*.c*)
-    set(PLATFORM_LIBS SDL ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
+    set(PLATFORM_LIBS SDL ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
+        #${PNG_LIBRARIES}
     list(APPEND FLAGS -D__SDL1__ -D__GL__)
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)
