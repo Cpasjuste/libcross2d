@@ -4,6 +4,7 @@
 
 #ifdef __GL__
 
+#include <png.h>
 #include "c2d.h"
 #include "skeleton/lodepng.h"
 
@@ -104,6 +105,7 @@ GLTexture::GLTexture(const Vector2f &size, int format) : Texture(size, format) {
     printf("GLTexture(%p): %ix%i\n", this, (int) size.x, (int) size.y);
 }
 
+#if 0
 int GLTexture::resize(const Vector2f &size, bool copyPixels) {
 
     printf("GLTexture::resize: %i x %i\n", (int) size.x, (int) size.y);
@@ -157,6 +159,136 @@ int GLTexture::resize(const Vector2f &size, bool copyPixels) {
     printf("GLTexture::resize\n");
 
     return -1;
+}
+#endif
+
+int GLTexture::save(const char *path) {
+
+    unsigned char *converted = nullptr;
+    png_bytep *rows = nullptr;
+
+    const char *szAuthor = "Cpasjuste";
+    const char *szDescription = "Screenshot";
+    const char *szCopyright = "Cpasjuste";
+    const char *szSoftware = "libcross2d @ libpng";
+    const char *szSource = "libcross2d";
+
+    FILE *ff = nullptr;
+    png_text text_ptr[7];
+    int num_text = 7;
+    time_t currentTime;
+    png_time_struct png_time_now;
+
+    if (!pixels) {
+        return -1;
+    }
+
+    int w = getTextureRect().width, h = getTextureRect().height;
+
+    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+    if (!png_ptr) {
+        return -1;
+    }
+
+    png_infop info_ptr = png_create_info_struct(png_ptr);
+    if (!info_ptr) {
+        png_destroy_write_struct(&png_ptr, (png_infopp)
+                nullptr);
+        return -1;
+    }
+
+    if (setjmp(png_jmpbuf(png_ptr))) {
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        fclose(ff);
+        remove(path);
+        return -1;
+    }
+
+    // Convert the image to 32-bit
+    if (bpp < 4) {
+        unsigned char *pTemp = (unsigned char *) malloc(w * h * sizeof(int));
+        if (bpp == 2) {
+            for (int i = 0; i < h * w; i++) {
+                signed short nColour = ((signed short *) pixels)[i];
+                // Red
+                *(pTemp + i * 4 + 0) = (unsigned char) ((nColour & 0x1F) << 3);
+                *(pTemp + i * 4 + 0) |= *(pTemp + 4 * i + 0) >> 5;
+                // Green
+                *(pTemp + i * 4 + 1) = (unsigned char) (((nColour >> 5) & 0x3F) << 2);
+                *(pTemp + i * 4 + 1) |= *(pTemp + i * 4 + 1) >> 6;
+                // Blue
+                *(pTemp + i * 4 + 2) = (unsigned char) (((nColour >> 11) & 0x1F) << 3);
+                *(pTemp + i * 4 + 2) |= *(pTemp + i * 4 + 2) >> 5;
+            }
+        } else {
+            memset(pTemp, 0, w * h * sizeof(int));
+            for (int i = 0; i < h * w; i++) {
+                *(pTemp + i * 4 + 0) = *(pixels + i * 3 + 0);
+                *(pTemp + i * 4 + 1) = *(pixels + i * 3 + 1);
+                *(pTemp + i * 4 + 2) = *(pixels + i * 3 + 2);
+            }
+        }
+        converted = pTemp;
+    }
+
+    // Get the time
+    time(&currentTime);
+    png_convert_from_time_t(&png_time_now, currentTime);
+
+    ff = fopen(path, "wb");
+    if (ff == nullptr) {
+        printf("C2DUINXVideo::save: fopen failed: `%s`\n", path);
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        if (converted) {
+            free(converted);
+        }
+        return -1;
+    }
+
+    // Fill the PNG text fields
+    text_ptr[0].key = (png_charp) "Title";
+    text_ptr[0].text = (png_charp) "ROM";
+    text_ptr[1].key = (png_charp) "Author";
+    text_ptr[1].text = (png_charp) szAuthor;
+    text_ptr[2].key = (png_charp) "Description";
+    text_ptr[2].text = (png_charp) szDescription;
+    text_ptr[3].key = (png_charp) "Copyright";
+    text_ptr[3].text = (png_charp) szCopyright;
+    text_ptr[4].key = (png_charp) "Software";
+    text_ptr[4].text = (png_charp) szSoftware;
+    text_ptr[5].key = (png_charp) "Source";
+    text_ptr[5].text = (png_charp) szSource;
+    text_ptr[6].key = (png_charp) "Comment";
+    text_ptr[6].text = (png_charp) "Created by running the game in an emulator";
+    for (int i = 0; i < num_text; i++) {
+        text_ptr[i].compression = PNG_TEXT_COMPRESSION_NONE;
+    }
+    png_set_text(png_ptr, info_ptr, text_ptr, num_text);
+    png_init_io(png_ptr, ff);
+    png_set_IHDR(png_ptr, info_ptr, (png_uint_32) w, (png_uint_32) h, 8,
+                 PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_DEFAULT,
+                 PNG_FILTER_TYPE_DEFAULT);
+    png_write_info(png_ptr, info_ptr);
+    png_set_filler(png_ptr, 0, PNG_FILLER_AFTER);
+    png_set_bgr(png_ptr);
+    rows = (png_bytep *) malloc(h * sizeof(png_bytep));
+    for (int y = 0; y < h; y++) {
+        rows[y] = converted + (y * w * sizeof(int));
+    }
+    png_write_image(png_ptr, rows);
+    png_write_end(png_ptr, info_ptr);
+    if (rows) {
+        free(rows);
+    }
+    fclose(ff);
+    png_destroy_write_struct(&png_ptr, &info_ptr);
+
+    if (converted) {
+        free(converted);
+    }
+
+    return 0;
 }
 
 int GLTexture::lock(FloatRect *rect, void **pix, int *p) {
