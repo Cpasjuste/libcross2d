@@ -583,7 +583,7 @@ namespace c2d {
                     static_cast<float>(face->glyph->metrics.height) / static_cast<float>(1 << 6) + outlineThickness * 2;
 
             // Resize the pixel buffer to the new size and fill it with transparent white pixels
-            m_pixelBuffer.resize(width * height * 4);
+            m_pixelBuffer.resize(static_cast<unsigned long>(width * height * 4));
 
             Uint8 *current = &m_pixelBuffer[0];
             Uint8 *end = current + width * height * 4;
@@ -656,7 +656,7 @@ namespace c2d {
             Uint8 *dstPixels = (Uint8 *) buffer;
 
             for (int i = 0; i < height; ++i) {
-                std::memcpy(dstPixels, srcPixels, (size_t) (width * 4));
+                memcpy(dstPixels, srcPixels, (size_t) (width * 4));
                 srcPixels += width * 4;
                 dstPixels += pitch;
             }
@@ -723,15 +723,15 @@ namespace c2d {
                     Uint8 *dst;
                     int dst_pitch;
                     texture->lock(NULL, reinterpret_cast<void **>(&dst), &dst_pitch);
-
                     for (int i = 0; i < (int) textureHeight; ++i) {
                         std::memcpy(dst, src, (size_t) (textureWidth * 4));
                         src += textureWidth * 4;
                         dst += dst_pitch;
                     }
-
                     texture->unlock();
-
+#ifdef __SWITCH__
+                    glFinish();
+#endif
                     delete (page.texture);
                     page.texture = texture;
 

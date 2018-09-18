@@ -15,7 +15,7 @@ GLTexture::GLTexture(const char *path) : Texture(path) {
 
     error = lodepng_decode32_file(&pixels, &w, &h, path);
     if (error) {
-        printf("GLTexture::GLTexture: couldn't create texture:: %s\n", lodepng_error_text(error));
+        printf("GLTexture(%p): couldn't create texture: %s\n", this, lodepng_error_text(error));
         return;
     }
 
@@ -34,7 +34,7 @@ GLTexture::GLTexture(const char *path) : Texture(path) {
         pitch = getTextureRect().width * bpp;
         available = true;
     } else {
-        printf("GLTexture::GLTexture: couldn't create texture: %s\n", path);
+        printf("GLTexture(%p): couldn't create texture: %s\n", this, path);
     }
 
     printf("GLTexture(%p): %ix%i\n", this, w, h);
@@ -46,7 +46,7 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
 
     error = lodepng_decode32(&pixels, &w, &h, buffer, (size_t) bufferSize);
     if (error) {
-        printf("GLTexture::GLTexture: couldn't create texture: %s\n", lodepng_error_text(error));
+        printf("GLTexture(%p): couldn't create texture: %s\n", this, lodepng_error_text(error));
         return;
     }
 
@@ -66,7 +66,7 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
         pitch = getTextureRect().width * bpp;
         available = true;
     } else {
-        printf("GLTexture::GLTexture: couldn't create texture: %s\n", path);
+        printf("GLTexture(%p): couldn't create texture: %s\n", this, path);
     }
 
     printf("GLTexture(%p): %ix%i\n", this, w, h);
@@ -98,7 +98,7 @@ GLTexture::GLTexture(const Vector2f &size, int format) : Texture(size, format) {
         setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
         available = true;
     } else {
-        printf("GLTexture::GLTexture: couldn't create texture");
+        printf("GLTexture(%p): couldn't create texture", this);
     }
 
     printf("GLTexture(%p): %ix%i\n", this, (int) size.x, (int) size.y);
@@ -210,7 +210,7 @@ void GLTexture::setFiltering(int filter) {
 
 void GLTexture::setShader(int shaderIndex) {
 
-    GLShaderList *shaderList = (GLShaderList *) c2d_renderer->getShaderList();
+    ShaderList *shaderList = c2d_renderer->getShaderList();
     if (shaderIndex >= shaderList->getCount()) {
         shader = shaderList->get(0);
         return;
@@ -231,6 +231,7 @@ GLTexture::~GLTexture() {
     if (texID) {
         printf("glDeleteTextures(%i)\n", texID);
         glDeleteTextures(1, &texID);
+        texID = 0;
     }
 }
 

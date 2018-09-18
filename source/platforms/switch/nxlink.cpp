@@ -8,9 +8,9 @@
 
 #include <unistd.h>
 
-static int s_nxlinkSock = -1;
+int s_nxlinkSock = -1;
 
-static void initNxLink() {
+void initNxLink() {
     if (R_FAILED(socketInitializeDefault()))
         return;
 
@@ -21,7 +21,7 @@ static void initNxLink() {
         socketExit();
 }
 
-static void deinitNxLink() {
+void deinitNxLink() {
     if (s_nxlinkSock >= 0) {
         close(s_nxlinkSock);
         socketExit();
@@ -29,6 +29,7 @@ static void deinitNxLink() {
     }
 }
 
+/*
 extern "C" void userAppInit() {
     initNxLink();
 }
@@ -36,5 +37,6 @@ extern "C" void userAppInit() {
 extern "C" void userAppExit() {
     deinitNxLink();
 }
+*/
 
 #endif // __NET_DEBUG__

@@ -8,7 +8,16 @@
 
 using namespace c2d;
 
+#if defined(__SWITCH__) && defined(__NET_DEBUG__)
+void initNxLink();
+void deinitNxLink();
+#endif
+
 SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
+
+#if defined(__SWITCH__) && defined(__NET_DEBUG__)
+    initNxLink();
+#endif
 
     printf("SDL2Renderer(GL)\n");
 
@@ -91,6 +100,10 @@ SDL2Renderer::~SDL2Renderer() {
     }
 
     SDL_Quit();
+
+#if defined(__SWITCH__) && defined(__NET_DEBUG__)
+    deinitNxLink();
+#endif
 }
 
 #endif
