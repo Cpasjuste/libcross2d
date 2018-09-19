@@ -58,7 +58,7 @@ if (BUILD_SFML)
             SDL2
             sfml-graphics sfml-window sfml-system
             GL freetype z)
-        #png
+    #png
     #####################
     # PSP2 PLATORM
     #####################
@@ -81,7 +81,7 @@ elseif (BUILD_PSP2)
             SceAudio_stub SceTouch_stub SceHid_stub
             jpeg z m c
             )
-        #png
+    #png
     list(APPEND FLAGS -Wl,-q -D__PSP2__
             -Wno-uninitialized
             -ftree-vectorize -mword-relocations
@@ -203,28 +203,16 @@ elseif (BUILD_SDL2)
             source/platforms/sdl2/*.c*
             source/platforms/posix/*.c*)
     set(PLATFORM_LIBS SDL2 ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
-        #${PNG_LIBRARIES}
+    #${PNG_LIBRARIES}
     list(APPEND FLAGS -D__SDL2__)
     if (BUILD_SDL2_GL)
         list(APPEND PLATFORM_DIRS source/platforms/gl)
+        file(GLOB SHADERS_SRC source/platforms/gl/shaders/*.c*)
         list(APPEND PLATFORM_SRC
                 source/platforms/gl/gl_renderer.cpp
                 source/platforms/gl/gl_texture.cpp
                 source/platforms/gl/gl_shaders.cpp
-                source/platforms/gl/shaders/color.cpp
-                source/platforms/gl/shaders/texture.cpp
-                source/platforms/gl/shaders/retro_v2.cpp
-                source/platforms/gl/shaders/crt_easymode.cpp
-                source/platforms/gl/shaders/crt_geom.cpp
-                source/platforms/gl/shaders/xbrz_freescale.cpp
-                source/platforms/gl/shaders/pixellate.cpp
-                source/platforms/gl/shaders/scanlines.cpp
-                source/platforms/gl/shaders/xbr_lv2.cpp
-                source/platforms/gl/shaders/xbr_lv3.cpp
-                source/platforms/gl/shaders/sabr_v3.cpp
-                source/platforms/gl/shaders/supereagle.cpp
-                source/platforms/gl/shaders/sharp_bilinear.cpp
-                source/platforms/gl/shaders/sharp_bilinear_scanlines.cpp
+                ${SHADERS_SRC}
                 )
         list(APPEND FLAGS -D__SDL2_GL__ -D__GL__)
         list(APPEND PLATFORM_LIBS GL)
@@ -248,7 +236,7 @@ elseif (BUILD_SDL1)
             source/platforms/gl/*.c*
             source/platforms/posix/*.c*)
     set(PLATFORM_LIBS SDL ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
-        #${PNG_LIBRARIES}
+    #${PNG_LIBRARIES}
     list(APPEND FLAGS -D__SDL1__ -D__GL__)
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)

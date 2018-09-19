@@ -14,6 +14,18 @@ extern const char *texture_f;
 extern const char *retro_v2_v;
 extern const char *retro_v2_f;
 
+extern const char *lcd3x_v;
+extern const char *lcd3x_f;
+
+extern const char *crt_caligari_v;
+extern const char *crt_caligari_f;
+
+extern const char *crt_easymode_v;
+extern const char *crt_easymode_f;
+
+extern const char *crt_geom_v;
+extern const char *crt_geom_f;
+
 extern const char *pixellate_v;
 extern const char *pixellate_f;
 
@@ -32,17 +44,14 @@ extern const char *sharp_bilinear_scanlines_f;
 // extern const char *xbr_lv3_v;
 // extern const char *xbr_lv3_f;
 
-extern const char *sabr_v3_v;
-extern const char *sabr_v3_f;
-
 extern const char *supereagle_v;
 extern const char *supereagle_f;
 
-extern const char *crt_easymode_v;
-extern const char *crt_easymode_f;
+extern const char *sal2x_v;
+extern const char *sal2x_f;
 
-extern const char *crt_geom_v;
-extern const char *crt_geom_f;
+extern const char *sabr_v3_v;
+extern const char *sabr_v3_f;
 
 extern const char *xbrz_freescale_v;
 extern const char *xbrz_freescale_f;
