@@ -119,7 +119,7 @@ extern c2d::Renderer *c2d_renderer;
 #include <glad/glad.h>
 
 //#define __SVC_DEBUG__ 1
-#define __NET_DEBUG__ 1
+//#define __NET_DEBUG__ 1
 
 #include "platforms/sdl2/sdl2_gl_renderer.h"
 #include "platforms/gl/gl_texture.h"
