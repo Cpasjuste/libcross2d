@@ -63,7 +63,7 @@ void ListBox::ListBoxLine::setIcon(Texture *i) {
 
     if (use_icons) {
         if (icon) {
-            removeChild(icon);
+            remove(icon);
         }
         icon = i;
         if (icon) {
