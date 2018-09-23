@@ -22,7 +22,9 @@ namespace c2d {
 
         ~GLTexture();
 
-        int resize(const Vector2f &size, bool copyPixels = false);
+        //int resize(const Vector2f &size, bool copyPixels = false);
+
+        int save(const char *path);
 
         int lock(FloatRect *rect, void **pixels, int *pitch);
 
@@ -30,9 +32,12 @@ namespace c2d {
 
         void setFiltering(int filter);
 
+        void setShader(int shaderIndex);
+
         unsigned int texID = 0;
 
-        unsigned char *pixels = NULL;
+        unsigned char *pixels = nullptr;
+
     };
 }
 

@@ -113,32 +113,24 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RX         0
 #define KEY_JOY_AXIS_RY         0
 
-#elif __NX__
+#elif __SWITCH__
 
 #include <switch.h>
+#include <glad/glad.h>
 
-#if defined(__GL__)
-#include "platforms/nx/nx_mesa_renderer.h"
+//#define __SVC_DEBUG__ 1
+//#define __NET_DEBUG__ 1
+
+#include "platforms/sdl2/sdl2_gl_renderer.h"
 #include "platforms/gl/gl_texture.h"
-#define C2DRenderer NXMESARenderer
-#define C2DTexture GLTexture
-#else
-
-#include "platforms/sdl2/sdl2_renderer.h"
-#include "platforms/sdl2/sdl2_texture.h"
-
-#define C2DRenderer SDL2Renderer
-#define C2DTexture SDL2Texture
-#endif
-
+#include "platforms/gl/gl_shaders.h"
 #include "platforms/sdl2/sdl2_input.h"
 #include "platforms/sdl2/sdl2_audio.h"
 #include "platforms/posix/posix_io.h"
 #include "platforms/posix/posix_clock.h"
 
-//#define SVC_DEBUG 1
-//#define NET_DEBUG 1
-
+#define C2DRenderer SDL2Renderer
+#define C2DTexture GLTexture
 #define C2DRectangle Rectangle
 #define C2DCircle Circle
 #define C2DLine Line
@@ -177,12 +169,18 @@ extern c2d::Renderer *c2d_renderer;
 #include <SDL2/SDL.h>
 
 #if defined(__SDL2_GL__)
+#define GL_GLEXT_PROTOTYPES 1
+#include <GL/gl.h>
+#include <GL/glext.h>
 #include "platforms/sdl2/sdl2_gl_renderer.h"
+#include "platforms/gl/gl_shaders.h"
 #include "platforms/gl/gl_texture.h"
+#define C2DRenderer SDL2Renderer
 #define C2DTexture GLTexture
 #else
 #include "platforms/sdl2/sdl2_renderer.h"
 #include "platforms/sdl2/sdl2_texture.h"
+#define C2DRenderer SDL2Renderer
 #define C2DTexture SDL2Texture
 #endif
 
@@ -191,7 +189,6 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/posix/posix_io.h"
 #include "platforms/posix/posix_clock.h"
 
-#define C2DRenderer SDL2Renderer
 #define C2DRectangle Rectangle
 #define C2DCircle Circle
 #define C2DLine Line

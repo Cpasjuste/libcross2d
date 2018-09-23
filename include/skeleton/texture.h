@@ -17,7 +17,7 @@
 
 namespace c2d {
 
-    class Texture : public C2DObject, public sfml::RectangleShape {
+    class Texture : public C2DObject, public c2d::Transformable {
 
     public:
 
@@ -45,8 +45,25 @@ namespace c2d {
         virtual void applyShader() {};
         // END - to implement, device specific code
 
-        char path[512];
+        void setTextureRect(const IntRect &rectangle);
 
+        void setOriginCenter();
+
+        void setOriginTopLeft();
+
+        void setColor(const Color &color);
+
+        const IntRect &getTextureRect() const;
+
+        const Color &getColor() const;
+
+        FloatRect getLocalBounds() const;
+
+        FloatRect getGlobalBounds() const;
+
+        VertexArray *getVertices();
+
+        char path[512];
         int format = C2D_TEXTURE_FMT_RGBA8;
         int bpp = 4;
         int pitch = 0;
@@ -56,6 +73,14 @@ namespace c2d {
     private:
 
         virtual void draw(Transform &transform);
+
+        void updatePositions();
+
+        void updateTexCoords();
+
+        VertexArray m_vertices;
+        const Texture *m_texture;
+        IntRect m_textureRect;
 
     };
 }

@@ -11,7 +11,6 @@ option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_NX "Build with NX (SWITCH) support" OFF)
-option(BUILD_NX_GL "Build with NX support (software, osmesa)" OFF)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
@@ -58,7 +57,8 @@ if (BUILD_SFML)
     set(PLATFORM_LIBS
             SDL2
             sfml-graphics sfml-window sfml-system
-            GL freetype png z)
+            GL freetype z)
+    #png
     #####################
     # PSP2 PLATORM
     #####################
@@ -79,8 +79,9 @@ elseif (BUILD_PSP2)
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub
-            png jpeg z m c
+            jpeg z m c
             )
+    #png
     list(APPEND FLAGS -Wl,-q -D__PSP2__
             -Wno-uninitialized
             -ftree-vectorize -mword-relocations
@@ -111,14 +112,14 @@ elseif (BUILD_PS3)
             )
     set(PLATFORM_LIBS
             ${PSL1GHT}/portlibs/ppu/lib/libfreetype.a
-            ${PSL1GHT}/portlibs/ppu/lib/libpng.a
+            #${PSL1GHT}/portlibs/ppu/lib/libpng.a
             ${PSL1GHT}/portlibs/ppu/lib/libtiff.a
             ${PSL1GHT}/portlibs/ppu/lib/libjpeg.a
             ${PSL1GHT}/ppu/lib/libgcm_sys.a
             ${PSL1GHT}/ppu/lib/librsx.a
             ${PSL1GHT}/ppu/lib/libsysutil.a
             ${PSL1GHT}/ppu/lib/libsysmodule.a
-            ${PSL1GHT}/ppu/lib/libpngdec.a
+            #${PSL1GHT}/ppu/lib/libpngdec.a
             ${PSL1GHT}/ppu/lib/libio.a
             ${PSL1GHT}/ppu/lib/libaudio.a
             ${PSL1GHT}/portlibs/ppu/lib/libz.a
@@ -148,7 +149,7 @@ elseif (BUILD_3DS)
 
     set(PLATFORM_LIBS
             ${DEVKITPRO}/portlibs/3ds/lib/libSDL2.a
-            ${DEVKITPRO}/portlibs/armv6k/lib/libpng.a
+            #${DEVKITPRO}/portlibs/armv6k/lib/libpng.a
             ${DEVKITPRO}/portlibs/armv6k/lib/libz.a
             ${DEVKITPRO}/libctru/lib/libcitro3d.a
             ${DEVKITPRO}/libctru/lib/libctru.a
@@ -162,56 +163,57 @@ elseif (BUILD_3DS)
     #####################
 elseif (BUILD_NX)
     set(PLATFORM_DIRS
-            source/platforms/nx
+            source/platforms/gl
+            source/platforms/sdl2
             source/platforms/posix
+            source/platforms/switch
             ${DEVKITPRO}/portlibs/switch/include/freetype2
             )
     file(GLOB PLATFORM_SRC
-            source/platforms/nx/*.c*
-            source/platforms/sdl2/sdl2_input.cpp
-            source/platforms/sdl2/sdl2_audio.cpp
+            source/platforms/gl/*.c*
+            source/platforms/gl/shaders/*.c*
+            source/platforms/sdl2/*.c*
             source/platforms/posix/posix_io.cpp
             source/platforms/posix/posix_clock.cpp
+            source/platforms/switch/*.c*
             )
-    list(APPEND FLAGS -D__NX__ -D__SWITCH__
+    list(APPEND FLAGS
             -ffunction-sections -fomit-frame-pointer
+            -D__SDL2_GL__ -D__GL__ -D__SWITCH__
+            -D_GLIBCXX_USE_C99_MATH_TR1 -D_LDBL_EQ_DBL
             )
-    set(PLATFORM_LIBS SDL2 nx freetype png bz2 z)
-    if (BUILD_NX_GL)
-        list(APPEND PLATFORM_DIRS source/platforms/gl)
-        list(APPEND PLATFORM_SRC
-                source/platforms/gl/gl_renderer.cpp
-                source/platforms/gl/gl_texture.cpp)
-        list(APPEND FLAGS -D__GL__ -D__MESAGL__)
-        list(APPEND PLATFORM_LIBS OSMesa)
-    else ()
-        list(APPEND PLATFORM_SRC
-                source/platforms/sdl2/sdl2_renderer.cpp
-                source/platforms/sdl2/sdl2_texture.cpp)
-    endif (BUILD_NX_GL)
+    set(PLATFORM_LIBS
+            SDL2 glad EGL glapi drm_nouveau nx
+            freetype bz2 z png
+            )
     #####################
     # SDL2 PLATORM
     #####################
 elseif (BUILD_SDL2)
     find_package(ZLIB REQUIRED)
-    find_package(PNG REQUIRED)
+    #find_package(PNG REQUIRED)
     find_package(Freetype REQUIRED)
     set(PLATFORM_DIRS
             source/platforms/sdl2
             source/platforms/posix
             ${FREETYPE_INCLUDE_DIRS}
-            ${PNG_INCLUDE_DIRS}
+            #${PNG_INCLUDE_DIRS}
             ${ZLIB_INCLUDE_DIRS})
     file(GLOB PLATFORM_SRC
             source/platforms/sdl2/*.c*
             source/platforms/posix/*.c*)
-    set(PLATFORM_LIBS SDL2 ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
+    set(PLATFORM_LIBS SDL2 ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
+    #${PNG_LIBRARIES}
     list(APPEND FLAGS -D__SDL2__)
     if (BUILD_SDL2_GL)
         list(APPEND PLATFORM_DIRS source/platforms/gl)
+        file(GLOB SHADERS_SRC source/platforms/gl/shaders/*.c*)
         list(APPEND PLATFORM_SRC
                 source/platforms/gl/gl_renderer.cpp
-                source/platforms/gl/gl_texture.cpp)
+                source/platforms/gl/gl_texture.cpp
+                source/platforms/gl/gl_shaders.cpp
+                ${SHADERS_SRC}
+                )
         list(APPEND FLAGS -D__SDL2_GL__ -D__GL__)
         list(APPEND PLATFORM_LIBS GL)
     endif (BUILD_SDL2_GL)
@@ -220,20 +222,21 @@ elseif (BUILD_SDL2)
     #####################
 elseif (BUILD_SDL1)
     find_package(ZLIB REQUIRED)
-    find_package(PNG REQUIRED)
+    #find_package(PNG REQUIRED)
     find_package(Freetype REQUIRED)
     set(PLATFORM_DIRS
             source/platforms/sdl1
             source/platforms/gl
             source/platforms/posix
             ${FREETYPE_INCLUDE_DIRS}
-            ${PNG_INCLUDE_DIRS}
+            #${PNG_INCLUDE_DIRS}
             ${ZLIB_INCLUDE_DIRS})
     file(GLOB PLATFORM_SRC
             source/platforms/sdl1/*.c*
             source/platforms/gl/*.c*
             source/platforms/posix/*.c*)
-    set(PLATFORM_LIBS SDL ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
+    set(PLATFORM_LIBS SDL ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
+    #${PNG_LIBRARIES}
     list(APPEND FLAGS -D__SDL1__ -D__GL__)
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)

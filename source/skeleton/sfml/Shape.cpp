@@ -50,33 +50,6 @@ namespace c2d {
     Shape::~Shape() {
     }
 
-
-////////////////////////////////////////////////////////////
-
-    // TODO:
-    /*
-    void Shape::setTexture(const Texture *texture, bool resetRect) {
-        if (texture) {
-            // Recompute the texture area if requested, or if there was no texture & rect before
-            if (resetRect || (!m_texture && (m_textureRect == IntRect())))
-                setTextureRect(IntRect(0, 0, texture->getSize().x, texture->getSize().y));
-        }
-
-        // Assign the new texture
-        m_texture = texture;
-    }
-    */
-
-
-////////////////////////////////////////////////////////////
-
-    // TODO:
-    /*
-    const Texture *Shape::getTexture() const {
-        return m_texture;
-    }
-    */
-
 ////////////////////////////////////////////////////////////
     void Shape::setTextureRect(const IntRect &rect) {
         m_textureRect = rect;
@@ -140,18 +113,16 @@ namespace c2d {
         return getTransform().transformRect(getLocalBounds());
     }
 
-    VertexArray Shape::getVertices() const {
-        return m_vertices;
+    VertexArray *Shape::getVertices() {
+        return &m_vertices;
     }
 
-    VertexArray Shape::getOutlineVertices() const {
-        return m_outlineVertices;
+    VertexArray *Shape::getOutlineVertices() {
+        return &m_outlineVertices;
     }
 
 ////////////////////////////////////////////////////////////
     Shape::Shape() :
-    // TODO:
-    //m_texture(NULL),
             m_textureRect(),
             m_fillColor(255, 255, 255),
             m_outlineColor(255, 255, 255),
@@ -201,28 +172,10 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    // TODO:
-    /*
-    void Shape::draw(RenderTarget &target, RenderStates states) const {
-        states.transform *= getTransform();
-
-        // Render the inside
-        states.texture = m_texture;
-        target.draw(m_vertices, states);
-
-        // Render the outline
-        if (m_outlineThickness != 0) {
-            states.texture = NULL;
-            target.draw(m_outlineVertices, states);
-        }
-    }
-    */
-
-
-////////////////////////////////////////////////////////////
     void Shape::updateFillColors() {
         for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
             m_vertices[i].color = m_fillColor;
+        m_vertices.updateVbo();
     }
 
 
@@ -238,6 +191,7 @@ namespace c2d {
             m_vertices[i].texCoords.x = m_textureRect.left + m_textureRect.width * xratio;
             m_vertices[i].texCoords.y = m_textureRect.top + m_textureRect.height * yratio;
         }
+        m_vertices.updateVbo();
     }
 
 
@@ -283,6 +237,8 @@ namespace c2d {
 
         // Update the shape's bounds
         m_bounds = m_outlineVertices.getBounds();
+
+        m_outlineVertices.updateVbo();
     }
 
 
@@ -290,6 +246,7 @@ namespace c2d {
     void Shape::updateOutlineColors() {
         for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
             m_outlineVertices[i].color = m_outlineColor;
+        m_outlineVertices.updateVbo();
     }
 
 } // namespace sf

@@ -245,9 +245,9 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         FloatRect getGlobalBounds() const;
 
-        VertexArray getVertices() const;
+        VertexArray *getVertices();
 
-        VertexArray getOutlineVertices() const;
+        VertexArray *getOutlineVertices();
 
     protected:
 

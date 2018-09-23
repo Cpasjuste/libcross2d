@@ -52,9 +52,11 @@ void ListBox::ListBoxLine::setColor(const Color &color) {
     if (iconRect) {
         iconRect->setOutlineColor(color);
     }
-    if (icon) {
-        icon->setOutlineColor(color);
-    }
+
+    // TODO
+    //if (icon) {
+    //    icon->setOutlineColor(color);
+    //}
 }
 
 void ListBox::ListBoxLine::setIcon(Texture *i) {
@@ -66,14 +68,15 @@ void ListBox::ListBoxLine::setIcon(Texture *i) {
         icon = i;
         if (icon) {
             if (icon->available) {
-                icon->setOutlineThickness(1);
+                // TODO
+                //icon->setOutlineThickness(1);
                 icon->setOrigin(iconRect->getOrigin());
                 icon->setPosition(iconRect->getPosition());
-                if (icon->getSize().x != 32 || icon->getSize().y != 32) {
+                if (icon->getLocalBounds().width != 32 || icon->getLocalBounds().height != 32) {
                     printf("ListBoxLine: icon size != 32, scaling icon...\n");
                     float scaling = std::min(
-                            iconRect->getSize().y / icon->getSize().x,
-                            iconRect->getSize().y / icon->getSize().y);
+                            iconRect->getSize().y / icon->getLocalBounds().width,
+                            iconRect->getSize().y / icon->getLocalBounds().height);
                     icon->setScale(scaling, scaling);
                 }
             }

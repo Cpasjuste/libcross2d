@@ -51,6 +51,8 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         VertexArray();
 
+        ~VertexArray();
+
         ////////////////////////////////////////////////////////////
         /// \brief Construct the vertex array with a type and an initial number of vertices
         ///
@@ -170,17 +172,11 @@ namespace c2d {
 
         std::vector<Vertex> getVertices() const;
 
-    private:
+        void bindVbo() const;
 
-        ////////////////////////////////////////////////////////////
-        /// \brief Draw the vertex array to a render target
-        ///
-        /// \param target Render target to draw to
-        /// \param states Current render states
-        ///
-        ////////////////////////////////////////////////////////////
-        // TODO:
-        //virtual void draw(RenderTarget& target, RenderStates states) const;
+        void unbindVbo() const;
+
+        void updateVbo();
 
     private:
 
@@ -189,9 +185,10 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         std::vector<Vertex> m_vertices;      ///< Vertices contained in the array
         PrimitiveType m_primitiveType; ///< Type of primitives to draw
+        unsigned int vbo = 0;
     };
 
-} // namespace sf
+} // namespace c2d
 
 
 #endif // SFML_VERTEXARRAY_HPP

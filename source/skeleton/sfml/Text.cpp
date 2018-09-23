@@ -171,6 +171,7 @@ namespace sfml {
             if (!m_geometryNeedUpdate) {
                 for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
                     m_vertices[i].color = m_fillColor;
+                m_vertices.updateVbo();
             }
         }
     }
@@ -331,34 +332,17 @@ namespace sfml {
         setOrigin(getLocalBounds().width, getLocalBounds().height);
     }
 
-    VertexArray Text::getVertices() const {
+    VertexArray *Text::getVertices() {
         ensureGeometryUpdate();
-        return m_vertices;
+        return &m_vertices;
     }
 
-    VertexArray Text::getOutlineVertices() const {
+    VertexArray *Text::getOutlineVertices() {
         ensureGeometryUpdate();
-        return m_outlineVertices;
+        return &m_outlineVertices;
     }
 
 ////////////////////////////////////////////////////////////
-    /*
-    void Text::draw(Renderer *render, const Transform &transform) {
-        if (m_font) {
-
-            ensureGeometryUpdate();
-
-            Transform combined = transform * getTransform();
-
-            // Only draw the outline if there is something to draw
-            if (m_outlineThickness != 0)
-                render->draw(m_outlineVertices, combined, &m_font->getTexture(m_characterSize));
-
-            render->draw(m_vertices, combined, &m_font->getTexture(m_characterSize));
-            //render->drawTexture((Texture &) m_font->getTexture(m_characterSize), combined);
-        }
-    }
-    */
 
     void Text::setSizeMax(const c2d::Vector2f &size) {
         maxSize = size;
@@ -553,6 +537,9 @@ namespace sfml {
         m_bounds.top = minY;
         m_bounds.width = maxX - minX;
         m_bounds.height = maxY - minY;
+
+        m_vertices.updateVbo();
+        m_outlineVertices.updateVbo();
     }
 
 } // namespace sf

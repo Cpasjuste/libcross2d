@@ -335,9 +335,9 @@ namespace sfml {
 
         void setOriginBottomRight();
 
-        c2d::VertexArray getVertices() const;
+        c2d::VertexArray *getVertices();
 
-        c2d::VertexArray getOutlineVertices() const;
+        c2d::VertexArray *getOutlineVertices();
 
         void setSizeMax(const c2d::Vector2f &maxSize);
 

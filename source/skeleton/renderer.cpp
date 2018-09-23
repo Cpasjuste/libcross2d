@@ -10,8 +10,8 @@ Renderer *c2d_renderer;
 
 Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
 
-    thisTransform = this;
     c2d_renderer = this;
+    thisTransform = this;
     setFillColor(Color::Black);
 
     deltaClock = new C2DClock();
@@ -58,10 +58,12 @@ void Renderer::drawTexture(Texture &texture, Transform &transform) {
 
     //printf("drawTexture: %ix%i (%s)\n", (int)texture.getSize().x, (int)texture.getSize().y, texture.path);
     Transform combined = transform * texture.getTransform();
-    if (texture.getOutlineColor().a != 0 && texture.getOutlineThickness() > 0) {
-        draw(texture.getOutlineVertices(), combined, nullptr);
-    }
-    if (texture.available && texture.getFillColor().a != 0) {
+
+    // TODO
+    //if (texture.getOutlineColor().a != 0 && texture.getOutlineThickness() > 0) {
+    //    draw(texture.getOutlineVertices(), combined, nullptr);
+    //}
+    if (texture.available && texture.getColor().a != 0) {
         draw(texture.getVertices(), combined, &texture);
     }
 }
@@ -130,6 +132,7 @@ ShaderList *Renderer::getShaderList() {
 Renderer::~Renderer() {
 
     printf("~Renderer(%p)\n", this);
+
     delete (deltaClock);
     delete (elapsedClock);
     if (shaderList) {

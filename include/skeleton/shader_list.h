@@ -17,7 +17,7 @@ namespace c2d {
         struct Shader {
 
             std::string name;
-            void *data = NULL;
+            void *data = nullptr;
 
             Shader(const std::string n, void *d) {
                 name = n;

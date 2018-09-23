@@ -4,6 +4,7 @@
 
 #include "c2d.h"
 #include "main.h"
+#include <unistd.h>
 
 #include "../res/default.h"
 #include "../res/title.h"
@@ -18,7 +19,7 @@ int main() {
 
     // create a rect
     Rectangle *rect = new C2DRectangle(
-            FloatRect(0, renderer->getSize().y / 2,
+            FloatRect(renderer->getSize().x / 2, renderer->getSize().y / 2,
                       renderer->getSize().x / 2, renderer->getSize().y / 2));
     rect->setOriginCenter();
     rect->setFillColor(Color::Gray);
@@ -66,9 +67,9 @@ int main() {
                renderer->getElapsedTime().asSeconds(), delta, renderer->getFps());
 
         // render
-        rect->move(10 * delta, 0);
-        rect->setScale(rect->getScale().x - (0.01f * delta), rect->getScale().y - (0.01f * delta));
-        rect->rotate(50 * delta);
+        //rect->move(10 * delta, 0);
+        //rect->setScale(rect->getScale().x + (0.1f * delta), rect->getScale().y + (0.1f * delta));
+        //rect->rotate(50 * delta);
 
         renderer->flip();
     }

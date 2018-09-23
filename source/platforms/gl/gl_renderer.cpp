@@ -5,99 +5,143 @@
 #ifdef __GL__
 
 #include "c2d.h"
-#include <GL/gl.h>
+
+#define GLM_FORCE_PURE
+
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace c2d;
 
 GLRenderer::GLRenderer(const Vector2f &size) : Renderer(size) {
 
-    setSize(size.x, size.y);
+    printf("GLRenderer\n");
 }
 
-void GLRenderer::draw(const VertexArray &vertices,
+void GLRenderer::initGL() {
+
+#ifdef __SWITCH__
+    gladLoadGL();
+#endif
+
+    // vao
+    GL_CHECK(glGenVertexArrays(1, &vao));
+    GL_CHECK(glBindVertexArray(vao));
+
+    GL_CHECK(glDisable(GL_DEPTH_TEST));
+    GL_CHECK(glDepthMask(GL_FALSE));
+
+    // enable position and color array by default
+    GL_CHECK(glEnableVertexAttribArray(0));
+    GL_CHECK(glEnableVertexAttribArray(1));
+
+    // init shaders
+    shaderList = (ShaderList *) new GLShaderList();
+}
+
+void GLRenderer::draw(VertexArray *vertexArray,
                       const Transform &transform,
                       const Texture *texture) {
 
-    size_t count = vertices.getVertexCount();
+    Vertex *vertices = vertexArray->getVertices().data();
+    size_t vertexCount = vertexArray->getVertexCount();
+    GLTexture *glTexture = ((GLTexture *) texture);
 
-    glPushMatrix();
-
-    if (transform == Transform::Identity) {
-        glLoadIdentity();
-    } else {
-        glLoadMatrixf(transform.getMatrix());
+    GLShader *shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(0)->data :
+                       (GLShader *) ((GLShaderList *) shaderList)->color->data;
+    if (glTexture && glTexture->shader) {
+        shader = (GLShader *) glTexture->shader->data;
     }
 
-    GLTexture *tex = ((GLTexture *) texture);
-    if (tex && tex->available) {
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, tex->texID);
-    }
+    // bind object vao
+    vertexArray->bindVbo();
 
-    if (tex || vertices[0].color.a < 255) {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
+    // set shader
+    GL_CHECK(glUseProgram(shader->GetProgram()));
 
-    static const GLenum modes[] =
-            {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
-             GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
-    GLenum mode = modes[vertices.getPrimitiveType()];
+    // set vertex position
+    GL_CHECK(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                                   (void *) offsetof(Vertex, position)));
 
-    glBegin(mode);
+    // set vertex colors
+    GL_CHECK(glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex),
+                                   (void *) offsetof(Vertex, color)));
 
-    for (unsigned int i = 0; i < count; i++) {
-        if (tex && tex->available) {
-            glTexCoord2f(vertices[i].texCoords.x / texture->getSize().x,
-                         vertices[i].texCoords.y / texture->getSize().y);
+    if (glTexture && glTexture->available) {
+
+        // bind texture
+        GL_CHECK(glBindTexture(GL_TEXTURE_2D, glTexture->texID));
+
+        // set tex coords
+        GL_CHECK(glEnableVertexAttribArray(2));
+        GL_CHECK(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                                       (void *) offsetof(Vertex, texCoords)));
+
+        // normalize texture coords
+        GLfloat texMtx[16] = {1.f, 0.f, 0.f, 0.f,
+                              0.f, 1.f, 0.f, 0.f,
+                              0.f, 0.f, 1.f, 0.f,
+                              0.f, 0.f, 0.f, 1.f};
+        texMtx[0] = 1.f / texture->getTextureRect().width;
+        texMtx[5] = 1.f / texture->getTextureRect().height;
+        shader->SetUniformMatrix("textureMatrix", texMtx);
+
+        // set retroarch shader params
+        shader->SetUniform("TextureSize", texture->getTextureRect().width, texture->getTextureRect().height);
+        shader->SetUniform("InputSize", texture->getTextureRect().width, texture->getTextureRect().height);
+        shader->SetUniform("OutputSize", texture->getGlobalBounds().width, texture->getGlobalBounds().height);
+
+        if (glTexture->shader) {
+            //printf("tex: %i %i, out: %f %f\n", texture->getTextureRect().width, texture->getTextureRect().height,
+            //       texture->getGlobalBounds().width, texture->getGlobalBounds().height);
         }
-        glColor4f(vertices[i].color.r / 255.0f,
-                  vertices[i].color.g / 255.0f,
-                  vertices[i].color.b / 255.0f,
-                  vertices[i].color.a / 255.0f);
-        glVertex2f(vertices[i].position.x, vertices[i].position.y);
+
+    } else {
+        GL_CHECK(glDisableVertexAttribArray(2));
     }
 
-    glEnd();
+    //auto pMtx = glm::orthoLH(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
+    //auto mMtx = glm::make_mat4(transform.getMatrix());
+    //auto pmMtx = glm::matrixCompMult(pMtx, mMtx);
+    //shader->SetUniformMatrix("MVPMatrix", glm::value_ptr(pmMtx));
 
-    if (tex && tex->available) {
-        glDisable(GL_TEXTURE_2D);
+    // set projection matrix
+    auto mtx = glm::orthoLH(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
+    shader->SetUniformMatrix("projectionMatrix", glm::value_ptr(mtx));
+    // set model view matrix
+    shader->SetUniformMatrix("modelViewMatrix", transform.getMatrix());
+
+    // enable blending if needed
+    if (glTexture || vertices[0].color.a < 255) {
+        GL_CHECK(glEnable(GL_BLEND));
+        GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     }
 
-    if (tex || vertices[0].color.a < 255) {
-        glDisable(GL_BLEND);
+    // draw
+    const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
+                            GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
+    GLenum mode = modes[vertexArray->getPrimitiveType()];
+    GL_CHECK(glDrawArrays(mode, 0, (GLsizei) vertexCount));
+
+    if (glTexture || vertices[0].color.a < 255) {
+        GL_CHECK(glDisable(GL_BLEND));
     }
 
-    glPopMatrix();
-}
-
-void GLRenderer::setSize(const c2d::Vector2f &size) {
-    setSize(size.x, size.y);
-}
-
-void GLRenderer::setSize(float width, float height) {
-
-    RectangleShape::setSize(width, height);
-
-    glDisable(GL_LIGHTING);
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0f, width, height, 0.0f, 0.0f, 1.0f);
-    glMatrixMode(GL_MODELVIEW);
+    // unbind object vao
+    vertexArray->unbindVbo();
 }
 
 void GLRenderer::flip(bool draw) {
 
     if (draw) {
+
         // clear screen
-        glClearColor(getFillColor().r / 255.0f,
-                     getFillColor().g / 255.0f,
-                     getFillColor().b / 255.0f,
-                     getFillColor().a / 255.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        GL_CHECK(glClearColor(getFillColor().r / 255.0f,
+                              getFillColor().g / 255.0f,
+                              getFillColor().b / 255.0f,
+                              getFillColor().a / 255.0f));
+        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
     }
 
     // call base class (draw childs)
@@ -106,6 +150,29 @@ void GLRenderer::flip(bool draw) {
 
 GLRenderer::~GLRenderer() {
 
+    printf("~GLRenderer\n");
+
+    if (shaderList) {
+        delete (shaderList);
+        shaderList = nullptr;
+    }
+
+    if (vao) {
+        GL_CHECK(glDeleteVertexArrays(1, &vao));
+    }
 }
+
+#ifndef NDEBUG
+
+namespace c2d {
+    void CheckOpenGLError(const char *stmt, const char *fname, int line) {
+        GLenum err = glGetError();
+        if (err != GL_NO_ERROR) {
+            printf("OpenGL error %08x, at %s:%i - for %s\n", err, fname, line, stmt);
+            abort();
+        }
+    }
+}
+#endif
 
 #endif // __GL__

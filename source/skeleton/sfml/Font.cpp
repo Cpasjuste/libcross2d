@@ -583,7 +583,7 @@ namespace c2d {
                     static_cast<float>(face->glyph->metrics.height) / static_cast<float>(1 << 6) + outlineThickness * 2;
 
             // Resize the pixel buffer to the new size and fill it with transparent white pixels
-            m_pixelBuffer.resize(width * height * 4);
+            m_pixelBuffer.resize(static_cast<unsigned long>(width * height * 4));
 
             Uint8 *current = &m_pixelBuffer[0];
             Uint8 *end = current + width * height * 4;
@@ -656,7 +656,7 @@ namespace c2d {
             Uint8 *dstPixels = (Uint8 *) buffer;
 
             for (int i = 0; i < height; ++i) {
-                std::memcpy(dstPixels, srcPixels, (size_t) (width * 4));
+                memcpy(dstPixels, srcPixels, (size_t) (width * 4));
                 srcPixels += width * 4;
                 dstPixels += pitch;
             }
@@ -685,7 +685,7 @@ namespace c2d {
                 continue;
 
             // Check if there's enough horizontal space left in the row
-            if (width > page.texture->getSize().x - it->width)
+            if (width > page.texture->getTextureRect().width - it->width)
                 continue;
 
             // Make sure that this new row is the best found so far
@@ -700,10 +700,11 @@ namespace c2d {
         // If we didn't find a matching row, create a new one (10% taller than the glyph)
         if (!row) {
             int rowHeight = height + height / 10;
-            while ((page.nextRow + rowHeight >= page.texture->getSize().y) || (width >= page.texture->getSize().x)) {
+            while ((page.nextRow + rowHeight >= (unsigned int) page.texture->getTextureRect().height)
+                   || (width >= (unsigned int) page.texture->getTextureRect().width)) {
                 // Not enough space: resize the texture if possible
-                unsigned int textureWidth = page.texture->getSize().x;
-                unsigned int textureHeight = page.texture->getSize().y;
+                unsigned int textureWidth = (unsigned int) page.texture->getTextureRect().width;
+                unsigned int textureHeight = (unsigned int) page.texture->getTextureRect().height;
                 // TODO:
                 //if ((textureWidth * 2 <= Texture::getMaximumSize()) &&
                 //    (textureHeight * 2 <= Texture::getMaximumSize())) {
@@ -722,15 +723,15 @@ namespace c2d {
                     Uint8 *dst;
                     int dst_pitch;
                     texture->lock(NULL, reinterpret_cast<void **>(&dst), &dst_pitch);
-
                     for (int i = 0; i < (int) textureHeight; ++i) {
                         std::memcpy(dst, src, (size_t) (textureWidth * 4));
                         src += textureWidth * 4;
                         dst += dst_pitch;
                     }
-
                     texture->unlock();
-
+#ifdef __SWITCH__
+                    glFinish();
+#endif
                     delete (page.texture);
                     page.texture = texture;
 
@@ -803,7 +804,7 @@ namespace c2d {
         texture->lock(NULL, reinterpret_cast<void **>(&buffer), NULL);
         for (int x = 0; x < 2; ++x) {
             for (int y = 0; y < 2; ++y) {
-                Uint8 *pixel = &buffer[(int) ((x + y * texture->getSize().x) * texture->bpp)];
+                Uint8 *pixel = &buffer[(x + y * texture->getTextureRect().width) * texture->bpp];
                 *pixel++ = 255;
                 *pixel++ = 255;
                 *pixel++ = 255;

@@ -21,9 +21,8 @@ SDL2Texture::SDL2Texture(const char *path) : Texture(path) {
         return;
     }
 
-    setSize(Vector2f(w, h));
     setTextureRect(IntRect(0, 0, w, h));
-    pitch = (int) (getSize().x * bpp);
+    pitch = getTextureRect().width * bpp;
 
     SDL_Surface *tmp =
             SDL_CreateRGBSurfaceWithFormatFrom(pixels, w, h, 32, pitch, SDL_PIXELFORMAT_RGBA32);
@@ -59,9 +58,8 @@ SDL2Texture::SDL2Texture(const unsigned char *buffer, int bufferSize) : Texture(
         return;
     }
 
-    setSize(Vector2f(w, h));
     setTextureRect(IntRect(0, 0, w, h));
-    pitch = (int) (getSize().x * bpp);
+    pitch = getTextureRect().width * bpp;
 
     SDL_Surface *tmp =
             SDL_CreateRGBSurfaceWithFormatFrom(pixels, w, h, 32, pitch, SDL_PIXELFORMAT_RGBA32);
@@ -100,6 +98,7 @@ SDL2Texture::SDL2Texture(const Vector2f &size, int format) : Texture(size, forma
         return;
     }
 
+    setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
 
     available = true;
@@ -109,6 +108,8 @@ SDL2Texture::SDL2Texture(const Vector2f &size, int format) : Texture(size, forma
 
 int SDL2Texture::lock(FloatRect *rect, void **pix, int *p) {
 
+    int ret = 0;
+
     if (rect) {
         SDL_Rect r = {
                 (Sint16) rect->left,
@@ -116,23 +117,28 @@ int SDL2Texture::lock(FloatRect *rect, void **pix, int *p) {
                 (Uint16) rect->width,
                 (Uint16) rect->height
         };
-        SDL_LockTexture(tex, &r, pix, &pitch);
+        ret = SDL_LockTexture(tex, &r, pix, &pitch);
     } else {
-        SDL_LockTexture(tex, NULL, pix, &pitch);
+        ret = SDL_LockTexture(tex, nullptr, pix, &pitch);
     }
 
     if (p) {
         *p = pitch;
     }
 
-    return 0;
+    return ret;
+}
+
+void SDL2Texture::unlock() {
+
+    SDL_UnlockTexture(tex);
 }
 
 int SDL2Texture::save(const char *path) {
 
-    unsigned char *pixels = NULL;
-    unsigned char *converted = NULL;
-    png_bytep *rows = NULL;
+    unsigned char *pixels = nullptr;
+    unsigned char *converted = nullptr;
+    png_bytep *rows = nullptr;
 
     const char *szAuthor = "Cpasjuste";
     const char *szDescription = "Screenshot";
@@ -146,16 +152,16 @@ int SDL2Texture::save(const char *path) {
     time_t currentTime;
     png_time_struct png_time_now;
 
-    int w = (int) getSize().x, h = (int) getSize().y;
+    int w = getTextureRect().width, h = getTextureRect().height;
 
-    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     if (!png_ptr) {
         return -1;
     }
 
     png_infop info_ptr = png_create_info_struct(png_ptr);
     if (!info_ptr) {
-        png_destroy_write_struct(&png_ptr, (png_infopp) NULL);
+        png_destroy_write_struct(&png_ptr, (png_infopp) nullptr);
         return -1;
     }
 
@@ -166,7 +172,7 @@ int SDL2Texture::save(const char *path) {
         return -1;
     }
 
-    SDL_LockTexture(tex, NULL, (void **) &pixels, NULL);
+    SDL_LockTexture(tex, nullptr, (void **) &pixels, nullptr);
 
     // Convert the image to 32-bit
     if (bpp < 4) {
@@ -201,7 +207,7 @@ int SDL2Texture::save(const char *path) {
     png_convert_from_time_t(&png_time_now, currentTime);
 
     ff = fopen(path, "wb");
-    if (ff == NULL) {
+    if (ff == nullptr) {
         printf("C2DUINXVideo::save: fopen failed: `%s`\n", path);
         png_destroy_write_struct(&png_ptr, &info_ptr);
         if (converted) {
@@ -256,13 +262,51 @@ int SDL2Texture::save(const char *path) {
     return 0;
 }
 
-void SDL2Texture::unlock() {
-
-    SDL_UnlockTexture(tex);
-}
-
 void SDL2Texture::setFiltering(int filter) {
 
+#if 0
+    if (!tex || filter == filtering) {
+        return;
+    }
+
+    int access;
+    SDL_QueryTexture(tex, nullptr, &access, nullptr, nullptr);
+    if (access != SDL_TEXTUREACCESS_STREAMING) {
+        printf("SDL2Texture::setFiltering: access != SDL_TEXTUREACCESS_STREAMING\n");
+        return;
+    }
+
+    printf("SDL2Texture::setFiltering(%i)\n", filter);
+    filtering = filter;
+
+    if (filter == C2D_TEXTURE_FILTER_LINEAR) {
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+    } else if (tex) {
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+    }
+
+    // SDL2 needs to re-create a texture to apply filtering...
+    SDL_Texture *newTex = SDL_CreateTexture(
+            ((SDL2Renderer *) c2d_renderer)->renderer,
+            format == C2D_TEXTURE_FMT_RGBA8 ? SDL_PIXELFORMAT_RGBA32 : SDL_PIXELFORMAT_RGB565,
+            SDL_TEXTUREACCESS_STREAMING,
+            (int) getSize().x, (int) getSize().y);
+
+    void *src_pixels, *dst_pixels;
+    int src_pitch, dst_pitch;
+
+    SDL_LockTexture(tex, nullptr, &src_pixels, &src_pitch);
+    SDL_LockTexture(newTex, nullptr, &dst_pixels, &dst_pitch);
+
+    memcpy(dst_pixels, src_pixels, (size_t) pitch * (size_t) getSize().y);
+
+    SDL_UnlockTexture(newTex);
+    //SDL_UnlockTexture(tex);
+    SDL_DestroyTexture(tex);
+    tex = newTex;
+
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+#endif
 }
 
 SDL2Texture::~SDL2Texture() {
@@ -270,7 +314,8 @@ SDL2Texture::~SDL2Texture() {
     printf("~SDL2Texture(%p)\n", this);
     if (tex) {
         SDL_DestroyTexture(tex);
+        tex = nullptr;
     }
 }
 
-#endif
+#endif // __SDL2_GL__

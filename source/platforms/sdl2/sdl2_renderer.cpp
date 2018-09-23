@@ -9,7 +9,9 @@
 #ifndef __SDL2_GL__
 
 #ifdef __SWITCH__
+
 #include <switch.h>
+
 #endif
 
 #include "c2d.h"
@@ -18,23 +20,43 @@ using namespace c2d;
 
 SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
 
+#ifdef __SWITCH__
+#ifdef SVC_DEBUG
+    consoleDebugInit(debugDevice_SVC);
+    stdout = stderr;
+#endif
+#endif
+
     if ((SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't init sdl: %s\n", SDL_GetError());
         return;
     }
 
+#ifdef __SWITCH__
+    Uint32 flags = SDL_WINDOW_FULLSCREEN;
+#else
     Uint32 flags = 0;
     if (!getSize().x || !getSize().y) { // force fullscreen if window size == 0
         flags |= SDL_WINDOW_FULLSCREEN;
     }
+#endif
+
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 1);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 1);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 0);
 
     window = SDL_CreateWindow(
-            "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            (int) getSize().x, (int) getSize().y, flags);
+            "CROSS2D_SDL2_GL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+            (int) getSize().x, (int) getSize().y, flags | SDL_WINDOW_OPENGL);
 
     if (window == nullptr) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                     "Couldn't create an opengl window: %s, trying software...\n", SDL_GetError());
         window = SDL_CreateWindow(
-                "CROSS2D_SDL2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                "CROSS2D_SDL2_SW", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                 (int) getSize().x, (int) getSize().y, 0);
         if (window == nullptr) {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
@@ -54,25 +76,19 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
         }
     }
 
-#ifdef __SWITCH__
-#ifdef NET_DEBUG
-    socketInitializeDefault();
-    nxlinkStdio();
-#elif SVC_DEBUG
-    consoleDebugInit(debugDevice_SVC);
-    stdout = stderr;
-#endif
-#endif
+    // set default scale quality to linear filtering
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
     available = true;
 }
 
-void SDL2Renderer::draw(const VertexArray &vertices,
+void SDL2Renderer::draw(VertexArray *vertexArray,
                         const Transform &transform,
                         const Texture *texture) {
 
-    size_t count = vertices.getVertexCount();
-    int type = vertices.getPrimitiveType();
+    size_t count = vertexArray->getVertexCount();
+    int type = vertexArray->getPrimitiveType();
+    Vertex *vertices = vertexArray->getVertices().data();
 
     //printf("draw: type=%i | vertex=%i\n", type, (int) count);
 
@@ -141,6 +157,7 @@ void SDL2Renderer::draw(const VertexArray &vertices,
 
     } else if (type == 3 || type == 5) {
 
+        // TODO: fix new texcoords
         // Triangles // TriangleFan
         int p0 = type == 3 ? 0 : 5;
         int p1 = type == 3 ? 5 : 3;
@@ -244,15 +261,55 @@ void SDL2Renderer::delay(unsigned int ms) {
 
 SDL2Renderer::~SDL2Renderer() {
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    if (renderer) {
+        SDL_DestroyRenderer(renderer);
+    }
+    if (window) {
+        SDL_DestroyWindow(window);
+    }
+
     SDL_Quit();
+}
+
+//-----------------------------------------------------------------------------
+// nxlink support
+//-----------------------------------------------------------------------------
 
 #ifdef __SWITCH__
 #ifdef NET_DEBUG
-    socketExit();
-#endif
-#endif
+
+#include <unistd.h>
+
+static int s_nxlinkSock = -1;
+
+static void initNxLink() {
+    if (R_FAILED(socketInitializeDefault()))
+        return;
+
+    s_nxlinkSock = nxlinkStdio();
+    if (s_nxlinkSock >= 0)
+        printf("printf output now goes to nxlink server");
+    else
+        socketExit();
+}
+
+static void deinitNxLink() {
+    if (s_nxlinkSock >= 0) {
+        close(s_nxlinkSock);
+        socketExit();
+        s_nxlinkSock = -1;
+    }
+}
+
+extern "C" void userAppInit() {
+    initNxLink();
+}
+
+extern "C" void userAppExit() {
+    deinitNxLink();
 }
 
 #endif
+#endif
+
+#endif // __SDL2_GL__
