@@ -120,11 +120,11 @@ namespace c2d {
             toFloat = to;
         }
 
-        const float getFrom() const {
+        float getFrom() const {
             return fromFloat;
         }
 
-        const float getTo() const {
+        float getTo() const {
             return toFloat;
         }
     };
@@ -150,11 +150,11 @@ namespace c2d {
             toVector2 = to;
         }
 
-        const Vector2f getFrom() const {
+        Vector2f getFrom() const {
             return fromVector2;
         }
 
-        const Vector2f getTo() const {
+        Vector2f getTo() const {
             return toVector2;
         }
     };
@@ -180,11 +180,11 @@ namespace c2d {
             toColor = to;
         }
 
-        const Color getFrom() const {
+        Color getFrom() const {
             return fromColor;
         }
 
-        const Color getTo() const {
+        Color getTo() const {
             return toColor;
         }
     };
@@ -210,11 +210,11 @@ namespace c2d {
             toFloat = to;
         }
 
-        const float getFrom() const {
+        float getFrom() const {
             return fromFloat;
         }
 
-        const float getTo() const {
+        float getTo() const {
             return toFloat;
         }
     };

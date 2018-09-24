@@ -66,7 +66,7 @@ namespace c2d {
 
         void setLayer(int layer);
 
-        const ObjectType getType() const {
+        ObjectType getType() const {
             return type;
         }
 
