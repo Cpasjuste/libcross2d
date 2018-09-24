@@ -60,8 +60,8 @@ Tweener::~Tweener() {
     delete (timerClock);
 }
 
-void Tweener::setTransform(Transformable *transform) {
-    this->transform = transform;
+void Tweener::setObject(C2DObject *thisObject) {
+    this->thisObject = thisObject;
 }
 
 void Tweener::step() {
@@ -69,7 +69,7 @@ void Tweener::step() {
     delta = deltaClock->restart();
     time = timerClock->getElapsedTime();
 
-    if (!transform) {
+    if (!thisObject || !active) {
         active = false;
         return;
     }
@@ -93,79 +93,81 @@ void Tweener::step() {
     }
 
     if (type == TweenerType::TPosition) {
-        auto pos = tweenVector2.step(delta.asMilliseconds(), true);
-        transform->setPosition(pos[0], pos[1]);
+        auto position = tweenVector2.step(delta.asMilliseconds(), true);
+        if (thisObject->getType() == C2DObject::ObjectType::TRectangle) {
+            ((Rectangle *) thisObject)->setPosition(position[0], position[1]);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TLine) {
+            ((Line *) thisObject)->setPosition(position[0], position[1]);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TCircle) {
+            ((Circle *) thisObject)->setPosition(position[0], position[1]);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TTexture) {
+            ((Texture *) thisObject)->setPosition(position[0], position[1]);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TText) {
+            ((Text *) thisObject)->setPosition(position[0], position[1]);
+        }
     } else if (type == TweenerType::TRotation) {
-        auto rot = tweenFloat.step(delta.asMilliseconds(), true);
-        transform->setRotation(rot);
+        auto rotation = tweenFloat.step(delta.asMilliseconds(), true);
+        if (thisObject->getType() == C2DObject::ObjectType::TRectangle) {
+            ((Rectangle *) thisObject)->setRotation(rotation);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TLine) {
+            ((Line *) thisObject)->setRotation(rotation);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TCircle) {
+            ((Circle *) thisObject)->setRotation(rotation);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TTexture) {
+            ((Texture *) thisObject)->setRotation(rotation);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TText) {
+            ((Text *) thisObject)->setRotation(rotation);
+        }
+    } else if (type == TweenerType::TScale) {
+        auto scale = tweenVector2.step(delta.asMilliseconds(), true);
+        if (thisObject->getType() == C2DObject::ObjectType::TRectangle) {
+            ((Rectangle *) thisObject)->setScale(scale[0], scale[1]);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TLine) {
+            ((Line *) thisObject)->setScale(scale[0], scale[1]);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TCircle) {
+            ((Circle *) thisObject)->setScale(scale[0], scale[1]);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TTexture) {
+            ((Texture *) thisObject)->setScale(scale[0], scale[1]);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TText) {
+            ((Text *) thisObject)->setScale(scale[0], scale[1]);
+        }
+    } else if (type == TweenerType::TColor) {
+        auto c = tweenColor.step(delta.asMilliseconds(), true);
+        Color color = {(uint8_t) (c[0] * 255.0f), (uint8_t) (c[1] * 255.0f),
+                       (uint8_t) (c[2] * 255.0f), (uint8_t) (c[3] * 255.0f)};
+        if (thisObject->getType() == C2DObject::ObjectType::TRectangle) {
+            ((Rectangle *) thisObject)->setFillColor(color);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TLine) {
+            ((Line *) thisObject)->setFillColor(color);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TCircle) {
+            ((Circle *) thisObject)->setFillColor(color);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TTexture) {
+            ((Texture *) thisObject)->setColor(color);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TText) {
+            ((Text *) thisObject)->setFillColor(color);
+        }
+    } else if (type == TweenerType::TAlpha) {
+        auto alpha = tweenFloat.step(delta.asMilliseconds(), true);
+        if (thisObject->getType() == C2DObject::ObjectType::TRectangle) {
+            Color color = ((Rectangle *) thisObject)->getFillColor();
+            Color colorA = {color.r, color.g, color.b, (uint8_t) alpha};
+            ((Rectangle *) thisObject)->setFillColor(colorA);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TLine) {
+            Color color = ((Line *) thisObject)->getFillColor();
+            Color colorA = {color.r, color.g, color.b, (uint8_t) alpha};
+            ((Line *) thisObject)->setFillColor(colorA);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TCircle) {
+            Color color = ((Circle *) thisObject)->getFillColor();
+            Color colorA = {color.r, color.g, color.b, (uint8_t) alpha};
+            ((Circle *) thisObject)->setFillColor(colorA);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TTexture) {
+            Color color = ((Texture *) thisObject)->getColor();
+            Color colorA = {color.r, color.g, color.b, (uint8_t) alpha};
+            ((Texture *) thisObject)->setColor(colorA);
+        } else if (thisObject->getType() == C2DObject::ObjectType::TText) {
+            Color color = ((Text *) thisObject)->getFillColor();
+            Color colorA = {color.r, color.g, color.b, (uint8_t) alpha};
+            ((Text *) thisObject)->setFillColor(colorA);
+        }
     }
-}
-
-TweenPosition::TweenPosition(
-        const Vector2f &from, const Vector2f &to, float duration, TweenerLoop loop)
-        : Tweener(from, to, duration, loop) {
-
-    this->type = TweenerType::TPosition;
-}
-
-void TweenPosition::setFrom(const Vector2f &from) {
-    fromVector2 = from;
-}
-
-void TweenPosition::setTo(const Vector2f &to) {
-    toVector2 = to;
-}
-
-const Vector2f TweenPosition::getFrom() const {
-    return fromVector2;
-}
-
-const Vector2f TweenPosition::getTo() const {
-    return toVector2;
-}
-
-TweenRotation::TweenRotation(
-        float from, float to, float duration, TweenerLoop loop)
-        : Tweener(from, to, duration, loop) {
-
-    this->type = TweenerType::TRotation;
-}
-
-void TweenRotation::setFrom(float from) {
-    toFloat = from;
-}
-
-void TweenRotation::setTo(float to) {
-    toFloat = to;
-}
-
-const float TweenRotation::getFrom() const {
-    return fromFloat;
-}
-
-const float TweenRotation::getTo() const {
-    return toFloat;
-}
-
-TweenColor::TweenColor(
-        const Color &from, const Color &to, float duration, TweenerLoop loop)
-        : Tweener(from, to, duration, loop) {
-
-    this->type = TweenerType::TColor;
-}
-
-void TweenColor::setFrom(const Color &from) {
-    toColor = from;
-}
-
-void TweenColor::setTo(const Color &to) {
-    toColor = to;
-}
-
-const Color TweenColor::getFrom() const {
-    return fromColor;
-}
-
-const Color TweenColor::getTo() const {
-    return toColor;
 }

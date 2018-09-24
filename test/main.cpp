@@ -36,10 +36,10 @@ int main() {
     }
 
     // create a font
-    Font font;
-    if (font.loadFromMemory(pfba_font, pfba_font_length)) {
+    Font *font = new Font();
+    if (font->loadFromMemory(pfba_font, pfba_font_length)) {
         // create a text and add it to the rect
-        Text *text = new Text("Hello world", font);
+        Text *text = new Text("Hello world", *font);
         text->setOutlineColor(Color::Blue);
         text->setOutlineThickness(2);
         text->setOriginCenter();
@@ -55,13 +55,18 @@ int main() {
 
     // add some tweening :)
     auto *tweenPos = new TweenPosition(
-            Vector2f(renderer->getSize().x / 2 - 256, rect->getPosition().y),
-            Vector2f(renderer->getSize().x / 2 + 256, rect->getPosition().y),
+            {renderer->getSize().x / 2 - 256, rect->getPosition().y},
+            {renderer->getSize().x / 2 + 256, rect->getPosition().y},
             4.0f, TweenerLoop::PingPong);
     rect->add(tweenPos);
-
     auto *tweenRot = new TweenRotation(0, 360, 4.0f, TweenerLoop::PingPong);
     rect->add(tweenRot);
+    auto *tweenScale = new TweenScale(rect->getScale(), {2, 2}, 4.0f, TweenerLoop::PingPong);
+    rect->add(tweenScale);
+    auto *tweenColor = new TweenColor(rect->getFillColor(), Color::Orange, 4.0f, TweenerLoop::PingPong);
+    rect->add(tweenColor);
+    auto *tweenAlpha = new TweenAlpha(255, 0, 4.0f, TweenerLoop::PingPong);
+    rect->add(tweenAlpha);
 
     while (renderer->getElapsedTime().asSeconds() < 20) {
 
@@ -82,6 +87,7 @@ int main() {
 
     // will delete widgets recursively
     delete (input);
+    delete (font);
     delete (renderer);
 
     return 0;

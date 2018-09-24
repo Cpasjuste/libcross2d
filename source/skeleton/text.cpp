@@ -11,7 +11,7 @@ Text::Text() {
 
     //printf("Text(%p): %ix%i\n", this, (int) getLocalBounds().width, (int) getLocalBounds().height);
 
-    thisTransform = this;
+    type = TText;
 }
 
 Text::Text(const std::string &string, const Font &font, unsigned int characterSize)
@@ -20,7 +20,7 @@ Text::Text(const std::string &string, const Font &font, unsigned int characterSi
     //printf("Text(%p): %ix%i\n", this,
     //       (int) getLocalBounds().width, (int) getLocalBounds().height);
 
-    thisTransform = this;
+    type = TText;
 }
 
 void Text::draw(Transform &transform) {

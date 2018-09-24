@@ -27,6 +27,14 @@ namespace c2d {
             Auto = 0, Manual = 1
         };
 
+        enum ObjectType : int {
+            TRectangle = 1,
+            TLine = 2,
+            TCircle = 3,
+            TTexture = 4,
+            TText = 5
+        };
+
         C2DObject();
 
         virtual ~C2DObject();
@@ -58,12 +66,18 @@ namespace c2d {
 
         void setLayer(int layer);
 
+        const ObjectType getType() const {
+            return type;
+        }
+
         bool available = false;
 
     protected:
 
         C2DObject *parent = nullptr;
-        Transformable *thisTransform = nullptr;
+        ObjectType type;
+        //void *thisTransform = nullptr;
+
         std::vector<C2DObject *> childs;
         std::vector<Tweener *> tweeners;
         Visibility visibility = Visible;

@@ -21,7 +21,7 @@ Line::Line(const Vector2f &p1, const Vector2f &p2, float width) : RectangleShape
     printf("Line(%p): %ix%i (r=%f)\n",
            this, (int) getSize().x, (int) getSize().y, rotation);
 
-    thisTransform = this;
+    type = TLine;
 }
 
 std::size_t Line::getPointCount() const {

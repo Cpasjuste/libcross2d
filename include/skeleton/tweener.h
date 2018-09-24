@@ -9,20 +9,17 @@
 #include "skeleton/sfml/Clock.hpp"
 #include "skeleton/sfml/Color.hpp"
 #include "skeleton/sfml/Vector2.hpp"
-#include "skeleton/sfml/Transformable.hpp"
 
 namespace c2d {
 
+    class C2DObject;
+
     enum TweenerType : int {
-        TPosition,
-        TRotation,
-        TScale,
-        TColor
+        TPosition, TRotation, TScale, TColor, TAlpha
     };
 
     enum TweenerLoop : int {
-        None,
-        PingPong
+        None, PingPong
     };
 
     ///
@@ -43,13 +40,13 @@ namespace c2d {
 
         ~Tweener();
 
-        void setTransform(Transformable *transform);
+        void setObject(C2DObject *thisObject);
 
         void step();
 
     protected:
         // transform to tween
-        Transformable *transform;
+        C2DObject *thisObject;
         // tweener info
         TweenerType type;
         TweenerLoop loop;
@@ -81,15 +78,25 @@ namespace c2d {
 
         TweenPosition(
                 const Vector2f &from, const Vector2f &to,
-                float duration, TweenerLoop loop = None);
+                float duration, TweenerLoop loop = None) : Tweener(from, to, duration, loop) {
+            this->type = TweenerType::TPosition;
+        };
 
-        void setFrom(const Vector2f &from);
+        void setFrom(const Vector2f &from) {
+            fromVector2 = from;
+        }
 
-        void setTo(const Vector2f &to);
+        void setTo(const Vector2f &to) {
+            toVector2 = to;
+        }
 
-        const Vector2f getFrom() const;
+        const Vector2f getFrom() const {
+            return fromVector2;
+        }
 
-        const Vector2f getTo() const;
+        const Vector2f getTo() const {
+            return toVector2;
+        }
     };
 
     ///
@@ -101,15 +108,55 @@ namespace c2d {
 
         TweenRotation(
                 float from, float to,
-                float duration, TweenerLoop loop = None);
+                float duration, TweenerLoop loop = None) : Tweener(from, to, duration, loop) {
+            this->type = TweenerType::TRotation;
+        }
 
-        void setFrom(float from);
+        void setFrom(float from) {
+            fromFloat = from;
+        }
 
-        void setTo(float to);
+        void setTo(float to) {
+            toFloat = to;
+        }
 
-        const float getFrom() const;
+        const float getFrom() const {
+            return fromFloat;
+        }
 
-        const float getTo() const;
+        const float getTo() const {
+            return toFloat;
+        }
+    };
+
+    ///
+    /// Scale tweener
+    ///
+    class TweenScale : public Tweener {
+
+    public:
+
+        TweenScale(
+                const Vector2f &from, const Vector2f &to,
+                float duration, TweenerLoop loop = None) : Tweener(from, to, duration, loop) {
+            this->type = TweenerType::TScale;
+        }
+
+        void setFrom(const Vector2f &from) {
+            fromVector2 = from;
+        }
+
+        void setTo(const Vector2f &to) {
+            toVector2 = to;
+        }
+
+        const Vector2f getFrom() const {
+            return fromVector2;
+        }
+
+        const Vector2f getTo() const {
+            return toVector2;
+        }
     };
 
     ///
@@ -121,15 +168,55 @@ namespace c2d {
 
         TweenColor(
                 const Color &from, const Color &to,
-                float duration, TweenerLoop loop = None);
+                float duration, TweenerLoop loop = None) : Tweener(from, to, duration, loop) {
+            this->type = TweenerType::TColor;
+        }
 
-        void setFrom(const Color &from);
+        void setFrom(const Color &from) {
+            fromColor = from;
+        }
 
-        void setTo(const Color &to);
+        void setTo(const Color &to) {
+            toColor = to;
+        }
 
-        const Color getFrom() const;
+        const Color getFrom() const {
+            return fromColor;
+        }
 
-        const Color getTo() const;
+        const Color getTo() const {
+            return toColor;
+        }
+    };
+
+    ///
+    /// Alpha tweener
+    ///
+    class TweenAlpha : public Tweener {
+
+    public:
+
+        TweenAlpha(
+                float from, float to,
+                float duration, TweenerLoop loop = None) : Tweener(from, to, duration, loop) {
+            this->type = TweenerType::TAlpha;
+        }
+
+        void setFrom(float from) {
+            fromFloat = from;
+        }
+
+        void setTo(float to) {
+            toFloat = to;
+        }
+
+        const float getFrom() const {
+            return fromFloat;
+        }
+
+        const float getTo() const {
+            return toFloat;
+        }
     };
 }
 

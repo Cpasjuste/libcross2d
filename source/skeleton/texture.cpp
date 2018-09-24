@@ -20,7 +20,7 @@ Texture::Texture(const char *p) : Transformable() {
 
     strncpy(path, p, 511);
 
-    thisTransform = this;
+    type = TTexture;
 }
 
 Texture::Texture(const unsigned char *buffer, int bufferSize) : Transformable() {
@@ -35,7 +35,7 @@ Texture::Texture(const unsigned char *buffer, int bufferSize) : Transformable() 
     setColor(Color::White);
     setFiltering(C2D_TEXTURE_FILTER_LINEAR);
 
-    thisTransform = this;
+    type = TTexture;
 }
 
 Texture::Texture(const Vector2f &size, int fmt) : Transformable() {
@@ -51,7 +51,7 @@ Texture::Texture(const Vector2f &size, int fmt) : Transformable() {
     setColor(Color::White);
     setFiltering(C2D_TEXTURE_FILTER_LINEAR);
 
-    thisTransform = this;
+    type = TTexture;
 }
 
 Texture::~Texture() {
@@ -93,10 +93,10 @@ const Color &Texture::getColor() const {
 }
 
 FloatRect Texture::getLocalBounds() const {
-    float width = static_cast<float>(std::abs(m_textureRect.width));
-    float height = static_cast<float>(std::abs(m_textureRect.height));
+    float width = (float) std::abs(m_textureRect.width);
+    float height = (float) std::abs(m_textureRect.height);
 
-    return FloatRect(0.f, 0.f, width, height);
+    return {0.f, 0.f, width, height};
 }
 
 FloatRect Texture::getGlobalBounds() const {
