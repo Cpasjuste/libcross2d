@@ -33,7 +33,7 @@ void C2DObject::remove(C2DObject *object) {
     }
 }
 
-void C2DObject::add(Tweener *tweener) {
+void C2DObject::add(Tween *tweener) {
 
     if (tweener) {
         tweener->setObject(this);
@@ -41,7 +41,7 @@ void C2DObject::add(Tweener *tweener) {
     }
 }
 
-void C2DObject::remove(Tweener *tweener) {
+void C2DObject::remove(Tween *tweener) {
 
     if (tweener) {
         if (!tweeners.empty()) {
@@ -55,6 +55,10 @@ void C2DObject::remove(Tweener *tweener) {
 void C2DObject::draw(Transform &transform) {
 
     //printf("C2DObject(%p): draw\n", this);
+
+    if (visibility_current == Visibility::Hidden) {
+        return;
+    }
 
     Transform combinedTransform = transform;
     Transformable *transformable = nullptr;
@@ -72,34 +76,58 @@ void C2DObject::draw(Transform &transform) {
         transformable = (Text *) this;
     }
 
+    // handle tweeners
+    for (auto &tween : tweeners) {
+        if (tween) {
+            tween->step();
+            // hide object if needed
+            if (tween->getState() == Stopped && visibility_current != visibility_wanted) {
+                visibility_current = visibility_wanted;
+            }
+        }
+    }
+
     if (transformable) {
         combinedTransform *= transformable->getTransform();
     }
 
     for (auto &child : childs) {
         if (child) {
-            if (child->visibility == Visible) {
+            if (child->visibility_current == Visible) {
                 child->draw(combinedTransform);
             }
-        }
-    }
-
-    // handle tweeners
-    for (auto &tweener : tweeners) {
-        if (tweener) {
-            tweener->step();
         }
     }
 }
 
 int C2DObject::getVisibility() {
 
-    return visibility;
+    return visibility_current;
 }
 
-void C2DObject::setVisibility(Visibility v) {
+void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
 
-    visibility = v;
+    if (v == visibility_current || v == visibility_wanted) {
+        return;
+    }
+
+    if (tweenPlay && !tweeners.empty()) {
+        if (v == Visible) {
+            // we want the object to be visible immediately
+            visibility_current = visibility_wanted = Visible;
+        } else {
+            visibility_wanted = Hidden;
+        }
+        for (auto &tween : tweeners) {
+            if (tween) {
+                tween->play(visibility_wanted == Visible ? Forward : Backward);
+                // set transform/color to initial values
+                tween->step();
+            }
+        }
+    } else {
+        visibility_current = visibility_wanted = v;
+    }
 }
 
 int C2DObject::getDeleteMode() {
@@ -134,9 +162,10 @@ void C2DObject::setLayer(int layer) {
 C2DObject::~C2DObject() {
 
     // delete tweeners
-    for (auto tweener = tweeners.begin(); tweener != tweeners.end();) {
-        if (*tweener) {
-            delete (*tweener);
+    for (auto tween = tweeners.begin(); tween != tweeners.end();) {
+        if (*tween) {
+            delete (*tween);
+            remove(*tween);
         }
     }
     tweeners.clear();
@@ -147,9 +176,8 @@ C2DObject::~C2DObject() {
             if ((*widget)->deleteMode == Auto) {
                 //printf("~Widget(%p): delete child(%p)\n", this, *widget);
                 delete (*widget);
-            } else {
-                childs.erase(widget);
             }
+            remove(*widget);
         }
     }
     childs.clear();

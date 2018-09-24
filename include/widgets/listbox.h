@@ -47,6 +47,8 @@ namespace c2d {
 
         void setHighLight(bool enable);
 
+        Rectangle *getHighLight();
+
         int getMaxLines();
 
         std::vector<ListBoxLine *> getLines();

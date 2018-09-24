@@ -2,6 +2,8 @@
 // Created by cpasjuste on 05/01/18.
 //
 
+#include <widgets/listbox.h>
+
 #include "widgets/listbox.h"
 
 using namespace c2d;
@@ -168,7 +170,7 @@ void ListBox::setSelection(int idx) {
                 highlight->setPosition(lines[i]->getPosition());
                 Color color = file->color;
                 highlight->setOutlineColor(color);
-                color.a = 100;
+                color.a = highlight->getFillColor().a;
                 highlight->setFillColor(color);
             }
         }
@@ -203,6 +205,10 @@ Io::File *ListBox::getSelection() {
 
 int ListBox::getIndex() {
     return index;
+}
+
+Rectangle *ListBox::getHighLight() {
+    return highlight;
 }
 
 void ListBox::setHighLight(bool enable) {

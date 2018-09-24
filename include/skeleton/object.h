@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "skeleton/sfml/Transformable.hpp"
-#include "tweener.h"
+#include "tween.h"
 
 namespace c2d {
 
@@ -48,14 +48,14 @@ namespace c2d {
         void remove(C2DObject *object);
 
         // tweeners
-        void add(Tweener *tweener);
+        void add(Tween *tweener);
 
-        void remove(Tweener *tweener);
+        void remove(Tween *tweener);
 
         // visibility
         int getVisibility();
 
-        void setVisibility(Visibility visibility);
+        void setVisibility(Visibility visibility, bool tweenPlay = true);
 
         // deletion mode
         int getDeleteMode();
@@ -76,11 +76,13 @@ namespace c2d {
 
         C2DObject *parent = nullptr;
         ObjectType type;
-        //void *thisTransform = nullptr;
-
         std::vector<C2DObject *> childs;
-        std::vector<Tweener *> tweeners;
-        Visibility visibility = Visible;
+        std::vector<Tween *> tweeners;
+
+        Visibility visibility_current = Visible;
+        // for tweeners
+        Visibility visibility_wanted = Visible;
+
         DeleteMode deleteMode = Auto;
         int layer = 0;
     };

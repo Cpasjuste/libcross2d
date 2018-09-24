@@ -57,15 +57,15 @@ int main() {
     auto *tweenPos = new TweenPosition(
             {renderer->getSize().x / 2 - 256, rect->getPosition().y},
             {renderer->getSize().x / 2 + 256, rect->getPosition().y},
-            4.0f, TweenerLoop::PingPong);
+            4.0f, TweenLoop::PingPong);
     rect->add(tweenPos);
-    auto *tweenRot = new TweenRotation(0, 360, 4.0f, TweenerLoop::PingPong);
+    auto *tweenRot = new TweenRotation(0, 360, 4.0f, TweenLoop::PingPong);
     rect->add(tweenRot);
-    auto *tweenScale = new TweenScale(rect->getScale(), {2, 2}, 4.0f, TweenerLoop::PingPong);
+    auto *tweenScale = new TweenScale(rect->getScale(), {2, 2}, 4.0f, TweenLoop::PingPong);
     rect->add(tweenScale);
-    auto *tweenColor = new TweenColor(rect->getFillColor(), Color::Orange, 4.0f, TweenerLoop::PingPong);
+    auto *tweenColor = new TweenColor(rect->getFillColor(), Color::Orange, 4.0f, TweenLoop::PingPong);
     rect->add(tweenColor);
-    auto *tweenAlpha = new TweenAlpha(255, 0, 4.0f, TweenerLoop::PingPong);
+    auto *tweenAlpha = new TweenAlpha(255, 0, 4.0f, TweenLoop::PingPong);
     rect->add(tweenAlpha);
 
     while (renderer->getElapsedTime().asSeconds() < 20) {
