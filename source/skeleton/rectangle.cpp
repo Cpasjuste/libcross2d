@@ -9,12 +9,12 @@ using namespace c2d;
 
 Rectangle::Rectangle() : sfml::RectangleShape() {
 
-    thisTransform = this;
+    type = TRectangle;
 }
 
 Rectangle::Rectangle(const FloatRect &rect) : sfml::RectangleShape() {
 
-    thisTransform = this;
+    type = TRectangle;
 
     setPosition(rect.left, rect.top);
     setSize(Vector2f(rect.width, rect.height));
@@ -24,7 +24,7 @@ Rectangle::Rectangle(const FloatRect &rect) : sfml::RectangleShape() {
 
 Rectangle::Rectangle(const Vector2f &size) : sfml::RectangleShape(size) {
 
-    thisTransform = this;
+    type = TRectangle;
 
     //printf("Rectangle(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }

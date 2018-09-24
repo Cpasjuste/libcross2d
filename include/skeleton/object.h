@@ -8,7 +8,8 @@
 #include <cstdint>
 #include <vector>
 
-#include "skeleton/sfml/RectangleShape.hpp"
+#include "skeleton/sfml/Transformable.hpp"
+#include "tweener.h"
 
 namespace c2d {
 
@@ -26,6 +27,14 @@ namespace c2d {
             Auto = 0, Manual = 1
         };
 
+        enum ObjectType : int {
+            TRectangle = 1,
+            TLine = 2,
+            TCircle = 3,
+            TTexture = 4,
+            TText = 5
+        };
+
         C2DObject();
 
         virtual ~C2DObject();
@@ -35,9 +44,13 @@ namespace c2d {
         // Childs
         void add(C2DObject *object);
 
-        // remove a widget without calling
-        // it's destructor
-        void removeChild(C2DObject *object);
+        // remove a widget without calling it's destructor
+        void remove(C2DObject *object);
+
+        // tweeners
+        void add(Tweener *tweener);
+
+        void remove(Tweener *tweener);
 
         // visibility
         int getVisibility();
@@ -53,13 +66,20 @@ namespace c2d {
 
         void setLayer(int layer);
 
+        const ObjectType getType() const {
+            return type;
+        }
+
         bool available = false;
 
     protected:
 
-        C2DObject *parent = NULL;
-        Transformable *thisTransform = NULL;
+        C2DObject *parent = nullptr;
+        ObjectType type;
+        //void *thisTransform = nullptr;
+
         std::vector<C2DObject *> childs;
+        std::vector<Tweener *> tweeners;
         Visibility visibility = Visible;
         DeleteMode deleteMode = Auto;
         int layer = 0;

@@ -36,10 +36,10 @@ int main() {
     }
 
     // create a font
-    Font font;
-    if (font.loadFromMemory(pfba_font, pfba_font_length)) {
+    Font *font = new Font();
+    if (font->loadFromMemory(pfba_font, pfba_font_length)) {
         // create a text and add it to the rect
-        Text *text = new Text("Hello world", font);
+        Text *text = new Text("Hello world", *font);
         text->setOutlineColor(Color::Blue);
         text->setOutlineThickness(2);
         text->setOriginCenter();
@@ -53,7 +53,22 @@ int main() {
     Input *input = new C2DInput(nullptr);
     input->setJoystickMapping(0, KEYS, 0);
 
-    while (renderer->getElapsedTime().asSeconds() < 5) {
+    // add some tweening :)
+    auto *tweenPos = new TweenPosition(
+            {renderer->getSize().x / 2 - 256, rect->getPosition().y},
+            {renderer->getSize().x / 2 + 256, rect->getPosition().y},
+            4.0f, TweenerLoop::PingPong);
+    rect->add(tweenPos);
+    auto *tweenRot = new TweenRotation(0, 360, 4.0f, TweenerLoop::PingPong);
+    rect->add(tweenRot);
+    auto *tweenScale = new TweenScale(rect->getScale(), {2, 2}, 4.0f, TweenerLoop::PingPong);
+    rect->add(tweenScale);
+    auto *tweenColor = new TweenColor(rect->getFillColor(), Color::Orange, 4.0f, TweenerLoop::PingPong);
+    rect->add(tweenColor);
+    auto *tweenAlpha = new TweenAlpha(255, 0, 4.0f, TweenerLoop::PingPong);
+    rect->add(tweenAlpha);
+
+    while (renderer->getElapsedTime().asSeconds() < 20) {
 
         // handle input
         unsigned int key = input->update()[0].state;
@@ -66,16 +81,13 @@ int main() {
         printf("Time: %f (delta: %f), fps: %2g\n",
                renderer->getElapsedTime().asSeconds(), delta, renderer->getFps());
 
-        // render
-        //rect->move(10 * delta, 0);
-        //rect->setScale(rect->getScale().x + (0.1f * delta), rect->getScale().y + (0.1f * delta));
-        //rect->rotate(50 * delta);
-
+        // renderer everything
         renderer->flip();
     }
 
     // will delete widgets recursively
     delete (input);
+    delete (font);
     delete (renderer);
 
     return 0;

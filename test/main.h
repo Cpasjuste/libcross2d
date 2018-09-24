@@ -52,8 +52,8 @@ int KEYS[]{
 
 #elif __SDL2__ || __SDL1__
 
-#define SCR_W 960
-#define SCR_H 544
+#define SCR_W 1280
+#define SCR_H 720
 #define FONT_PATH   "../res/default.ttf"
 #define TEX_PATH    "../res/title.png"
 

@@ -11,12 +11,12 @@ Renderer *c2d_renderer;
 Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
 
     c2d_renderer = this;
-    thisTransform = this;
     setFillColor(Color::Black);
 
     deltaClock = new C2DClock();
     elapsedClock = new C2DClock();
-    //printf("Renderer(%p)\n", this);
+
+    type = TRectangle;
 }
 
 void Renderer::drawLine(Line &line, Transform &transform) {
@@ -130,8 +130,6 @@ ShaderList *Renderer::getShaderList() {
 }
 
 Renderer::~Renderer() {
-
-    printf("~Renderer(%p)\n", this);
 
     delete (deltaClock);
     delete (elapsedClock);

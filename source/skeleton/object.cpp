@@ -3,6 +3,8 @@
 //
 
 #include <cstdio>
+#include <skeleton/object.h>
+
 #include "c2d.h"
 
 using namespace c2d;
@@ -20,14 +22,58 @@ void C2DObject::add(C2DObject *object) {
     }
 }
 
+void C2DObject::remove(C2DObject *object) {
+
+    if (object) {
+        if (!childs.empty()) {
+            childs.erase(std::remove(
+                    childs.begin(), childs.end(), object),
+                         childs.end());
+        }
+    }
+}
+
+void C2DObject::add(Tweener *tweener) {
+
+    if (tweener) {
+        tweener->setObject(this);
+        tweeners.push_back(tweener);
+    }
+}
+
+void C2DObject::remove(Tweener *tweener) {
+
+    if (tweener) {
+        if (!tweeners.empty()) {
+            tweeners.erase(std::remove(
+                    tweeners.begin(), tweeners.end(), tweener),
+                           tweeners.end());
+        }
+    }
+}
+
 void C2DObject::draw(Transform &transform) {
 
     //printf("C2DObject(%p): draw\n", this);
 
     Transform combinedTransform = transform;
+    Transformable *transformable = nullptr;
 
-    if (thisTransform) {
-        combinedTransform *= thisTransform->getTransform();
+    // TODO: can't cast Rectangle to Transformable ?
+    if (type == TRectangle) {
+        transformable = (Rectangle *) this;
+    } else if (type == TLine) {
+        transformable = (Line *) this;
+    } else if (type == TCircle) {
+        transformable = (Circle *) this;
+    } else if (type == TTexture) {
+        transformable = (Texture *) this;
+    } else if (type == TText) {
+        transformable = (Text *) this;
+    }
+
+    if (transformable) {
+        combinedTransform *= transformable->getTransform();
     }
 
     for (auto &child : childs) {
@@ -35,6 +81,13 @@ void C2DObject::draw(Transform &transform) {
             if (child->visibility == Visible) {
                 child->draw(combinedTransform);
             }
+        }
+    }
+
+    // handle tweeners
+    for (auto &tweener : tweeners) {
+        if (tweener) {
+            tweener->step();
         }
     }
 }
@@ -78,16 +131,15 @@ void C2DObject::setLayer(int layer) {
     }
 }
 
-void C2DObject::removeChild(C2DObject *object) {
-
-    if (!childs.empty()) {
-        childs.erase(std::remove(
-                childs.begin(), childs.end(), object),
-                     childs.end());
-    }
-}
-
 C2DObject::~C2DObject() {
+
+    // delete tweeners
+    for (auto tweener = tweeners.begin(); tweener != tweeners.end();) {
+        if (*tweener) {
+            delete (*tweener);
+        }
+    }
+    tweeners.clear();
 
     // delete childs
     for (auto widget = childs.begin(); widget != childs.end();) {
@@ -105,7 +157,7 @@ C2DObject::~C2DObject() {
     // remove from parent
     if (parent) {
         //printf("~C2DObject(%p): remove from parent(%p)\n", this, parent);
-        parent->removeChild(this);
+        parent->remove(this);
     }
     //printf("~C2DObject(%p)\n", this);
 }

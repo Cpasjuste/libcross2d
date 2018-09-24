@@ -6,6 +6,7 @@
 #define CROSS2D_LINE_H
 
 #include "object.h"
+#include "skeleton/sfml/RectangleShape.hpp"
 
 namespace c2d {
 

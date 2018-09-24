@@ -9,7 +9,7 @@ using namespace c2d;
 
 Circle::Circle(float radius, std::size_t pointCount) : sfml::CircleShape(radius, pointCount) {
 
-    thisTransform = this;
+    type = TCircle;
 
     //printf("Circle(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }

@@ -7,6 +7,7 @@
 
 #include "object.h"
 #include "shader_list.h"
+#include "skeleton/sfml/VertexArray.hpp"
 
 #define C2D_TEXTURE_FILTER_POINT    0
 #define C2D_TEXTURE_FILTER_LINEAR   1
@@ -17,7 +18,7 @@
 
 namespace c2d {
 
-    class Texture : public C2DObject, public c2d::Transformable {
+    class Texture : public C2DObject, public Transformable {
 
     public:
 
