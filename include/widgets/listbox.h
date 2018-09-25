@@ -9,32 +9,32 @@
 
 namespace c2d {
 
-    class ListBox : public Rectangle {
+    class ListBoxLine : public Rectangle {
 
     public:
 
-        class ListBoxLine : public Rectangle {
+        ListBoxLine(const FloatRect &rect, const std::string &str, const Font &font,
+                    unsigned int fontSize, Texture *icon = nullptr, bool use_icons = false);
 
-        public:
+        ~ListBoxLine();
 
-            ListBoxLine(const FloatRect &rect, const std::string &str, const Font &font,
-                        unsigned int fontSize, Texture *icon = nullptr, bool use_icons = false);
+        void setString(const std::string &string);
 
-            ~ListBoxLine();
+        void setColor(const Color &color);
 
-            void setString(const std::string &string);
+        void setIcon(Texture *icon);
 
-            void setColor(const Color &color);
+    private:
 
-            void setIcon(Texture *icon);
+        Rectangle *iconRect = nullptr;
+        Texture *icon = nullptr;
+        Text *text = nullptr;
+        bool use_icons = false;
+    };
 
-        private:
+    class ListBox : public Rectangle {
 
-            Rectangle *iconRect = nullptr;
-            Texture *icon = nullptr;
-            Text *text = nullptr;
-            bool use_icons = false;
-        };
+    public:
 
         ListBox(const Font &font, int fontSize, const FloatRect &rect,
                 const std::vector<Io::File *> &fileList, bool use_icons = false);

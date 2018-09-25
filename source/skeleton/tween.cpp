@@ -13,28 +13,20 @@ using namespace tweeny;
 
 Tween::Tween(float from, float to, float duration, TweenLoop loop) {
 
-    this->fromFloat = from;
-    this->toFloat = to;
     this->tweenFloat = tweeny::from(from).to(to).during(duration * 1000);
-
     this->loop = loop;
     this->deltaClock = new C2DClock();
 }
 
 Tween::Tween(const Vector2f &from, const Vector2f &to, float duration, TweenLoop loop) {
 
-    this->fromVector2 = from;
-    this->toVector2 = to;
     this->tweenVector2 = tweeny::from(from.x, from.y).to(to.x, to.y).during(duration * 1000);
-
     this->loop = loop;
     this->deltaClock = new C2DClock();
 }
 
 Tween::Tween(const Color &from, const Color &to, float duration, TweenLoop loop) {
 
-    this->fromColor = from;
-    this->toColor = to;
     this->tweenColor = tweeny::from(
             (float) from.r / 255.0f, (float) from.g / 255.0f, (float) from.b / 255.0f, (float) from.a / 255.0f)
             .to((float) to.r / 255.0f, (float) to.g / 255.0f, (float) to.b / 255.0f, (float) to.a / 255.0f)
@@ -46,7 +38,11 @@ Tween::Tween(const Color &from, const Color &to, float duration, TweenLoop loop)
 
 Tween::~Tween() {
 
-    delete (deltaClock);
+    printf("~Tween(%p)\n", this);
+    if (deltaClock) {
+        delete (deltaClock);
+        deltaClock = nullptr;
+    }
 }
 
 void Tween::setObject(C2DObject *thisObject) {

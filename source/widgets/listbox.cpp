@@ -8,7 +8,7 @@
 
 using namespace c2d;
 
-ListBox::ListBoxLine::ListBoxLine(
+ListBoxLine::ListBoxLine(
         const FloatRect &rect, const std::string &str,
         const Font &font, unsigned int fontSize, Texture *i, bool ui) : Rectangle(rect) {
 
@@ -43,12 +43,12 @@ ListBox::ListBoxLine::ListBoxLine(
     add(text);
 }
 
-void ListBox::ListBoxLine::setString(const std::string &string) {
+void ListBoxLine::setString(const std::string &string) {
 
     text->setString(string);
 }
 
-void ListBox::ListBoxLine::setColor(const Color &color) {
+void ListBoxLine::setColor(const Color &color) {
 
     text->setFillColor(color);
     if (iconRect) {
@@ -61,7 +61,7 @@ void ListBox::ListBoxLine::setColor(const Color &color) {
     //}
 }
 
-void ListBox::ListBoxLine::setIcon(Texture *i) {
+void ListBoxLine::setIcon(Texture *i) {
 
     if (use_icons) {
         if (icon) {
@@ -91,7 +91,7 @@ void ListBox::ListBoxLine::setIcon(Texture *i) {
     }
 }
 
-ListBox::ListBoxLine::~ListBoxLine() {
+ListBoxLine::~ListBoxLine() {
     printf("~ListBoxLine(%p)\n", this);
 }
 
@@ -190,7 +190,7 @@ void ListBox::setFiles(const std::vector<Io::File *> &fileList) {
     setSelection(0);
 }
 
-std::vector<ListBox::ListBoxLine *> ListBox::getLines() {
+std::vector<ListBoxLine *> ListBox::getLines() {
     return lines;
 }
 

@@ -7,18 +7,11 @@
 
 using namespace c2d;
 
-Text::Text() {
-
-    //printf("Text(%p): %ix%i\n", this, (int) getLocalBounds().width, (int) getLocalBounds().height);
-
-    type = TText;
-}
-
 Text::Text(const std::string &string, const Font &font, unsigned int characterSize)
         : sfml::Text(string, font, characterSize) {
 
-    //printf("Text(%p): %ix%i\n", this,
-    //       (int) getLocalBounds().width, (int) getLocalBounds().height);
+    printf("Text(%p): %s (%ix%i)\n", this, string.c_str(),
+            (int) getLocalBounds().width, (int) getLocalBounds().height);
 
     type = TText;
 }
@@ -34,5 +27,5 @@ void Text::draw(Transform &transform) {
 
 Text::~Text() {
 
-    //printf("~Text(%p)\n", this);
+    printf("~Text(%p): %s\n", this, getString().c_str());
 }

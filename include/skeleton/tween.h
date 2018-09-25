@@ -46,7 +46,7 @@ namespace c2d {
         Tween(const Color &from, const Color &to,
               float duration, TweenLoop loop = None);
 
-        ~Tween();
+        virtual ~Tween();
 
         void play(TweenDirection direction = Current, bool reset = false);
 
@@ -72,15 +72,9 @@ namespace c2d {
         TweenLoop loop;
         TweenDirection direction = Current;
         TweenState state = Playing;
-        // float tweener
         tweeny::tween<float> tweenFloat;
-        float fromFloat, toFloat;
-        // vector2f tweener
         tweeny::tween<float, float> tweenVector2;
-        Vector2f fromVector2, toVector2;
-        // Color tweener
         tweeny::tween<float, float, float, float> tweenColor;
-        Color fromColor, toColor;
         // timer stuff
         Clock *deltaClock = nullptr;
         Time delta;

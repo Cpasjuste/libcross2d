@@ -10,6 +10,8 @@ Renderer *c2d_renderer;
 
 Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
 
+    printf("Renderer(%p)\n", this);
+
     c2d_renderer = this;
     setFillColor(Color::Black);
 
@@ -130,6 +132,8 @@ ShaderList *Renderer::getShaderList() {
 }
 
 Renderer::~Renderer() {
+
+    printf("~Renderer(%p)\n", this);
 
     delete (deltaClock);
     delete (elapsedClock);

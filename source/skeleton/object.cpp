@@ -161,6 +161,8 @@ void C2DObject::setLayer(int layer) {
 
 C2DObject::~C2DObject() {
 
+    //printf("~C2DObject(%p): childs = %i\n", this, (int) childs.size());
+
     // delete tweeners
     for (auto tween = tweeners.begin(); tween != tweeners.end();) {
         if (*tween) {
@@ -174,10 +176,11 @@ C2DObject::~C2DObject() {
     for (auto widget = childs.begin(); widget != childs.end();) {
         if (*widget) {
             if ((*widget)->deleteMode == Auto) {
-                //printf("~Widget(%p): delete child(%p)\n", this, *widget);
+                //printf("\t~C2DObject(%p): delete child(%p)\n", this, *widget);
                 delete (*widget);
             }
-            remove(*widget);
+        } else {
+            //printf("\t~C2DObject(%p): delete child(%p): child is NULL\n", this, *widget);
         }
     }
     childs.clear();
@@ -187,5 +190,4 @@ C2DObject::~C2DObject() {
         //printf("~C2DObject(%p): remove from parent(%p)\n", this, parent);
         parent->remove(this);
     }
-    //printf("~C2DObject(%p)\n", this);
 }

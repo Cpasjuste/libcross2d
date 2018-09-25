@@ -140,6 +140,10 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
 GLShaderList::~GLShaderList() {
 
     if (color) {
+        if (color->data != nullptr) {
+            delete ((GLShader *) color->data);
+            color->data = nullptr;
+        }
         delete (color);
         color = nullptr;
     }

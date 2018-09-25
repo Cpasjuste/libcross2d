@@ -15,8 +15,6 @@ namespace c2d {
 
     public:
 
-        Text();
-
         Text(const std::string &string, const Font &font,
              unsigned int characterSize = C2D_DEFAULT_CHAR_SIZE);
 
