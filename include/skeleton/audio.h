@@ -2,8 +2,8 @@
 // Created by cpasjuste on 12/12/16.
 //
 
-#ifndef _AUDIO_H_
-#define _AUDIO_H_
+#ifndef _C2D_AUDIO_H_
+#define _C2D_AUDIO_H_
 
 #include <cstring>
 
@@ -40,4 +40,4 @@ namespace c2d {
     };
 }
 
-#endif //_AUDIO_H_
+#endif //_C2D_AUDIO_H_
