@@ -5,6 +5,7 @@
 #ifndef _SDL2_AUDIO_H_
 #define _SDL2_AUDIO_H_
 
+#include <SDL2/SDL.h>
 #include "skeleton/audio.h"
 
 namespace c2d {
@@ -13,19 +14,21 @@ namespace c2d {
 
     public:
 
-        SDL2Audio(int freq, int fps = 60, C2DAudioCallback cb = NULL);
+        SDL2Audio(int rate = 48000, int fps = 60, C2DAudioCallback cb = nullptr);
 
         virtual ~SDL2Audio();
 
         virtual void play();
 
+        virtual void play(const void *data, int len);
+
         virtual void pause(int pause);
 
         virtual void reset();
 
-        virtual void lock();
+    private:
 
-        virtual void unlock();
+        SDL_AudioDeviceID deviceID;
     };
 }
 
