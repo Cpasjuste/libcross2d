@@ -37,6 +37,8 @@ namespace c2d {
 
         int getBufferLen();
 
+        bool isAvailable();
+
     protected:
 
         int sample_rate = 48000;

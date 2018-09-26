@@ -69,3 +69,7 @@ int Audio::getBufferSize() {
 int Audio::getBufferLen() {
     return buffer_len;
 }
+
+bool Audio::isAvailable() {
+    return available == 1;
+}
