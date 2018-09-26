@@ -13,9 +13,9 @@ namespace c2d {
 
     public:
 
-        typedef void (*C2DAudioCallback)(void *userdata, Uint8 *stream, int len);
+        typedef void (*C2DAudioCallback)(void *data, unsigned char *stream, int len);
 
-        Audio(int freq, int fps = 60, C2DAudioCallback cb = NULL);
+        Audio(int rate = 48000, int fps = 60, C2DAudioCallback cb = nullptr);
 
         virtual ~Audio();
 
@@ -29,14 +29,14 @@ namespace c2d {
 
         virtual void unlock() {};
 
-        int frequency = 48000;
+        int sample_rate = 48000;
         int channels = 2;
-        short *buffer = NULL;
+        short *buffer = nullptr;
         int buffer_size = 0;
         int buffer_len = 0;
         int paused = 0;
         int available = 0;
-        C2DAudioCallback callback = NULL;
+        C2DAudioCallback callback = nullptr;
     };
 }
 
