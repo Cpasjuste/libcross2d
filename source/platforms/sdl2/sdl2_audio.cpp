@@ -21,7 +21,7 @@ SDL2Audio::SDL2Audio(int freq, int fps, C2DAudioCallback cb) : Audio(freq, fps, 
     wanted.format = AUDIO_S16SYS;
     wanted.channels = (Uint8) channels;
     wanted.samples = (Uint16) buffer_len;
-    wanted.callback = nullptr;
+    wanted.callback = cb;
     wanted.userdata = nullptr;
 
     if (!SDL_WasInit(SDL_INIT_AUDIO)) {
@@ -60,12 +60,22 @@ SDL2Audio::~SDL2Audio() {
 
 void SDL2Audio::play() {
 
+    if (callback) {
+        printf("SDL2Audio::play: can't manually play, a callback was defined\n");
+        return;
+    }
+
     play(buffer, buffer_size);
 }
 
 void SDL2Audio::play(const void *data, int len) {
 
     if (available && !paused) {
+
+        if (callback) {
+            printf("SDL2Audio::play: can't manually play, a callback was defined\n");
+            return;
+        }
 
         if (SDL_GetAudioStatus() == SDL_AUDIO_PAUSED) {
             SDL_PauseAudioDevice(deviceID, 0);
