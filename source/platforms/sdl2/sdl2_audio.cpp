@@ -3,6 +3,8 @@
 //
 
 #include <malloc.h>
+#include <platforms/sdl2/sdl2_audio.h>
+
 #include "platforms/sdl2/sdl2_audio.h"
 
 using namespace c2d;
@@ -58,19 +60,28 @@ SDL2Audio::~SDL2Audio() {
 
 void SDL2Audio::play() {
 
+    play(buffer, buffer_size);
+}
+
+void SDL2Audio::play(const void *data, int len) {
+
     if (available && !paused) {
 
         if (SDL_GetAudioStatus() == SDL_AUDIO_PAUSED) {
             SDL_PauseAudioDevice(deviceID, 0);
         }
 
-        while (SDL_GetQueuedAudioSize(deviceID) > (Uint32) buffer_size) {
+        // sync
+        while (SDL_GetQueuedAudioSize(deviceID) > (Uint32) len) {
             SDL_Delay(1);
         }
 
-        SDL_QueueAudio(deviceID, (const void *) buffer, buffer_size);
+        SDL_QueueAudio(deviceID, data, (Uint32) len);
+
         // Clear the audio queue arbitrarily to avoid it backing up too far
-        if (SDL_GetQueuedAudioSize(deviceID) > (Uint32) (buffer_size * 3)) { SDL_ClearQueuedAudio(deviceID); }
+        if (SDL_GetQueuedAudioSize(deviceID) > (Uint32) (len * 3)) {
+            SDL_ClearQueuedAudio(deviceID);
+        }
     }
 }
 

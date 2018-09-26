@@ -3,6 +3,8 @@
 //
 
 #include <string>
+#include <skeleton/audio.h>
+
 #include "c2d.h"
 
 using namespace c2d;
@@ -26,7 +28,7 @@ Audio::Audio(int rate, int fps, C2DAudioCallback cb) {
     callback = cb;
     available = true;
 
-    printf("Audio: rate = %i, buf size = %i, buf len = %i\n", rate, buffer_size, buffer_len);
+    printf("Audio: rate = %i, fps = %i, buf_size = %i, buf_len = %i\n", rate, fps, buffer_size, buffer_len);
 }
 
 void Audio::reset() {
@@ -35,9 +37,6 @@ void Audio::reset() {
         memset(buffer, 0, (size_t) buffer_size);
     }
     paused = 0;
-}
-
-void Audio::play() {
 }
 
 void Audio::pause(int pause) {
@@ -49,4 +48,24 @@ Audio::~Audio() {
         free(buffer);
         buffer = nullptr;
     }
+}
+
+int Audio::getSampleRate() {
+    return sample_rate;
+}
+
+int Audio::getChannels() {
+    return channels;
+}
+
+short *Audio::getBuffer() {
+    return buffer;
+}
+
+int Audio::getBufferSize() {
+    return buffer_size;
+}
+
+int Audio::getBufferLen() {
+    return buffer_len;
 }

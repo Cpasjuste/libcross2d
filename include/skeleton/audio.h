@@ -19,15 +19,25 @@ namespace c2d {
 
         virtual ~Audio();
 
-        virtual void play();
+        virtual void play() {};
+
+        virtual void play(const void *data, int len) {};
 
         virtual void pause(int pause);
 
         virtual void reset();
 
-        virtual void lock() {};
+        int getSampleRate();
 
-        virtual void unlock() {};
+        int getChannels();
+
+        short *getBuffer();
+
+        int getBufferSize();
+
+        int getBufferLen();
+
+    protected:
 
         int sample_rate = 48000;
         int channels = 2;

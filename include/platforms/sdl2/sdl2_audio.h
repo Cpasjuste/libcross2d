@@ -20,6 +20,8 @@ namespace c2d {
 
         virtual void play();
 
+        virtual void play(const void *data, int len);
+
         virtual void pause(int pause);
 
         virtual void reset();
