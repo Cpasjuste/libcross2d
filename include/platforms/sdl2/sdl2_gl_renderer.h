@@ -18,9 +18,13 @@ namespace c2d {
 
         ~SDL2Renderer();
 
-        void flip(bool draw = true);
+        virtual void setSize(const c2d::Vector2f &size);
 
-        void delay(unsigned int ms);
+        virtual void setSize(float width, float height);
+
+        virtual void flip(bool draw = true);
+
+        virtual void delay(unsigned int ms);
 
     private:
 

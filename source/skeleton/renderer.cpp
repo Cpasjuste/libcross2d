@@ -2,6 +2,8 @@
 // Created by cpasjuste on 09/12/16.
 //
 
+#include <skeleton/renderer.h>
+
 #include "c2d.h"
 
 using namespace c2d;
@@ -19,6 +21,14 @@ Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
     elapsedClock = new C2DClock();
 
     type = TRectangle;
+}
+
+void Renderer::setSize(const c2d::Vector2f &size) {
+    RectangleShape::setSize(size);
+}
+
+void Renderer::setSize(float width, float height) {
+    RectangleShape::setSize(width, height);
 }
 
 void Renderer::drawLine(Line &line, Transform &transform) {

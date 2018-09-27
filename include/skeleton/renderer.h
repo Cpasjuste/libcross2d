@@ -32,6 +32,10 @@ namespace c2d {
 
         virtual ~Renderer();
 
+        virtual void setSize(const c2d::Vector2f &size);
+
+        virtual void setSize(float width, float height);
+
         virtual void draw(VertexArray *vertexArray,
                           const Transform &transform,
                           const Texture *texture) {};
