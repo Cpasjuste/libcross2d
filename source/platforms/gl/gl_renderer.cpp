@@ -88,15 +88,15 @@ void GLRenderer::draw(VertexArray *vertexArray,
         shader->SetUniformMatrix("textureMatrix", texMtx);
 
         // set retroarch shader params
-        shader->SetUniform("TextureSize", texture->getTextureRect().width, texture->getTextureRect().height);
         shader->SetUniform("InputSize", texture->getTextureRect().width, texture->getTextureRect().height);
-        shader->SetUniform("OutputSize", texture->getGlobalBounds().width, texture->getGlobalBounds().height);
-
+        shader->SetUniform("TextureSize", texture->getTextureRect().width, texture->getTextureRect().height);
+        shader->SetUniform("OutputSize", getSize().x, getSize().y);
+        /*
         if (glTexture->shader) {
-            //printf("tex: %i %i, out: %f %f\n", texture->getTextureRect().width, texture->getTextureRect().height,
-            //       texture->getGlobalBounds().width, texture->getGlobalBounds().height);
+            printf("tex: %i x %i, out: %f x %f\n", texture->getTextureRect().width, texture->getTextureRect().height,
+                   texture->getGlobalBounds().width, texture->getGlobalBounds().height);
         }
-
+        */
     } else {
         GL_CHECK(glDisableVertexAttribArray(2));
     }
