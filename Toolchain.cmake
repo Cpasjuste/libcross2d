@@ -1,4 +1,5 @@
 # setup toolchains
+message(STATUS "Using custom toolchain: ${CMAKE_TOOLCHAIN_FILE}")
 
 if (BUILD_PSP2)
     set(CMAKE_SYSTEM_NAME "Generic")

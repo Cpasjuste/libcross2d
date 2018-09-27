@@ -17,7 +17,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif ()
 
 # setup toolchain
-include(Toolchain.cmake)
+set(CMAKE_TOOLCHAIN_FILE Toolchain.cmake)
 
 project(cross2d)
 
