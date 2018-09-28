@@ -729,9 +729,7 @@ namespace c2d {
                         dst += dst_pitch;
                     }
                     texture->unlock();
-#ifdef __SWITCH__
-                    glFinish();
-#endif
+
                     delete (page.texture);
                     page.texture = texture;
 
