@@ -91,10 +91,10 @@ void GLRenderer::draw(VertexArray *vertexArray,
         shader->SetUniform("InputSize", texture->getTextureRect().width, texture->getTextureRect().height);
         shader->SetUniform("TextureSize", texture->getTextureRect().width, texture->getTextureRect().height);
         // TODO: i don't get this..
-        Vector2f outSize = getSize();
-        if (shader->getScaleType() == GLShader::SCALE_TYPE_SOURCE) {
+        Vector2f outSize = getSize(); // SCALE_TYPE_SCREEN
+        if (shader->getScaleType() == GLShader::SCALE_TYPE_VIEWPORT) {
             outSize = Vector2f{texture->getGlobalBounds().width, texture->getGlobalBounds().height};
-        } else if (shader->getScaleType() == GLShader::SCALE_TYPE_VIEWPORT) {
+        } else if (shader->getScaleType() == GLShader::SCALE_TYPE_SOURCE) {
             outSize = Vector2f{texture->getTextureRect().width, texture->getTextureRect().height};
         }
         shader->SetUniform("OutputSize", outSize);

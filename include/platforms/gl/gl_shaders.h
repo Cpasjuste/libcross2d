@@ -14,12 +14,12 @@ namespace c2d {
     public:
 
         enum {
-            SCALE_TYPE_SOURCE = 0,
-            SCALE_TYPE_SCREEN = 1,
+            SCALE_TYPE_SCREEN = 0,
+            SCALE_TYPE_SOURCE = 1,
             SCALE_TYPE_VIEWPORT = 2
         };
 
-        GLShader(const char *vertex, const char *fragment, int scale_type = SCALE_TYPE_SOURCE);
+        GLShader(const char *vertex, const char *fragment, int scale_type = SCALE_TYPE_SCREEN);
 
         ~GLShader();
 

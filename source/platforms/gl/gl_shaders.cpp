@@ -125,20 +125,20 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
 
     get(0)->data = new GLShader(texture_v, texture_f);
 
-    add("retro v2", new GLShader(retro_v2_v, retro_v2_f));
-    add("lcd3x", new GLShader(lcd3x_v, lcd3x_f));
-    add("scanlines", new GLShader(scanlines_v, scanlines_f));
-    add("crt caligari", new GLShader(crt_caligari_v, crt_caligari_f));
-    add("crt easymode", new GLShader(crt_easymode_v, crt_easymode_f, GLShader::SCALE_TYPE_SOURCE));
-    add("crt geom", new GLShader(crt_geom_v, crt_geom_f));
+    add("retro v2", new GLShader(retro_v2_v, retro_v2_f, GLShader::SCALE_TYPE_SOURCE));
+    add("lcd3x", new GLShader(lcd3x_v, lcd3x_f, GLShader::SCALE_TYPE_SOURCE));
+    add("scanlines", new GLShader(scanlines_v, scanlines_f, GLShader::SCALE_TYPE_SOURCE));
+    add("crt caligari", new GLShader(crt_caligari_v, crt_caligari_f, GLShader::SCALE_TYPE_SOURCE));
+    add("crt easymode", new GLShader(crt_easymode_v, crt_easymode_f, GLShader::SCALE_TYPE_VIEWPORT));
+    add("crt geom", new GLShader(crt_geom_v, crt_geom_f, GLShader::SCALE_TYPE_SOURCE));
     add("sharp bilinear", new GLShader(sharp_bilinear_v,
                                        sharp_bilinear_f));
     add("sharp bilinear scanlines", new GLShader(sharp_bilinear_scanlines_v,
                                                  sharp_bilinear_scanlines_f));
-    add("sal2x", new GLShader(sal2x_v, sal2x_f));
+    add("sal2x", new GLShader(sal2x_v, sal2x_f, GLShader::SCALE_TYPE_SOURCE));
     add("supereagle", new GLShader(supereagle_v, supereagle_f));
-    add("sabr v3", new GLShader(sabr_v3_v, sabr_v3_f));
-    add("xbrz freescale", new GLShader(xbrz_freescale_v, xbrz_freescale_f));
+    add("sabr v3", new GLShader(sabr_v3_v, sabr_v3_f, GLShader::SCALE_TYPE_SOURCE));
+    add("xbrz freescale", new GLShader(xbrz_freescale_v, xbrz_freescale_f, GLShader::SCALE_TYPE_VIEWPORT));
 }
 
 GLShaderList::~GLShaderList() {
