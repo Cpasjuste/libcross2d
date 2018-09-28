@@ -12,7 +12,14 @@ namespace c2d {
     class GLShader {
 
     public:
-        GLShader(const char *vertex, const char *fragment);
+
+        enum {
+            SCALE_TYPE_SOURCE = 0,
+            SCALE_TYPE_SCREEN = 1,
+            SCALE_TYPE_VIEWPORT = 2
+        };
+
+        GLShader(const char *vertex, const char *fragment, int scale_type = SCALE_TYPE_SOURCE);
 
         ~GLShader();
 
@@ -26,9 +33,11 @@ namespace c2d {
 
         GLuint GetProgram();
 
+        int getScaleType();
+
     private:
         GLuint program;
-
+        int scale_type = 0;
         bool available = false;
 
     };

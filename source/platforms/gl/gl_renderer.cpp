@@ -90,7 +90,14 @@ void GLRenderer::draw(VertexArray *vertexArray,
         // set retroarch shader params
         shader->SetUniform("InputSize", texture->getTextureRect().width, texture->getTextureRect().height);
         shader->SetUniform("TextureSize", texture->getTextureRect().width, texture->getTextureRect().height);
-        shader->SetUniform("OutputSize", getSize().x, getSize().y);
+        // TODO: i don't get this..
+        Vector2f outSize = getSize();
+        if (shader->getScaleType() == GLShader::SCALE_TYPE_SOURCE) {
+            outSize = Vector2f{texture->getGlobalBounds().width, texture->getGlobalBounds().height};
+        } else if (shader->getScaleType() == GLShader::SCALE_TYPE_VIEWPORT) {
+            outSize = Vector2f{texture->getTextureRect().width, texture->getTextureRect().height};
+        }
+        shader->SetUniform("OutputSize", outSize);
         /*
         if (glTexture->shader) {
             printf("tex: %i x %i, out: %f x %f\n", texture->getTextureRect().width, texture->getTextureRect().height,

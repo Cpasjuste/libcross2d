@@ -36,7 +36,7 @@ static GLuint createAndCompileShader(GLenum type, const char *source) {
     return handle;
 }
 
-GLShader::GLShader(const char *vertex, const char *fragment) {
+GLShader::GLShader(const char *vertex, const char *fragment, int type) {
 
     GLuint vsh, fsh;
 
@@ -67,6 +67,7 @@ GLShader::GLShader(const char *vertex, const char *fragment) {
     GL_CHECK(glDeleteShader(vsh));
     GL_CHECK(glDeleteShader(fsh));
 
+    scale_type = type;
     available = true;
 }
 
@@ -107,6 +108,10 @@ GLuint GLShader::GetProgram() {
     return program;
 }
 
+int GLShader::getScaleType() {
+    return scale_type;
+}
+
 GLShader::~GLShader() {
     if (program) {
         GL_CHECK(glDeleteProgram(program));
@@ -123,9 +128,8 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
     add("retro v2", new GLShader(retro_v2_v, retro_v2_f));
     add("lcd3x", new GLShader(lcd3x_v, lcd3x_f));
     add("scanlines", new GLShader(scanlines_v, scanlines_f));
-    add("pixellate", new GLShader(pixellate_v, pixellate_f));
     add("crt caligari", new GLShader(crt_caligari_v, crt_caligari_f));
-    add("crt easymode", new GLShader(crt_easymode_v, crt_easymode_f));
+    add("crt easymode", new GLShader(crt_easymode_v, crt_easymode_f, GLShader::SCALE_TYPE_SOURCE));
     add("crt geom", new GLShader(crt_geom_v, crt_geom_f));
     add("sharp bilinear", new GLShader(sharp_bilinear_v,
                                        sharp_bilinear_f));
