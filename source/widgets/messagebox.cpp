@@ -142,7 +142,7 @@ int MessageBox::show(const std::string &title, const std::string &message,
                 break;
             }
         } else {
-            key = input->update(0)[0].state;
+            key = input->update()[0].state;
             if (key > 0) {
 
                 if (key & Input::Key::KEY_LEFT) {

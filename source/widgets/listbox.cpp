@@ -177,7 +177,7 @@ void ListBox::setSelection(int idx) {
     }
 
     if (files.empty()) {
-        highlight->setVisibility(Hidden);
+        highlight->setVisibility(Hidden, false);
     } else {
         highlight->setVisibility(Visible);
     }
