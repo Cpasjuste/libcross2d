@@ -4,6 +4,8 @@
 
 #ifdef __SDL2_GL__
 
+#include <platforms/sdl2/sdl2_gl_renderer.h>
+
 #include "c2d.h"
 
 using namespace c2d;
@@ -49,8 +51,8 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
     }
 
     printf("SDL_GL_CreateContext\n");
-    ctx = SDL_GL_CreateContext(window);
-    if (!ctx) {
+    context = SDL_GL_CreateContext(window);
+    if (!context) {
         printf("Couldn't SDL_GL_CreateContext: %s\n", SDL_GetError());
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't SDL_GL_CreateContext: %s\n", SDL_GetError());
         return;
@@ -104,8 +106,8 @@ SDL2Renderer::~SDL2Renderer() {
 
     glFinish();
 
-    if (ctx) {
-        SDL_GL_DeleteContext(ctx);
+    if (context) {
+        SDL_GL_DeleteContext(context);
     }
 
     if (window) {
@@ -117,6 +119,14 @@ SDL2Renderer::~SDL2Renderer() {
 #if defined(__SWITCH__) && defined(__NET_DEBUG__)
     deinitNxLink();
 #endif
+}
+
+SDL_Window *SDL2Renderer::getWindow() {
+    return window;
+}
+
+SDL_GLContext SDL2Renderer::getContext() {
+    return context;
 }
 
 #endif

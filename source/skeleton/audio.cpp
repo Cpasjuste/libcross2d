@@ -16,7 +16,7 @@ Audio::Audio(int rate, int fps, C2DAudioCallback cb) {
         return;
     }
 
-    buffer_len = rate / fps;
+    buffer_len = (int) ((float) rate / (float) fps);
     buffer_size = buffer_len * channels * 2;
     buffer = (short *) malloc((size_t) buffer_size);
     if (buffer == nullptr) {

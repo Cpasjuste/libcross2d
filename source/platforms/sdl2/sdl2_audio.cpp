@@ -113,3 +113,7 @@ void SDL2Audio::pause(int pause) {
     Audio::pause(pause);
     SDL_PauseAudioDevice(deviceID, pause);
 }
+
+SDL_AudioDeviceID SDL2Audio::getDeviceID() {
+    return deviceID;
+}

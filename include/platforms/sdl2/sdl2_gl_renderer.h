@@ -26,10 +26,14 @@ namespace c2d {
 
         virtual void delay(unsigned int ms);
 
+        SDL_Window *getWindow();
+
+        SDL_GLContext getContext();
+
     private:
 
         SDL_Window *window = nullptr;
-        SDL_GLContext ctx = nullptr;
+        SDL_GLContext context = nullptr;
     };
 }
 

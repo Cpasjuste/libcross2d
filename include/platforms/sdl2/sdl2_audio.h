@@ -26,6 +26,8 @@ namespace c2d {
 
         virtual void reset();
 
+        SDL_AudioDeviceID getDeviceID();
+
     private:
 
         SDL_AudioDeviceID deviceID;
