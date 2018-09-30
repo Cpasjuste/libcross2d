@@ -25,6 +25,8 @@ namespace c2d {
                           const Transform &transform,
                           const Texture *texture);
 
+        virtual void clear();
+
         virtual void flip(bool draw = true);
 
         unsigned int vao = 0;

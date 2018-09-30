@@ -84,6 +84,8 @@ void SDL2Renderer::setSize(float width, float height) {
     Renderer::setSize(width, height);
 }
 
+
+
 void SDL2Renderer::flip(bool draw) {
 
     if (draw) {
@@ -98,6 +100,14 @@ void SDL2Renderer::flip(bool draw) {
 void SDL2Renderer::delay(unsigned int ms) {
 
     SDL_Delay(ms);
+}
+
+SDL_Window *SDL2Renderer::getWindow() {
+    return window;
+}
+
+SDL_GLContext SDL2Renderer::getContext() {
+    return context;
 }
 
 SDL2Renderer::~SDL2Renderer() {
@@ -119,14 +129,6 @@ SDL2Renderer::~SDL2Renderer() {
 #if defined(__SWITCH__) && defined(__NET_DEBUG__)
     deinitNxLink();
 #endif
-}
-
-SDL_Window *SDL2Renderer::getWindow() {
-    return window;
-}
-
-SDL_GLContext SDL2Renderer::getContext() {
-    return context;
 }
 
 #endif

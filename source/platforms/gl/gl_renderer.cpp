@@ -139,16 +139,20 @@ void GLRenderer::draw(VertexArray *vertexArray,
     vertexArray->unbindVbo();
 }
 
+void GLRenderer::clear() {
+
+    // clear screen
+    GL_CHECK(glClearColor(getFillColor().r / 255.0f,
+                          getFillColor().g / 255.0f,
+                          getFillColor().b / 255.0f,
+                          getFillColor().a / 255.0f));
+    GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+}
+
 void GLRenderer::flip(bool draw) {
 
     if (draw) {
-
-        // clear screen
-        GL_CHECK(glClearColor(getFillColor().r / 255.0f,
-                              getFillColor().g / 255.0f,
-                              getFillColor().b / 255.0f,
-                              getFillColor().a / 255.0f));
-        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+        clear();
     }
 
     // call base class (draw childs)
