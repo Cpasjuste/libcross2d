@@ -16,6 +16,7 @@
 #define C2D_TEXTURE_FMT_RGBA8       1
 #define C2D_TEXTURE_FMT_ARGB8       2
 #define C2D_TEXTURE_FMT_BGRA8       3
+#define C2D_TEXTURE_FMT_ABGR8       4
 
 namespace c2d {
 

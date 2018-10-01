@@ -43,7 +43,7 @@ Texture::Texture(const Vector2f &size, int fmt) : Transformable() {
     printf("Texture(%p)\n", this);
 
     format = fmt;
-    bpp = (fmt == C2D_TEXTURE_FMT_RGBA8 || fmt == C2D_TEXTURE_FMT_ARGB8) ? 4 : 2;
+    bpp = fmt == C2D_TEXTURE_FMT_RGB565 ? 2 : 4;
     pitch = (int) (size.x * bpp);
 
     m_vertices.setPrimitiveType(TriangleStrip);
