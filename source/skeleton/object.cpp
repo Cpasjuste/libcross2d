@@ -102,12 +102,13 @@ void C2DObject::draw(Transform &transform) {
 
 int C2DObject::getVisibility() {
 
-    return visibility_current;
+    return visibility_wanted;
 }
 
 void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
 
-    if (v == visibility_current || v == visibility_wanted) {
+    if (v == visibility_current
+        || v == visibility_wanted) {
         return;
     }
 
@@ -121,7 +122,7 @@ void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
         for (auto &tween : tweeners) {
             if (tween) {
                 tween->play(visibility_wanted == Visible ? Forward : Backward);
-                // set transform/color to initial values
+                // reset transform/color to initial values
                 tween->step();
             }
         }

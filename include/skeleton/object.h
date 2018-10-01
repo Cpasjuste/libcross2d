@@ -78,13 +78,14 @@ namespace c2d {
         ObjectType type;
         std::vector<C2DObject *> childs;
         std::vector<Tween *> tweeners;
+        DeleteMode deleteMode = Auto;
+        int layer = 0;
+
+    private:
 
         Visibility visibility_current = Visible;
         // for tweeners
         Visibility visibility_wanted = Visible;
-
-        DeleteMode deleteMode = Auto;
-        int layer = 0;
     };
 }
 
