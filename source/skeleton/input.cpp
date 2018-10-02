@@ -23,16 +23,15 @@ int Input::clear(int player) {
     return 0;
 }
 
-void Input::setJoystickMapping(int player, int *mapping, int deadzone) {
+void Input::setJoystickMapping(int player, const int *mapping, int deadzone) {
     for (int i = 0; i < KEY_COUNT; i++) {
         players[player].mapping[i] = mapping[i];
     }
     players[player].dead_zone = deadzone;
 }
 
-void Input::setKeyboardMapping(int *mapping) {
+void Input::setKeyboardMapping(const int *mapping) {
     for (int i = 0; i < KEY_COUNT; i++) {
         keyboard.mapping[i] = mapping[i];
     }
 }
-

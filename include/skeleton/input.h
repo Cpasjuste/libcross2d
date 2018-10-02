@@ -66,9 +66,9 @@ namespace c2d {
         virtual int getButton(int player = 0) { return -1; }; // to implement
         virtual int clear(int player = 0);
 
-        virtual void setJoystickMapping(int player, int *mapping, int deadzone);
+        virtual void setJoystickMapping(int player, const int *mapping, int deadzone);
 
-        virtual void setKeyboardMapping(int *mapping);
+        virtual void setKeyboardMapping(const int *mapping);
 
         Player players[PLAYER_COUNT];
         Keyboard keyboard;

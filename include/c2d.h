@@ -172,11 +172,13 @@ extern c2d::Renderer *c2d_renderer;
 
 #if defined(__SDL2_GL__)
 #define GL_GLEXT_PROTOTYPES 1
+
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include "platforms/sdl2/sdl2_gl_renderer.h"
 #include "platforms/gl/gl_shaders.h"
 #include "platforms/gl/gl_texture.h"
+
 #define C2DRenderer SDL2Renderer
 #define C2DTexture GLTexture
 #else
@@ -387,5 +389,24 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_KB_MENU2_DEFAULT   36
 #endif
 #endif
+
+const int C2D_DEFAULT_JOY_KEYS[]{
+        // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
+        KEY_JOY_UP_DEFAULT, KEY_JOY_DOWN_DEFAULT, KEY_JOY_LEFT_DEFAULT, KEY_JOY_RIGHT_DEFAULT,
+        KEY_JOY_COIN1_DEFAULT, KEY_JOY_START1_DEFAULT,
+        KEY_JOY_FIRE1_DEFAULT, KEY_JOY_FIRE2_DEFAULT, KEY_JOY_FIRE3_DEFAULT,
+        KEY_JOY_FIRE4_DEFAULT, KEY_JOY_FIRE5_DEFAULT, KEY_JOY_FIRE6_DEFAULT,
+        0
+};
+
+const int C2D_DEFAULT_KB_KEYS[]{
+        // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
+        KEY_KB_UP_DEFAULT, KEY_KB_DOWN_DEFAULT, KEY_KB_LEFT_DEFAULT, KEY_KB_RIGHT_DEFAULT,
+        KEY_KB_COIN1_DEFAULT, KEY_KB_START1_DEFAULT,
+        KEY_KB_FIRE1_DEFAULT, KEY_KB_FIRE2_DEFAULT, KEY_KB_FIRE3_DEFAULT,
+        KEY_KB_FIRE4_DEFAULT, KEY_KB_FIRE5_DEFAULT, KEY_KB_FIRE6_DEFAULT,
+        0
+        // 13, 15, 12, 14, 10, 11, 0, 1, 2, 3, 7, 6, 0 // QUIT
+};
 
 #endif //_C2D_H_
