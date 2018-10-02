@@ -75,7 +75,7 @@ SDL2Input::~SDL2Input() {
     }
 }
 
-int SDL2Input::getButton(int player) {
+int SDL2Input::waitButton(int player) {
 
     SDL_Event event = {};
     while (SDL_PollEvent(&event)) {
@@ -91,8 +91,8 @@ int SDL2Input::getButton(int player) {
 
 Input::Player *SDL2Input::update(int rotate) {
 
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-        players[i].state = 0;
+    for (auto &player : players) {
+        player.state = 0;
     }
 
     SDL_Event event = {};
@@ -105,26 +105,27 @@ Input::Player *SDL2Input::update(int rotate) {
 
     SDL_JoystickUpdate(); // ensure all joysticks are up-to-date to remove lag
 
-    for (int i = 0; i < PLAYER_COUNT; i++) {
+    for (auto &player : players) {
 
-        if (!players[i].enabled) {
+        if (!player.enabled) {
             continue;
         }
 
         // hat
-        process_hat(players[i], rotate);
+        process_hat(player, rotate);
 
         // sticks
-        process_axis(players[i], rotate);
+        process_axis(player, rotate);
 
         // buttons
-        process_buttons(players[i], rotate);
+        process_buttons(player, rotate);
     }
 
     // keyboard
     process_keyboard(players[0], rotate);
 
-    return players;
+    // mandatory to handle repeat delay if needed
+    return Input::update(rotate);
 }
 
 void SDL2Input::process_axis(Input::Player &player, int rotate) {

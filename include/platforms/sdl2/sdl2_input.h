@@ -18,7 +18,7 @@ namespace c2d {
 
         virtual Player *update(int rotate = 0);
 
-        virtual int getButton(int player = 0);
+        virtual int waitButton(int player = 0);
 
     private:
         virtual void process_axis(Input::Player &player, int rotate);

@@ -135,7 +135,7 @@ int MessageBox::show(const std::string &title, const std::string &message,
         }
 
         if (pressed) {
-            key = input->getButton();
+            key = input->waitButton();
             if (key > -1) {
                 setVisibility(Hidden);
                 input->clear(0);

@@ -60,21 +60,32 @@ namespace c2d {
 
         explicit Input(Renderer *renderer = nullptr);
 
-        virtual ~Input() {};
+        virtual ~Input();
 
-        virtual Player *update(int rotate = 0) { return players; }; // to implement
-        virtual int getButton(int player = 0) { return -1; }; // to implement
-        virtual int clear(int player = 0);
+        virtual Player *update(int rotate = 0); // to implement
 
-        virtual void setJoystickMapping(int player, const int *mapping, int deadzone);
+        virtual int waitButton(int player = 0) { return -1; }; // to implement
 
-        virtual void setKeyboardMapping(const int *mapping);
+        int clear(int player = 0);
+
+        void setRepeatEnable(bool enable);
+
+        void setRepeatDelay(int ms);
+
+        void setJoystickMapping(int player, const int *mapping, int deadzone);
+
+        void setKeyboardMapping(const int *mapping);
 
         Player players[PLAYER_COUNT];
         Keyboard keyboard;
         Renderer *renderer;
-    };
 
+    private:
+        Clock *repeatClock;
+        int repeatDelay = 150;
+        bool repeat = false;
+        unsigned int stateOld = 0;
+    };
 }
 
 #endif //_INPUT_H
