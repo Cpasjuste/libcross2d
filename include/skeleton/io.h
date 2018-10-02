@@ -19,13 +19,19 @@ namespace c2d {
 
     public:
 
+        enum class Type {
+            Unknown = 0,
+            File = 1,
+            Directory = 2
+        };
+
         class File {
         public:
             File() {};
-            const char *name;
-            const char *path;
+            std::string name;
+            std::string path;
             size_t size = 0;
-            int type;
+            Type type = Type::Unknown;
             // for ui
             Color color = Color::White;
             Texture *icon = nullptr;
@@ -37,10 +43,27 @@ namespace c2d {
 
         virtual bool exist(const std::string &path) { return false; };
 
-        virtual bool createDir(const std::string &path) { return false; };
+        virtual size_t getSize(const std::string &file) { return 0; };
 
-        virtual std::vector<std::string> getDirList(const std::string &path) { return std::vector<std::string>(); };
+        virtual Type getType(const std::string &file) { return Type::Unknown; };
 
+        virtual bool create(const std::string &path) { return false; };
+
+        virtual std::vector<Io::File> getDirList(const std::string &path, bool sort = false) {
+            return std::vector<Io::File>();
+        };
+
+    protected:
+
+        static bool compare(const Io::File &a, const Io::File &b) {
+            if (a.type == Type::Directory && b.type != Type::Directory) {
+                return true;
+            }
+            if (a.type != Type::Directory && b.type == Type::Directory) {
+                return false;
+            }
+            return a.name < b.name;
+        }
     };
 }
 

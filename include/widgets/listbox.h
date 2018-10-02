@@ -37,11 +37,11 @@ namespace c2d {
     public:
 
         ListBox(const Font &font, int fontSize, const FloatRect &rect,
-                const std::vector<Io::File *> &fileList, bool use_icons = false);
+                const std::vector<Io::File> &fileList, bool use_icons = false);
 
         ~ListBox();
 
-        void setFiles(const std::vector<Io::File *> &fileList);
+        void setFiles(const std::vector<Io::File> &fileList);
 
         void setSelection(int index);
 
@@ -53,15 +53,15 @@ namespace c2d {
 
         std::vector<ListBoxLine *> getLines();
 
-        std::vector<c2d::Io::File *> getFiles();
+        std::vector<c2d::Io::File> getFiles();
 
-        Io::File *getSelection();
+        Io::File getSelection();
 
         int getIndex();
 
     private:
 
-        std::vector<Io::File *> files;
+        std::vector<Io::File> files;
         std::vector<ListBoxLine *> lines;
         Rectangle *highlight;
         float line_height;

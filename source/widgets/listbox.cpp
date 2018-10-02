@@ -96,7 +96,7 @@ ListBoxLine::~ListBoxLine() {
 }
 
 ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
-                 const std::vector<Io::File *> &fileList, bool use_icons)
+                 const std::vector<Io::File> &fileList, bool use_icons)
         : Rectangle(rect) {
 
     printf("ListBox(%p)\n", this);
@@ -129,7 +129,7 @@ ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
         FloatRect r = {1, (line_height * i) + 1, getSize().x - 2, line_height - 2};
         Texture *icon = nullptr;
         if (use_icons) {
-            icon = files.size() > i ? files.at(i)->icon : nullptr;
+            icon = files.size() > i ? files[i].icon : nullptr;
         }
         ListBoxLine *line = new ListBoxLine(r, "BLpT92,(", font, (unsigned int) fontSize, icon, use_icons);
         lines.push_back(line);
@@ -145,6 +145,7 @@ ListBox::~ListBox() {
     // will be delete by parent (widget)
     //lines.clear();
     printf("~ListBox(%p)\n", this);
+    files.clear();
 }
 
 void ListBox::setSelection(int idx) {
@@ -159,16 +160,16 @@ void ListBox::setSelection(int idx) {
             lines[i]->setVisibility(Hidden);
         } else {
             // set file
-            Io::File *file = files.at(index_start + i);
+            Io::File file = files[index_start + i];
             lines[i]->setVisibility(Visible);
-            lines[i]->setString(file->name);
+            lines[i]->setString(file.name);
             // set text color based on file color
-            lines[i]->setIcon(file->icon);
-            lines[i]->setColor(file->color);
+            lines[i]->setIcon(file.icon);
+            lines[i]->setColor(file.color);
             // set highlight position and color
             if (index_start + i == (unsigned int) index) {
                 highlight->setPosition(lines[i]->getPosition());
-                Color color = file->color;
+                Color color = file.color;
                 highlight->setOutlineColor(color);
                 color.a = highlight->getFillColor().a;
                 highlight->setFillColor(color);
@@ -183,9 +184,8 @@ void ListBox::setSelection(int idx) {
     }
 }
 
-void ListBox::setFiles(const std::vector<Io::File *> &fileList) {
+void ListBox::setFiles(const std::vector<Io::File> &fileList) {
 
-    files.clear();
     files = fileList;
     setSelection(0);
 }
@@ -194,13 +194,12 @@ std::vector<ListBoxLine *> ListBox::getLines() {
     return lines;
 }
 
-std::vector<c2d::Io::File *> ListBox::getFiles() {
+std::vector<c2d::Io::File> ListBox::getFiles() {
     return files;
 }
 
-Io::File *ListBox::getSelection() {
-    return (int) files.size() <= index ? nullptr : files[index];
-
+Io::File ListBox::getSelection() {
+    return (int) files.size() <= index ? Io::File() : files[index];
 }
 
 int ListBox::getIndex() {
