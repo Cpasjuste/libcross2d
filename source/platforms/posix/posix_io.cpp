@@ -49,9 +49,9 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort) {
                 }
 
                 File file;
-                file.path = path;
                 file.name = ent->d_name;
-                file.size = getSize(file.path + "/" + file.name);
+                file.path = path + "/" + file.name;
+                file.size = getSize(path);
                 file.type = ent->d_type == DT_DIR ? Type::Directory : Type::File;
                 file.color = ent->d_type == DT_DIR ? Color::Yellow : Color::White;
                 files.push_back(file);

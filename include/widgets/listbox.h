@@ -24,6 +24,8 @@ namespace c2d {
 
         void setIcon(Texture *icon);
 
+        Text *getText();
+
     private:
 
         Rectangle *iconRect = nullptr;
@@ -37,7 +39,7 @@ namespace c2d {
     public:
 
         ListBox(const Font &font, int fontSize, const FloatRect &rect,
-                const std::vector<Io::File> &fileList, bool use_icons = false);
+                const std::vector<Io::File> &fileList, bool useIcons = false);
 
         ~ListBox();
 
@@ -45,9 +47,21 @@ namespace c2d {
 
         void setSelection(int index);
 
-        void setHighLight(bool enable);
+        void setTextOutlineColor(const Color &color);
 
-        Rectangle *getHighLight();
+        void setTextOutlineThickness(float thickness);
+
+        void setHighlight(bool enable);
+
+        void setHighlightColor(const Color &color);
+
+        void setHighlightAlpha(uint8_t alpha);
+
+        void setHighlightTween(Tween *tween);
+
+        void setHighlightThickness(float thickness);
+
+        void setHighlightUseFileColor(bool enable);
 
         int getMaxLines();
 
@@ -68,6 +82,7 @@ namespace c2d {
         int max_lines;
         int index = 0;
         bool use_icons = false;
+        bool highlight_use_files_color = true;
     };
 }
 

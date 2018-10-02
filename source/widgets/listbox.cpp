@@ -91,17 +91,22 @@ void ListBoxLine::setIcon(Texture *i) {
     }
 }
 
+Text *ListBoxLine::getText() {
+    return text;
+}
+
 ListBoxLine::~ListBoxLine() {
     printf("~ListBoxLine(%p)\n", this);
 }
 
 ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
-                 const std::vector<Io::File> &fileList, bool use_icons)
+                 const std::vector<Io::File> &fileList, bool useIcons)
         : Rectangle(rect) {
 
     printf("ListBox(%p)\n", this);
 
     files = fileList;
+    use_icons = useIcons;
 
     // set default bg colors
     setFillColor(Color::GrayLight);
@@ -169,10 +174,12 @@ void ListBox::setSelection(int idx) {
             // set highlight position and color
             if (index_start + i == (unsigned int) index) {
                 highlight->setPosition(lines[i]->getPosition());
-                Color color = file.color;
-                highlight->setOutlineColor(color);
-                color.a = highlight->getFillColor().a;
+                Color color = highlight_use_files_color ?
+                              file.color : highlight->getFillColor();
+                color.a = highlight_use_files_color ? (uint8_t) 80 : color.a;
                 highlight->setFillColor(color);
+                color.a = 255;
+                highlight->setOutlineColor(color);
             }
         }
     }
@@ -190,29 +197,60 @@ void ListBox::setFiles(const std::vector<Io::File> &fileList) {
     setSelection(0);
 }
 
-std::vector<ListBoxLine *> ListBox::getLines() {
-    return lines;
-}
-
 std::vector<c2d::Io::File> ListBox::getFiles() {
     return files;
 }
 
 Io::File ListBox::getSelection() {
-    return (int) files.size() <= index ? Io::File() : files[index];
+    Io::File file;
+    return (files.empty() ||
+            (int) files.size() <= index) ? file : files[index];
+}
+
+std::vector<ListBoxLine *> ListBox::getLines() {
+    return lines;
+}
+
+void ListBox::setTextOutlineColor(const Color &color) {
+    for (auto &line : lines) {
+        line->getText()->setOutlineColor(color);
+    }
+}
+
+void ListBox::setTextOutlineThickness(float thickness) {
+    for (auto &line : lines) {
+        line->getText()->setOutlineThickness(thickness);
+    }
+}
+
+void ListBox::setHighlight(bool enable) {
+    highlight->setVisibility(enable ? Visible
+                                    : Hidden);
+}
+
+void ListBox::setHighlightTween(Tween *tween) {
+    highlight->add(tween);
+}
+
+void ListBox::setHighlightColor(const Color &color) {
+    highlight->setFillColor(color);
+}
+
+void ListBox::setHighlightAlpha(u_int8_t alpha) {
+    Color c = highlight->getFillColor();
+    highlight->setFillColor({c.r, c.g, c.b, alpha});
+}
+
+void ListBox::setHighlightThickness(float thickness) {
+    highlight->setOutlineThickness(thickness);
+}
+
+void ListBox::setHighlightUseFileColor(bool enable) {
+    highlight_use_files_color = enable;
 }
 
 int ListBox::getIndex() {
     return index;
-}
-
-Rectangle *ListBox::getHighLight() {
-    return highlight;
-}
-
-void ListBox::setHighLight(bool enable) {
-    highlight->setVisibility(enable ? Visible
-                                    : Hidden);
 }
 
 int ListBox::getMaxLines() {
