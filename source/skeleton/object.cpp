@@ -10,6 +10,7 @@
 using namespace c2d;
 
 C2DObject::C2DObject() {
+
     //printf("C2DObject(%p)\n", this);
 }
 
@@ -52,29 +53,30 @@ void C2DObject::remove(Tween *tweener) {
     }
 }
 
-void C2DObject::draw(Transform &transform) {
+void C2DObject::draw(Transform &trans) {
 
     //printf("C2DObject(%p): draw\n", this);
+
+    if (!transformable) {
+        // TODO: can't cast Rectangle to Transformable ?
+        if (type == TRectangle) {
+            transformable = (Rectangle *) this;
+        } else if (type == TLine) {
+            transformable = (Line *) this;
+        } else if (type == TCircle) {
+            transformable = (Circle *) this;
+        } else if (type == TTexture) {
+            transformable = (Texture *) this;
+        } else if (type == TText) {
+            transformable = (Text *) this;
+        }
+    }
 
     if (visibility_current == Visibility::Hidden) {
         return;
     }
 
-    Transform combinedTransform = transform;
-    Transformable *transformable = nullptr;
-
-    // TODO: can't cast Rectangle to Transformable ?
-    if (type == TRectangle) {
-        transformable = (Rectangle *) this;
-    } else if (type == TLine) {
-        transformable = (Line *) this;
-    } else if (type == TCircle) {
-        transformable = (Circle *) this;
-    } else if (type == TTexture) {
-        transformable = (Texture *) this;
-    } else if (type == TText) {
-        transformable = (Text *) this;
-    }
+    Transform combinedTransform = trans;
 
     // handle tweeners
     for (auto &tween : tweeners) {
@@ -160,6 +162,10 @@ void C2DObject::setLayer(int layer) {
     }
 }
 
+Transformable *C2DObject::getTransformable() {
+    return transformable;
+}
+
 C2DObject::~C2DObject() {
 
     //printf("~C2DObject(%p): childs = %i\n", this, (int) childs.size());
@@ -192,3 +198,4 @@ C2DObject::~C2DObject() {
         parent->remove(this);
     }
 }
+

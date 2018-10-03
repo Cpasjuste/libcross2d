@@ -74,6 +74,9 @@ int main() {
         unsigned int key = input->update()[0].state;
         if (key) {
             printf("input[0]: 0x%08X\n", key);
+            if (key & EV_QUIT) {
+                break;
+            }
         }
 
         // time / delta time

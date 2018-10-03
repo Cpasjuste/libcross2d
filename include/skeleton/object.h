@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <skeleton/sfml/Shape.hpp>
 
 #include "skeleton/sfml/Transformable.hpp"
 #include "tween.h"
@@ -66,6 +67,8 @@ namespace c2d {
 
         void setLayer(int layer);
 
+        Transformable *getTransformable();
+
         ObjectType getType() const {
             return type;
         }
@@ -75,6 +78,7 @@ namespace c2d {
     protected:
 
         C2DObject *parent = nullptr;
+        Transformable *transformable = nullptr;
         ObjectType type;
         std::vector<C2DObject *> childs;
         std::vector<Tween *> tweeners;

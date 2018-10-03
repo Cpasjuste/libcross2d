@@ -21,6 +21,7 @@
 #include "widgets/textbox.h"
 #include "widgets/listbox.h"
 #include "widgets/messagebox.h"
+#include "widgets/progress.h"
 
 #ifdef __DEBUG_NVWA__
 #include "debug_new.h"

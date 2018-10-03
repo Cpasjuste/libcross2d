@@ -72,9 +72,7 @@ namespace c2d {
         TweenLoop loop;
         TweenDirection direction = Current;
         TweenState state = Playing;
-        tweeny::tween<float> tweenFloat;
-        tweeny::tween<float, float> tweenVector2;
-        tweeny::tween<float, float, float, float> tweenColor;
+        tweeny::tween<float, float, float, float> tween;
         // timer stuff
         Clock *deltaClock = nullptr;
         Time delta;
