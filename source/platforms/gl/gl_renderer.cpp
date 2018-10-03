@@ -47,11 +47,15 @@ void GLRenderer::draw(VertexArray *vertexArray,
     Vertex *vertices = vertexArray->getVertices().data();
     size_t vertexCount = vertexArray->getVertexCount();
     GLTexture *glTexture = ((GLTexture *) texture);
-
     GLShader *shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(0)->data :
                        (GLShader *) ((GLShaderList *) shaderList)->color->data;
     if (glTexture && glTexture->shader) {
         shader = (GLShader *) glTexture->shader->data;
+    }
+
+    if (!vertices) {
+        printf("gl_render::draw: no vertices\n");
+        return;
     }
 
     // bind object vao

@@ -11,6 +11,7 @@
 #include <cstdio>
 
 #include "rectangle.h"
+#include "rounded_rectangle.h"
 #include "line.h"
 #include "circle.h"
 #include "text.h"
@@ -47,6 +48,8 @@ namespace c2d {
         virtual void drawLine(Line &line, Transform &transform);
 
         virtual void drawRectangle(Rectangle &rectangle, Transform &transform);
+
+        virtual void drawRoundedRectangle(RoundedRectangle &rectangle, Transform &transform);
 
         virtual void drawCircle(Circle &circle, Transform &transform);
 

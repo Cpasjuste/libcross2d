@@ -11,6 +11,7 @@
 #include "skeleton/audio.h"
 #include "skeleton/renderer.h"
 #include "skeleton/rectangle.h"
+#include "skeleton/rounded_rectangle.h"
 #include "skeleton/line.h"
 #include "skeleton/circle.h"
 #include "skeleton/texture.h"
