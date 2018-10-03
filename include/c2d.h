@@ -122,7 +122,7 @@ extern c2d::Renderer *c2d_renderer;
 
 //#define __SVC_DEBUG__ 1
 #define __NET_DEBUG__ 1
-
+#define NO_KEYBOARD 1
 #include "platforms/sdl2/sdl2_gl_renderer.h"
 #include "platforms/gl/gl_texture.h"
 #include "platforms/gl/gl_shaders.h"
@@ -399,6 +399,7 @@ const int C2D_DEFAULT_JOY_KEYS[]{
         0
 };
 
+#ifndef NO_KEYBOARD
 const int C2D_DEFAULT_KB_KEYS[]{
         // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
         KEY_KB_UP_DEFAULT, KEY_KB_DOWN_DEFAULT, KEY_KB_LEFT_DEFAULT, KEY_KB_RIGHT_DEFAULT,
@@ -408,5 +409,6 @@ const int C2D_DEFAULT_KB_KEYS[]{
         0
         // 13, 15, 12, 14, 10, 11, 0, 1, 2, 3, 7, 6, 0 // QUIT
 };
+#endif
 
 #endif //_C2D_H_
