@@ -74,6 +74,10 @@ void C2DObject::draw(Transform &transform) {
     }
 }
 
+bool C2DObject::isVisible() {
+    return visibility_wanted == Visibility::Visible;
+}
+
 Visibility C2DObject::getVisibility() {
 
     return visibility_wanted;

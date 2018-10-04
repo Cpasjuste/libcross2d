@@ -10,6 +10,7 @@
 #include "skeleton/input.h"
 #include "skeleton/audio.h"
 #include "skeleton/sfml/RectangleShape.hpp"
+#include "skeleton/sfml/RoundedRectangleShape.h"
 #include "skeleton/sfml/CircleShape.hpp"
 #include "skeleton/sfml/Text.hpp"
 #include "skeleton/renderer.h"

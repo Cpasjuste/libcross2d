@@ -40,7 +40,7 @@ int main() {
     auto *font = new C2DFont();
     if (font->loadFromMemory(pfba_font, pfba_font_length)) {
         // some font have too much "margin"..
-        font->setYOffset(-8);
+        font->setOffset({0, -10});
         // create a text and add it to the rect
         auto *text = new C2DText("Hello world", *font);
         text->setOutlineColor(Color::Blue);

@@ -20,14 +20,14 @@ ListBoxLine::ListBoxLine(
     text = new Text(str, font, fontSize);
     text->setOutlineThickness(2);
     text->setOutlineColor(Color::Black);
-    text->setOrigin(0, text->getLocalBounds().height / 2);
+    text->setOrigin(Origin::Left);
 
     setFillColor(Color::Transparent);
 
     if (use_icons) {
         // add iconRect
         iconRect = new C2DRectangle(Vector2f(32, 32));
-        iconRect->setOrigin(0, 16);
+        iconRect->setOrigin(Origin::Center);
         iconRect->setPosition(Vector2f(1, getSize().y / 2));
         iconRect->setFillColor(Color::Transparent);
         iconRect->setOutlineThickness(1);
@@ -37,7 +37,7 @@ ListBoxLine::ListBoxLine(
         text->setPosition(iconRect->getSize().x + 8, getSize().y / 2);
         text->setSizeMax(Vector2f(getSize().x - 8 - iconRect->getSize().x, 0));
     } else {
-        text->setPosition(4, getSize().y / 2);
+        text->setPosition(8, getSize().y / 2);
         text->setSizeMax(Vector2f(getSize().x - 8, 0));
     }
 

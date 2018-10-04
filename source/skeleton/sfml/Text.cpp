@@ -315,38 +315,37 @@ namespace c2d {
         Transformable::setOrigin(origin);
     }
 
-    void Text::setOrigin(const Origin &origin, bool outline) {
+    void Text::setOrigin(const Origin &origin) {
 
-        float out_size = outline ? m_outlineThickness : 0;
         m_text_origin = origin;
 
         switch (origin) {
             case Origin::Left:
-                Transformable::setOrigin(-out_size, m_bounds.height / 2);
+                Transformable::setOrigin(0, m_characterSize / 2);
                 break;
             case Origin::TopLeft:
-                Transformable::setOrigin(-out_size, -out_size);
+                Transformable::setOrigin(0, 0);
                 break;
             case Origin::Top:
-                Transformable::setOrigin(m_bounds.width / 2, -out_size);
+                Transformable::setOrigin(m_bounds.width / 2, 0);
                 break;
             case Origin::TopRight:
-                Transformable::setOrigin(m_bounds.width - out_size, -out_size);
+                Transformable::setOrigin(m_bounds.width, 0);
                 break;
             case Origin::Right:
-                Transformable::setOrigin(m_bounds.width - out_size, m_bounds.height / 2);
+                Transformable::setOrigin(m_bounds.width, m_characterSize / 2);
                 break;
             case Origin::BottomRight:
-                Transformable::setOrigin(m_bounds.width - out_size, m_bounds.height - out_size);
+                Transformable::setOrigin(m_bounds.width, m_characterSize);
                 break;
             case Origin::Bottom:
-                Transformable::setOrigin(m_bounds.width / 2, m_bounds.height - out_size);
+                Transformable::setOrigin(m_bounds.width / 2, m_characterSize);
                 break;
             case Origin::BottomLeft:
-                Transformable::setOrigin(-out_size, m_bounds.height - out_size);
+                Transformable::setOrigin(0, m_characterSize);
                 break;
             case Origin::Center:
-                Transformable::setOrigin(m_bounds.width / 2, m_bounds.height / 2);
+                Transformable::setOrigin(m_bounds.width / 2, m_characterSize / 2);
                 break;
             default:
                 break;
@@ -377,10 +376,13 @@ namespace c2d {
 
         Transform combined = transform * getTransform();
 
-        // fix top not at 0 if needed (font->setYOffset)
+        /*
+        // fix top not at 0 if needed (font->setOffset)
         float scale = getCharacterSize() / (float) C2D_DEFAULT_CHAR_SIZE;
-        combined.translate(0, getFont()->getYOffset() * scale);
-        //combined.translate(0, (getFont()->getYOffset() * scale) + getOutlineThickness());
+        combined.translate(
+                getFont()->getOffset().x * scale,
+                getFont()->getOffset().y * scale);
+        */
 
         //
         if (getOutlineThickness() > 0) {
@@ -428,8 +430,14 @@ namespace c2d {
         // Precompute the variables needed by the algorithm
         float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
         float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + m_line_spacing;
+
         float x = 0.f;
         float y = static_cast<float>(m_characterSize);
+
+        // fix top not at 0 if needed (font->setOffset)
+        float scale = (float) getCharacterSize() / (float) C2D_DEFAULT_CHAR_SIZE;
+        x += m_font->getOffset().x * scale;
+        y += m_font->getOffset().y * scale;
 
         // Create one quad for each character
         float minX = static_cast<float>(m_characterSize);

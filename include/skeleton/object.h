@@ -48,6 +48,8 @@ namespace c2d {
         void remove(Tween *tween);
 
         // visibility
+        bool isVisible();
+
         Visibility getVisibility();
 
         void setVisibility(Visibility visibility, bool tweenPlay = true);

@@ -318,12 +318,12 @@ namespace c2d {
         }
     }
 
-    void Font::setYOffset(float offset) {
-        y_offset = offset;
+    void Font::setOffset(Vector2f off) {
+        offset = off;
     }
 
-    float Font::getYOffset() const {
-        return y_offset;
+    Vector2f Font::getOffset() const {
+        return offset;
     }
 
 ////////////////////////////////////////////////////////////

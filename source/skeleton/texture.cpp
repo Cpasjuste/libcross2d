@@ -72,39 +72,38 @@ void Texture::setOrigin(const Vector2f &origin) {
     Transformable::setOrigin(origin);
 }
 
-void Texture::setOrigin(const Origin &origin, bool outline) {
+void Texture::setOrigin(const Origin &origin) {
 
-    //float out_size = outline ? m_outlineThickness : 0;
-    float out_size = 0;
     m_origin = origin;
+    FloatRect m_bounds = getLocalBounds();
 
     switch (origin) {
         case Origin::Left:
-            Transformable::setOrigin(-out_size, m_textureRect.height / 2);
+            Transformable::setOrigin(0, m_bounds.height / 2);
             break;
         case Origin::TopLeft:
-            Transformable::setOrigin(-out_size, -out_size);
+            Transformable::setOrigin(0, 0);
             break;
         case Origin::Top:
-            Transformable::setOrigin(m_textureRect.width / 2, -out_size);
+            Transformable::setOrigin(m_bounds.width / 2, 0);
             break;
         case Origin::TopRight:
-            Transformable::setOrigin(m_textureRect.width - out_size, -out_size);
+            Transformable::setOrigin(m_bounds.width, 0);
             break;
         case Origin::Right:
-            Transformable::setOrigin(m_textureRect.width - out_size, m_textureRect.height / 2);
+            Transformable::setOrigin(m_bounds.width, m_bounds.height / 2);
             break;
         case Origin::BottomRight:
-            Transformable::setOrigin(m_textureRect.width - out_size, m_textureRect.height - out_size);
+            Transformable::setOrigin(m_bounds.width, m_bounds.height);
             break;
         case Origin::Bottom:
-            Transformable::setOrigin(m_textureRect.width / 2, m_textureRect.height - out_size);
+            Transformable::setOrigin(m_bounds.width / 2, m_bounds.height);
             break;
         case Origin::BottomLeft:
-            Transformable::setOrigin(-out_size, m_textureRect.height - out_size);
+            Transformable::setOrigin(0, m_bounds.height);
             break;
         case Origin::Center:
-            Transformable::setOrigin(m_textureRect.width / 2, m_textureRect.height / 2);
+            Transformable::setOrigin(m_bounds.width / 2, m_bounds.height / 2);
             break;
         default:
             break;

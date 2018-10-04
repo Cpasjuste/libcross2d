@@ -327,7 +327,7 @@ namespace c2d {
 
         void setOrigin(const Vector2f &origin);
 
-        void setOrigin(const Origin &origin, bool outline = true);
+        void setOrigin(const Origin &origin);
 
         void setSizeMax(const c2d::Vector2f &maxSize);
 
