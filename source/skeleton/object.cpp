@@ -26,20 +26,19 @@ void C2DObject::remove(C2DObject *object) {
     }
 }
 
-void C2DObject::add(Tween *tweener) {
+void C2DObject::add(Tween *tween) {
 
-    if (tweener) {
-        tweener->setTransform((Transformable *) this);
-        tweeners.push_back(tweener);
+    if (tween) {
+        tween->setTransform((Transformable *) this);
+        tweens.push_back(tween);
     }
 }
 
-void C2DObject::remove(Tween *tweener) {
+void C2DObject::remove(Tween *tween) {
 
-    if (tweener && tweeners.empty()) {
-        tweeners.erase(std::remove(
-                tweeners.begin(), tweeners.end(), tweener),
-                       tweeners.end());
+    if (tween && !tweens.empty()) {
+        tweens.erase(std::remove(
+                tweens.begin(), tweens.end(), tween), tweens.end());
     }
 }
 
@@ -52,7 +51,7 @@ void C2DObject::draw(Transform &transform) {
     }
 
     // handle tweeners
-    for (auto &tween : tweeners) {
+    for (auto &tween : tweens) {
         if (tween) {
             tween->step();
             // hide object if needed
@@ -87,14 +86,14 @@ void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
         return;
     }
 
-    if (tweenPlay && !tweeners.empty()) {
+    if (tweenPlay && !tweens.empty()) {
         if (v == Visibility::Visible) {
             // we want the object to be visible immediately
             visibility_current = visibility_wanted = Visibility::Visible;
         } else {
             visibility_wanted = Visibility::Hidden;
         }
-        for (auto &tween : tweeners) {
+        for (auto &tween : tweens) {
             if (tween) {
                 tween->play(visibility_wanted == Visibility::Visible ?
                             TweenDirection::Forward : TweenDirection::Backward);
@@ -141,13 +140,13 @@ C2DObject::~C2DObject() {
     //printf("~C2DObject(%p): childs = %i\n", this, (int) childs.size());
 
     // delete tweeners
-    for (auto tween = tweeners.begin(); tween != tweeners.end();) {
+    for (auto tween = tweens.begin(); tween != tweens.end();) {
         if (*tween) {
             delete (*tween);
             remove(*tween);
         }
     }
-    tweeners.clear();
+    tweens.clear();
 
     // delete childs
     for (auto widget = childs.begin(); widget != childs.end();) {

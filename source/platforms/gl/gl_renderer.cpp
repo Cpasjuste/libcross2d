@@ -4,13 +4,13 @@
 
 #ifdef __GL__
 
-#include "c2d.h"
-
 #define GLM_FORCE_PURE
 
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "c2d.h"
 
 using namespace c2d;
 
@@ -44,18 +44,23 @@ void GLRenderer::draw(VertexArray *vertexArray,
                       const Transform &transform,
                       const Texture *texture) {
 
-    Vertex *vertices = vertexArray->getVertices().data();
-    size_t vertexCount = vertexArray->getVertexCount();
-    GLTexture *glTexture = ((GLTexture *) texture);
-    GLShader *shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(0)->data :
-                       (GLShader *) ((GLShaderList *) shaderList)->color->data;
-    if (glTexture && glTexture->shader) {
-        shader = (GLShader *) glTexture->shader->data;
-    }
+    Vertex *vertices;
+    size_t vertexCount;
+    GLTexture *glTexture;
+    GLShader *shader;
 
-    if (!vertices) {
+    if (!vertexArray || vertexArray->getVertexCount() < 1) {
         printf("gl_render::draw: no vertices\n");
         return;
+    }
+
+    vertices = vertexArray->getVertices().data();
+    vertexCount = vertexArray->getVertexCount();
+    glTexture = ((GLTexture *) texture);
+    shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(0)->data :
+             (GLShader *) ((GLShaderList *) shaderList)->color->data;
+    if (glTexture && glTexture->shader) {
+        shader = (GLShader *) glTexture->shader->data;
     }
 
     // bind object vao

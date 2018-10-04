@@ -37,10 +37,10 @@ namespace c2d {
         void remove(C2DObject *object);
 
         // tweeners
-        void add(Tween *tweener);
+        void add(Tween *tween);
 
         // remove a tweener without calling it's destructor
-        void remove(Tween *tweener);
+        void remove(Tween *tween);
 
         // visibility
         Visibility getVisibility();
@@ -71,7 +71,7 @@ namespace c2d {
 
         int layer = 0;
         C2DObject *parent = nullptr;
-        std::vector<Tween *> tweeners;
+        std::vector<Tween *> tweens;
         std::vector<C2DObject *> childs;
         DeleteMode deleteMode = DeleteMode::Auto;
         Visibility visibility_current = Visibility::Visible;
