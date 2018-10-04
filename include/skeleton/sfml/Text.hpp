@@ -43,7 +43,7 @@ namespace c2d {
 /// \brief Graphical text that can be drawn to a render target
 ///
 ////////////////////////////////////////////////////////////
-    class Text : public c2d::Transformable, public c2d::C2DObject {
+    class Text : public c2d::Transformable {
     public:
 
         ////////////////////////////////////////////////////////////
@@ -335,29 +335,21 @@ namespace c2d {
 
         void setOriginBottomRight();
 
-        c2d::VertexArray *getVertices();
-
-        c2d::VertexArray *getOutlineVertices();
-
         void setSizeMax(const c2d::Vector2f &maxSize);
 
         void setSizeMax(float x, float y);
 
         void setLineSpacingModifier(int size);
 
-        void draw(Transform &transform);
+    protected:
 
     private:
 
         ////////////////////////////////////////////////////////////
-        /// \brief Draw the text to a render target
-        ///
-        /// \param target Render target to draw to
-        /// \param states Current render states
+        /// \brief Draw the shape to the main renderer
         ///
         ////////////////////////////////////////////////////////////
-        //virtual void draw(RenderTarget& target, RenderStates states) const;
-        //virtual void draw(Renderer *render);
+        virtual void draw(Transform &transform);
 
         ////////////////////////////////////////////////////////////
         /// \brief Make sure the text's geometry is updated

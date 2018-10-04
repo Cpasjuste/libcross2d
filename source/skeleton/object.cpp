@@ -2,17 +2,9 @@
 // Created by cpasjuste on 12/12/17.
 //
 
-#include <cstdio>
-
 #include "c2d.h"
-#include "skeleton/sfml/Shape.hpp"
 
 using namespace c2d;
-
-C2DObject::C2DObject() {
-
-    //printf("C2DObject(%p)\n", this);
-}
 
 void C2DObject::add(C2DObject *object) {
 
@@ -37,35 +29,23 @@ void C2DObject::remove(C2DObject *object) {
 void C2DObject::add(Tween *tweener) {
 
     if (tweener) {
-        tweener->setObject(this);
+        tweener->setTransform((Transformable *) this);
         tweeners.push_back(tweener);
     }
 }
 
 void C2DObject::remove(Tween *tweener) {
 
-    if (tweener) {
-        if (!tweeners.empty()) {
-            tweeners.erase(std::remove(
-                    tweeners.begin(), tweeners.end(), tweener),
-                           tweeners.end());
-        }
+    if (tweener && tweeners.empty()) {
+        tweeners.erase(std::remove(
+                tweeners.begin(), tweeners.end(), tweener),
+                       tweeners.end());
     }
 }
 
 void C2DObject::draw(Transform &transform) {
 
     //printf("C2DObject(%p): draw\n", this);
-    if (!transformable) {
-        // TODO: can't cast Rectangle to Transformable ?
-        if (type == TTexture) {
-            transformable = (Texture *) this;
-        } else if (type == TText) {
-            transformable = (Text *) this;
-        } else {
-            transformable = (Shape *) this;
-        }
-    }
 
     if (visibility_current == Visibility::Hidden) {
         return;
@@ -76,27 +56,26 @@ void C2DObject::draw(Transform &transform) {
         if (tween) {
             tween->step();
             // hide object if needed
-            if (tween->getState() == Stopped && visibility_current != visibility_wanted) {
+            if (tween->getState() == TweenState::Stopped
+                && visibility_current != visibility_wanted) {
                 visibility_current = visibility_wanted;
             }
         }
     }
 
     Transform combinedTransform = transform;
-    if (transformable) {
-        combinedTransform *= transformable->getTransform();
-    }
+    combinedTransform *= ((Transformable *) this)->getTransform();
 
     for (auto &child : childs) {
         if (child) {
-            if (child->visibility_current == Visible) {
+            if (child->visibility_current == Visibility::Visible) {
                 child->draw(combinedTransform);
             }
         }
     }
 }
 
-int C2DObject::getVisibility() {
+C2DObject::Visibility C2DObject::getVisibility() {
 
     return visibility_wanted;
 }
@@ -109,15 +88,16 @@ void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
     }
 
     if (tweenPlay && !tweeners.empty()) {
-        if (v == Visible) {
+        if (v == Visibility::Visible) {
             // we want the object to be visible immediately
-            visibility_current = visibility_wanted = Visible;
+            visibility_current = visibility_wanted = Visibility::Visible;
         } else {
-            visibility_wanted = Hidden;
+            visibility_wanted = Visibility::Hidden;
         }
         for (auto &tween : tweeners) {
             if (tween) {
-                tween->play(visibility_wanted == Visible ? Forward : Backward);
+                tween->play(visibility_wanted == Visibility::Visible ?
+                            TweenDirection::Forward : TweenDirection::Backward);
                 // reset transform/color to initial values
                 tween->step();
             }
@@ -127,7 +107,7 @@ void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
     }
 }
 
-int C2DObject::getDeleteMode() {
+C2DObject::DeleteMode C2DObject::getDeleteMode() {
     return deleteMode;
 }
 
@@ -156,10 +136,6 @@ void C2DObject::setLayer(int layer) {
     }
 }
 
-Transformable *C2DObject::getTransformable() {
-    return transformable;
-}
-
 C2DObject::~C2DObject() {
 
     //printf("~C2DObject(%p): childs = %i\n", this, (int) childs.size());
@@ -176,7 +152,7 @@ C2DObject::~C2DObject() {
     // delete childs
     for (auto widget = childs.begin(); widget != childs.end();) {
         if (*widget) {
-            if ((*widget)->deleteMode == Auto) {
+            if ((*widget)->deleteMode == DeleteMode::Auto) {
                 //printf("\t~C2DObject(%p): delete child(%p)\n", this, *widget);
                 delete (*widget);
             }
@@ -192,4 +168,3 @@ C2DObject::~C2DObject() {
         parent->remove(this);
     }
 }
-

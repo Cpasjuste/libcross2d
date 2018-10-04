@@ -14,11 +14,11 @@ using namespace c2d;
 int main() {
 
     // create main renderer
-    C2DRenderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
+    auto *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
     renderer->setFillColor(Color::Black);
 
     // create a rect
-    C2DRectangle *rect = new C2DRectangle(
+    auto *rect = new C2DRectangle(
             {renderer->getSize().x / 2, renderer->getSize().y / 2,
              renderer->getSize().x / 2, renderer->getSize().y / 2});
 
@@ -28,7 +28,7 @@ int main() {
     rect->setOutlineThickness(8);
 
     // create a texture and add it to the rect
-    C2DTexture *tex = new C2DTexture((const unsigned char *) pfba_title, pfba_title_length);
+    auto *tex = new C2DTexture((const unsigned char *) pfba_title, pfba_title_length);
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
         tex->setScale(0.5f, 0.5f);
@@ -37,7 +37,7 @@ int main() {
     }
 
     // create a font
-    C2DFont *font = new C2DFont();
+    auto *font = new C2DFont();
     if (font->loadFromMemory(pfba_font, pfba_font_length)) {
         // create a text and add it to the rect
         Text *text = new Text("Hello world", *font);
@@ -51,10 +51,9 @@ int main() {
     // add all this crap to the renderer
     renderer->add(rect);
 
-    C2DInput *input = new C2DInput(nullptr);
+    auto *input = new C2DInput(nullptr);
     input->setJoystickMapping(0, KEYS, 0);
 
-    /*
     // add some tweening :)
     auto *tweenPos = new TweenPosition(
             {renderer->getSize().x / 2 - 256, rect->getPosition().y},
@@ -69,7 +68,6 @@ int main() {
     rect->add(tweenColor);
     auto *tweenAlpha = new TweenAlpha(255, 0, 4.0f, TweenLoop::PingPong);
     rect->add(tweenAlpha);
-    */
 
     while (renderer->getElapsedTime().asSeconds() < 20) {
 

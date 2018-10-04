@@ -2,46 +2,35 @@
 // Created by cpasjuste on 12/12/17.
 //
 
-#ifndef CROSS2D_DRAWABLE_H
-#define CROSS2D_DRAWABLE_H
+#ifndef CROSS2D_OBJECT_H
+#define CROSS2D_OBJECT_H
 
 #include <cstdint>
 #include <vector>
-
-#include "skeleton/sfml/Transformable.hpp"
+#include "skeleton/sfml/Transform.hpp"
 #include "tween.h"
 
 namespace c2d {
-
-    class Renderer;
 
     class C2DObject {
 
     public:
 
-        enum Visibility : int {
-            Visible = 0, Hidden = 1
+        enum class Visibility : int {
+            Visible, Hidden
         };
 
-        enum DeleteMode : int {
-            Auto = 0, Manual = 1
+        enum class DeleteMode : int {
+            Auto, Manual
         };
 
-        enum ObjectType : int {
-            TRectangle = 1,
-            TLine = 2,
-            TCircle = 3,
-            TTexture = 4,
-            TText = 5
+        enum class Type : int {
+            Shape, Texture, Text
         };
-
-        C2DObject();
 
         virtual ~C2DObject();
 
-        virtual void draw(Transform &transform);
-
-        // Childs
+        // childs
         void add(C2DObject *object);
 
         // remove a widget without calling it's destructor
@@ -50,15 +39,16 @@ namespace c2d {
         // tweeners
         void add(Tween *tweener);
 
+        // remove a tweener without calling it's destructor
         void remove(Tween *tweener);
 
         // visibility
-        int getVisibility();
+        Visibility getVisibility();
 
         void setVisibility(Visibility visibility, bool tweenPlay = true);
 
         // deletion mode
-        int getDeleteMode();
+        DeleteMode getDeleteMode();
 
         void setDeleteMode(DeleteMode mode);
 
@@ -66,9 +56,7 @@ namespace c2d {
 
         void setLayer(int layer);
 
-        Transformable *getTransformable();
-
-        ObjectType getType() const {
+        Type getType() const {
             return type;
         }
 
@@ -76,20 +64,19 @@ namespace c2d {
 
     protected:
 
-        C2DObject *parent = nullptr;
-        Transformable *transformable = nullptr;
-        ObjectType type;
-        std::vector<C2DObject *> childs;
-        std::vector<Tween *> tweeners;
-        DeleteMode deleteMode = Auto;
-        int layer = 0;
+        virtual void draw(Transform &transform);
+        Type type;
 
     private:
 
-        Visibility visibility_current = Visible;
-        // for tweeners
-        Visibility visibility_wanted = Visible;
+        int layer = 0;
+        C2DObject *parent = nullptr;
+        std::vector<Tween *> tweeners;
+        std::vector<C2DObject *> childs;
+        DeleteMode deleteMode = DeleteMode::Auto;
+        Visibility visibility_current = Visibility::Visible;
+        Visibility visibility_wanted = Visibility::Visible;
     };
 }
 
-#endif //CROSS2D_DRAWABLE_H
+#endif //CROSS2D_OBJECT_H

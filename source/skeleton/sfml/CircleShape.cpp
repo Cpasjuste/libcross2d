@@ -35,14 +35,14 @@ namespace c2d {
     CircleShape::CircleShape(float radius, std::size_t pointCount) :
             m_radius(radius),
             m_pointCount(pointCount) {
-        updateShape();
+        update();
     }
 
 
 ////////////////////////////////////////////////////////////
     void CircleShape::setRadius(float radius) {
         m_radius = radius;
-        updateShape();
+        update();
     }
 
 
@@ -55,7 +55,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void CircleShape::setPointCount(std::size_t count) {
         m_pointCount = count;
-        updateShape();
+        update();
     }
 
 ////////////////////////////////////////////////////////////

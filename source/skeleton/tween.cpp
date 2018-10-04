@@ -2,10 +2,7 @@
 // Created by cpasjuste on 23/09/18.
 //
 
-#include <skeleton/tween.h>
-
 #include "c2d.h"
-
 #include "skeleton/tweeny/tweeny.h"
 
 using namespace c2d;
@@ -47,9 +44,9 @@ Tween::~Tween() {
     }
 }
 
-void Tween::setObject(C2DObject *thisObject) {
+void Tween::setTransform(c2d::Transformable *t) {
 
-    this->thisObject = thisObject;
+    transform = t;
 }
 
 void Tween::play(TweenDirection direction, bool _reset) {
@@ -58,12 +55,12 @@ void Tween::play(TweenDirection direction, bool _reset) {
         reset();
     }
 
-    if (direction != Current) {
+    if (direction != TweenDirection::Current) {
         setDirection(direction);
     }
 
     deltaClock->restart();
-    state = Playing;
+    state = TweenState::Playing;
 }
 
 void Tween::reset() {
@@ -89,9 +86,9 @@ void Tween::setDirection(TweenDirection direction) {
 
     this->direction = direction;
 
-    if (direction == Backward) {
+    if (direction == TweenDirection::Backward) {
         tween.backward();
-    } else if (direction == Forward) {
+    } else if (direction == TweenDirection::Forward) {
         tween.forward();
     }
 };
@@ -102,8 +99,8 @@ void Tween::step() {
 
     delta = deltaClock->restart();
 
-    if (!thisObject || state == Stopped) {
-        state = Stopped;
+    if (!transform || state == TweenState::Stopped) {
+        state = TweenState::Stopped;
         return;
     }
 
@@ -112,46 +109,52 @@ void Tween::step() {
 
     if ((duration > 0 && (progress == 0.0f || progress == 1.0f))) {
         if (loop == TweenLoop::None) {
-            if ((progress == 1.0f && direction == Forward) || (progress == 0.0f && direction == Backward)) {
-                state = Stopped;
+            if ((progress == 1.0f && direction == TweenDirection::Forward)
+                || (progress == 0.0f && direction == TweenDirection::Backward)) {
+                state = TweenState::Stopped;
                 return;
             }
         } else if (loop == TweenLoop::PingPong) {
-            if (direction == Forward) {
-                setDirection(Backward);
+            if (direction == TweenDirection::Forward) {
+                setDirection(TweenDirection::Backward);
             } else {
-                setDirection(Forward);
+                setDirection(TweenDirection::Forward);
             }
         }
     }
 
-    auto float4 = tween.step(delta.asMilliseconds(), true);
+    auto *object = (C2DObject *) transform;
 
-    if (type == TweenType::TPosition) {
-        thisObject->getTransformable()->setPosition(float4[0], float4[1]);
-    } else if (type == TweenType::TRotation) {
-        thisObject->getTransformable()->setRotation(float4[0]);
-    } else if (type == TweenType::TScale) {
-        thisObject->getTransformable()->setScale(float4[0], float4[1]);
-    } else if (type == TweenType::TColor) {
+    auto float4 = tween.step(delta.asMilliseconds(), true);
+    if (type == TweenType::Position) {
+        transform->setPosition(float4[0], float4[1]);
+    } else if (type == TweenType::Rotation) {
+        transform->setRotation(float4[0]);
+    } else if (type == TweenType::Scale) {
+        transform->setScale(float4[0], float4[1]);
+    } else if (type == TweenType::Color) {
         Color color = {(uint8_t) (float4[0] * 255.0f), (uint8_t) (float4[1] * 255.0f),
                        (uint8_t) (float4[2] * 255.0f), (uint8_t) (float4[3] * 255.0f)};
-        if (thisObject->getType() == C2DObject::ObjectType::TRectangle) {
-            ((RectangleShape *) thisObject)->setFillColor(color);
-        } else if (thisObject->getType() == C2DObject::ObjectType::TTexture) {
-            ((Texture *) thisObject)->setColor(color);
+        if (object->getType() == C2DObject::Type::Text) {
+            ((Text *) transform)->setFillColor(color);
+        } else if (object->getType() == C2DObject::Type::Texture) {
+            ((Texture *) transform)->setColor(color);
         } else {
-            ((Shape *) thisObject)->setFillColor(color);
+            ((Shape *) transform)->setFillColor(color);
         }
-    } else if (type == TweenType::TAlpha) {
-        Color color = ((RectangleShape *) thisObject)->getFillColor();
-        Color colorA = {color.r, color.g, color.b, (uint8_t) float4[0]};
-        if (thisObject->getType() == C2DObject::ObjectType::TRectangle) {
-            ((RectangleShape *) thisObject)->setFillColor(colorA);
-        } else if (thisObject->getType() == C2DObject::ObjectType::TTexture) {
-            ((Texture *) thisObject)->setColor(color);
+    } else if (type == TweenType::Alpha) {
+        if (object->getType() == C2DObject::Type::Text) {
+            Color color = ((Text *) transform)->getFillColor();
+            Color colorA = {color.r, color.g, color.b, (uint8_t) float4[0]};
+            ((Text *) transform)->setFillColor(colorA);
+        } else if (object->getType() == C2DObject::Type::Texture) {
+            Color color = ((Texture *) transform)->getColor();
+            Color colorA = {color.r, color.g, color.b, (uint8_t) float4[0]};
+            ((Texture *) transform)->setColor(colorA);
         } else {
-            ((Shape *) thisObject)->setFillColor(color);
+            Color color = ((Shape *) transform)->getFillColor();
+            Color colorA = {color.r, color.g, color.b, (uint8_t) float4[0]};
+            ((Shape *) transform)->setFillColor(colorA);
         }
     }
 }

@@ -12,21 +12,21 @@
 
 namespace c2d {
 
-    class C2DObject;
+    class Transformable;
 
-    enum TweenType : int {
-        TPosition = 1, TRotation, TScale, TColor, TAlpha
+    enum class TweenType : int {
+        Position = 1, Rotation, Scale, Color, Alpha
     };
 
-    enum TweenLoop : int {
+    enum class TweenLoop : int {
         None = 1, PingPong
     };
 
-    enum TweenDirection : int {
+    enum class TweenDirection : int {
         Current, Forward, Backward
     };
 
-    enum TweenState : int {
+    enum class TweenState : int {
         Playing = 1, Stopped
     };
 
@@ -38,17 +38,17 @@ namespace c2d {
     public:
 
         Tween(float from, float to,
-              float duration, TweenLoop loop = None);
+              float duration, TweenLoop loop = TweenLoop::None);
 
         Tween(const Vector2f &from, const Vector2f &to,
-              float duration, TweenLoop loop = None);
+              float duration, TweenLoop loop = TweenLoop::None);
 
         Tween(const Color &from, const Color &to,
-              float duration, TweenLoop loop = None);
+              float duration, TweenLoop loop = TweenLoop::None);
 
         virtual ~Tween();
 
-        void play(TweenDirection direction = Current, bool reset = false);
+        void play(TweenDirection direction = TweenDirection::Current, bool reset = false);
 
         void reset();
 
@@ -60,18 +60,18 @@ namespace c2d {
 
         void setDirection(TweenDirection direction);
 
-        void setObject(C2DObject *thisObject);
+        void setTransform(Transformable *transform);
 
         void step();
 
     protected:
         // transform to tween
-        C2DObject *thisObject = nullptr;
+        Transformable *transform = nullptr;
         // tweener info
         TweenType type;
         TweenLoop loop;
-        TweenDirection direction = Current;
-        TweenState state = Playing;
+        TweenDirection direction = TweenDirection::Current;
+        TweenState state = TweenState::Playing;
         tweeny::tween<float, float, float, float> tween;
         // timer stuff
         Clock *deltaClock = nullptr;
@@ -88,8 +88,8 @@ namespace c2d {
 
         TweenPosition(
                 const Vector2f &from, const Vector2f &to,
-                float duration, TweenLoop loop = None) : Tween(from, to, duration, loop) {
-            this->type = TweenType::TPosition;
+                float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
+            this->type = TweenType::Position;
         };
     };
 
@@ -102,8 +102,8 @@ namespace c2d {
 
         TweenRotation(
                 float from, float to,
-                float duration, TweenLoop loop = None) : Tween(from, to, duration, loop) {
-            this->type = TweenType::TRotation;
+                float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
+            this->type = TweenType::Rotation;
         }
     };
 
@@ -116,8 +116,8 @@ namespace c2d {
 
         TweenScale(
                 const Vector2f &from, const Vector2f &to,
-                float duration, TweenLoop loop = None) : Tween(from, to, duration, loop) {
-            this->type = TweenType::TScale;
+                float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
+            this->type = TweenType::Scale;
         }
     };
 
@@ -130,8 +130,8 @@ namespace c2d {
 
         TweenColor(
                 const Color &from, const Color &to,
-                float duration, TweenLoop loop = None) : Tween(from, to, duration, loop) {
-            this->type = TweenType::TColor;
+                float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
+            this->type = TweenType::Color;
         }
     };
 
@@ -144,8 +144,8 @@ namespace c2d {
 
         TweenAlpha(
                 float from, float to,
-                float duration, TweenLoop loop = None) : Tween(from, to, duration, loop) {
-            this->type = TweenType::TAlpha;
+                float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
+            this->type = TweenType::Alpha;
         }
     };
 }

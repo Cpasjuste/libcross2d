@@ -45,13 +45,13 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void RectangleShape::setSize(const Vector2f &size) {
         m_size = size;
-        updateShape();
+        update();
     }
 
     void RectangleShape::setSize(float width, float height) {
         m_size.x = width;
         m_size.y = height;
-        updateShape();
+        update();
     }
 
 ////////////////////////////////////////////////////////////

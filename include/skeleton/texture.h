@@ -7,6 +7,7 @@
 
 #include "object.h"
 #include "shader_list.h"
+#include "skeleton/sfml/Transformable.hpp"
 #include "skeleton/sfml/VertexArray.hpp"
 
 #define C2D_TEXTURE_FILTER_POINT    0
@@ -20,7 +21,7 @@
 
 namespace c2d {
 
-    class Texture : public C2DObject, public Transformable {
+    class Texture : public Transformable {
 
     public:
 
@@ -71,7 +72,7 @@ namespace c2d {
         int bpp = 4;
         int pitch = 0;
         int filtering = C2D_TEXTURE_FILTER_LINEAR;
-        ShaderList::Shader *shader = NULL;
+        ShaderList::Shader *shader = nullptr;
 
     private:
 
@@ -82,7 +83,6 @@ namespace c2d {
         void updateTexCoords();
 
         VertexArray m_vertices;
-        const Texture *m_texture;
         IntRect m_textureRect;
 
     };

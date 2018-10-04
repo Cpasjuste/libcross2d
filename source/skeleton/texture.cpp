@@ -20,7 +20,7 @@ Texture::Texture(const char *p) : Transformable() {
 
     strncpy(path, p, 511);
 
-    type = TTexture;
+    type = C2DObject::Type::Texture;
 }
 
 Texture::Texture(const unsigned char *buffer, int bufferSize) : Transformable() {
@@ -35,7 +35,7 @@ Texture::Texture(const unsigned char *buffer, int bufferSize) : Transformable() 
     setColor(Color::White);
     setFiltering(C2D_TEXTURE_FILTER_LINEAR);
 
-    type = TTexture;
+    type = C2DObject::Type::Texture;
 }
 
 Texture::Texture(const Vector2f &size, int fmt) : Transformable() {
@@ -51,7 +51,7 @@ Texture::Texture(const Vector2f &size, int fmt) : Transformable() {
     setColor(Color::White);
     setFiltering(C2D_TEXTURE_FILTER_LINEAR);
 
-    type = TTexture;
+    type = C2DObject::Type::Texture;
 }
 
 Texture::~Texture() {

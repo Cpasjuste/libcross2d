@@ -17,8 +17,6 @@ Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
 
     deltaClock = new C2DClock();
     elapsedClock = new C2DClock();
-
-    type = TRectangle;
 }
 
 void Renderer::setSize(const c2d::Vector2f &size) {

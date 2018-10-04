@@ -84,10 +84,10 @@ void ListBoxLine::setIcon(Texture *i) {
                 }
             }
             add(icon);
-            icon->setVisibility(icon->available ? Visible : Hidden);
-            iconRect->setVisibility(icon->available ? Hidden : Visible);
+            icon->setVisibility(icon->available ? Visibility::Visible : Visibility::Hidden);
+            iconRect->setVisibility(icon->available ? Visibility::Hidden : Visibility::Visible);
         } else {
-            iconRect->setVisibility(Visible);
+            iconRect->setVisibility(Visibility::Visible);
         }
     }
 }
@@ -163,11 +163,11 @@ void ListBox::setSelection(int idx) {
     for (unsigned int i = 0; i < (unsigned int) max_lines; i++) {
 
         if (index_start + i >= files.size()) {
-            lines[i]->setVisibility(Hidden);
+            lines[i]->setVisibility(Visibility::Hidden);
         } else {
             // set file
             Io::File file = files[index_start + i];
-            lines[i]->setVisibility(Visible);
+            lines[i]->setVisibility(Visibility::Visible);
             lines[i]->setString(file.name);
             // set text color based on file color
             lines[i]->setIcon(file.icon);
@@ -186,9 +186,9 @@ void ListBox::setSelection(int idx) {
     }
 
     if (files.empty()) {
-        highlight->setVisibility(Hidden, false);
+        highlight->setVisibility(Visibility::Hidden, false);
     } else {
-        highlight->setVisibility(Visible);
+        highlight->setVisibility(Visibility::Visible);
     }
 }
 
@@ -225,8 +225,8 @@ void ListBox::setTextOutlineThickness(float thickness) {
 }
 
 void ListBox::setHighlight(bool enable) {
-    highlight->setVisibility(enable ? Visible
-                                    : Hidden);
+    highlight->setVisibility(enable ? Visibility::Visible
+                                    : Visibility::Hidden);
 }
 
 void ListBox::setHighlightTween(Tween *tween) {

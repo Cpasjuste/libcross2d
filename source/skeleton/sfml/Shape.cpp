@@ -25,11 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "skeleton/sfml/Shape.hpp"
 #include <cmath>
-#include <skeleton/sfml/Shape.hpp>
-#include <c2d.h>
-
+#include "skeleton/sfml/Shape.hpp"
+#include "c2d.h"
 
 namespace {
     // Compute the normal of a segment
@@ -52,19 +50,6 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     Shape::~Shape() {
     }
-
-////////////////////////////////////////////////////////////
-    void Shape::setTextureRect(const IntRect &rect) {
-        m_textureRect = rect;
-        updateTexCoords();
-    }
-
-
-////////////////////////////////////////////////////////////
-    const IntRect &Shape::getTextureRect() const {
-        return m_textureRect;
-    }
-
 
 ////////////////////////////////////////////////////////////
     void Shape::setFillColor(const Color &color) {
@@ -95,7 +80,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void Shape::setOutlineThickness(float thickness) {
         m_outlineThickness = thickness;
-        updateShape(); // recompute everything because the whole shape must be offset
+        update(); // recompute everything because the whole shape must be offset
     }
 
 
@@ -116,17 +101,8 @@ namespace c2d {
         return getTransform().transformRect(getLocalBounds());
     }
 
-    VertexArray *Shape::getVertices() {
-        return &m_vertices;
-    }
-
-    VertexArray *Shape::getOutlineVertices() {
-        return &m_outlineVertices;
-    }
-
 ////////////////////////////////////////////////////////////
     Shape::Shape() :
-            m_textureRect(),
             m_fillColor(255, 255, 255),
             m_outlineColor(255, 255, 255),
             m_outlineThickness(0),
@@ -134,11 +110,11 @@ namespace c2d {
             m_outlineVertices(TriangleStrip),
             m_insideBounds(),
             m_bounds() {
+        type = C2DObject::Type::Shape;
     }
 
-
 ////////////////////////////////////////////////////////////
-    void Shape::updateShape() {
+    void Shape::update() {
 
         // Get the total number of points of the shape
         std::size_t count = getPointCount();
@@ -166,9 +142,6 @@ namespace c2d {
         // Color
         updateFillColors();
 
-        // Texture coordinates
-        updateTexCoords();
-
         // Outline
         updateOutline();
     }
@@ -193,22 +166,6 @@ namespace c2d {
         }
         m_vertices.updateVbo();
     }
-
-////////////////////////////////////////////////////////////
-    void Shape::updateTexCoords() {
-        for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i) {
-            float xratio =
-                    m_insideBounds.width > 0 ? (m_vertices[i].position.x - m_insideBounds.left) / m_insideBounds.width
-                                             : 0;
-            float yratio =
-                    m_insideBounds.height > 0 ? (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height
-                                              : 0;
-            m_vertices[i].texCoords.x = m_textureRect.left + m_textureRect.width * xratio;
-            m_vertices[i].texCoords.y = m_textureRect.top + m_textureRect.height * yratio;
-        }
-        m_vertices.updateVbo();
-    }
-
 
 ////////////////////////////////////////////////////////////
     void Shape::updateOutline() {

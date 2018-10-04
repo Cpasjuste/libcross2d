@@ -49,7 +49,7 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
     this->timeout->setLineSpacingModifier(4);
     add(this->timeout);
 
-    this->setVisibility(Hidden);
+    this->setVisibility(Visibility::Hidden);
 }
 
 void MessageBox::setFillColor(const Color &color) {
@@ -81,7 +81,7 @@ int MessageBox::show(const std::string &title, const std::string &message,
     this->title->setOriginCenter();
     this->message->setString(message);
     this->message->setOriginCenter();
-    this->timeout->setVisibility(timeout > 0 ? Visible : Hidden);
+    this->timeout->setVisibility(timeout > 0 ? Visibility::Visible : Visibility::Hidden);
 
     // buttons
     if (!buttonLeftText.empty() || !buttonRightText.empty()) {
@@ -92,27 +92,27 @@ int MessageBox::show(const std::string &title, const std::string &message,
         if (buttonRightText.empty()) {
             buttons[0]->setText(buttonLeftText);
             buttons[0]->setPosition(getSize().x / 2, getSize().y - buttons[0]->getSize().y - 16);
-            buttons[0]->setVisibility(Visible);
-            buttons[1]->setVisibility(Hidden);
+            buttons[0]->setVisibility(Visibility::Visible);
+            buttons[1]->setVisibility(Visibility::Hidden);
             choices = 1;
         } else {
             buttons[0]->setText(buttonLeftText);
             buttons[0]->setPosition((getSize().x / 3) - 8,
                                     getSize().y - buttons[0]->getSize().y - 16);
-            buttons[0]->setVisibility(Visible);
+            buttons[0]->setVisibility(Visibility::Visible);
             buttons[1]->setText(buttonRightText);
             buttons[1]->setPosition(((getSize().x / 3) * 2) + 8,
                                     getSize().y - buttons[1]->getSize().y - 16);
             buttons[1]->setFillColor(getFillColor());
-            buttons[1]->setVisibility(Visible);
+            buttons[1]->setVisibility(Visibility::Visible);
             choices = 2;
         }
     } else {
-        buttons[0]->setVisibility(Hidden);
-        buttons[1]->setVisibility(Hidden);
+        buttons[0]->setVisibility(Visibility::Hidden);
+        buttons[1]->setVisibility(Visibility::Hidden);
     }
 
-    setVisibility(Visible);
+    setVisibility(Visibility::Visible);
     setLayer(1000);
 
     input->clear(0);
@@ -124,7 +124,7 @@ int MessageBox::show(const std::string &title, const std::string &message,
         if (timeout > 0) {
             int elapsed = (int) clock.getElapsedTime().asSeconds();
             if (elapsed >= timeout) {
-                setVisibility(Hidden);
+                setVisibility(Visibility::Hidden);
                 input->clear(0);
                 ret = TIMEOUT;
                 break;
@@ -137,7 +137,7 @@ int MessageBox::show(const std::string &title, const std::string &message,
         if (pressed) {
             key = input->waitButton();
             if (key > -1) {
-                setVisibility(Hidden);
+                setVisibility(Visibility::Hidden);
                 input->clear(0);
                 break;
             }
@@ -154,12 +154,12 @@ int MessageBox::show(const std::string &title, const std::string &message,
                         index++;
                     }
                 } else if (key & Input::Key::KEY_FIRE1) {
-                    setVisibility(Hidden);
+                    setVisibility(Visibility::Hidden);
                     input->clear(0);
                     ret = index == 1 ? RIGHT : LEFT;
                     break;
                 } else if (key & Input::Key::KEY_FIRE2) {
-                    setVisibility(Hidden);
+                    setVisibility(Visibility::Hidden);
                     input->clear(0);
                     ret = CANCEL;
                     break;

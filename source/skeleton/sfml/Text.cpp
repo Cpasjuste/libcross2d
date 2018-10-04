@@ -101,7 +101,7 @@ namespace c2d {
             m_outlineVertices(Triangles),
             m_bounds(),
             m_geometryNeedUpdate(false) {
-
+        type = C2DObject::Type::Text;
     }
 
 
@@ -118,7 +118,7 @@ namespace c2d {
             m_outlineVertices(Triangles),
             m_bounds(),
             m_geometryNeedUpdate(true) {
-
+        type = C2DObject::Type::Text;
     }
 
 
@@ -330,16 +330,6 @@ namespace c2d {
         setOrigin(getLocalBounds().width, getLocalBounds().height);
     }
 
-    VertexArray *Text::getVertices() {
-        ensureGeometryUpdate();
-        return &m_vertices;
-    }
-
-    VertexArray *Text::getOutlineVertices() {
-        ensureGeometryUpdate();
-        return &m_outlineVertices;
-    }
-
 ////////////////////////////////////////////////////////////
 
     void Text::setSizeMax(const c2d::Vector2f &size) {
@@ -367,10 +357,10 @@ namespace c2d {
 
         //
         if (getOutlineThickness() > 0) {
-            c2d_renderer->draw(getOutlineVertices(), combined, &getFont()->getTexture(getCharacterSize()));
+            c2d_renderer->draw(&m_outlineVertices, combined, &getFont()->getTexture(getCharacterSize()));
         }
 
-        c2d_renderer->draw(getVertices(), combined, &getFont()->getTexture(getCharacterSize()));
+        c2d_renderer->draw(&m_vertices, combined, &getFont()->getTexture(getCharacterSize()));
 
         C2DObject::draw(transform);
     }

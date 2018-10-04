@@ -33,13 +33,13 @@ namespace c2d {
         mySize = size;
         myRadius = radius;
         myCornerPointCount = cornerPointCount;
-        updateShape();
+        update();
     }
 
 ////////////////////////////////////////////////////////////
     void RoundedRectangleShape::setSize(const Vector2f &size) {
         mySize = size;
-        updateShape();
+        update();
     }
 
 ////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void RoundedRectangleShape::setCornersRadius(float radius) {
         myRadius = radius;
-        updateShape();
+        update();
     }
 
 ////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void RoundedRectangleShape::setCornerPointCount(unsigned int count) {
         myCornerPointCount = count;
-        updateShape();
+        update();
     }
 
 ////////////////////////////////////////////////////////////
