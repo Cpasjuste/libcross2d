@@ -323,17 +323,11 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         c2d::FloatRect getGlobalBounds() const;
 
-        void setOriginTop();
+        void setOrigin(float x, float y);
 
-        void setOriginTopLeft();
+        void setOrigin(const Vector2f &origin);
 
-        void setOriginTopRight();
-
-        void setOriginCenter();
-
-        void setOriginBottomLeft();
-
-        void setOriginBottomRight();
+        void setOrigin(const Origin &origin, bool outline = true);
 
         void setSizeMax(const c2d::Vector2f &maxSize);
 
@@ -376,6 +370,7 @@ namespace c2d {
         mutable bool m_geometryNeedUpdate; ///< Does the geometry need to be recomputed?
         c2d::Vector2f maxSize = c2d::Vector2f(0, 0);
         int m_line_spacing = 0;
+        Origin m_text_origin = Origin::TopLeft;
     };
 
 } // namespace sf

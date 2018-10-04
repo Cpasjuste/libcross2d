@@ -22,7 +22,7 @@ int main() {
             {renderer->getSize().x / 2, renderer->getSize().y / 2,
              renderer->getSize().x / 2, renderer->getSize().y / 2});
 
-    rect->setOriginCenter();
+    rect->setOrigin(Origin::Center);
     rect->setFillColor(Color::Gray);
     rect->setOutlineColor(Color::Orange);
     rect->setOutlineThickness(8);
@@ -32,19 +32,21 @@ int main() {
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
         tex->setScale(0.5f, 0.5f);
-        tex->setOriginCenter();
+        tex->setOrigin(Origin::Center);
         rect->add(tex);
     }
 
     // create a font
     auto *font = new C2DFont();
     if (font->loadFromMemory(pfba_font, pfba_font_length)) {
+        // some font have too much "margin"..
+        font->setYOffset(-8);
         // create a text and add it to the rect
-        Text *text = new Text("Hello world", *font);
+        auto *text = new C2DText("Hello world", *font);
         text->setOutlineColor(Color::Blue);
         text->setOutlineThickness(2);
-        text->setOriginCenter();
         text->setPosition(rect->getSize().x / 2, 32);
+        text->setOrigin(Origin::Center);
         rect->add(text);
     }
 

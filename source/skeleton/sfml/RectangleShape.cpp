@@ -81,24 +81,4 @@ namespace c2d {
         }
     }
 
-    void RectangleShape::setOriginTopLeft() {
-        setOrigin(0, 0);
-    }
-
-    void RectangleShape::setOriginTopRight() {
-        setOrigin(m_size.x, 0);
-    }
-
-    void RectangleShape::setOriginCenter() {
-        setOrigin(m_size.x / 2, m_size.y / 2);
-    }
-
-    void RectangleShape::setOriginBottomLeft() {
-        setOrigin(0, m_size.y);
-    }
-
-    void RectangleShape::setOriginBottomRight() {
-        setOrigin(m_size.x, m_size.y);
-    }
-
 } // namespace sf

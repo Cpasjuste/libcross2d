@@ -10,27 +10,26 @@
 #include "skeleton/sfml/Transformable.hpp"
 #include "skeleton/sfml/VertexArray.hpp"
 
-#define C2D_TEXTURE_FILTER_POINT    0
-#define C2D_TEXTURE_FILTER_LINEAR   1
-
-#define C2D_TEXTURE_FMT_RGB565      0
-#define C2D_TEXTURE_FMT_RGBA8       1
-#define C2D_TEXTURE_FMT_ARGB8       2
-#define C2D_TEXTURE_FMT_BGRA8       3
-#define C2D_TEXTURE_FMT_ABGR8       4
-
 namespace c2d {
 
     class Texture : public Transformable {
 
     public:
 
+        enum class Format : int {
+            RGB565, RGBA8, ARGB8, BGRA8, ABGR8
+        };
+
+        enum class Filter : int {
+            Point, Linear
+        };
+
         // START - to implement, device specific code
         Texture(const char *path);
 
         Texture(const unsigned char *buffer, int bufferSize);
 
-        Texture(const Vector2f &size = Vector2f(0, 0), int format = C2D_TEXTURE_FMT_RGBA8);
+        Texture(const Vector2f &size = Vector2f(0, 0), Format format = Format::RGBA8);
 
         virtual ~Texture();
 
@@ -42,7 +41,7 @@ namespace c2d {
 
         virtual int save(const char *path) { return -1; };
 
-        virtual void setFiltering(int filter) { filtering = filter; };
+        virtual void setFilter(Filter filter) { this->filter = filter; };
 
         virtual void setShader(int shaderIndex) {};
 
@@ -51,9 +50,11 @@ namespace c2d {
 
         void setTextureRect(const IntRect &rectangle);
 
-        void setOriginCenter();
+        void setOrigin(float x, float y);
 
-        void setOriginTopLeft();
+        void setOrigin(const Vector2f &origin);
+
+        void setOrigin(const Origin &origin, bool outline = true);
 
         void setColor(const Color &color);
 
@@ -68,10 +69,10 @@ namespace c2d {
         VertexArray *getVertices();
 
         char path[512];
-        int format = C2D_TEXTURE_FMT_RGBA8;
         int bpp = 4;
         int pitch = 0;
-        int filtering = C2D_TEXTURE_FILTER_LINEAR;
+        Format format = Format::RGBA8;
+        Filter filter = Filter::Linear;
         ShaderList::Shader *shader = nullptr;
 
     private:
@@ -84,6 +85,7 @@ namespace c2d {
 
         VertexArray m_vertices;
         IntRect m_textureRect;
+        Origin m_origin = Origin::TopLeft;
 
     };
 }

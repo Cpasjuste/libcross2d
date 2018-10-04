@@ -24,8 +24,6 @@ GLTexture::GLTexture(const char *path) : Texture(path) {
         return;
     }
 
-    format = C2D_TEXTURE_FMT_RGBA8;
-
     glGenTextures(1, &texID);
     glBindTexture(GL_TEXTURE_2D, texID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0,
@@ -34,7 +32,6 @@ GLTexture::GLTexture(const char *path) : Texture(path) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     if (texID) {
-        bpp = 4;
         setTextureRect(IntRect(0, 0, w, h));
         pitch = getTextureRect().width * bpp;
         available = true;
@@ -55,10 +52,7 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
         return;
     }
 
-    format = C2D_TEXTURE_FMT_RGBA8;
-
     GL_CHECK(glGenTextures(1, &texID));
-    //GL_CHECK(glActiveTexture(GL_TEXTURE0));
     GL_CHECK(glBindTexture(GL_TEXTURE_2D, texID));
     GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
     GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
@@ -66,7 +60,6 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
                           GL_RGBA, GL_UNSIGNED_BYTE, pixels));
 
     if (texID) {
-        bpp = 4;
         setTextureRect(IntRect(0, 0, w, h));
         pitch = getTextureRect().width * bpp;
         available = true;
@@ -77,26 +70,28 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
     printf("GLTexture(%p): %ix%i\n", this, w, h);
 }
 
-GLTexture::GLTexture(const Vector2f &size, int format) : Texture(size, format) {
+GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format) {
 
     glGenTextures(1, &texID);
+
     if (texID) {
         pixels = (unsigned char *) malloc((size_t) (size.x * size.y * bpp));
         glBindTexture(GL_TEXTURE_2D, texID);
+
         switch (format) {
-            case C2D_TEXTURE_FMT_RGBA8:
+            case Format::RGBA8:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
                              GL_RGBA, GL_UNSIGNED_BYTE, pixels);
                 break;
-            case C2D_TEXTURE_FMT_ARGB8:
+            case Format::ARGB8:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
                              GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, pixels);
                 break;
-            case C2D_TEXTURE_FMT_BGRA8:
+            case Format::BGRA8:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
                              GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
                 break;
-            case C2D_TEXTURE_FMT_ABGR8:
+            case Format::ABGR8:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
                              GL_ABGR_EXT, GL_UNSIGNED_INT_8_8_8_8, pixels);
                 break;
@@ -105,6 +100,7 @@ GLTexture::GLTexture(const Vector2f &size, int format) : Texture(size, format) {
                              GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
                 break;
         }
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
@@ -224,22 +220,22 @@ void GLTexture::unlock() {
     glBindTexture(GL_TEXTURE_2D, texID);
 
     switch (format) {
-        case C2D_TEXTURE_FMT_RGBA8:
+        case Format::RGBA8:
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
                             (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                             GL_RGBA, GL_UNSIGNED_BYTE, pixels);
             break;
-        case C2D_TEXTURE_FMT_BGRA8:
+        case Format::BGRA8:
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
                             (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                             GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
             break;
-        case C2D_TEXTURE_FMT_ARGB8:
+        case Format::ARGB8:
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
                             (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                             GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, pixels);
             break;
-        case C2D_TEXTURE_FMT_ABGR8:
+        case Format::ABGR8:
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
                             (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                             GL_ABGR_EXT, GL_UNSIGNED_INT_8_8_8_8, pixels);
@@ -252,15 +248,15 @@ void GLTexture::unlock() {
     }
 }
 
-void GLTexture::setFiltering(int filter) {
+void GLTexture::setFilter(Filter f) {
 
-    filtering = filter;
+    this->filter = f;
 
     glBindTexture(GL_TEXTURE_2D, texID);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    filtering == C2D_TEXTURE_FILTER_LINEAR ? GL_LINEAR : GL_NEAREST);
+                    filter == Filter::Linear ? GL_LINEAR : GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                    filtering == C2D_TEXTURE_FILTER_LINEAR ? GL_LINEAR : GL_NEAREST);
+                    filter == Filter::Linear ? GL_LINEAR : GL_NEAREST);
 }
 
 void GLTexture::setShader(int shaderIndex) {

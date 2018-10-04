@@ -74,7 +74,7 @@ void C2DObject::draw(Transform &transform) {
     }
 }
 
-C2DObject::Visibility C2DObject::getVisibility() {
+Visibility C2DObject::getVisibility() {
 
     return visibility_wanted;
 }
@@ -106,7 +106,7 @@ void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
     }
 }
 
-C2DObject::DeleteMode C2DObject::getDeleteMode() {
+DeleteMode C2DObject::getDeleteMode() {
     return deleteMode;
 }
 

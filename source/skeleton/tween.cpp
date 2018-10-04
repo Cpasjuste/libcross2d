@@ -135,19 +135,19 @@ void Tween::step() {
     } else if (type == TweenType::Color) {
         Color color = {(uint8_t) (float4[0] * 255.0f), (uint8_t) (float4[1] * 255.0f),
                        (uint8_t) (float4[2] * 255.0f), (uint8_t) (float4[3] * 255.0f)};
-        if (object->getType() == C2DObject::Type::Text) {
+        if (object->getType() == Type::Text) {
             ((Text *) transform)->setFillColor(color);
-        } else if (object->getType() == C2DObject::Type::Texture) {
+        } else if (object->getType() == Type::Texture) {
             ((Texture *) transform)->setColor(color);
         } else {
             ((Shape *) transform)->setFillColor(color);
         }
     } else if (type == TweenType::Alpha) {
-        if (object->getType() == C2DObject::Type::Text) {
+        if (object->getType() == Type::Text) {
             Color color = ((Text *) transform)->getFillColor();
             Color colorA = {color.r, color.g, color.b, (uint8_t) float4[0]};
             ((Text *) transform)->setFillColor(colorA);
-        } else if (object->getType() == C2DObject::Type::Texture) {
+        } else if (object->getType() == Type::Texture) {
             Color color = ((Texture *) transform)->getColor();
             Color colorA = {color.r, color.g, color.b, (uint8_t) float4[0]};
             ((Texture *) transform)->setColor(colorA);

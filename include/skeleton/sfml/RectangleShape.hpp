@@ -71,29 +71,6 @@ namespace c2d {
         const c2d::Vector2f &getSize() const;
 
         ////////////////////////////////////////////////////////////
-        /// \brief set the local origin of the object
-        ///
-        /// The origin of an object defines the center point for
-        /// all transformations (position, scale, rotation).
-        /// The coordinates of this point must be relative to the
-        /// top-left corner of the object, and ignore all
-        /// transformations (position, scale, rotation).
-        /// The default origin of a transformable object is (0, 0).
-        ///
-        /// \see getOrigin
-        ///
-        ////////////////////////////////////////////////////////////
-        void setOriginTopLeft();
-
-        void setOriginTopRight();
-
-        void setOriginCenter();
-
-        void setOriginBottomLeft();
-
-        void setOriginBottomRight();
-
-        ////////////////////////////////////////////////////////////
         /// \brief Get the number of points defining the shape
         ///
         /// \return Number of points of the shape. For rectangle

@@ -20,7 +20,7 @@ TextBox::TextBox(const std::string &string, const Font &font,
         setSize(text->getLocalBounds().width + 16, text->getLocalBounds().height + 16);
     }
 
-    text->setOriginCenter();
+    text->setOrigin(Origin::Center);
     text->setPosition(getLocalBounds().width / 2, getLocalBounds().height / 2);
 
     add(text);

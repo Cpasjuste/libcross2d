@@ -19,7 +19,7 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
     this->title->setOutlineThickness(1);
     this->title->setSizeMax(getSize().x - 16, getSize().y - 8);
     this->title->setPosition(getSize().x / 2, line_height);
-    this->title->setOriginCenter();
+    this->title->setOrigin(Origin::Center);
     add(this->title);
 
     this->message = new Text("MESSAGE", font, (unsigned int) fontSize);
@@ -27,7 +27,7 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
     this->message->setOutlineThickness(1);
     this->message->setSizeMax(getSize().x - 16, getSize().y - 8);
     this->message->setPosition(getSize().x / 2, getSize().y * 0.45f);
-    this->message->setOriginCenter();
+    this->message->setOrigin(Origin::Center);
     this->message->setLineSpacingModifier(4);
     add(this->message);
 
@@ -45,7 +45,7 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
     this->timeout->setOutlineThickness(1);
     this->timeout->setSizeMax(getSize().x - 16, getSize().y - 8);
     this->timeout->setPosition(getSize().x / 2, getSize().y - buttons[0]->getSize().y - 16);
-    this->timeout->setOriginCenter();
+    this->timeout->setOrigin(Origin::Center);
     this->timeout->setLineSpacingModifier(4);
     add(this->timeout);
 
@@ -78,9 +78,9 @@ int MessageBox::show(const std::string &title, const std::string &message,
     C2DClock clock;
 
     this->title->setString(title);
-    this->title->setOriginCenter();
+    this->title->setOrigin(Origin::Center);
     this->message->setString(message);
-    this->message->setOriginCenter();
+    this->message->setOrigin(Origin::Center);
     this->timeout->setVisibility(timeout > 0 ? Visibility::Visible : Visibility::Hidden);
 
     // buttons
@@ -131,7 +131,7 @@ int MessageBox::show(const std::string &title, const std::string &message,
             }
             snprintf(timeout_str, 16, "%i", timeout - elapsed);
             this->timeout->setString(timeout_str);
-            this->timeout->setOriginCenter();
+            this->timeout->setOrigin(Origin::Center);
         }
 
         if (pressed) {

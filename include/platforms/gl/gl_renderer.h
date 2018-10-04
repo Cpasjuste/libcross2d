@@ -22,8 +22,8 @@ namespace c2d {
         virtual void initGL();
 
         void draw(VertexArray *vertexArray,
-                          const Transform &transform,
-                          const Texture *texture) override;
+                  const Transform &transform,
+                  const Texture *texture) override;
 
         void clear() override;
 

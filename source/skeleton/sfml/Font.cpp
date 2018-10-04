@@ -209,7 +209,7 @@ namespace c2d {
     Font::getGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const {
         // Get the page corresponding to the character size
         GlyphTable &glyphs = m_pages[characterSize].glyphs;
-        m_pages[characterSize].texture->setFiltering(m_filtering);
+        m_pages[characterSize].texture->setFilter(m_filtering);
 
         // Build the key by combining the code point, bold flag, and outline thickness
         uint64_t key = (static_cast<uint64_t>(*&outlineThickness) << 32)
@@ -310,11 +310,11 @@ namespace c2d {
         return *m_pages[characterSize].texture;
     }
 
-    void Font::setFiltering(int filter) {
+    void Font::setFilter(Texture::Filter filter) {
 
         m_filtering = filter;
         for (unsigned int i = 0; i < m_pages.size(); i++) {
-            m_pages[i].texture->setFiltering(filter);
+            m_pages[i].texture->setFilter(filter);
         }
     }
 
@@ -470,7 +470,7 @@ namespace c2d {
 
             // Get the glyphs page corresponding to the character size
             Page &page = m_pages[characterSize];
-            m_pages[characterSize].texture->setFiltering(m_filtering);
+            m_pages[characterSize].texture->setFilter(m_filtering);
 
             // Find a good position for the new glyph into the texture
             glyph.textureRect = findGlyphRect(page, width, height);
@@ -622,8 +622,8 @@ namespace c2d {
                     //page.texture->resize(Vector2f(textureWidth * 2, textureHeight * 2));
                     // TODO
                     Texture *texture = new C2DTexture(
-                            Vector2f(textureWidth * 2, textureHeight * 2), C2D_TEXTURE_FMT_RGBA8);
-                    texture->setFiltering(m_filtering);
+                            Vector2f(textureWidth * 2, textureHeight * 2), Texture::Format::RGBA8);
+                    texture->setFilter(m_filtering);
 
                     uint8_t *src;
                     page.texture->lock(NULL, reinterpret_cast<void **>(&src), NULL);
@@ -703,7 +703,7 @@ namespace c2d {
             texture = NULL;
         }
 
-        texture = new C2DTexture(Vector2f(128, 128), C2D_TEXTURE_FMT_RGBA8);
+        texture = new C2DTexture(Vector2f(128, 128), Texture::Format::RGBA8);
 
         // Reserve a 2x2 white square for texturing underlines
         uint8_t *buffer;

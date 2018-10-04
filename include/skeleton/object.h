@@ -12,21 +12,26 @@
 
 namespace c2d {
 
+    enum class Origin : int {
+        Left, TopLeft, Top, TopRight,
+        Right, BottomRight, Bottom, BottomLeft, Center
+    };
+
+    enum class Visibility : int {
+        Visible, Hidden
+    };
+
+    enum class DeleteMode : int {
+        Auto, Manual
+    };
+
+    enum class Type : int {
+        Shape, Texture, Text
+    };
+
     class C2DObject {
 
     public:
-
-        enum class Visibility : int {
-            Visible, Hidden
-        };
-
-        enum class DeleteMode : int {
-            Auto, Manual
-        };
-
-        enum class Type : int {
-            Shape, Texture, Text
-        };
 
         virtual ~C2DObject();
 
@@ -65,6 +70,7 @@ namespace c2d {
     protected:
 
         virtual void draw(Transform &transform);
+
         Type type;
 
     private:

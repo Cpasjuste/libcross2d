@@ -23,7 +23,7 @@ void Button::setText(const std::string &text) {
 
     this->text->setScale(1, 1);
     this->text->setString(text);
-    this->text->setOriginCenter();
+    this->text->setOrigin(Origin::Center);
     float width = this->text->getGlobalBounds().width;
     if (width > getSize().x - 8) {
         float scaling = (getSize().x - 16) / width;

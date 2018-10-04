@@ -26,6 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cmath>
+#include <skeleton/sfml/Shape.hpp>
+
 #include "skeleton/sfml/Shape.hpp"
 #include "c2d.h"
 
@@ -101,6 +103,55 @@ namespace c2d {
         return getTransform().transformRect(getLocalBounds());
     }
 
+
+////////////////////////////////////////////////////////////
+
+    void Shape::setOrigin(float x, float y) {
+        Transformable::setOrigin(x, y);
+    }
+
+    void Shape::setOrigin(const Vector2f &origin) {
+        Transformable::setOrigin(origin);
+    }
+
+    void Shape::setOrigin(const Origin &origin, bool outline) {
+
+        float out_size = outline ? m_outlineThickness : 0;
+        m_origin = origin;
+
+        switch (origin) {
+            case Origin::Left:
+                Transformable::setOrigin(-out_size, m_bounds.height / 2);
+                break;
+            case Origin::TopLeft:
+                Transformable::setOrigin(-out_size, -out_size);
+                break;
+            case Origin::Top:
+                Transformable::setOrigin(m_bounds.width / 2, -out_size);
+                break;
+            case Origin::TopRight:
+                Transformable::setOrigin(m_bounds.width - out_size, -out_size);
+                break;
+            case Origin::Right:
+                Transformable::setOrigin(m_bounds.width - out_size, m_bounds.height / 2);
+                break;
+            case Origin::BottomRight:
+                Transformable::setOrigin(m_bounds.width - out_size, m_bounds.height - out_size);
+                break;
+            case Origin::Bottom:
+                Transformable::setOrigin(m_bounds.width / 2, m_bounds.height - out_size);
+                break;
+            case Origin::BottomLeft:
+                Transformable::setOrigin(-out_size, m_bounds.height - out_size);
+                break;
+            case Origin::Center:
+                Transformable::setOrigin(m_bounds.width / 2, m_bounds.height / 2);
+                break;
+            default:
+                break;
+        }
+    }
+
 ////////////////////////////////////////////////////////////
     Shape::Shape() :
             m_fillColor(255, 255, 255),
@@ -110,7 +161,7 @@ namespace c2d {
             m_outlineVertices(TriangleStrip),
             m_insideBounds(),
             m_bounds() {
-        type = C2DObject::Type::Shape;
+        type = Type::Shape;
     }
 
 ////////////////////////////////////////////////////////////
@@ -144,6 +195,9 @@ namespace c2d {
 
         // Outline
         updateOutline();
+
+        // origin
+        setOrigin(m_origin);
     }
 
     void Shape::draw(Transform &transform) {
@@ -210,7 +264,6 @@ namespace c2d {
         // Update the shape's bounds
         m_bounds = m_outlineVertices.getBounds();
 
-        m_outlineVertices.updateVbo();
     }
 
 

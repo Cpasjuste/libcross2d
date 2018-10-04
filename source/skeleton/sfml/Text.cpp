@@ -101,7 +101,7 @@ namespace c2d {
             m_outlineVertices(Triangles),
             m_bounds(),
             m_geometryNeedUpdate(false) {
-        type = C2DObject::Type::Text;
+        type = Type::Text;
     }
 
 
@@ -118,7 +118,8 @@ namespace c2d {
             m_outlineVertices(Triangles),
             m_bounds(),
             m_geometryNeedUpdate(true) {
-        type = C2DObject::Type::Text;
+        type = Type::Text;
+        ensureGeometryUpdate();
     }
 
 
@@ -295,7 +296,6 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     FloatRect Text::getLocalBounds() const {
         ensureGeometryUpdate();
-
         return m_bounds;
     }
 
@@ -306,28 +306,51 @@ namespace c2d {
     }
 
 
-    void Text::setOriginTop() {
-        setOrigin(getLocalBounds().width / 2, 0);
+////////////////////////////////////////////////////////////
+    void Text::setOrigin(float x, float y) {
+        Transformable::setOrigin(x, y);
     }
 
-    void Text::setOriginTopLeft() {
-        setOrigin(0, 0);
+    void Text::setOrigin(const Vector2f &origin) {
+        Transformable::setOrigin(origin);
     }
 
-    void Text::setOriginTopRight() {
-        setOrigin(getLocalBounds().width, 0);
-    }
+    void Text::setOrigin(const Origin &origin, bool outline) {
 
-    void Text::setOriginCenter() {
-        setOrigin(getLocalBounds().width / 2, getLocalBounds().height / 2);
-    }
+        float out_size = outline ? m_outlineThickness : 0;
+        m_text_origin = origin;
 
-    void Text::setOriginBottomLeft() {
-        setOrigin(0, getLocalBounds().height);
-    }
-
-    void Text::setOriginBottomRight() {
-        setOrigin(getLocalBounds().width, getLocalBounds().height);
+        switch (origin) {
+            case Origin::Left:
+                Transformable::setOrigin(-out_size, m_bounds.height / 2);
+                break;
+            case Origin::TopLeft:
+                Transformable::setOrigin(-out_size, -out_size);
+                break;
+            case Origin::Top:
+                Transformable::setOrigin(m_bounds.width / 2, -out_size);
+                break;
+            case Origin::TopRight:
+                Transformable::setOrigin(m_bounds.width - out_size, -out_size);
+                break;
+            case Origin::Right:
+                Transformable::setOrigin(m_bounds.width - out_size, m_bounds.height / 2);
+                break;
+            case Origin::BottomRight:
+                Transformable::setOrigin(m_bounds.width - out_size, m_bounds.height - out_size);
+                break;
+            case Origin::Bottom:
+                Transformable::setOrigin(m_bounds.width / 2, m_bounds.height - out_size);
+                break;
+            case Origin::BottomLeft:
+                Transformable::setOrigin(-out_size, m_bounds.height - out_size);
+                break;
+            case Origin::Center:
+                Transformable::setOrigin(m_bounds.width / 2, m_bounds.height / 2);
+                break;
+            default:
+                break;
+        }
     }
 
 ////////////////////////////////////////////////////////////
@@ -349,11 +372,15 @@ namespace c2d {
 
     void Text::draw(Transform &transform) {
 
+        ensureGeometryUpdate();
+        setOrigin(m_text_origin);
+
         Transform combined = transform * getTransform();
 
         // fix top not at 0 if needed (font->setYOffset)
         float scale = getCharacterSize() / (float) C2D_DEFAULT_CHAR_SIZE;
-        combined.translate(0, (getFont()->getYOffset() * scale) + getOutlineThickness());
+        combined.translate(0, getFont()->getYOffset() * scale);
+        //combined.translate(0, (getFont()->getYOffset() * scale) + getOutlineThickness());
 
         //
         if (getOutlineThickness() > 0) {

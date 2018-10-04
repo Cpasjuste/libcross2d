@@ -32,13 +32,14 @@
 #include <string>
 #include <vector>
 
+#include "skeleton/texture.h"
 #include "Glyph.hpp"
 #include "Rect.hpp"
 #include "Vector2.hpp"
 
 namespace c2d {
 
-    class Texture;
+    //class Texture;
 
     class Renderer;
 
@@ -229,7 +230,7 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         const Texture &getTexture(unsigned int characterSize) const;
 
-        void setFiltering(int filter);
+        void setFilter(Texture::Filter filter);
 
         void setYOffset(float offset);
 
@@ -336,7 +337,7 @@ namespace c2d {
         Info m_info;        ///< Information about the font
         mutable PageTable m_pages;       ///< Table containing the glyphs pages by character size
         mutable std::vector<uint8_t> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
-        int m_filtering = 1; // C2D_TEXTURE_FILTER_LINEAR
+        Texture::Filter m_filtering = Texture::Filter::Linear;
         float y_offset = 0;
 
 #ifdef SFML_SYSTEM_ANDROID

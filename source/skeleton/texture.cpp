@@ -10,48 +10,45 @@ Texture::Texture(const char *p) : Transformable() {
 
     printf("Texture(%p): %s\n", this, p);
 
-    format = C2D_TEXTURE_FMT_RGBA8;
+    format = Format::RGBA8;
     bpp = 4;
 
     m_vertices.setPrimitiveType(TriangleStrip);
     m_vertices.resize(4);
     setColor(Color::White);
-    setFiltering(C2D_TEXTURE_FILTER_LINEAR);
 
     strncpy(path, p, 511);
 
-    type = C2DObject::Type::Texture;
+    type = Type::Texture;
 }
 
 Texture::Texture(const unsigned char *buffer, int bufferSize) : Transformable() {
 
     printf("Texture(%p)\n", this);
 
-    format = C2D_TEXTURE_FMT_RGBA8;
+    format = Format::RGBA8;
     bpp = 4;
 
     m_vertices.setPrimitiveType(TriangleStrip);
     m_vertices.resize(4);
     setColor(Color::White);
-    setFiltering(C2D_TEXTURE_FILTER_LINEAR);
 
-    type = C2DObject::Type::Texture;
+    type = Type::Texture;
 }
 
-Texture::Texture(const Vector2f &size, int fmt) : Transformable() {
+Texture::Texture(const Vector2f &size, Format fmt) : Transformable() {
 
     printf("Texture(%p)\n", this);
 
     format = fmt;
-    bpp = fmt == C2D_TEXTURE_FMT_RGB565 ? 2 : 4;
+    bpp = fmt == Format::RGB565 ? 2 : 4;
     pitch = (int) (size.x * bpp);
 
     m_vertices.setPrimitiveType(TriangleStrip);
     m_vertices.resize(4);
     setColor(Color::White);
-    setFiltering(C2D_TEXTURE_FILTER_LINEAR);
 
-    type = C2DObject::Type::Texture;
+    type = Type::Texture;
 }
 
 Texture::~Texture() {
@@ -67,12 +64,51 @@ void Texture::setTextureRect(const IntRect &rectangle) {
     }
 }
 
-void Texture::setOriginCenter() {
-    setOrigin((float) m_textureRect.width / 2, (float) m_textureRect.height / 2);
+void Texture::setOrigin(float x, float y) {
+    Transformable::setOrigin(x, y);
 }
 
-void Texture::setOriginTopLeft() {
-    setOrigin(0, 0);
+void Texture::setOrigin(const Vector2f &origin) {
+    Transformable::setOrigin(origin);
+}
+
+void Texture::setOrigin(const Origin &origin, bool outline) {
+
+    //float out_size = outline ? m_outlineThickness : 0;
+    float out_size = 0;
+    m_origin = origin;
+
+    switch (origin) {
+        case Origin::Left:
+            Transformable::setOrigin(-out_size, m_textureRect.height / 2);
+            break;
+        case Origin::TopLeft:
+            Transformable::setOrigin(-out_size, -out_size);
+            break;
+        case Origin::Top:
+            Transformable::setOrigin(m_textureRect.width / 2, -out_size);
+            break;
+        case Origin::TopRight:
+            Transformable::setOrigin(m_textureRect.width - out_size, -out_size);
+            break;
+        case Origin::Right:
+            Transformable::setOrigin(m_textureRect.width - out_size, m_textureRect.height / 2);
+            break;
+        case Origin::BottomRight:
+            Transformable::setOrigin(m_textureRect.width - out_size, m_textureRect.height - out_size);
+            break;
+        case Origin::Bottom:
+            Transformable::setOrigin(m_textureRect.width / 2, m_textureRect.height - out_size);
+            break;
+        case Origin::BottomLeft:
+            Transformable::setOrigin(-out_size, m_textureRect.height - out_size);
+            break;
+        case Origin::Center:
+            Transformable::setOrigin(m_textureRect.width / 2, m_textureRect.height / 2);
+            break;
+        default:
+            break;
+    }
 }
 
 void Texture::setColor(const Color &color) {
@@ -118,6 +154,9 @@ void Texture::updatePositions() {
     m_vertices[1].position = Vector2f(0, bounds.height);
     m_vertices[2].position = Vector2f(bounds.width, 0);
     m_vertices[3].position = Vector2f(bounds.width, bounds.height);
+
+    // origin
+    setOrigin(m_origin);
 }
 
 void Texture::updateTexCoords() {

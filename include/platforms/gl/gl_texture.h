@@ -18,11 +18,9 @@ namespace c2d {
         GLTexture(const unsigned char *buffer, int bufferSize);
 
         GLTexture(const Vector2f &size = Vector2f(0, 0),
-                  int format = C2D_TEXTURE_FMT_RGBA8);
+                  Format format = Format::RGBA8);
 
         ~GLTexture();
-
-        //int resize(const Vector2f &size, bool copyPixels = false);
 
         int save(const char *path);
 
@@ -30,7 +28,7 @@ namespace c2d {
 
         void unlock();
 
-        void setFiltering(int filter);
+        void setFilter(Filter filter);
 
         void setShader(int shaderIndex);
 
