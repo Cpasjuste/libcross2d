@@ -28,18 +28,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-//#include "c2d.h"
-//#include <SFML/Graphics/Export.hpp>
-#include "Glyph.hpp"
-//#include <SFML/Graphics/Texture.hpp>
-#include "Rect.hpp"
-#include "Vector2.hpp"
-//#include "String.hpp"
-#include "InputStream.hpp"
 #include <map>
 #include <string>
 #include <vector>
 
+#include "Glyph.hpp"
+#include "Rect.hpp"
+#include "Vector2.hpp"
 
 namespace c2d {
 
@@ -132,28 +127,6 @@ namespace c2d {
         bool loadFromMemory(const void *data, std::size_t sizeInBytes);
 
         ////////////////////////////////////////////////////////////
-        /// \brief Load the font from a custom stream
-        ///
-        /// The supported font formats are: TrueType, Type 1, CFF,
-        /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
-        /// Warning: SFML cannot preload all the font data in this
-        /// function, so the contents of \a stream have to remain
-        /// valid as long as the font is used.
-        ///
-        /// \warning SFML cannot preload all the font data in this
-        /// function, so the stream has to remain accessible until
-        /// the sf::Font object loads a new font or is destroyed.
-        ///
-        /// \param stream Source stream to read from
-        ///
-        /// \return True if loading succeeded, false if it failed
-        ///
-        /// \see loadFromFile, loadFromMemory
-        ///
-        ////////////////////////////////////////////////////////////
-        bool loadFromStream(sfml::InputStream &stream);
-
-        ////////////////////////////////////////////////////////////
         /// \brief Get the font information
         ///
         /// \return A structure that holds the font information
@@ -180,7 +153,7 @@ namespace c2d {
         ///
         ////////////////////////////////////////////////////////////
         const Glyph &
-        getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness = 0) const;
+        getGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness = 0) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the kerning offset of two glyphs
@@ -198,7 +171,7 @@ namespace c2d {
         /// \return Kerning value for \a first and \a second, in pixels
         ///
         ////////////////////////////////////////////////////////////
-        float getKerning(Uint32 first, Uint32 second, unsigned int characterSize) const;
+        float getKerning(uint32_t first, uint32_t second, unsigned int characterSize) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the line spacing
@@ -289,7 +262,7 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         // Types
         ////////////////////////////////////////////////////////////
-        typedef std::map<Uint64, Glyph> GlyphTable; ///< Table mapping a codepoint to its glyph
+        typedef std::map<uint64_t, Glyph> GlyphTable; ///< Table mapping a codepoint to its glyph
 
         ////////////////////////////////////////////////////////////
         /// \brief Structure defining a page of glyphs
@@ -323,7 +296,7 @@ namespace c2d {
         /// \return The glyph corresponding to \a codePoint and \a characterSize
         ///
         ////////////////////////////////////////////////////////////
-        Glyph loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const;
+        Glyph loadGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Find a suitable rectangle within the texture for a glyph
@@ -362,7 +335,7 @@ namespace c2d {
         int *m_refCount;    ///< Reference counter used by implicit sharing
         Info m_info;        ///< Information about the font
         mutable PageTable m_pages;       ///< Table containing the glyphs pages by character size
-        mutable std::vector<Uint8> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
+        mutable std::vector<uint8_t> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
         int m_filtering = 1; // C2D_TEXTURE_FILTER_LINEAR
         float y_offset = 0;
 

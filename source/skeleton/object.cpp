@@ -3,9 +3,9 @@
 //
 
 #include <cstdio>
-#include <skeleton/object.h>
 
 #include "c2d.h"
+#include "skeleton/sfml/Shape.hpp"
 
 using namespace c2d;
 
@@ -53,30 +53,23 @@ void C2DObject::remove(Tween *tweener) {
     }
 }
 
-void C2DObject::draw(Transform &trans) {
+void C2DObject::draw(Transform &transform) {
 
     //printf("C2DObject(%p): draw\n", this);
-
     if (!transformable) {
         // TODO: can't cast Rectangle to Transformable ?
-        if (type == TRectangle) {
-            transformable = (Rectangle *) this;
-        } else if (type == TLine) {
-            transformable = (Line *) this;
-        } else if (type == TCircle) {
-            transformable = (Circle *) this;
-        } else if (type == TTexture) {
+        if (type == TTexture) {
             transformable = (Texture *) this;
         } else if (type == TText) {
             transformable = (Text *) this;
+        } else {
+            transformable = (Shape *) this;
         }
     }
 
     if (visibility_current == Visibility::Hidden) {
         return;
     }
-
-    Transform combinedTransform = trans;
 
     // handle tweeners
     for (auto &tween : tweeners) {
@@ -89,6 +82,7 @@ void C2DObject::draw(Transform &trans) {
         }
     }
 
+    Transform combinedTransform = transform;
     if (transformable) {
         combinedTransform *= transformable->getTransform();
     }

@@ -9,13 +9,11 @@
 #include "skeleton/io.h"
 #include "skeleton/input.h"
 #include "skeleton/audio.h"
+#include "skeleton/sfml/RectangleShape.hpp"
+#include "skeleton/sfml/CircleShape.hpp"
+#include "skeleton/sfml/Text.hpp"
 #include "skeleton/renderer.h"
-#include "skeleton/rectangle.h"
-#include "skeleton/rounded_rectangle.h"
-#include "skeleton/line.h"
-#include "skeleton/circle.h"
 #include "skeleton/texture.h"
-#include "skeleton/text.h"
 #include "skeleton/utility.h"
 #include "skeleton/tween.h"
 #include "widgets/button.h"
@@ -195,9 +193,9 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/posix/posix_io.h"
 #include "platforms/posix/posix_clock.h"
 
-#define C2DRectangle Rectangle
-#define C2DCircle Circle
-#define C2DLine Line
+#define C2DRectangle RectangleShape
+#define C2DRoundedRectangle RoundedRectangleShape
+#define C2DCircle CircleShape
 #define C2DFont Font
 #define C2DText Text
 #define C2DInput SDL2Input

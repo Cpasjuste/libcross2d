@@ -50,7 +50,7 @@ namespace c2d {
         virtual ~Clock() {};
 
         // TO IMPLEMENT
-        virtual Time getCurrentTime() const { return Time {}; };
+        virtual Time getCurrentTime() const { return Time{}; };
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the elapsed time

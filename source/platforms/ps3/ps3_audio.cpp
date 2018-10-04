@@ -34,8 +34,8 @@ static void audio_thread(void *arg) {
 
     while (running) {
 
-        u64 current_block = *(u64 *) ((u64) config.readIndex);
-        f32 *dataStart = (f32 *) ((u64) config.audioDataStart);
+        u64 current_block = *(u64 * )((u64) config.readIndex);
+        f32 *dataStart = (f32 * )((u64) config.audioDataStart);
         u32 audio_block_index = (current_block + 1) % config.numBlocks;
 
         ret = sysEventQueueReceive(snd_queue, &event, 20 * 1000);
@@ -46,8 +46,8 @@ static void audio_thread(void *arg) {
 
             static u32 pos = 0;
             for (int i = 0; i < AUDIO_BLOCK_SAMPLES; i++) {
-                buf[i * 2 + 0] = (f32) *((s16 *) &buffer_fba[pos]) / 32768.0f;
-                buf[i * 2 + 1] = (f32) *((s16 *) &buffer_fba[pos + 2]) / 32768.0f;
+                buf[i * 2 + 0] = (f32) * ((s16 * ) & buffer_fba[pos]) / 32768.0f;
+                buf[i * 2 + 1] = (f32) * ((s16 * ) & buffer_fba[pos + 2]) / 32768.0f;
 
                 pos += 4;
                 if (pos >= buffer_fba_size) {

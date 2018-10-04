@@ -15,7 +15,7 @@ namespace c2d {
 
         bool exist(const std::string &path);
 
-        std::vector <std::string> getDirList(const std::string &path);
+        std::vector<std::string> getDirList(const std::string &path);
 
     };
 }

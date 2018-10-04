@@ -85,7 +85,6 @@ void SDL2Renderer::setSize(float width, float height) {
 }
 
 
-
 void SDL2Renderer::flip(bool draw) {
 
     if (draw) {

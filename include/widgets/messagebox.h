@@ -7,7 +7,7 @@
 
 namespace c2d {
 
-    class MessageBox : public c2d::Rectangle {
+    class MessageBox : public RectangleShape {
 
     public:
 

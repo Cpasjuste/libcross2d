@@ -27,7 +27,7 @@
 
 using namespace c2d;
 
-namespace sfml {
+namespace c2d {
 ////////////////////////////////////////////////////////////
     RoundedRectangleShape::RoundedRectangleShape(const Vector2f &size, float radius, unsigned int cornerPointCount) {
         mySize = size;

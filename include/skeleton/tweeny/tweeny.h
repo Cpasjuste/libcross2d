@@ -118,16 +118,17 @@
  * @brief The tweeny namespace contains all symbols and names for the Tweeny library.
  */
 namespace tweeny {
-  /**
-   * @brief Creates a tween starting from the values defined in the arguments.
-   *
-   * Starting values can have heterogeneous types, even user-defined types, provided they implement the
-   * four arithmetic operators (+, -, * and /). The types used will also define the type of each next step, the type
-   * of the callback and the type of arguments the passed easing functions must have.
-   *
-   * @sa tweeny::tween
-   */
-    template<typename... Ts> tween<Ts...> from(Ts... vs);
+    /**
+     * @brief Creates a tween starting from the values defined in the arguments.
+     *
+     * Starting values can have heterogeneous types, even user-defined types, provided they implement the
+     * four arithmetic operators (+, -, * and /). The types used will also define the type of each next step, the type
+     * of the callback and the type of arguments the passed easing functions must have.
+     *
+     * @sa tweeny::tween
+     */
+    template<typename... Ts>
+    tween<Ts...> from(Ts... vs);
 }
 
 #include "tweeny.tcc"

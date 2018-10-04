@@ -189,12 +189,12 @@ void CTRRenderer::draw(const VertexArray &vertices,
         Vector2f v = transform.transformPoint(vertices[i].position);
 
         C3D_ImmSendAttrib(v.x, v.y, 0.5f, 0.0f);
-        if(texture) {
+        if (texture) {
             C3D_ImmSendAttrib(
                     vertices[i].texCoords.x / texture->getSize().x,
                     vertices[i].texCoords.y / texture->getSize().y, 0.0f, 0.0f);
         } else {
-            
+
         }
     }
 

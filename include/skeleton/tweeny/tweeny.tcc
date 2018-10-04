@@ -32,9 +32,10 @@
 #include "tween.h"
 
 namespace tweeny {
-  template<typename... Ts> inline tween<Ts...> from(Ts... vs) {
-    return tween<Ts...>::from(vs...);
-  }
+    template<typename... Ts>
+    inline tween<Ts...> from(Ts... vs) {
+        return tween<Ts...>::from(vs...);
+    }
 }
 
 #endif //TWEENY_TWEENY_TCC

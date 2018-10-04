@@ -134,8 +134,15 @@ void Texture::updateTexCoords() {
 
 void Texture::draw(Transform &transform) {
 
-    // draw texture from renderer
-    c2d_renderer->drawTexture(*this, transform);
+    Transform combined = transform * getTransform();
+
+    // TODO
+    //if (texture.getOutlineColor().a != 0 && texture.getOutlineThickness() > 0) {
+    //    draw(texture.getOutlineVertices(), combined, nullptr);
+    //}
+    if (available && getColor().a != 0) {
+        c2d_renderer->draw(getVertices(), combined, this);
+    }
 
     // call base class (draw childs)
     C2DObject::draw(transform);

@@ -19,7 +19,7 @@ namespace c2d {
         virtual void play();
 
         virtual void pause(int pause);
-        
+
         virtual void reset();
 
     };

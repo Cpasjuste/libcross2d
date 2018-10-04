@@ -64,7 +64,7 @@ namespace tweeny {
             }
         };
 
-        #define DECLARE_EASING_RESOLVE(__EASING_TYPE__) \
+#define DECLARE_EASING_RESOLVE(__EASING_TYPE__) \
         template <int I, typename TypeTuple, typename FunctionTuple, typename... Fs> \
         struct easingresolve<I, TypeTuple, FunctionTuple, easing::__EASING_TYPE__ ## InEasing, Fs...> { \
           typedef typename std::tuple_element<I, TypeTuple>::type ArgType; \
@@ -93,14 +93,23 @@ namespace tweeny {
         }
 
         DECLARE_EASING_RESOLVE(quadratic);
+
         DECLARE_EASING_RESOLVE(cubic);
+
         DECLARE_EASING_RESOLVE(quartic);
+
         DECLARE_EASING_RESOLVE(quintic);
+
         DECLARE_EASING_RESOLVE(sinusoidal);
+
         DECLARE_EASING_RESOLVE(exponential);
+
         DECLARE_EASING_RESOLVE(circular);
+
         DECLARE_EASING_RESOLVE(bounce);
+
         DECLARE_EASING_RESOLVE(elastic);
+
         DECLARE_EASING_RESOLVE(back);
     }
 }

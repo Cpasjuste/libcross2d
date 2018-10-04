@@ -40,28 +40,28 @@
 
 namespace tweeny {
     namespace detail {
-        template<typename TypeTupleT, typename EasingCollectionT, typename EasingT, size_t I> void easingfill(EasingCollectionT & f, EasingT easing, int2type<I>) {
+        template<typename TypeTupleT, typename EasingCollectionT, typename EasingT, size_t I>
+        void easingfill(EasingCollectionT &f, EasingT easing, int2type<I>) {
             easingresolve<I, TypeTupleT, EasingCollectionT, EasingT>::impl(f, easing);
-            easingfill<TypeTupleT, EasingCollectionT, EasingT>(f, easing, int2type<I - 1>{ });
+            easingfill<TypeTupleT, EasingCollectionT, EasingT>(f, easing, int2type<I - 1>{});
         }
 
-        template<typename TypeTupleT, typename EasingCollectionT, typename EasingT> void easingfill(EasingCollectionT & f, EasingT easing, int2type<0>) {
+        template<typename TypeTupleT, typename EasingCollectionT, typename EasingT>
+        void easingfill(EasingCollectionT &f, EasingT easing, int2type<0>) {
             easingresolve<0, TypeTupleT, EasingCollectionT, EasingT>::impl(f, easing);
         }
 
 
-        template <class ...T>
+        template<class ...T>
         struct are_same;
 
-        template <class A, class B, class ...T>
-        struct are_same<A, B, T...>
-        {
+        template<class A, class B, class ...T>
+        struct are_same<A, B, T...> {
             static const bool value = std::is_same<A, B>::value && are_same<B, T...>::value;
         };
 
-        template <class A>
-        struct are_same<A>
-        {
+        template<class A>
+        struct are_same<A> {
             static const bool value = true;
         };
 
@@ -75,7 +75,7 @@ namespace tweeny {
         template<typename... Ts>
         template<typename D>
         inline void tweenpoint<Ts...>::during(D milis) {
-            for (uint16_t & t : durations) { t = static_cast<uint16_t>(milis); }
+            for (uint16_t &t : durations) { t = static_cast<uint16_t>(milis); }
         }
 
         template<typename... Ts>
@@ -83,7 +83,7 @@ namespace tweeny {
         inline void tweenpoint<Ts...>::during(Ds... milis) {
             static_assert(sizeof...(Ds) == sizeof...(Ts),
                           "Amount of durations should be equal to the amount of values in a currentPoint");
-            std::array<int, sizeof...(Ts)> list = {{ milis... }};
+            std::array<int, sizeof...(Ts)> list = {{milis...}};
             std::copy(list.begin(), list.end(), durations.begin());
         }
 
@@ -98,7 +98,7 @@ namespace tweeny {
         template<typename... Ts>
         template<typename F>
         inline void tweenpoint<Ts...>::via(F f) {
-            easingfill<typename traits::valuesType>(easings, f, int2type<sizeof...(Ts) - 1>{ });
+            easingfill<typename traits::valuesType>(easings, f, int2type<sizeof...(Ts) - 1>{});
         }
 
         template<typename... Ts>

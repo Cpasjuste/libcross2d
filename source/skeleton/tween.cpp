@@ -137,17 +137,17 @@ void Tween::step() {
         Color color = {(uint8_t) (float4[0] * 255.0f), (uint8_t) (float4[1] * 255.0f),
                        (uint8_t) (float4[2] * 255.0f), (uint8_t) (float4[3] * 255.0f)};
         if (thisObject->getType() == C2DObject::ObjectType::TRectangle) {
-            ((Rectangle *) thisObject)->setFillColor(color);
+            ((RectangleShape *) thisObject)->setFillColor(color);
         } else if (thisObject->getType() == C2DObject::ObjectType::TTexture) {
             ((Texture *) thisObject)->setColor(color);
         } else {
             ((Shape *) thisObject)->setFillColor(color);
         }
     } else if (type == TweenType::TAlpha) {
-        Color color = ((Rectangle *) thisObject)->getFillColor();
+        Color color = ((RectangleShape *) thisObject)->getFillColor();
         Color colorA = {color.r, color.g, color.b, (uint8_t) float4[0]};
         if (thisObject->getType() == C2DObject::ObjectType::TRectangle) {
-            ((Rectangle *) thisObject)->setFillColor(colorA);
+            ((RectangleShape *) thisObject)->setFillColor(colorA);
         } else if (thisObject->getType() == C2DObject::ObjectType::TTexture) {
             ((Texture *) thisObject)->setColor(color);
         } else {

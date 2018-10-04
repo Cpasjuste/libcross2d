@@ -34,19 +34,44 @@
 #include <type_traits>
 
 namespace tweeny {
-    template<typename T, typename... Ts> class tween;
+    template<typename T, typename... Ts>
+    class tween;
 
     namespace detail {
 
-        template<typename... Ts> struct equal { enum { value = true }; };
-        template<typename T> struct equal<T> { enum { value = true }; };
-        template<typename T, typename... Ts> struct equal<T, T, Ts...>  { enum { value = true && equal<Ts...>::value }; };
-        template<typename T, typename U, typename... Ts> struct equal<T, U, Ts...> { enum { value = false }; };
+        template<typename... Ts>
+        struct equal {
+            enum {
+                value = true
+            };
+        };
+        template<typename T>
+        struct equal<T> {
+            enum {
+                value = true
+            };
+        };
+        template<typename T, typename... Ts>
+        struct equal<T, T, Ts...> {
+            enum {
+                value = true && equal<Ts...>::value
+            };
+        };
+        template<typename T, typename U, typename... Ts>
+        struct equal<T, U, Ts...> {
+            enum {
+                value = false
+            };
+        };
 
-        template<typename T, typename...> struct first { typedef T type; };
+        template<typename T, typename...>
+        struct first {
+            typedef T type;
+        };
 
         template<bool equal, typename... Ts>
-        struct valuetype { };
+        struct valuetype {
+        };
 
         template<typename... Ts>
         struct valuetype<false, Ts...> {

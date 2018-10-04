@@ -9,7 +9,7 @@
 
 namespace c2d {
 
-    class ListBoxLine : public Rectangle {
+    class ListBoxLine : public RectangleShape {
 
     public:
 
@@ -28,13 +28,13 @@ namespace c2d {
 
     private:
 
-        Rectangle *iconRect = nullptr;
+        RectangleShape *iconRect = nullptr;
         Texture *icon = nullptr;
         Text *text = nullptr;
         bool use_icons = false;
     };
 
-    class ListBox : public Rectangle {
+    class ListBox : public RectangleShape {
 
     public:
 
@@ -77,7 +77,7 @@ namespace c2d {
 
         std::vector<Io::File> files;
         std::vector<ListBoxLine *> lines;
-        Rectangle *highlight;
+        RectangleShape *highlight;
         float line_height;
         int max_lines;
         int index = 0;

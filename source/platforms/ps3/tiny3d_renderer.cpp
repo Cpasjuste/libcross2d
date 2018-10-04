@@ -111,10 +111,10 @@ void TINY3DRenderer::flip() {
     tiny3d_AlphaTest(1, 0x10, TINY3D_ALPHA_FUNC_GEQUAL);
     // Enable alpha blending.
     tiny3d_BlendFunc(1,
-                     (blend_src_func) (TINY3D_BLEND_FUNC_SRC_RGB_SRC_ALPHA | TINY3D_BLEND_FUNC_SRC_ALPHA_SRC_ALPHA),
-                     (blend_dst_func) (NV30_3D_BLEND_FUNC_DST_RGB_ONE_MINUS_SRC_ALPHA |
-                                       NV30_3D_BLEND_FUNC_DST_ALPHA_ZERO),
-                     (blend_func) (TINY3D_BLEND_RGB_FUNC_ADD | TINY3D_BLEND_ALPHA_FUNC_ADD));
+                     (blend_src_func)(TINY3D_BLEND_FUNC_SRC_RGB_SRC_ALPHA | TINY3D_BLEND_FUNC_SRC_ALPHA_SRC_ALPHA),
+                     (blend_dst_func)(NV30_3D_BLEND_FUNC_DST_RGB_ONE_MINUS_SRC_ALPHA |
+                                      NV30_3D_BLEND_FUNC_DST_ALPHA_ZERO),
+                     (blend_func)(TINY3D_BLEND_RGB_FUNC_ADD | TINY3D_BLEND_ALPHA_FUNC_ADD));
     tiny3d_Project2D();
 
     // call base class (draw childs)

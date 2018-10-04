@@ -14,9 +14,9 @@ bool PSP2Io::exist(const std::string &path) {
     return (stat(path.c_str(), &buf) == 0);
 }
 
-std::vector <std::string> PSP2Io::getDirList(const std::string &path) {
+std::vector<std::string> PSP2Io::getDirList(const std::string &path) {
 
-    std::vector <std::string> files;
+    std::vector<std::string> files;
 
     DIR *dir;
     struct dirent *ent;

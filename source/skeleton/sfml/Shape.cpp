@@ -27,6 +27,9 @@
 ////////////////////////////////////////////////////////////
 #include "skeleton/sfml/Shape.hpp"
 #include <cmath>
+#include <skeleton/sfml/Shape.hpp>
+#include <c2d.h>
+
 
 namespace {
     // Compute the normal of a segment
@@ -170,14 +173,26 @@ namespace c2d {
         updateOutline();
     }
 
+    void Shape::draw(Transform &transform) {
+
+        Transform combined = transform * getTransform();
+        if (getFillColor().a != 0) {
+            c2d_renderer->draw(&m_vertices, combined, nullptr);
+        }
+        if (getOutlineColor().a != 0 && m_outlineThickness > 0) {
+            c2d_renderer->draw(&m_outlineVertices, combined, nullptr);
+        }
+
+        C2DObject::draw(transform);
+    }
 
 ////////////////////////////////////////////////////////////
     void Shape::updateFillColors() {
-        for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
+        for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i) {
             m_vertices[i].color = m_fillColor;
+        }
         m_vertices.updateVbo();
     }
-
 
 ////////////////////////////////////////////////////////////
     void Shape::updateTexCoords() {

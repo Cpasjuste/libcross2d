@@ -31,83 +31,83 @@
 //#include <SFML/System/Export.hpp>
 
 
-namespace c2d
-{
+namespace c2d {
 ////////////////////////////////////////////////////////////
 /// \brief Represents a time value
 ///
 ////////////////////////////////////////////////////////////
-class Time
-{
-public:
+    class Time {
+    public:
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// Sets the time value to zero.
-    ///
-    ////////////////////////////////////////////////////////////
-    Time();
+        ////////////////////////////////////////////////////////////
+        /// \brief Default constructor
+        ///
+        /// Sets the time value to zero.
+        ///
+        ////////////////////////////////////////////////////////////
+        Time();
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Return the time value as a number of seconds
-    ///
-    /// \return Time in seconds
-    ///
-    /// \see asMilliseconds, asMicroseconds
-    ///
-    ////////////////////////////////////////////////////////////
-    float asSeconds() const;
+        ////////////////////////////////////////////////////////////
+        /// \brief Return the time value as a number of seconds
+        ///
+        /// \return Time in seconds
+        ///
+        /// \see asMilliseconds, asMicroseconds
+        ///
+        ////////////////////////////////////////////////////////////
+        float asSeconds() const;
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Return the time value as a number of milliseconds
-    ///
-    /// \return Time in milliseconds
-    ///
-    /// \see asSeconds, asMicroseconds
-    ///
-    ////////////////////////////////////////////////////////////
-    int asMilliseconds() const;
+        ////////////////////////////////////////////////////////////
+        /// \brief Return the time value as a number of milliseconds
+        ///
+        /// \return Time in milliseconds
+        ///
+        /// \see asSeconds, asMicroseconds
+        ///
+        ////////////////////////////////////////////////////////////
+        int asMilliseconds() const;
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Return the time value as a number of microseconds
-    ///
-    /// \return Time in microseconds
-    ///
-    /// \see asSeconds, asMilliseconds
-    ///
-    ////////////////////////////////////////////////////////////
-    long asMicroseconds() const;
+        ////////////////////////////////////////////////////////////
+        /// \brief Return the time value as a number of microseconds
+        ///
+        /// \return Time in microseconds
+        ///
+        /// \see asSeconds, asMilliseconds
+        ///
+        ////////////////////////////////////////////////////////////
+        long asMicroseconds() const;
 
-    ////////////////////////////////////////////////////////////
-    // Static member data
-    ////////////////////////////////////////////////////////////
-    static const Time Zero_; ///< Predefined "zero" time value
+        ////////////////////////////////////////////////////////////
+        // Static member data
+        ////////////////////////////////////////////////////////////
+        static const Time Zero_; ///< Predefined "zero" time value
 
-private:
+    private:
 
-    friend Time seconds(float);
-    friend Time milliseconds(int);
-    friend Time microseconds(long);
+        friend Time seconds(float);
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct from a number of microseconds
-    ///
-    /// This function is internal. To construct time values,
-    /// use sf::seconds, sf::milliseconds or sf::microseconds instead.
-    ///
-    /// \param microseconds Number of microseconds
-    ///
-    ////////////////////////////////////////////////////////////
-    explicit Time(long microseconds);
+        friend Time milliseconds(int);
 
-private:
+        friend Time microseconds(long);
 
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-    long m_microseconds; ///< Time value stored as microseconds
-};
+        ////////////////////////////////////////////////////////////
+        /// \brief Construct from a number of microseconds
+        ///
+        /// This function is internal. To construct time values,
+        /// use sf::seconds, sf::milliseconds or sf::microseconds instead.
+        ///
+        /// \param microseconds Number of microseconds
+        ///
+        ////////////////////////////////////////////////////////////
+        explicit Time(long microseconds);
+
+    private:
+
+        ////////////////////////////////////////////////////////////
+        // Member data
+        ////////////////////////////////////////////////////////////
+        long m_microseconds; ///< Time value stored as microseconds
+    };
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -120,7 +120,7 @@ private:
 /// \see milliseconds, microseconds
 ///
 ////////////////////////////////////////////////////////////
-Time seconds(float amount);
+    Time seconds(float amount);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -133,7 +133,7 @@ Time seconds(float amount);
 /// \see seconds, microseconds
 ///
 ////////////////////////////////////////////////////////////
-Time milliseconds(int amount);
+    Time milliseconds(int amount);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -146,7 +146,7 @@ Time milliseconds(int amount);
 /// \see seconds, milliseconds
 ///
 ////////////////////////////////////////////////////////////
-Time microseconds(long amount);
+    Time microseconds(long amount);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -158,7 +158,7 @@ Time microseconds(long amount);
 /// \return True if both time values are equal
 ///
 ////////////////////////////////////////////////////////////
-bool operator ==(Time left, Time right);
+    bool operator==(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -170,7 +170,7 @@ bool operator ==(Time left, Time right);
 /// \return True if both time values are different
 ///
 ////////////////////////////////////////////////////////////
-bool operator !=(Time left, Time right);
+    bool operator!=(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -182,7 +182,7 @@ bool operator !=(Time left, Time right);
 /// \return True if \a left is lesser than \a right
 ///
 ////////////////////////////////////////////////////////////
-bool operator <(Time left, Time right);
+    bool operator<(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -194,7 +194,7 @@ bool operator <(Time left, Time right);
 /// \return True if \a left is greater than \a right
 ///
 ////////////////////////////////////////////////////////////
-bool operator >(Time left, Time right);
+    bool operator>(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -206,7 +206,7 @@ bool operator >(Time left, Time right);
 /// \return True if \a left is lesser or equal than \a right
 ///
 ////////////////////////////////////////////////////////////
-bool operator <=(Time left, Time right);
+    bool operator<=(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -218,7 +218,7 @@ bool operator <=(Time left, Time right);
 /// \return True if \a left is greater or equal than \a right
 ///
 ////////////////////////////////////////////////////////////
-bool operator >=(Time left, Time right);
+    bool operator>=(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -229,7 +229,7 @@ bool operator >=(Time left, Time right);
 /// \return Opposite of the time value
 ///
 ////////////////////////////////////////////////////////////
-Time operator -(Time right);
+    Time operator-(Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -241,7 +241,7 @@ Time operator -(Time right);
 /// \return Sum of the two times values
 ///
 ////////////////////////////////////////////////////////////
-Time operator +(Time left, Time right);
+    Time operator+(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -253,7 +253,7 @@ Time operator +(Time left, Time right);
 /// \return Sum of the two times values
 ///
 ////////////////////////////////////////////////////////////
-Time& operator +=(Time& left, Time right);
+    Time &operator+=(Time &left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -265,7 +265,7 @@ Time& operator +=(Time& left, Time right);
 /// \return Difference of the two times values
 ///
 ////////////////////////////////////////////////////////////
-Time operator -(Time left, Time right);
+    Time operator-(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -277,7 +277,7 @@ Time operator -(Time left, Time right);
 /// \return Difference of the two times values
 ///
 ////////////////////////////////////////////////////////////
-Time& operator -=(Time& left, Time right);
+    Time &operator-=(Time &left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -289,7 +289,7 @@ Time& operator -=(Time& left, Time right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-Time operator *(Time left, float right);
+    Time operator*(Time left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -301,19 +301,7 @@ Time operator *(Time left, float right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-Time operator *(Time left, long right);
-
-////////////////////////////////////////////////////////////
-/// \relates Time
-/// \brief Overload of binary * operator to scale a time value
-///
-/// \param left  Left operand (a number)
-/// \param right Right operand (a time)
-///
-/// \return \a left multiplied by \a right
-///
-////////////////////////////////////////////////////////////
-Time operator *(float left, Time right);
+    Time operator*(Time left, long right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -325,7 +313,19 @@ Time operator *(float left, Time right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-Time operator *(long left, Time right);
+    Time operator*(float left, Time right);
+
+////////////////////////////////////////////////////////////
+/// \relates Time
+/// \brief Overload of binary * operator to scale a time value
+///
+/// \param left  Left operand (a number)
+/// \param right Right operand (a time)
+///
+/// \return \a left multiplied by \a right
+///
+////////////////////////////////////////////////////////////
+    Time operator*(long left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -337,7 +337,7 @@ Time operator *(long left, Time right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-Time& operator *=(Time& left, float right);
+    Time &operator*=(Time &left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -349,7 +349,7 @@ Time& operator *=(Time& left, float right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-Time& operator *=(Time& left, long right);
+    Time &operator*=(Time &left, long right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -361,7 +361,7 @@ Time& operator *=(Time& left, long right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-Time operator /(Time left, float right);
+    Time operator/(Time left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -373,7 +373,7 @@ Time operator /(Time left, float right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-Time operator /(Time left, long right);
+    Time operator/(Time left, long right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -385,7 +385,7 @@ Time operator /(Time left, long right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-Time& operator /=(Time& left, float right);
+    Time &operator/=(Time &left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -397,7 +397,7 @@ Time& operator /=(Time& left, float right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-Time& operator /=(Time& left, long right);
+    Time &operator/=(Time &left, long right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -409,7 +409,7 @@ Time& operator /=(Time& left, long right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-float operator /(Time left, Time right);
+    float operator/(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -421,7 +421,7 @@ float operator /(Time left, Time right);
 /// \return \a left modulo \a right
 ///
 ////////////////////////////////////////////////////////////
-Time operator %(Time left, Time right);
+    Time operator%(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -433,7 +433,7 @@ Time operator %(Time left, Time right);
 /// \return \a left modulo \a right
 ///
 ////////////////////////////////////////////////////////////
-Time& operator %=(Time& left, Time right);
+    Time &operator%=(Time &left, Time right);
 
 } // namespace sf
 

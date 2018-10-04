@@ -30,13 +30,17 @@
 
 using namespace c2d;
 
-namespace sfml {
+namespace c2d {
 
 ////////////////////////////////////////////////////////////
     RectangleShape::RectangleShape(const Vector2f &size) {
         setSize(size);
     }
 
+    RectangleShape::RectangleShape(const FloatRect &rect) {
+        setSize(rect.width, rect.height);
+        setPosition(rect.left, rect.top);
+    }
 
 ////////////////////////////////////////////////////////////
     void RectangleShape::setSize(const Vector2f &size) {
@@ -67,13 +71,13 @@ namespace sfml {
         switch (index) {
             default:
             case 0:
-                return Vector2f(0, 0);
+                return {0, 0};
             case 1:
-                return Vector2f(m_size.x, 0);
+                return {m_size.x, 0};
             case 2:
-                return Vector2f(m_size.x, m_size.y);
+                return {m_size.x, m_size.y};
             case 3:
-                return Vector2f(0, m_size.y);
+                return {0, m_size.y};
         }
     }
 

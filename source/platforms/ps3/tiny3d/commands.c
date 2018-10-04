@@ -142,10 +142,10 @@ void internal_reality_SetVertexProgramConstant4f(gcmContextData *context, int nu
 
     internal_commandBufferPutCmd5(context, NV30_3D_VP_UPLOAD_CONST_ID,
                                   num,
-                                  ((ieee32) (values[0])).u,
-                                  ((ieee32) (values[1])).u,
-                                  ((ieee32) (values[2])).u,
-                                  ((ieee32) (values[3])).u
+                                  ((ieee32)(values[0])).u,
+                                  ((ieee32)(values[1])).u,
+                                  ((ieee32)(values[2])).u,
+                                  ((ieee32)(values[3])).u
     );
 }
 
@@ -298,7 +298,7 @@ void internal_reality_DrawVertexBufferIndex(gcmContextData *context, uint32_t ty
 
     internal_commandBufferPutCmd1(context, NV40_3D_VTX_CACHE_INVALIDATE, 0);
 
-    internal_commandBufferPutCmd2(context, NV30_3D_IDXBUF_OFFSET, offset, (uint32_t) (dataType | location));
+    internal_commandBufferPutCmd2(context, NV30_3D_IDXBUF_OFFSET, offset, (uint32_t)(dataType | location));
 
     internal_commandBufferPutCmd1(context, NV30_3D_VERTEX_BEGIN_END, type);
 

@@ -9,6 +9,7 @@
 
 //#ifdef __PSP2_DEBUG__
 #include <psp2/kernel/clib.h>
+
 #define printf sceClibPrintf
 //#endif
 

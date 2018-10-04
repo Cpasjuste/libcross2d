@@ -10,13 +10,9 @@
 #include <cstdarg>
 #include <cstdio>
 
-#include "rectangle.h"
-#include "rounded_rectangle.h"
-#include "line.h"
-#include "circle.h"
-#include "text.h"
 #include "texture.h"
 #include "shader_list.h"
+#include "skeleton/sfml/RectangleShape.hpp"
 #include "skeleton/sfml/Clock.hpp"
 
 #ifndef MAX_PATH
@@ -25,33 +21,23 @@
 
 namespace c2d {
 
-    class Renderer : public C2DObject, public sfml::RectangleShape {
+    class Renderer : public RectangleShape {
 
     public:
 
-        Renderer(const Vector2f &size = Vector2f(0, 0));
+        explicit Renderer(const Vector2f &size = Vector2f(0, 0));
 
-        virtual ~Renderer();
+        ~Renderer() override;
 
-        virtual void setSize(const c2d::Vector2f &size);
+        void setSize(const c2d::Vector2f &size) override;
 
-        virtual void setSize(float width, float height);
+        void setSize(float width, float height) override;
+
+        void draw(Transform &transform) override {};
 
         virtual void draw(VertexArray *vertexArray,
                           const Transform &transform,
                           const Texture *texture) {};
-
-        virtual void drawText(Text &text, Transform &transform);
-
-        virtual void drawTexture(Texture &texture, Transform &transform);
-
-        virtual void drawLine(Line &line, Transform &transform);
-
-        virtual void drawRectangle(Rectangle &rectangle, Transform &transform);
-
-        virtual void drawRoundedRectangle(RoundedRectangle &rectangle, Transform &transform);
-
-        virtual void drawCircle(Circle &circle, Transform &transform);
 
         virtual void clear() {};
 
@@ -71,8 +57,8 @@ namespace c2d {
 
     protected:
 
-        ShaderList *shaderList = NULL;
-        Clock *deltaClock = NULL, *elapsedClock = NULL;
+        ShaderList *shaderList = nullptr;
+        Clock *deltaClock = nullptr, *elapsedClock = nullptr;
         Time deltaTime, elapsedTime;
         float time_now = 0, time_last = 0, fps = 0;
         int frames = 0;

@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include "c2d.h"
 #include "skeleton/sfml/Font.hpp"
-#include "skeleton/sfml/InputStream.hpp"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
@@ -36,24 +35,6 @@
 #include FT_STROKER_H
 #include <cstdlib>
 #include <cstring>
-
-namespace {
-    // FreeType callbacks that operate on a sf::InputStream
-    unsigned long read(FT_Stream rec, unsigned long offset, unsigned char *buffer, unsigned long count) {
-        sfml::InputStream *stream = static_cast<sfml::InputStream *>(rec->descriptor.pointer);
-        if (static_cast<unsigned long>(stream->seek(offset)) == offset) {
-            if (count > 0)
-                return static_cast<unsigned long>(stream->read(reinterpret_cast<char *>(buffer), count));
-            else
-                return 0;
-        } else
-            return count > 0 ? 0 : 1; // error code is 0 if we're reading, or nonzero if we're seeking
-    }
-
-    void close(FT_Stream) {
-    }
-}
-
 
 namespace c2d {
 ////////////////////////////////////////////////////////////
@@ -217,80 +198,6 @@ namespace c2d {
         return true;
     }
 
-
-////////////////////////////////////////////////////////////
-    bool Font::loadFromStream(sfml::InputStream &stream) {
-        // Cleanup the previous resources
-        cleanup();
-        m_refCount = new int(1);
-
-        // Initialize FreeType
-        // Note: we initialize FreeType for every font instance in order to avoid having a single
-        // global manager that would create a lot of issues regarding creation and destruction order.
-        FT_Library library;
-        if (FT_Init_FreeType(&library) != 0) {
-            printf("Failed to load font from stream (failed to initialize FreeType)\n");
-            return false;
-        }
-        m_library = library;
-
-        // Make sure that the stream's reading position is at the beginning
-        stream.seek(0);
-
-        // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
-        FT_StreamRec *rec = new FT_StreamRec;
-        std::memset(rec, 0, sizeof(*rec));
-        rec->base = NULL;
-        rec->size = static_cast<unsigned long>(stream.getSize());
-        rec->pos = 0;
-        rec->descriptor.pointer = &stream;
-        rec->read = &read;
-        rec->close = &close;
-
-        // Setup the FreeType callbacks that will read our stream
-        FT_Open_Args args;
-        args.flags = FT_OPEN_STREAM;
-        args.stream = rec;
-        args.driver = 0;
-
-        // Load the new font face from the specified stream
-        FT_Face face;
-        if (FT_Open_Face(static_cast<FT_Library>(m_library), &args, 0, &face) != 0) {
-            printf("Failed to load font from stream (failed to create the font face)\n");
-            delete rec;
-            return false;
-        }
-
-        // Load the stroker that will be used to outline the font
-        FT_Stroker stroker;
-        if (FT_Stroker_New(static_cast<FT_Library>(m_library), &stroker) != 0) {
-            printf("Failed to load font from stream (failed to create the stroker)\n");
-            FT_Done_Face(face);
-            delete rec;
-            return false;
-        }
-
-        // Select the Unicode character map
-        if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0) {
-            printf("Failed to load font from stream (failed to set the Unicode character set)\n");
-            FT_Done_Face(face);
-            FT_Stroker_Done(stroker);
-            delete rec;
-            return false;
-        }
-
-        // Store the loaded font in our ugly void* :)
-        m_stroker = stroker;
-        m_face = face;
-        m_streamRec = rec;
-
-        // Store the font information
-        m_info.family = face->family_name ? face->family_name : std::string();
-
-        return true;
-    }
-
-
 ////////////////////////////////////////////////////////////
     const Font::Info &Font::getInfo() const {
         return m_info;
@@ -298,15 +205,16 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    const Glyph &Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const {
+    const Glyph &
+    Font::getGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const {
         // Get the page corresponding to the character size
         GlyphTable &glyphs = m_pages[characterSize].glyphs;
         m_pages[characterSize].texture->setFiltering(m_filtering);
 
         // Build the key by combining the code point, bold flag, and outline thickness
-        Uint64 key = (static_cast<Uint64>(*&outlineThickness) << 32)
-                     | (static_cast<Uint64>(bold ? 1 : 0) << 31)
-                     | static_cast<Uint64>(codePoint);
+        uint64_t key = (static_cast<uint64_t>(*&outlineThickness) << 32)
+                       | (static_cast<uint64_t>(bold ? 1 : 0) << 31)
+                       | static_cast<uint64_t>(codePoint);
 
         // Search the glyph into the cache
         GlyphTable::const_iterator it = glyphs.find(key);
@@ -322,7 +230,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    float Font::getKerning(Uint32 first, Uint32 second, unsigned int characterSize) const {
+    float Font::getKerning(uint32_t first, uint32_t second, unsigned int characterSize) const {
         // Special case where first or second is 0 (null character)
         if (first == 0 || second == 0)
             return 0.f;
@@ -476,12 +384,12 @@ namespace c2d {
         m_streamRec = NULL;
         m_refCount = NULL;
         m_pages.clear();
-        std::vector<Uint8>().swap(m_pixelBuffer);
+        std::vector<uint8_t>().swap(m_pixelBuffer);
     }
 
 
 ////////////////////////////////////////////////////////////
-    Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const {
+    Glyph Font::loadGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const {
         // The glyph to return
         Glyph glyph;
 
@@ -585,8 +493,8 @@ namespace c2d {
             // Resize the pixel buffer to the new size and fill it with transparent white pixels
             m_pixelBuffer.resize(static_cast<unsigned long>(width * height * 4));
 
-            Uint8 *current = &m_pixelBuffer[0];
-            Uint8 *end = current + width * height * 4;
+            uint8_t *current = &m_pixelBuffer[0];
+            uint8_t *end = current + width * height * 4;
 
 #ifdef __C2D_ARGB__
             while (current != end) {
@@ -604,7 +512,7 @@ namespace c2d {
             }
 #endif
             // Extract the glyph's pixels from the bitmap
-            const Uint8 *pixels = bitmap->buffer;
+            const uint8_t *pixels = bitmap->buffer;
             if (bitmap->pixel_mode == FT_PIXEL_MODE_MONO) {
                 // Pixels are 1 bit monochrome values
                 for (unsigned int y = padding; y < height - padding; ++y) {
@@ -652,8 +560,8 @@ namespace c2d {
             FloatRect rect = {(float) x, (float) y, (float) w, (float) h};
             page.texture->lock(&rect, &buffer, &pitch);
 
-            const Uint8 *srcPixels = &m_pixelBuffer[0];
-            Uint8 *dstPixels = (Uint8 *) buffer;
+            const uint8_t *srcPixels = &m_pixelBuffer[0];
+            uint8_t *dstPixels = (uint8_t *) buffer;
 
             for (int i = 0; i < height; ++i) {
                 memcpy(dstPixels, srcPixels, (size_t) (width * 4));
@@ -717,10 +625,10 @@ namespace c2d {
                             Vector2f(textureWidth * 2, textureHeight * 2), C2D_TEXTURE_FMT_RGBA8);
                     texture->setFiltering(m_filtering);
 
-                    Uint8 *src;
+                    uint8_t *src;
                     page.texture->lock(NULL, reinterpret_cast<void **>(&src), NULL);
 
-                    Uint8 *dst;
+                    uint8_t *dst;
                     int dst_pitch;
                     texture->lock(NULL, reinterpret_cast<void **>(&dst), &dst_pitch);
                     for (int i = 0; i < (int) textureHeight; ++i) {
@@ -798,11 +706,11 @@ namespace c2d {
         texture = new C2DTexture(Vector2f(128, 128), C2D_TEXTURE_FMT_RGBA8);
 
         // Reserve a 2x2 white square for texturing underlines
-        Uint8 *buffer;
+        uint8_t *buffer;
         texture->lock(NULL, reinterpret_cast<void **>(&buffer), NULL);
         for (int x = 0; x < 2; ++x) {
             for (int y = 0; y < 2; ++y) {
-                Uint8 *pixel = &buffer[(x + y * texture->getTextureRect().width) * texture->bpp];
+                uint8_t *pixel = &buffer[(x + y * texture->getTextureRect().width) * texture->bpp];
                 *pixel++ = 255;
                 *pixel++ = 255;
                 *pixel++ = 255;

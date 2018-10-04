@@ -31,7 +31,9 @@
 
 namespace tweeny {
     namespace detail {
-        template<std::size_t> struct int2type { };
+        template<std::size_t>
+        struct int2type {
+        };
     }
 }
 #endif //TWEENY_INT2TYPE_H

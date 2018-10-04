@@ -7,21 +7,21 @@
 
 namespace c2d {
 
-    class Progress : public c2d::Rectangle {
+    class Progress : public RectangleShape {
 
     public:
 
-        Progress(const c2d::FloatRect &rect);
+        Progress(const FloatRect &rect);
 
         void setProgress(float progress);
 
-        void setBgColor(const c2d::Color &color);
+        void setBgColor(const Color &color);
 
-        void setFgColor(const c2d::Color &color);
+        void setFgColor(const Color &color);
 
     private:
 
-        c2d::Rectangle *progress_fg = nullptr;
+        RectangleShape *progress_fg = nullptr;
 
     };
 }

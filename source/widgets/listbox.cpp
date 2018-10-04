@@ -10,9 +10,10 @@ using namespace c2d;
 
 ListBoxLine::ListBoxLine(
         const FloatRect &rect, const std::string &str,
-        const Font &font, unsigned int fontSize, Texture *i, bool ui) : Rectangle(rect) {
+        const Font &font, unsigned int fontSize, Texture *i, bool ui) : RectangleShape(rect) {
 
     printf("ListBoxLine(%p)\n", this);
+
 
     icon = i;
     use_icons = ui;
@@ -101,7 +102,7 @@ ListBoxLine::~ListBoxLine() {
 
 ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
                  const std::vector<Io::File> &fileList, bool useIcons)
-        : Rectangle(rect) {
+        : RectangleShape(rect) {
 
     printf("ListBox(%p)\n", this);
 
@@ -125,7 +126,7 @@ ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
     }
 
     // add selection rectangle (highlight)
-    highlight = new Rectangle(Vector2f(getSize().x - 2, line_height - 2));
+    highlight = new RectangleShape(Vector2f(getSize().x - 2, line_height - 2));
     highlight->setOutlineThickness(1);
     add(highlight);
 

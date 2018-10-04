@@ -8,7 +8,7 @@ using namespace c2d;
 
 Button::Button(const c2d::FloatRect &rect, c2d::Font &font,
                int fontSize, const std::string &text)
-        : Rectangle(rect) {
+        : RectangleShape(rect) {
 
     this->text = new Text(text, font, (unsigned int) fontSize);
     this->text->setPosition(getSize().x / 2, getSize().y / 2);

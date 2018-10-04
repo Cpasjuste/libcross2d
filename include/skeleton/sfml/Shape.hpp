@@ -28,17 +28,20 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "skeleton/object.h"
 #include "Transformable.hpp"
 #include "VertexArray.hpp"
 #include "Vector2.hpp"
-
 
 namespace c2d {
 ////////////////////////////////////////////////////////////
 /// \brief Base class for textured shapes with outline
 ///
 ////////////////////////////////////////////////////////////
-    class Shape : public Transformable {
+
+    class Texture;
+
+    class Shape : public Transformable, public c2d::C2DObject {
     public:
 
         ////////////////////////////////////////////////////////////
@@ -249,6 +252,8 @@ namespace c2d {
 
         VertexArray *getOutlineVertices();
 
+        virtual void draw(Transform &transform);
+
     protected:
 
         ////////////////////////////////////////////////////////////
@@ -276,7 +281,6 @@ namespace c2d {
         /// \param states Current render states
         ///
         ////////////////////////////////////////////////////////////
-        // TODO:
         //virtual void draw(RenderTarget &target, RenderStates states) const;
 
         ////////////////////////////////////////////////////////////

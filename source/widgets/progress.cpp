@@ -6,9 +6,10 @@
 
 using namespace c2d;
 
-c2d::Progress::Progress(const c2d::FloatRect &rect) : Rectangle(rect) {
+c2d::Progress::Progress(const c2d::FloatRect &rect) : RectangleShape(rect) {
 
-    progress_fg = new Rectangle(
+    setPosition(rect.left, rect.top);
+    progress_fg = new RectangleShape(
             FloatRect(1, 1, 2, getSize().y - 2));
     progress_fg->setFillColor(Color::Orange);
     add(progress_fg);

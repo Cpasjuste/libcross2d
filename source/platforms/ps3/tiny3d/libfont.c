@@ -87,7 +87,7 @@ u8 *AddFontFromBitmapArray(u8 *font, u8 *texture, u8 first_char, u8 last_char, i
 
         font_datas.fonts[font_datas.number_of_fonts].fw[n] = w;
 
-        texture = (u8 *) ((((long) texture) + 15) & ~15);
+        texture = (u8 * )((((long) texture) + 15) & ~15);
 
         if (n == first_char)
             font_datas.fonts[font_datas.number_of_fonts].rsx_text_offset = tiny3d_TextureOffset(texture);
@@ -131,7 +131,7 @@ u8 *AddFontFromBitmapArray(u8 *font, u8 *texture, u8 first_char, u8 last_char, i
 
     }
 
-    texture = (u8 *) ((((long) texture) + 15) & ~15);
+    texture = (u8 * )((((long) texture) + 15) & ~15);
 
     font_datas.number_of_fonts++;
 
@@ -184,14 +184,14 @@ u8 *AddFontFromTTF(u8 *texture, u8 first_char, u8 last_char, int w, int h,
 
         font_datas.fonts[font_datas.number_of_fonts].fw[n] = (short) w;
 
-        ttf_callback((u8) (n & 255), letter_bitmap, &font_datas.fonts[font_datas.number_of_fonts].fw[n], &hh,
+        ttf_callback((u8)(n & 255), letter_bitmap, &font_datas.fonts[font_datas.number_of_fonts].fw[n], &hh,
                      &font_datas.fonts[font_datas.number_of_fonts].fy[n]);
 
         // letter background correction
         if ((hh + font_datas.fonts[font_datas.number_of_fonts].fy[n]) > font_datas.fonts[font_datas.number_of_fonts].bh)
             font_datas.fonts[font_datas.number_of_fonts].bh = hh + font_datas.fonts[font_datas.number_of_fonts].fy[n];
 
-        texture = (u8 *) ((((long) texture) + 15) & ~15);
+        texture = (u8 * )((((long) texture) + 15) & ~15);
 
         if (n == first_char)
             font_datas.fonts[font_datas.number_of_fonts].rsx_text_offset = tiny3d_TextureOffset(texture);
@@ -228,7 +228,7 @@ u8 *AddFontFromTTF(u8 *texture, u8 first_char, u8 last_char, int w, int h,
 
     }
 
-    texture = (u8 *) ((((long) texture) + 15) & ~15);
+    texture = (u8 * )((((long) texture) + 15) & ~15);
 
     font_datas.number_of_fonts++;
 
@@ -355,8 +355,8 @@ static int i_must_break_line(char *str, float x) {
     int xx = 0;
 
     while (*str) {
-        if (((u8) *str) <= 32) break;
-        xx += font_datas.sx * font_datas.fonts[font_datas.current_font].fw[((u8) *str)] /
+        if (((u8) * str) <= 32) break;
+        xx += font_datas.sx * font_datas.fonts[font_datas.current_font].fw[((u8) * str)] /
               font_datas.fonts[font_datas.current_font].w;
         str++;
     }
@@ -391,8 +391,8 @@ float DrawString(float x, float y, char *str) {
             }
         }
 
-        DrawChar(x, y, font_datas.Z, (u8) *str);
-        x += font_datas.sx * font_datas.fonts[font_datas.current_font].fw[((u8) *str)] /
+        DrawChar(x, y, font_datas.Z, (u8) * str);
+        x += font_datas.sx * font_datas.fonts[font_datas.current_font].fw[((u8) * str)] /
              font_datas.fonts[font_datas.current_font].w;
         str++;
     }
@@ -435,9 +435,9 @@ float DrawFormatString(float x, float y, char *format, ...) {
             }
         }
 
-        DrawChar(x, y, font_datas.Z, (u8) *str);
+        DrawChar(x, y, font_datas.Z, (u8) * str);
 
-        x += font_datas.sx * font_datas.fonts[font_datas.current_font].fw[((u8) *str)] /
+        x += font_datas.sx * font_datas.fonts[font_datas.current_font].fw[((u8) * str)] /
              font_datas.fonts[font_datas.current_font].w;
         str++;
     }

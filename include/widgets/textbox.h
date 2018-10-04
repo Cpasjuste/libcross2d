@@ -5,12 +5,12 @@
 #ifndef CROSS2D_TEXTBOX_H
 #define CROSS2D_TEXTBOX_H
 
-#include "skeleton/rectangle.h"
-#include "skeleton/text.h"
+#include "skeleton/sfml/RectangleShape.hpp"
+#include "skeleton/sfml/Text.hpp"
 
 namespace c2d {
 
-    class TextBox : public Rectangle {
+    class TextBox : public RectangleShape {
 
     public:
 
@@ -19,13 +19,13 @@ namespace c2d {
                 const Color &fillColor = Color::GrayLight,
                 const Color &textColor = Color::White);
 
-        ~TextBox();
+        ~TextBox() override;
 
         virtual Text *getText();
 
     private:
 
-        virtual void draw(Transform &transform);
+        void draw(Transform &transform) override;
 
         Text *text;
 

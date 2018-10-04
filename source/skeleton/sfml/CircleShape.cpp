@@ -30,7 +30,7 @@
 
 using namespace c2d;
 
-namespace sfml {
+namespace c2d {
 ////////////////////////////////////////////////////////////
     CircleShape::CircleShape(float radius, std::size_t pointCount) :
             m_radius(radius),

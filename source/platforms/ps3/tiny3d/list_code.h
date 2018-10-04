@@ -44,7 +44,8 @@ static void push_list_cmd(u32 cmd, u32 params) {
         }
         curr_list[curr_list_index++] = (LIST_NEXT << 16) | 1;
         last_list = &curr_list[curr_list_index];
-        curr_list[curr_list_index++] = (u32) (u64) p;
+        curr_list[curr_list_index++] = (u32)(u64)
+        p;
         curr_list = p;
         curr_list_index = 0;
         curr_list[curr_list_index] = LIST_STOP << 16;
@@ -267,7 +268,8 @@ void tiny3d_DrawList(void *headlist) {
                 break;
 
             case LIST_NEXT:
-                list = (u32 *) (u64) get_list_int(0);
+                list = (u32 * )(u64)
+                get_list_int(0);
                 list_index = 0;
                 param = 0;
                 break;
@@ -302,7 +304,8 @@ void tiny3d_FreeList(void *headlist) {
         switch (cmd) {
 
             case LIST_NEXT: {
-                u32 *list2 = (u32 *) (u64) get_list_int(0);
+                u32 * list2 = (u32 * )(u64)
+                get_list_int(0);
                 free(list);
                 list = list2;
                 list_index = 0;

@@ -14,20 +14,21 @@ using namespace c2d;
 int main() {
 
     // create main renderer
-    Renderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
+    C2DRenderer *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
     renderer->setFillColor(Color::Black);
 
     // create a rect
-    Rectangle *rect = new C2DRectangle(
-            FloatRect(renderer->getSize().x / 2, renderer->getSize().y / 2,
-                      renderer->getSize().x / 2, renderer->getSize().y / 2));
+    C2DRectangle *rect = new C2DRectangle(
+            {renderer->getSize().x / 2, renderer->getSize().y / 2,
+             renderer->getSize().x / 2, renderer->getSize().y / 2});
+
     rect->setOriginCenter();
     rect->setFillColor(Color::Gray);
     rect->setOutlineColor(Color::Orange);
     rect->setOutlineThickness(8);
 
     // create a texture and add it to the rect
-    Texture *tex = new C2DTexture((const unsigned char *) pfba_title, pfba_title_length);
+    C2DTexture *tex = new C2DTexture((const unsigned char *) pfba_title, pfba_title_length);
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
         tex->setScale(0.5f, 0.5f);
@@ -36,7 +37,7 @@ int main() {
     }
 
     // create a font
-    Font *font = new Font();
+    C2DFont *font = new C2DFont();
     if (font->loadFromMemory(pfba_font, pfba_font_length)) {
         // create a text and add it to the rect
         Text *text = new Text("Hello world", *font);
@@ -50,9 +51,10 @@ int main() {
     // add all this crap to the renderer
     renderer->add(rect);
 
-    Input *input = new C2DInput(nullptr);
+    C2DInput *input = new C2DInput(nullptr);
     input->setJoystickMapping(0, KEYS, 0);
 
+    /*
     // add some tweening :)
     auto *tweenPos = new TweenPosition(
             {renderer->getSize().x / 2 - 256, rect->getPosition().y},
@@ -67,6 +69,7 @@ int main() {
     rect->add(tweenColor);
     auto *tweenAlpha = new TweenAlpha(255, 0, 4.0f, TweenLoop::PingPong);
     rect->add(tweenAlpha);
+    */
 
     while (renderer->getElapsedTime().asSeconds() < 20) {
 

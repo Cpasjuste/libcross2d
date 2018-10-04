@@ -32,19 +32,24 @@
 
 namespace tweeny {
     namespace detail {
-        template<int ...> struct seq { };
-        template<int N, int ...S> struct gens : gens<N - 1, N - 1, S...> { };
-        template<int ...S> struct gens<0, S...> {
+        template<int ...>
+        struct seq {
+        };
+        template<int N, int ...S>
+        struct gens : gens<N - 1, N - 1, S...> {
+        };
+        template<int ...S>
+        struct gens<0, S...> {
             typedef seq<S...> type;
         };
 
         template<typename R, typename Func, typename TupleType, int ...S>
-        R dispatch(Func && f, TupleType && args, seq<S...>) {
-           return f(std::get<S>(args) ...);
+        R dispatch(Func &&f, TupleType &&args, seq<S...>) {
+            return f(std::get<S>(args) ...);
         }
 
         template<typename R, typename Func, typename... Ts>
-        R call(Func && f, const std::tuple<Ts...> & args) {
+        R call(Func &&f, const std::tuple<Ts...> &args) {
             return dispatch<R>(f, args, typename gens<sizeof...(Ts)>::type());
         }
     }

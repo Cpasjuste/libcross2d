@@ -9,14 +9,14 @@ using namespace c2d;
 TextBox::TextBox(const std::string &string, const Font &font,
                  const FloatRect &rect,
                  const Color &fillColor,
-                 const Color &textColor) : Rectangle(rect) {
+                 const Color &textColor) : RectangleShape(rect) {
 
     setFillColor(fillColor);
 
     text = new Text(string, font);
     text->setFillColor(textColor);
 
-    if (!rect.width || !rect.height) {
+    if (rect.width <= 0 || rect.height <= 0) {
         setSize(text->getLocalBounds().width + 16, text->getLocalBounds().height + 16);
     }
 
@@ -32,11 +32,7 @@ void TextBox::draw(Transform &transform) {
     //text->setOrigin(text->getLocalBounds().width / 2, text->getLocalBounds().height / 2);
     text->setPosition(getLocalBounds().width / 2, getLocalBounds().height / 2);
 
-    // draw rect from renderer
-    c2d_renderer->drawRectangle(*this, transform);
-
-    // call base class (draw childs)
-    C2DObject::draw(transform);
+    Shape::draw(transform);
 }
 
 Text *TextBox::getText() {

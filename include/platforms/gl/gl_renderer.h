@@ -15,19 +15,19 @@ namespace c2d {
 
     public:
 
-        GLRenderer(const Vector2f &size = Vector2f(0, 0));
+        explicit GLRenderer(const Vector2f &size = Vector2f(0, 0));
 
-        ~GLRenderer();
+        ~GLRenderer() override;
 
         virtual void initGL();
 
-        virtual void draw(VertexArray *vertexArray,
+        void draw(VertexArray *vertexArray,
                           const Transform &transform,
-                          const Texture *texture);
+                          const Texture *texture) override;
 
-        virtual void clear();
+        void clear() override;
 
-        virtual void flip(bool draw = true);
+        void flip(bool draw = true) override;
 
         unsigned int vao = 0;
     };

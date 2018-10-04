@@ -25,10 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "skeleton/sfml/Text.hpp"
-#include "skeleton/renderer.h"
-//#include <SFML/Graphics/RenderTarget.hpp>
 #include <cmath>
+#include "c2d.h"
 
 using namespace c2d;
 
@@ -88,7 +86,7 @@ namespace {
 }
 
 
-namespace sfml {
+namespace c2d {
 
 ////////////////////////////////////////////////////////////
     Text::Text() :
@@ -154,7 +152,7 @@ namespace sfml {
 
 
 ////////////////////////////////////////////////////////////
-    void Text::setStyle(Uint32 style) {
+    void Text::setStyle(uint32_t style) {
         if (m_style != style) {
             m_style = style;
             m_geometryNeedUpdate = true;
@@ -220,7 +218,7 @@ namespace sfml {
 
 
 ////////////////////////////////////////////////////////////
-    Uint32 Text::getStyle() const {
+    uint32_t Text::getStyle() const {
         return m_style;
     }
 
@@ -261,9 +259,9 @@ namespace sfml {
 
         // Compute the position
         Vector2f position;
-        Uint32 prevChar = 0;
+        uint32_t prevChar = 0;
         for (std::size_t i = 0; i < index; ++i) {
-            Uint32 curChar = m_string[i];
+            uint32_t curChar = m_string[i];
 
             // Apply the kerning offset
             position.x += static_cast<float>(m_font->getKerning(prevChar, curChar, m_characterSize));
@@ -359,6 +357,24 @@ namespace sfml {
         m_line_spacing = size;
     }
 
+    void Text::draw(Transform &transform) {
+
+        Transform combined = transform * getTransform();
+
+        // fix top not at 0 if needed (font->setYOffset)
+        float scale = getCharacterSize() / (float) C2D_DEFAULT_CHAR_SIZE;
+        combined.translate(0, (getFont()->getYOffset() * scale) + getOutlineThickness());
+
+        //
+        if (getOutlineThickness() > 0) {
+            c2d_renderer->draw(getOutlineVertices(), combined, &getFont()->getTexture(getCharacterSize()));
+        }
+
+        c2d_renderer->draw(getVertices(), combined, &getFont()->getTexture(getCharacterSize()));
+
+        C2DObject::draw(transform);
+    }
+
 ////////////////////////////////////////////////////////////
     void Text::ensureGeometryUpdate() const {
 
@@ -403,10 +419,10 @@ namespace sfml {
         float minY = static_cast<float>(m_characterSize);
         float maxX = 0.f;
         float maxY = 0.f;
-        Uint32 prevChar = 0;
+        uint32_t prevChar = 0;
         for (std::size_t i = 0; i < m_string.length(); ++i) {
 
-            Uint32 curChar = m_string[i];
+            uint32_t curChar = m_string[i];
 
             // Apply the kerning offset
             x += m_font->getKerning(prevChar, curChar, m_characterSize);

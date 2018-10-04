@@ -28,22 +28,22 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-//#include <SFML/Graphics/Drawable.hpp>
+#include "skeleton/object.h"
 #include "Transformable.hpp"
 #include "Font.hpp"
 #include "Rect.hpp"
 #include "VertexArray.hpp"
-//#include "String.hpp"
 #include <string>
 #include <vector>
 
+#define C2D_DEFAULT_CHAR_SIZE 30
 
-namespace sfml {
+namespace c2d {
 ////////////////////////////////////////////////////////////
 /// \brief Graphical text that can be drawn to a render target
 ///
 ////////////////////////////////////////////////////////////
-    class Text : /*public Drawable,*/ public c2d::Transformable {
+    class Text : public c2d::Transformable, public c2d::C2DObject {
     public:
 
         ////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ namespace sfml {
         /// \see getStyle
         ///
         ////////////////////////////////////////////////////////////
-        void setStyle(Uint32 style);
+        void setStyle(uint32_t style);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the fill color of the text
@@ -246,7 +246,7 @@ namespace sfml {
         /// \see setStyle
         ///
         ////////////////////////////////////////////////////////////
-        Uint32 getStyle() const;
+        uint32_t getStyle() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the fill color of the text
@@ -345,6 +345,8 @@ namespace sfml {
 
         void setLineSpacingModifier(int size);
 
+        void draw(Transform &transform);
+
     private:
 
         ////////////////////////////////////////////////////////////
@@ -354,7 +356,6 @@ namespace sfml {
         /// \param states Current render states
         ///
         ////////////////////////////////////////////////////////////
-        // TODO:
         //virtual void draw(RenderTarget& target, RenderStates states) const;
         //virtual void draw(Renderer *render);
 
@@ -373,7 +374,7 @@ namespace sfml {
         std::string m_string;             ///< String to display
         const c2d::Font *m_font;               ///< Font used to display the string
         unsigned int m_characterSize;      ///< Base size of characters, in pixels
-        Uint32 m_style;              ///< Text style (see Style enum)
+        uint32_t m_style;              ///< Text style (see Style enum)
         c2d::Color m_fillColor;          ///< Text fill color
         c2d::Color m_outlineColor;       ///< Text outline color
         float m_outlineThickness;   ///< Thickness of the text's outline

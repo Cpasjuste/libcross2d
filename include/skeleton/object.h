@@ -7,7 +7,6 @@
 
 #include <cstdint>
 #include <vector>
-#include <skeleton/sfml/Shape.hpp>
 
 #include "skeleton/sfml/Transformable.hpp"
 #include "tween.h"
