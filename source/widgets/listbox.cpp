@@ -177,9 +177,11 @@ void ListBox::setSelection(int idx) {
                 highlight->setPosition(lines[i]->getPosition());
                 Color color = highlight_use_files_color ?
                               file.color : highlight->getFillColor();
-                color.a = highlight_use_files_color ? (uint8_t) 80 : color.a;
+                color.a = highlight->getAlpha();
                 highlight->setFillColor(color);
-                color.a = 255;
+                color = highlight_use_files_color ?
+                        file.color : highlight->getOutlineColor();
+                color.a = highlight->getAlpha();
                 highlight->setOutlineColor(color);
             }
         }
@@ -188,7 +190,7 @@ void ListBox::setSelection(int idx) {
     if (files.empty()) {
         highlight->setVisibility(Visibility::Hidden, false);
     } else {
-        highlight->setVisibility(Visibility::Visible);
+        highlight->setVisibility(Visibility::Visible, false);
     }
 }
 
@@ -235,6 +237,10 @@ void ListBox::setHighlightTween(Tween *tween) {
 
 void ListBox::setHighlightColor(const Color &color) {
     highlight->setFillColor(color);
+}
+
+void ListBox::setHighlightOutlineColor(const Color &color) {
+    highlight->setOutlineColor(color);
 }
 
 void ListBox::setHighlightAlpha(u_int8_t alpha) {

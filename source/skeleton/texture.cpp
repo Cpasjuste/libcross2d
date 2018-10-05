@@ -127,6 +127,23 @@ const Color &Texture::getColor() const {
     return m_vertices[0].color;
 }
 
+void Texture::setAlpha(uint8_t alpha) {
+
+    if (m_vertices[0].color.a != alpha) {
+        m_vertices[0].color.a = alpha;
+        m_vertices[1].color.a = alpha;
+        m_vertices[2].color.a = alpha;
+        m_vertices[3].color.a = alpha;
+        m_vertices.updateVbo();
+    }
+
+    C2DObject::setAlpha(alpha);
+}
+
+uint8_t Texture::getAlpha() {
+    return m_vertices[0].color.a;
+}
+
 FloatRect Texture::getLocalBounds() const {
     float width = (float) std::abs(m_textureRect.width);
     float height = (float) std::abs(m_textureRect.height);

@@ -2,6 +2,8 @@
 // Created by cpasjuste on 12/12/17.
 //
 
+#include <skeleton/object.h>
+
 #include "c2d.h"
 
 using namespace c2d;
@@ -107,6 +109,15 @@ void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
         }
     } else {
         visibility_current = visibility_wanted = v;
+    }
+}
+
+void C2DObject::setAlpha(uint8_t alpha) {
+
+    for (auto &child : childs) {
+        if (child) {
+            child->setAlpha(alpha);
+        }
     }
 }
 

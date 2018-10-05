@@ -195,6 +195,10 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         void setOutlineThickness(float thickness);
 
+        void setAlpha(uint8_t alpha);
+
+        uint8_t getAlpha();
+
         ////////////////////////////////////////////////////////////
         /// \brief Get the text's string
         ///

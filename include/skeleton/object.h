@@ -36,32 +36,32 @@ namespace c2d {
         virtual ~C2DObject();
 
         // childs
-        void add(C2DObject *object);
+        virtual void add(C2DObject *object);
 
         // remove a widget without calling it's destructor
-        void remove(C2DObject *object);
+        virtual void remove(C2DObject *object);
 
         // tweeners
-        void add(Tween *tween);
+        virtual void add(Tween *tween);
 
         // remove a tweener without calling it's destructor
-        void remove(Tween *tween);
+        virtual void remove(Tween *tween);
 
         // visibility
-        bool isVisible();
+        virtual bool isVisible();
 
-        Visibility getVisibility();
+        virtual Visibility getVisibility();
 
-        void setVisibility(Visibility visibility, bool tweenPlay = true);
+        virtual void setVisibility(Visibility visibility, bool tweenPlay = true);
 
         // deletion mode
-        DeleteMode getDeleteMode();
+        virtual DeleteMode getDeleteMode();
 
-        void setDeleteMode(DeleteMode mode);
+        virtual void setDeleteMode(DeleteMode mode);
 
-        int getLayer();
+        virtual int getLayer();
 
-        void setLayer(int layer);
+        virtual void setLayer(int layer);
 
         Type getType() const {
             return type;
@@ -72,6 +72,8 @@ namespace c2d {
     protected:
 
         virtual void draw(Transform &transform);
+
+        virtual void setAlpha(uint8_t alpha);
 
         Type type;
 

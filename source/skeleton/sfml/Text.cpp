@@ -175,7 +175,6 @@ namespace c2d {
         }
     }
 
-
 ////////////////////////////////////////////////////////////
     void Text::setOutlineColor(const Color &color) {
         if (color != m_outlineColor) {
@@ -186,6 +185,7 @@ namespace c2d {
             if (!m_geometryNeedUpdate) {
                 for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
                     m_outlineVertices[i].color = m_outlineColor;
+                m_outlineVertices.updateVbo();
             }
         }
     }
@@ -197,6 +197,26 @@ namespace c2d {
             m_outlineThickness = thickness;
             m_geometryNeedUpdate = true;
         }
+    }
+
+/////////////////////////////////////////////////////////////
+    void Text::setAlpha(uint8_t alpha) {
+
+        if (alpha != m_fillColor.a) {
+            Color color;
+            color = m_fillColor;
+            color.a = alpha;
+            setFillColor(color);
+            color = m_outlineColor;
+            color.a = alpha;
+            setOutlineColor(color);
+        }
+
+        C2DObject::setAlpha(alpha);
+    }
+
+    uint8_t Text::getAlpha() {
+        return m_fillColor.a;
     }
 
 
@@ -376,19 +396,9 @@ namespace c2d {
 
         Transform combined = transform * getTransform();
 
-        /*
-        // fix top not at 0 if needed (font->setOffset)
-        float scale = getCharacterSize() / (float) C2D_DEFAULT_CHAR_SIZE;
-        combined.translate(
-                getFont()->getOffset().x * scale,
-                getFont()->getOffset().y * scale);
-        */
-
-        //
         if (getOutlineThickness() > 0) {
             c2d_renderer->draw(&m_outlineVertices, combined, &getFont()->getTexture(getCharacterSize()));
         }
-
         c2d_renderer->draw(&m_vertices, combined, &getFont()->getTexture(getCharacterSize()));
 
         C2DObject::draw(transform);

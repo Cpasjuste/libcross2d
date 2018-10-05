@@ -143,18 +143,13 @@ void Tween::step() {
             ((Shape *) transform)->setFillColor(color);
         }
     } else if (type == TweenType::Alpha) {
+        auto alpha = (uint8_t) (float4[0]);
         if (object->getType() == Type::Text) {
-            Color color = ((Text *) transform)->getFillColor();
-            Color colorA = {color.r, color.g, color.b, (uint8_t) float4[0]};
-            ((Text *) transform)->setFillColor(colorA);
+            ((Text *) transform)->setAlpha(alpha);
         } else if (object->getType() == Type::Texture) {
-            Color color = ((Texture *) transform)->getColor();
-            Color colorA = {color.r, color.g, color.b, (uint8_t) float4[0]};
-            ((Texture *) transform)->setColor(colorA);
+            ((Texture *) transform)->setAlpha(alpha);
         } else {
-            Color color = ((Shape *) transform)->getFillColor();
-            Color colorA = {color.r, color.g, color.b, (uint8_t) float4[0]};
-            ((Shape *) transform)->setFillColor(colorA);
+            ((Shape *) transform)->setAlpha(alpha);
         }
     }
 }

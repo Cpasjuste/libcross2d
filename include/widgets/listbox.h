@@ -55,6 +55,8 @@ namespace c2d {
 
         void setHighlightColor(const Color &color);
 
+        void setHighlightOutlineColor(const Color &color);
+
         void setHighlightAlpha(uint8_t alpha);
 
         void setHighlightTween(Tween *tween);

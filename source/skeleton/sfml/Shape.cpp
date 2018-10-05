@@ -65,6 +65,21 @@ namespace c2d {
         return m_fillColor;
     }
 
+    void Shape::setAlpha(uint8_t alpha) {
+
+        if (alpha != m_fillColor.a) {
+            m_fillColor.a = alpha;
+            updateFillColors();
+            m_outlineColor.a = alpha;
+            updateOutlineColors();
+        }
+
+        C2DObject::setAlpha(alpha);
+    }
+
+    uint8_t Shape::getAlpha() {
+        return m_fillColor.a;
+    }
 
 ////////////////////////////////////////////////////////////
     void Shape::setOutlineColor(const Color &color) {

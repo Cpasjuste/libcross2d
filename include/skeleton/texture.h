@@ -62,6 +62,10 @@ namespace c2d {
 
         const Color &getColor() const;
 
+        void setAlpha(uint8_t alpha);
+
+        uint8_t getAlpha();
+
         FloatRect getLocalBounds() const;
 
         FloatRect getGlobalBounds() const;
