@@ -117,13 +117,13 @@ extern c2d::Renderer *c2d_renderer;
 
 #elif __SWITCH__
 
+#define GL_ABGR_EXT 0x8000
+//#define __SVC_DEBUG__ 1
+//#define __NET_DEBUG__ 1
+#define NO_KEYBOARD 1
+
 #include <switch.h>
 #include <glad/glad.h>
-#define GL_ABGR_EXT 0x8000
-
-//#define __SVC_DEBUG__ 1
-#define __NET_DEBUG__ 1
-#define NO_KEYBOARD 1
 #include "platforms/sdl2/sdl2_gl_renderer.h"
 #include "platforms/gl/gl_texture.h"
 #include "platforms/gl/gl_shaders.h"
@@ -134,9 +134,9 @@ extern c2d::Renderer *c2d_renderer;
 
 #define C2DRenderer SDL2Renderer
 #define C2DTexture GLTexture
-#define C2DRectangle Rectangle
-#define C2DCircle Circle
-#define C2DLine Line
+#define C2DRectangle RectangleShape
+#define C2DRoundedRectangle RoundedRectangleShape
+#define C2DCircle CircleShape
 #define C2DFont Font
 #define C2DText Text
 #define C2DInput SDL2Input
