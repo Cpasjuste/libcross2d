@@ -30,3 +30,8 @@ void Progress::setProgress(float progress) {
             std::min(width, getSize().x - 2),
             progress_fg->getSize().y);
 }
+
+FloatRect Progress::getProgressBounds() {
+
+    return progress_fg->getGlobalBounds();
+}
