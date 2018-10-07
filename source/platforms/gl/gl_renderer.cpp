@@ -151,10 +151,10 @@ void GLRenderer::draw(VertexArray *vertexArray,
 void GLRenderer::clear() {
 
     // clear screen
-    GL_CHECK(glClearColor(getFillColor().r / 255.0f,
-                          getFillColor().g / 255.0f,
-                          getFillColor().b / 255.0f,
-                          getFillColor().a / 255.0f));
+    GL_CHECK(glClearColor(m_clearColor.r / 255.0f,
+                          m_clearColor.g / 255.0f,
+                          m_clearColor.b / 255.0f,
+                          m_clearColor.a / 255.0f));
     GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 }
 

@@ -5,7 +5,6 @@
 #include "cross2d/c2d.h"
 #include "main.h"
 
-#include "../res/default.h"
 #include "../res/title.h"
 
 using namespace c2d;
@@ -14,7 +13,7 @@ int main() {
 
     // create main renderer
     auto *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
-    renderer->setFillColor(Color::Black);
+    renderer->setClearColor(Color::Black);
 
     // create a rect
     auto *rect = new C2DRectangle(
@@ -37,7 +36,7 @@ int main() {
 
     // create a font
     auto *font = new C2DFont();
-    if (font->loadFromMemory(pfba_font, pfba_font_length)) {
+    if (font->load()) {
         // some font have too much "margin"..
         font->setOffset({0, -10});
         // create a text and add it to the rect

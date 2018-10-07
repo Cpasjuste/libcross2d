@@ -21,17 +21,13 @@
 
 namespace c2d {
 
-    class Renderer : public RectangleShape {
+    class Renderer : public Transformable {
 
     public:
 
         explicit Renderer(const Vector2f &size = Vector2f(0, 0));
 
         ~Renderer() override;
-
-        void setSize(const c2d::Vector2f &size) override;
-
-        void setSize(float width, float height) override;
 
         void draw(Transform &transform) override {};
 
@@ -49,6 +45,17 @@ namespace c2d {
 
         virtual void setShaderList(ShaderList *list);
 
+        ///
+        void setSize(const Vector2f &size);
+
+        void setSize(float width, float height);
+
+        const Vector2f &getSize() const;
+
+        void setClearColor(const Color &color);
+
+        const Color &getClearColor();
+
         Time getDeltaTime() const;
 
         Time getElapsedTime() const;
@@ -57,6 +64,8 @@ namespace c2d {
 
     protected:
 
+        Vector2f m_size;
+        Color m_clearColor = Color::Black;
         ShaderList *shaderList = nullptr;
         Clock *deltaClock = nullptr, *elapsedClock = nullptr;
         Time deltaTime, elapsedTime;

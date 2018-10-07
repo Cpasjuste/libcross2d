@@ -2,29 +2,36 @@
 // Created by cpasjuste on 09/12/16.
 //
 
+#include <cross2d/skeleton/renderer.h>
+
 #include "cross2d/c2d.h"
 
 using namespace c2d;
 
 Renderer *c2d_renderer;
 
-Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
+Renderer::Renderer(const Vector2f &size) : Transformable() {
 
     printf("Renderer(%p)\n", this);
 
     c2d_renderer = this;
-    setFillColor(Color::Black);
+    setSize(size);
 
     deltaClock = new C2DClock();
     elapsedClock = new C2DClock();
 }
 
-void Renderer::setSize(const c2d::Vector2f &size) {
-    RectangleShape::setSize(size);
+void Renderer::setSize(const Vector2f &size) {
+    m_size = size;
 }
 
 void Renderer::setSize(float width, float height) {
-    RectangleShape::setSize(width, height);
+    m_size.x = width;
+    m_size.y = height;
+}
+
+const Vector2f &Renderer::getSize() const {
+    return m_size;
 }
 
 void Renderer::flip(bool draw) {
@@ -34,7 +41,7 @@ void Renderer::flip(bool draw) {
     // call base class (draw childs)
     if (draw) {
         Transform trans = getTransform();
-        Shape::draw(trans);
+        C2DObject::draw(trans);
     }
 
     deltaTime = deltaClock->restart();
@@ -47,6 +54,14 @@ void Renderer::flip(bool draw) {
         frames = 0;
         time_last = time_now;
     }
+}
+
+void Renderer::setClearColor(const Color &color) {
+    m_clearColor = color;
+}
+
+const Color &Renderer::getClearColor() {
+    return m_clearColor;
 }
 
 Time Renderer::getDeltaTime() const {
