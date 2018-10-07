@@ -2,7 +2,7 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#include "c2d.h"
+#include "cross2d/c2d.h"
 #include <cmath>
 #include <sysutil/sysutil.h>
 #include <sysmodule/sysmodule.h>

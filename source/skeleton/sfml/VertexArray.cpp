@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 
-#include "c2d.h"
-#include "skeleton/sfml/VertexArray.hpp"
+#include "cross2d/c2d.h"
+#include "cross2d/skeleton/sfml/VertexArray.hpp"
 
 namespace c2d {
 ////////////////////////////////////////////////////////////

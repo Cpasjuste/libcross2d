@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 3.0)
 option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
 option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" OFF)
 option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" OFF)
-option(BUILD_SDL2 "Build with SDL2 support (software)" OFF)
-option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" OFF)
+option(BUILD_SDL2 "Build with SDL2 support (software)" ON)
+option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" ON)
 option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
@@ -100,7 +100,7 @@ elseif (BUILD_PS3)
     set(PLATFORM_DIRS
             source/platforms/ps3
             source/platforms/ps3/tiny3d
-            include/platforms/ps3/tiny3d
+            include/cross2d/platforms/ps3/tiny3d
             source/platforms/posix
             ${PSL1GHT}/portlibs/ppu/include/freetype2
             )
@@ -191,19 +191,16 @@ elseif (BUILD_NX)
     #####################
 elseif (BUILD_SDL2)
     find_package(ZLIB REQUIRED)
-    #find_package(PNG REQUIRED)
     find_package(Freetype REQUIRED)
     set(PLATFORM_DIRS
             source/platforms/sdl2
             source/platforms/posix
             ${FREETYPE_INCLUDE_DIRS}
-            #${PNG_INCLUDE_DIRS}
             ${ZLIB_INCLUDE_DIRS})
     file(GLOB PLATFORM_SRC
             source/platforms/sdl2/*.c*
             source/platforms/posix/*.c*)
     set(PLATFORM_LIBS SDL2 ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
-    #${PNG_LIBRARIES}
     list(APPEND FLAGS -D__SDL2__)
     if (BUILD_SDL2_GL)
         list(APPEND PLATFORM_DIRS source/platforms/gl)
@@ -259,8 +256,8 @@ target_include_directories(cross2d PUBLIC ${CROSS2D_DIR} ${PLATFORM_DIRS})
 target_link_libraries(cross2d PUBLIC ${PLATFORM_LIBS})
 target_compile_options(cross2d PUBLIC ${FLAGS} -Wno-narrowing)
 
-install(FILES ${CMAKE_BINARY_DIR}/libcross2d.a DESTINATION lib)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include DESTINATION include/cross2d)
+#install(FILES ${CMAKE_BINARY_DIR}/libcross2d.a DESTINATION lib)
+#install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/cross2d DESTINATION include)
 
 #####################
 # test executable

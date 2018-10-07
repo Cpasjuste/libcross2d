@@ -4,7 +4,7 @@
 
 #ifdef __GL__
 
-#include "c2d.h"
+#include "cross2d/c2d.h"
 #include "shaders/shaders.h"
 
 using namespace c2d;

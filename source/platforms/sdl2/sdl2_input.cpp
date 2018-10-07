@@ -4,7 +4,7 @@
 
 #include <cmath>
 #include <SDL2/SDL.h>
-#include "c2d.h"
+#include "cross2d/c2d.h"
 
 using namespace c2d;
 

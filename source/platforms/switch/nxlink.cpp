@@ -2,7 +2,7 @@
 // Created by cpasjuste on 15/09/18.
 //
 
-#include "c2d.h"
+#include "cross2d/c2d.h"
 
 #ifdef __NET_DEBUG__
 

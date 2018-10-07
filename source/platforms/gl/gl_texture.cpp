@@ -4,13 +4,13 @@
 
 #ifdef __GL__
 
-#include "c2d.h"
+#include "cross2d/c2d.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
-#include "skeleton/stb_image.h"
-#include "skeleton/stb_image_write.h"
+#include "cross2d/skeleton/stb_image.h"
+#include "cross2d/skeleton/stb_image_write.h"
 
 using namespace c2d;
 

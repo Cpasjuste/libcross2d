@@ -2,9 +2,7 @@
 // Created by cpasjuste on 12/12/17.
 //
 
-#include <skeleton/object.h>
-
-#include "c2d.h"
+#include "cross2d/c2d.h"
 
 using namespace c2d;
 

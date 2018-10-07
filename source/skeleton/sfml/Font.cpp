@@ -25,8 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "c2d.h"
-#include "skeleton/sfml/Font.hpp"
+#include "cross2d/c2d.h"
+#include "cross2d/skeleton/sfml/Font.hpp"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H

@@ -2,7 +2,7 @@
 // Created by cpasjuste on 05/02/18.
 //
 
-#include "c2d.h"
+#include "cross2d/c2d.h"
 
 using namespace c2d;
 

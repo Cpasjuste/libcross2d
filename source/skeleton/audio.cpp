@@ -3,9 +3,8 @@
 //
 
 #include <string>
-#include <skeleton/audio.h>
 
-#include "c2d.h"
+#include "cross2d/c2d.h"
 
 using namespace c2d;
 
