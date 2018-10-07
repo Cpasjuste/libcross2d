@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.0)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
+add_custom_target(${PROJECT_NAME}.data
+        COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/data ${CMAKE_CURRENT_BINARY_DIR})
+add_dependencies(${PROJECT_NAME}.elf ${PROJECT_NAME}.data)
+
 #####################
 # PSP2 (vita) target
 #####################
@@ -26,17 +30,13 @@ if (BUILD_NX)
     add_custom_target(${PROJECT_NAME}.nro
             DEPENDS ${PROJECT_NAME}.elf
             COMMAND nacptool --create "${PROJECT_NAME}" "${PROJECT_AUTHOR}" "${VERSION_MAJOR}.${VERSION_MINOR}" ${PROJECT_NAME}.nacp
-            COMMAND elf2nro ${PROJECT_NAME}.elf ${PROJECT_NAME}.nro --nacp=${PROJECT_NAME}.nacp)
-    # TODO: add default icon
-    #--icon=${CMAKE_CURRENT_SOURCE_DIR}/data/nx/icon.jpg
+            COMMAND elf2nro ${PROJECT_NAME}.elf ${PROJECT_NAME}.nro --icon=${CMAKE_CURRENT_SOURCE_DIR}/data/switch/icon.jpg --nacp=${PROJECT_NAME}.nacp)
     add_custom_target(${PROJECT_NAME}_switch_release.zip
             DEPENDS ${PROJECT_NAME}.nro
             COMMAND rm -rf ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
             COMMAND mkdir -p ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
             COMMAND cp -f ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.nro ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/${PROJECT_NAME}.nro
-            #COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/data/skin ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
-            #COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/data/nx/skin ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
+            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
             COMMAND cd ${CMAKE_BINARY_DIR}/release && zip -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_switch.zip ${PROJECT_NAME}
-            COMMAND cd ${CMAKE_CURRENT_BINARY_DIR}
-            )
+            COMMAND cd ${CMAKE_CURRENT_BINARY_DIR})
 endif (BUILD_NX)
