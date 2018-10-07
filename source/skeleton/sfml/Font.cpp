@@ -36,6 +36,9 @@
 #include <cstdlib>
 #include <cstring>
 
+extern const char c2d_font_default[];
+extern const int c2d_font_default_length;
+
 namespace c2d {
 ////////////////////////////////////////////////////////////
     Font::Font() :
@@ -147,6 +150,11 @@ namespace c2d {
 #endif
     }
 
+////////////////////////////////////////////////////////////
+    bool Font::load() {
+        return loadFromMemory(
+                c2d_font_default, (std::size_t) c2d_font_default_length);
+    }
 
 ////////////////////////////////////////////////////////////
     bool Font::loadFromMemory(const void *data, std::size_t sizeInBytes) {
