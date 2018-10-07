@@ -4,7 +4,7 @@
 
 #include <cstring>
 #include <cstdio>
-#include "c2d.h"
+#include "cross2d/c2d.h"
 #include "platforms/psp2/psp2_shaders.h"
 
 #ifdef __PSP2_DEBUG__

@@ -2,8 +2,8 @@
 // Created by cpasjuste on 23/09/18.
 //
 
-#include "c2d.h"
-#include "skeleton/tweeny/tweeny.h"
+#include "cross2d/c2d.h"
+#include "cross2d/skeleton/tweeny/tweeny.h"
 
 using namespace c2d;
 using namespace tweeny;

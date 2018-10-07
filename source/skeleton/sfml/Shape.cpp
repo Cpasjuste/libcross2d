@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <cmath>
 
-#include "c2d.h"
+#include "cross2d/c2d.h"
 
 namespace {
     // Compute the normal of a segment

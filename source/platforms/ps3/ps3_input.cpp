@@ -5,7 +5,7 @@
 #include <cmath>
 #include <cstdio>
 
-#include "c2d.h"
+#include "cross2d/c2d.h"
 #include <io/pad.h>
 
 using namespace c2d;

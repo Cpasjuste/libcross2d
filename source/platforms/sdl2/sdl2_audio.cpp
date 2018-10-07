@@ -3,9 +3,7 @@
 //
 
 #include <malloc.h>
-#include <platforms/sdl2/sdl2_audio.h>
-
-#include "platforms/sdl2/sdl2_audio.h"
+#include "cross2d/platforms/sdl2/sdl2_audio.h"
 
 using namespace c2d;
 

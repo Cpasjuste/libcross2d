@@ -5,7 +5,7 @@
 #include <cstring>
 #include <sys/stat.h>
 
-#include "platforms/posix/posix_io.h"
+#include "cross2d/platforms/posix/posix_io.h"
 
 using namespace c2d;
 

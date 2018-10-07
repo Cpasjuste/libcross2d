@@ -4,9 +4,7 @@
 
 #ifdef __SDL2_GL__
 
-#include <platforms/sdl2/sdl2_gl_renderer.h>
-
-#include "c2d.h"
+#include "cross2d/c2d.h"
 
 using namespace c2d;
 
