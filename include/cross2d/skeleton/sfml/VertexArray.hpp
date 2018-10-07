@@ -172,11 +172,12 @@ namespace c2d {
 
         std::vector<Vertex> getVertices() const;
 
-        void bindVbo() const;
+        /// Vertex Buffer Object (OpenGL)
+        void bind() const;
 
-        void unbindVbo() const;
+        void unbind() const;
 
-        void updateVbo();
+        void update();
 
     private:
 

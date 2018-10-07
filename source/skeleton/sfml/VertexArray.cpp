@@ -34,7 +34,7 @@ namespace c2d {
     VertexArray::VertexArray() :
             m_vertices(),
             m_primitiveType(Points) {
-        updateVbo();
+        update();
     }
 
 
@@ -42,7 +42,7 @@ namespace c2d {
     VertexArray::VertexArray(PrimitiveType type, std::size_t vertexCount) :
             m_vertices(vertexCount),
             m_primitiveType(type) {
-        updateVbo();
+        update();
     }
 
 
@@ -67,21 +67,21 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void VertexArray::clear() {
         m_vertices.clear();
-        updateVbo();
+        update();
     }
 
 
 ////////////////////////////////////////////////////////////
     void VertexArray::resize(std::size_t vertexCount) {
         m_vertices.resize(vertexCount);
-        updateVbo();
+        update();
     }
 
 
 ////////////////////////////////////////////////////////////
     void VertexArray::append(const Vertex &vertex) {
         m_vertices.push_back(vertex);
-        updateVbo();
+        update();
     }
 
 
@@ -132,7 +132,7 @@ namespace c2d {
         return m_vertices;
     }
 
-    void VertexArray::updateVbo() {
+    void VertexArray::update() {
 #ifdef __GL__
         if (!c2d_renderer || !c2d_renderer->available) {
             return;
@@ -149,7 +149,7 @@ namespace c2d {
 #endif
     }
 
-    void VertexArray::bindVbo() const {
+    void VertexArray::bind() const {
 #ifdef __GL__
         if (!c2d_renderer || !c2d_renderer->available) {
             return;
@@ -158,7 +158,7 @@ namespace c2d {
 #endif
     }
 
-    void VertexArray::unbindVbo() const {
+    void VertexArray::unbind() const {
 #ifdef __GL__
         if (!c2d_renderer || !c2d_renderer->available) {
             return;

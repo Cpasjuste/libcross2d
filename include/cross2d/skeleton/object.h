@@ -63,6 +63,8 @@ namespace c2d {
 
         virtual void setLayer(int layer);
 
+
+
         Type getType() const {
             return type;
         }

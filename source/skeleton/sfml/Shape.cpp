@@ -268,7 +268,7 @@ namespace c2d {
         for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i) {
             m_vertices[i].color = m_fillColor;
         }
-        m_vertices.updateVbo();
+        m_vertices.update();
     }
 
 ////////////////////////////////////////////////////////////
@@ -283,7 +283,7 @@ namespace c2d {
             m_vertices[i].texCoords.x = m_textureRect.left + m_textureRect.width * xratio;
             m_vertices[i].texCoords.y = m_textureRect.top + m_textureRect.height * yratio;
         }
-        m_vertices.updateVbo();
+        m_vertices.update();
     }
 
 ////////////////////////////////////////////////////////////
@@ -336,7 +336,7 @@ namespace c2d {
     void Shape::updateOutlineColors() {
         for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
             m_outlineVertices[i].color = m_outlineColor;
-        m_outlineVertices.updateVbo();
+        m_outlineVertices.update();
     }
 
 } // namespace sf

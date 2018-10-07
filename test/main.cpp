@@ -37,10 +37,8 @@ int main() {
     // create a font
     auto *font = new C2DFont();
     if (font->load()) {
-        // some font have too much "margin"..
-        font->setOffset({0, -10});
         // create a text and add it to the rect
-        auto *text = new C2DText("Hello world", *font);
+        auto *text = new C2DText("cross2d", *font);
         text->setOutlineColor(Color::Blue);
         text->setOutlineThickness(2);
         text->setPosition(rect->getSize().x / 2, 32);
@@ -60,13 +58,13 @@ int main() {
             {renderer->getSize().x / 2 + 256, rect->getPosition().y},
             4.0f, TweenLoop::PingPong);
     rect->add(tweenPos);
-    auto *tweenRot = new TweenRotation(0, 360, 4.0f, TweenLoop::PingPong);
+    auto *tweenRot = new TweenRotation(0, 360, 8.0f, TweenLoop::PingPong);
     rect->add(tweenRot);
-    auto *tweenScale = new TweenScale(rect->getScale(), {2, 2}, 4.0f, TweenLoop::PingPong);
+    auto *tweenScale = new TweenScale(rect->getScale(), {2, 2}, 8.0f, TweenLoop::PingPong);
     rect->add(tweenScale);
-    auto *tweenColor = new TweenColor(rect->getFillColor(), Color::Orange, 4.0f, TweenLoop::PingPong);
+    auto *tweenColor = new TweenColor(rect->getFillColor(), Color::Black, 3.0f, TweenLoop::PingPong);
     rect->add(tweenColor);
-    auto *tweenAlpha = new TweenAlpha(255, 100, 4.0f, TweenLoop::PingPong);
+    auto *tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     rect->add(tweenAlpha);
 
     while (renderer->getElapsedTime().asSeconds() < 20) {

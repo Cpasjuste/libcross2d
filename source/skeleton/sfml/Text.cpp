@@ -170,7 +170,7 @@ namespace c2d {
             if (!m_geometryNeedUpdate) {
                 for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
                     m_vertices[i].color = m_fillColor;
-                m_vertices.updateVbo();
+                m_vertices.update();
             }
         }
     }
@@ -185,7 +185,7 @@ namespace c2d {
             if (!m_geometryNeedUpdate) {
                 for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
                     m_outlineVertices[i].color = m_outlineColor;
-                m_outlineVertices.updateVbo();
+                m_outlineVertices.update();
             }
         }
     }
@@ -590,8 +590,8 @@ namespace c2d {
         m_bounds.width = maxX - minX;
         m_bounds.height = maxY - minY;
 
-        m_vertices.updateVbo();
-        m_outlineVertices.updateVbo();
+        m_vertices.update();
+        m_outlineVertices.update();
     }
 
 } // namespace sf

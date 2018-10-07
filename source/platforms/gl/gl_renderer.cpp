@@ -64,7 +64,7 @@ void GLRenderer::draw(VertexArray *vertexArray,
     }
 
     // bind object vao
-    vertexArray->bindVbo();
+    vertexArray->bind();
 
     // set shader
     GL_CHECK(glUseProgram(shader->GetProgram()));
@@ -145,7 +145,7 @@ void GLRenderer::draw(VertexArray *vertexArray,
     }
 
     // unbind object vao
-    vertexArray->unbindVbo();
+    vertexArray->unbind();
 }
 
 void GLRenderer::clear() {
