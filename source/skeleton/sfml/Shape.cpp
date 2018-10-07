@@ -26,9 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cmath>
-#include <skeleton/sfml/Shape.hpp>
 
-#include "skeleton/sfml/Shape.hpp"
 #include "c2d.h"
 
 namespace {
@@ -52,6 +50,38 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     Shape::~Shape() {
     }
+
+    ////////////////////////////////////////////////////////////
+    void Shape::setTexture(const Texture *texture, bool resetRect) {
+        if (texture) {
+            // Recompute the texture area if requested, or if there was no texture & rect before
+            if (resetRect || (!m_texture && (m_textureRect == IntRect())))
+                setTextureRect(IntRect(0, 0, (int) texture->getSize().x, (int) texture->getSize().y));
+        }
+
+        // Assign the new texture
+        m_texture = texture;
+    }
+
+
+////////////////////////////////////////////////////////////
+    const Texture *Shape::getTexture() const {
+        return m_texture;
+    }
+
+
+////////////////////////////////////////////////////////////
+    void Shape::setTextureRect(const IntRect &rect) {
+        m_textureRect = rect;
+        updateTexCoords();
+    }
+
+
+////////////////////////////////////////////////////////////
+    const IntRect &Shape::getTextureRect() const {
+        return m_textureRect;
+    }
+
 
 ////////////////////////////////////////////////////////////
     void Shape::setFillColor(const Color &color) {
@@ -115,7 +145,8 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     FloatRect Shape::getGlobalBounds() const {
-        return getTransform().transformRect(getLocalBounds());
+        Transform t = transformation * getTransform();
+        return t.transformRect(getLocalBounds());
     }
 
 
@@ -168,6 +199,8 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     Shape::Shape() :
+            m_texture(nullptr),
+            m_textureRect(),
             m_fillColor(255, 255, 255),
             m_outlineColor(255, 255, 255),
             m_outlineThickness(0),
@@ -207,6 +240,9 @@ namespace c2d {
         // Color
         updateFillColors();
 
+        // Texture coordinates
+        updateTexCoords();
+
         // Outline
         updateOutline();
 
@@ -218,7 +254,7 @@ namespace c2d {
 
         Transform combined = transform * getTransform();
         if (getFillColor().a != 0) {
-            c2d_renderer->draw(&m_vertices, combined, nullptr);
+            c2d_renderer->draw(&m_vertices, combined, m_texture);
         }
         if (getOutlineColor().a != 0 && m_outlineThickness > 0) {
             c2d_renderer->draw(&m_outlineVertices, combined, nullptr);
@@ -231,6 +267,21 @@ namespace c2d {
     void Shape::updateFillColors() {
         for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i) {
             m_vertices[i].color = m_fillColor;
+        }
+        m_vertices.updateVbo();
+    }
+
+////////////////////////////////////////////////////////////
+    void Shape::updateTexCoords() {
+        for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i) {
+            float xratio =
+                    m_insideBounds.width > 0 ?
+                    (m_vertices[i].position.x - m_insideBounds.left) / m_insideBounds.width : 0;
+            float yratio =
+                    m_insideBounds.height > 0 ?
+                    (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height : 0;
+            m_vertices[i].texCoords.x = m_textureRect.left + m_textureRect.width * xratio;
+            m_vertices[i].texCoords.y = m_textureRect.top + m_textureRect.height * yratio;
         }
         m_vertices.updateVbo();
     }

@@ -32,7 +32,8 @@ GLTexture::GLTexture(const char *path) : Texture(path) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     if (texID) {
-        setTextureRect(IntRect(0, 0, w, h));
+        setSize(w, h);
+        setTexture(this, true);
         pitch = getTextureRect().width * bpp;
         available = true;
     } else {
@@ -60,7 +61,8 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
                           GL_RGBA, GL_UNSIGNED_BYTE, pixels));
 
     if (texID) {
-        setTextureRect(IntRect(0, 0, w, h));
+        setSize(w, h);
+        setTexture(this, true);
         pitch = getTextureRect().width * bpp;
         available = true;
     } else {
@@ -104,6 +106,7 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
+        setTexture(this, true);
         available = true;
     } else {
         printf("GLTexture(%p): couldn't create texture", this);

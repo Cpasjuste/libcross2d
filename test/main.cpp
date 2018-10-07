@@ -68,7 +68,7 @@ int main() {
     rect->add(tweenScale);
     auto *tweenColor = new TweenColor(rect->getFillColor(), Color::Orange, 4.0f, TweenLoop::PingPong);
     rect->add(tweenColor);
-    auto *tweenAlpha = new TweenAlpha(255, 0, 4.0f, TweenLoop::PingPong);
+    auto *tweenAlpha = new TweenAlpha(255, 100, 4.0f, TweenLoop::PingPong);
     rect->add(tweenAlpha);
 
     while (renderer->getElapsedTime().asSeconds() < 20) {

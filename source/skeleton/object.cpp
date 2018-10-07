@@ -64,7 +64,7 @@ void C2DObject::draw(Transform &transform) {
         }
     }
 
-    Transform combinedTransform = transform;
+    Transform combinedTransform = transformation = transform;
     combinedTransform *= ((Transformable *) this)->getTransform();
 
     for (auto &child : childs) {

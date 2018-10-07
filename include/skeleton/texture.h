@@ -7,12 +7,11 @@
 
 #include "object.h"
 #include "shader_list.h"
-#include "skeleton/sfml/Transformable.hpp"
-#include "skeleton/sfml/VertexArray.hpp"
+#include "skeleton/sfml/Shape.hpp"
 
 namespace c2d {
 
-    class Texture : public Transformable {
+    class Texture : public Shape {
 
     public:
 
@@ -48,29 +47,15 @@ namespace c2d {
         virtual void applyShader() {};
         // END - to implement, device specific code
 
-        void setTextureRect(const IntRect &rectangle);
+        void setSize(const c2d::Vector2f &size);
 
-        void setOrigin(float x, float y);
+        void setSize(float width, float height);
 
-        void setOrigin(const Vector2f &origin);
+        const c2d::Vector2f &getSize() const;
 
-        void setOrigin(const Origin &origin);
+        std::size_t getPointCount() const;
 
-        void setColor(const Color &color);
-
-        const IntRect &getTextureRect() const;
-
-        const Color &getColor() const;
-
-        void setAlpha(uint8_t alpha);
-
-        uint8_t getAlpha();
-
-        FloatRect getLocalBounds() const;
-
-        FloatRect getGlobalBounds() const;
-
-        VertexArray *getVertices();
+        c2d::Vector2f getPoint(std::size_t index) const;
 
         char path[512];
         int bpp = 4;
@@ -81,16 +66,7 @@ namespace c2d {
 
     private:
 
-        virtual void draw(Transform &transform);
-
-        void updatePositions();
-
-        void updateTexCoords();
-
-        VertexArray m_vertices;
-        IntRect m_textureRect;
-        Origin m_origin = Origin::TopLeft;
-
+        c2d::Vector2f m_size;
     };
 }
 

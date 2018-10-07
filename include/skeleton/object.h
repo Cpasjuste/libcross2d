@@ -76,6 +76,7 @@ namespace c2d {
         virtual void setAlpha(uint8_t alpha);
 
         Type type;
+        Transform transformation;
 
     private:
 

@@ -50,6 +50,42 @@ namespace c2d {
         virtual ~Shape();
 
         ////////////////////////////////////////////////////////////
+        /// \brief Change the source texture of the shape
+        ///
+        /// The \a texture argument refers to a texture that must
+        /// exist as long as the shape uses it. Indeed, the shape
+        /// doesn't store its own copy of the texture, but rather keeps
+        /// a pointer to the one that you passed to this function.
+        /// If the source texture is destroyed and the shape tries to
+        /// use it, the behavior is undefined.
+        /// \a texture can be NULL to disable texturing.
+        /// If \a resetRect is true, the TextureRect property of
+        /// the shape is automatically adjusted to the size of the new
+        /// texture. If it is false, the texture rect is left unchanged.
+        ///
+        /// \param texture   New texture
+        /// \param resetRect Should the texture rect be reset to the size of the new texture?
+        ///
+        /// \see getTexture, setTextureRect
+        ///
+        ////////////////////////////////////////////////////////////
+        void setTexture(const Texture *texture, bool resetRect = false);
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Set the sub-rectangle of the texture that the shape will display
+        ///
+        /// The texture rect is useful when you don't want to display
+        /// the whole texture, but rather a part of it.
+        /// By default, the texture rect covers the entire texture.
+        ///
+        /// \param rect Rectangle defining the region of the texture to display
+        ///
+        /// \see getTextureRect, setTexture
+        ///
+        ////////////////////////////////////////////////////////////
+        void setTextureRect(const IntRect &rect);
+
+        ////////////////////////////////////////////////////////////
         /// \brief Set the fill color of the shape
         ///
         /// This color is modulated (multiplied) with the shape's
@@ -111,6 +147,30 @@ namespace c2d {
         ///
         ////////////////////////////////////////////////////////////
         virtual void setOutlineThickness(float thickness);
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Get the source texture of the shape
+        ///
+        /// If the shape has no source texture, a NULL pointer is returned.
+        /// The returned pointer is const, which means that you can't
+        /// modify the texture when you retrieve it with this function.
+        ///
+        /// \return Pointer to the shape's texture
+        ///
+        /// \see setTexture
+        ///
+        ////////////////////////////////////////////////////////////
+        const Texture *getTexture() const;
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Get the sub-rectangle of the texture displayed by the shape
+        ///
+        /// \return Texture rectangle of the shape
+        ///
+        /// \see setTextureRect
+        ///
+        ////////////////////////////////////////////////////////////
+        const IntRect &getTextureRect() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the fill color of the shape
@@ -243,6 +303,12 @@ namespace c2d {
         void updateFillColors();
 
         ////////////////////////////////////////////////////////////
+        /// \brief Update the fill vertices' texture coordinates
+        ///
+        ////////////////////////////////////////////////////////////
+        void updateTexCoords();
+
+        ////////////////////////////////////////////////////////////
         /// \brief Update the outline vertices' position
         ///
         ////////////////////////////////////////////////////////////
@@ -254,11 +320,13 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         void updateOutlineColors();
 
-    private:
+    protected:
 
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
+        const Texture *m_texture;          ///< Texture of the shape
+        IntRect m_textureRect;      ///< Rectangle defining the area of the source texture to display
         Color m_fillColor;        ///< Fill color
         Color m_outlineColor;     ///< Outline color
         float m_outlineThickness; ///< Thickness of the shape's outline
