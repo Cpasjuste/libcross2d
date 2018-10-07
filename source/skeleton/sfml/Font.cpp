@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include "cross2d/c2d.h"
 #include "cross2d/skeleton/sfml/Font.hpp"
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
@@ -36,8 +37,8 @@
 #include <cstdlib>
 #include <cstring>
 
-extern const char c2d_font_default[];
-extern const int c2d_font_default_length;
+extern char c2d_font_default[];
+extern int c2d_font_default_length;
 
 namespace c2d {
 ////////////////////////////////////////////////////////////
