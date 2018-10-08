@@ -8,13 +8,6 @@
 #include "cross2d/c2d.h"
 #include "cross2d/platforms/psp2/psp2_shaders.h"
 
-#ifdef __PSP2_DEBUG__
-
-#include <psp2/kernel/clib.h>
-
-#define printf sceClibPrintf
-#endif
-
 using namespace c2d;
 
 PSP2Texture::PSP2Texture(const char *p) : Texture(p) {
@@ -48,13 +41,14 @@ PSP2Texture::PSP2Texture(const char *p) : Texture(p) {
 
 PSP2Texture::PSP2Texture(const Vector2f &size, Format fmt) : Texture(size, fmt) {
 
+    printf("PSP2Texture(%p): %i x %i\n", this, (int) size.x, (int) size.y);
+
     vita2d_texture_set_alloc_memblock_type(SCE_KERNEL_MEMBLOCK_TYPE_USER_RW);
     tex = vita2d_create_empty_texture_format(
             (unsigned int) size.x, (unsigned int) size.y,
             fmt == Format::RGBA8 ? SCE_GXM_TEXTURE_FORMAT_A8B8G8R8
                                  : SCE_GXM_TEXTURE_FORMAT_R5G6B5);
     vita2d_texture_set_alloc_memblock_type(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW);
-
     if (!tex) {
         printf("PSP2Texture: couldn't create texture\n");
         return;
@@ -137,8 +131,9 @@ void PSP2Texture::setFilter(Filter f) {
 
 void PSP2Texture::setShader(int shaderIndex) {
 
-    PSP2ShaderList *shaderList = (PSP2ShaderList *) c2d_renderer->getShaderList();
+    ShaderList *shaderList = c2d_renderer->getShaderList();
     if (shaderIndex >= shaderList->getCount()) {
+        shader = shaderList->get(0);
         return;
     }
 
@@ -161,22 +156,22 @@ void PSP2Texture::applyShader() {
     out_size[0] = getSize().x * getScale().x;
     out_size[1] = getSize().y * getScale().y;
 
-    if (v2d_shader->vertexInput.texture_size > 0) {
+    if (v2d_shader->vertexInput.texture_size) {
         PSP2ShaderList::setVertexUniform(v2d_shader->vertexInput.texture_size, tex_size, 2);
     }
-    if (v2d_shader->vertexInput.output_size > 0) {
+    if (v2d_shader->vertexInput.output_size) {
         PSP2ShaderList::setVertexUniform(v2d_shader->vertexInput.output_size, out_size, 2);
     }
-    if (v2d_shader->vertexInput.video_size > 0) {
+    if (v2d_shader->vertexInput.video_size) {
         PSP2ShaderList::setVertexUniform(v2d_shader->vertexInput.video_size, tex_size, 2);
     }
-    if (v2d_shader->fragmentInput.texture_size > 0) {
+    if (v2d_shader->fragmentInput.texture_size) {
         PSP2ShaderList::setFragmentUniform(v2d_shader->fragmentInput.texture_size, tex_size, 2);
     }
-    if (v2d_shader->fragmentInput.output_size > 0) {
+    if (v2d_shader->fragmentInput.output_size) {
         PSP2ShaderList::setFragmentUniform(v2d_shader->fragmentInput.output_size, out_size, 2);
     }
-    if (v2d_shader->fragmentInput.video_size > 0) {
+    if (v2d_shader->fragmentInput.video_size) {
         PSP2ShaderList::setFragmentUniform(v2d_shader->fragmentInput.video_size, tex_size, 2);
     }
 }
@@ -184,6 +179,7 @@ void PSP2Texture::applyShader() {
 PSP2Texture::~PSP2Texture() {
 
     if (tex != nullptr) {
+        printf("~PSP2Texture(%p): vita2d_free_texture\n", this);
         vita2d_wait_rendering_done();
         vita2d_free_texture(tex);
         tex = nullptr;

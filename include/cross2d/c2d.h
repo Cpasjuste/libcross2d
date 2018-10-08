@@ -23,10 +23,6 @@
 #include "cross2d/widgets/messagebox.h"
 #include "cross2d/widgets/progress.h"
 
-#ifdef __DEBUG_NVWA__
-#include "debug_new.h"
-#endif
-
 // for internal usage
 extern c2d::Renderer *c2d_renderer;
 

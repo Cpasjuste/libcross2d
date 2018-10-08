@@ -26,7 +26,7 @@ namespace c2d {
         };
 
         ShaderList(const std::string &shadersPath = "") {
-            list.push_back(Shader("NONE", nullptr));
+            list.emplace_back("NONE", nullptr);
         }
 
         virtual ~ShaderList() {
@@ -34,7 +34,7 @@ namespace c2d {
         }
 
         virtual void add(std::string n, void *d) {
-            list.push_back(Shader(n, d));
+            list.emplace_back(n, d);
         }
 
         virtual Shader *get(int index) {
@@ -45,9 +45,9 @@ namespace c2d {
         }
 
         virtual Shader *get(const std::string &name) {
-            for (size_t i = 0; i < list.size(); i++) {
-                if (list[i].name == name) {
-                    return &list[i];
+            for (auto &i : list) {
+                if (i.name == name) {
+                    return &i;
                 }
             }
             return nullptr;
@@ -55,8 +55,8 @@ namespace c2d {
 
         virtual std::vector<std::string> getNames() {
             std::vector<std::string> names;
-            for (size_t i = 0; i < list.size(); i++) {
-                names.push_back(list[i].name);
+            for (auto &i : list) {
+                names.push_back(i.name);
             }
             return names;
         }

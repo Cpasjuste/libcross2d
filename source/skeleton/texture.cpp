@@ -34,7 +34,7 @@ Texture::Texture(const unsigned char *buffer, int bufferSize) : Shape() {
 
 Texture::Texture(const Vector2f &size, Format fmt) : Shape() {
 
-    printf("Texture(%p)\n", this);
+    printf("Texture(%p): %i x %i\n", this, (int) size.x, (int) size.y);
 
     format = fmt;
     bpp = fmt == Format::RGB565 ? 2 : 4;

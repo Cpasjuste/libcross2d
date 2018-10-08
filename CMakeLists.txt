@@ -245,13 +245,6 @@ elseif (BUILD_SDL1)
     endif (BUILD_SDL1_GL)
 endif (BUILD_SFML)
 
-#if (BUILD_DEBUG)
-#    list(APPEND CROSS2D_DIR debug/nvwa/nvwa)
-#    file(GLOB NVWA_SRC debug/nvwa/nvwa/*.c*)
-#    list(APPEND CROSS2D_SRC ${NVWA_SRC})
-#    list(APPEND FLAGS -g -O0 -D__DEBUG_NVWA__ -D_DEBUG_NEW_FILENAME_LEN=128)
-#endif (BUILD_DEBUG)
-
 add_library(cross2d ${CROSS2D_SRC} ${PLATFORM_SRC})
 target_include_directories(cross2d PUBLIC ${CROSS2D_DIR} ${PLATFORM_DIRS})
 target_link_libraries(cross2d PUBLIC ${PLATFORM_LIBS})

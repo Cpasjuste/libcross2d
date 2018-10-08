@@ -5,7 +5,7 @@
 #include "cross2d/c2d.h"
 
 #ifdef __PSP2__
-#define TEX_PATH "data/gbatemp.png"
+#define TEX_PATH "app0:/data/gbatemp.png"
 #elif __3DS__
 #define TEX_PATH "data/gbatemp.png"
 #else

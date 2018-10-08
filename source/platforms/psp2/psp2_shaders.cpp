@@ -44,8 +44,6 @@ PSP2ShaderList::PSP2ShaderList(const std::string &shadersPath) : ShaderList(shad
         create((SceGxmProgram *) sharp_bilinear_v, (SceGxmProgram *) sharp_bilinear_f));
     add("sharp",
         create((SceGxmProgram *) sharp_bilinear_simple_v, (SceGxmProgram *) sharp_bilinear_simple_f));
-
-    printf("PSP2ShaderList: found %i shaders\n", getCount() - 1);
 }
 
 PSP2ShaderList::~PSP2ShaderList() {

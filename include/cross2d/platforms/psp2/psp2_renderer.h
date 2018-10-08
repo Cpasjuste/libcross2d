@@ -7,12 +7,6 @@
 
 #include "cross2d/skeleton/renderer.h"
 
-//#ifdef __PSP2_DEBUG__
-#include <psp2/kernel/clib.h>
-
-#define printf sceClibPrintf
-//#endif
-
 namespace c2d {
 
     class PSP2Renderer : public Renderer {
