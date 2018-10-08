@@ -31,7 +31,7 @@ void Progress::setProgress(float progress) {
             progress_fg->getSize().y);
 }
 
-FloatRect Progress::getProgressBounds() {
+float Progress::getProgressWidth() {
 
-    return progress_fg->getGlobalBounds();
+    return progress_fg->getSize().x;
 }

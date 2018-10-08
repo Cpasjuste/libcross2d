@@ -15,7 +15,7 @@ namespace c2d {
 
         void setProgress(float progress);
 
-        FloatRect getProgressBounds();
+        float getProgressWidth();
 
         void setBgColor(const Color &color);
 
