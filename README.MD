@@ -7,7 +7,7 @@ Build and run (Linux/deb)
     ```
 - Build
     ```
-    git clone --recursive git@github.com:cpasjuste/libcross2d.git
+    git clone --recursive git@github.com:Cpasjuste/libcross2d.git
     cd libcross2d
     mkdir cmake-build && cd cmake-build
     cmake -DBUILD_SDL2=1 ../
@@ -29,7 +29,7 @@ Build and run (Nintendo Switch)
 
 - Build
     ```
-    git clone --recursive git@github.com:cpasjuste/libcross2d.git
+    git clone --recursive git@github.com:Cpasjuste/libcross2d.git
     cd libcross2d
     mkdir cmake-build && cd cmake-build
     export DEVKITPRO=/opt/devkitpro
