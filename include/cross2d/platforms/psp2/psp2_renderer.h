@@ -23,7 +23,7 @@ namespace c2d {
 
         ~PSP2Renderer();
 
-        void draw(const VertexArray &vertices,
+        void draw(VertexArray *vertexArray,
                   const Transform &transform,
                   const Texture *texture);
 

@@ -2,8 +2,6 @@
 // Created by cpasjuste on 09/12/16.
 //
 
-#include <cross2d/skeleton/renderer.h>
-
 #include "cross2d/c2d.h"
 
 using namespace c2d;

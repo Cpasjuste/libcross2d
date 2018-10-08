@@ -33,7 +33,9 @@ extern c2d::Renderer *c2d_renderer;
 #ifdef __PSP2__
 
 #ifdef __PSP2_DEBUG__
+
 #include <psp2/kernel/clib.h>
+
 #define printf sceClibPrintf
 #endif
 
@@ -46,9 +48,9 @@ extern c2d::Renderer *c2d_renderer;
 
 #define C2DRenderer PSP2Renderer
 #define C2DTexture PSP2Texture
-#define C2DRectangle Rectangle
-#define C2DCircle Circle
-#define C2DLine Line
+#define C2DRectangle RectangleShape
+#define C2DRoundedRectangle RoundedRectangleShape
+#define C2DCircle CircleShape
 #define C2DFont Font
 #define C2DText Text
 #define C2DInput SDL2Input
@@ -400,7 +402,7 @@ const int C2D_DEFAULT_JOY_KEYS[]{
         0
 };
 
-#ifndef NO_KEYBOARD
+#ifdef NO_KEYBOARD
 const int C2D_DEFAULT_KB_KEYS[]{
         // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
         KEY_KB_UP_DEFAULT, KEY_KB_DOWN_DEFAULT, KEY_KB_LEFT_DEFAULT, KEY_KB_RIGHT_DEFAULT,
@@ -409,6 +411,10 @@ const int C2D_DEFAULT_KB_KEYS[]{
         KEY_KB_FIRE4_DEFAULT, KEY_KB_FIRE5_DEFAULT, KEY_KB_FIRE6_DEFAULT,
         0
         // 13, 15, 12, 14, 10, 11, 0, 1, 2, 3, 7, 6, 0 // QUIT
+};
+#else
+const int C2D_DEFAULT_KB_KEYS[]{
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 #endif
 

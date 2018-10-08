@@ -3,7 +3,7 @@
 //
 
 #include <sys/time.h>
-#include "platforms/psp2/psp2_clock.h"
+#include "cross2d/platforms/psp2/psp2_clock.h"
 
 using namespace c2d;
 
@@ -15,6 +15,6 @@ PSP2Clock::PSP2Clock() : Clock() {
 Time PSP2Clock::getCurrentTime() const {
 
     struct timeval time;
-    gettimeofday(&time, NULL);
+    gettimeofday(&time, nullptr);
     return microseconds((long) 1000000 * time.tv_sec + time.tv_usec);
 }

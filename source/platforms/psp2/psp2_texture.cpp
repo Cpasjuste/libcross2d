@@ -4,8 +4,9 @@
 
 #include <cstring>
 #include <cstdio>
+
 #include "cross2d/c2d.h"
-#include "platforms/psp2/psp2_shaders.h"
+#include "cross2d/platforms/psp2/psp2_shaders.h"
 
 #ifdef __PSP2_DEBUG__
 
@@ -36,26 +37,22 @@ PSP2Texture::PSP2Texture(const char *p) : Texture(p) {
         return;
     }
 
-    int w = vita2d_texture_get_width(tex);
-    int h = vita2d_texture_get_height(tex);
-
-    setSize(Vector2f(w, h));
-    setTextureRect(IntRect(0, 0, w, h));
-
+    setSize(vita2d_texture_get_width(tex), vita2d_texture_get_height(tex));
+    setTexture(this, true);
     pitch = vita2d_texture_get_stride(tex);
-    setFiltering(filtering);
+    setFilter(filter);
     setShader(0);
 
     available = true;
 }
 
-PSP2Texture::PSP2Texture(const Vector2f &size, int fmt) : Texture(size, fmt) {
+PSP2Texture::PSP2Texture(const Vector2f &size, Format fmt) : Texture(size, fmt) {
 
     vita2d_texture_set_alloc_memblock_type(SCE_KERNEL_MEMBLOCK_TYPE_USER_RW);
     tex = vita2d_create_empty_texture_format(
             (unsigned int) size.x, (unsigned int) size.y,
-            fmt == C2D_TEXTURE_FMT_RGBA8 ? SCE_GXM_TEXTURE_FORMAT_A8B8G8R8
-                                         : SCE_GXM_TEXTURE_FORMAT_R5G6B5);
+            fmt == Format::RGBA8 ? SCE_GXM_TEXTURE_FORMAT_A8B8G8R8
+                                 : SCE_GXM_TEXTURE_FORMAT_R5G6B5);
     vita2d_texture_set_alloc_memblock_type(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW);
 
     if (!tex) {
@@ -63,8 +60,10 @@ PSP2Texture::PSP2Texture(const Vector2f &size, int fmt) : Texture(size, fmt) {
         return;
     }
 
+    setSize(size.x, size.y);
+    setTexture(this, true);
     pitch = vita2d_texture_get_stride(tex);
-    setFiltering(filtering);
+    setFilter(filter);
     setShader(0);
 
     available = true;
@@ -78,8 +77,8 @@ int PSP2Texture::resize(const Vector2f &size, bool copyPixels) {
 
     vita2d_texture *tex_new = vita2d_create_empty_texture_format(
             (unsigned int) size.x, (unsigned int) size.y,
-            format == C2D_TEXTURE_FMT_RGBA8 ? SCE_GXM_TEXTURE_FORMAT_A8B8G8R8
-                                            : SCE_GXM_TEXTURE_FORMAT_R5G6B5);
+            format == Format::RGBA8 ? SCE_GXM_TEXTURE_FORMAT_A8B8G8R8
+                                    : SCE_GXM_TEXTURE_FORMAT_R5G6B5);
 
     if (!tex_new) {
         printf("PSP2Texture: couldn't create texture\n");
@@ -106,7 +105,7 @@ int PSP2Texture::resize(const Vector2f &size, bool copyPixels) {
     pitch = (int) (size.x * bpp);
     setSize(size);
     setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
-    setFiltering(filtering);
+    setFilter(filter);
 
     return 0;
 }
@@ -127,12 +126,12 @@ int PSP2Texture::lock(FloatRect *rect, void **pixels, int *p) {
     return 0;
 }
 
-void PSP2Texture::setFiltering(int filter) {
+void PSP2Texture::setFilter(Filter f) {
 
-    filtering = filter;
+    filter = f;
     vita2d_texture_set_filters(tex,
                                SCE_GXM_TEXTURE_FILTER_POINT,
-                               filter == C2D_TEXTURE_FILTER_POINT ?
+                               filter == Filter::Point ?
                                SCE_GXM_TEXTURE_FILTER_POINT : SCE_GXM_TEXTURE_FILTER_LINEAR);
 }
 

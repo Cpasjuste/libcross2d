@@ -3,7 +3,7 @@
 //
 
 #include <vita2d.h>
-#include "platforms/psp2/psp2_shaders.h"
+#include "cross2d/platforms/psp2/psp2_shaders.h"
 
 #include "lcd3x_v.h"
 #include "lcd3x_f.h"
@@ -53,7 +53,7 @@ PSP2ShaderList::~PSP2ShaderList() {
     SceGxmShaderPatcher *shaderPatcher = vita2d_get_shader_patcher();
 
     for (int i = 0; i < getCount(); i++) {
-        if (get(i)->data != NULL) {
+        if (get(i)->data != nullptr) {
             vita2d_shader *shader = (vita2d_shader *) get(i)->data;
             sceGxmShaderPatcherReleaseFragmentProgram(shaderPatcher, shader->fragmentProgram);
             sceGxmShaderPatcherReleaseVertexProgram(shaderPatcher, shader->vertexProgram);

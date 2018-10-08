@@ -10,16 +10,15 @@ add_dependencies(${PROJECT_NAME}.elf ${PROJECT_NAME}.data)
 #####################
 if (BUILD_VITA)
     vita_create_self(${PROJECT_NAME}.self ${PROJECT_NAME}.elf)
-    add_custom_target(${PROJECT_NAME}_vita_release.zip
+    add_custom_target(${PROJECT_NAME}_vita_release.vpk
             DEPENDS ${PROJECT_NAME}.self
-            COMMAND rm -rf ${CMAKE_BINARY_DIR}/release/pnes
-            COMMAND mkdir -p ${CMAKE_BINARY_DIR}/release/pnes/sce_sys
-            COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID="PNES0001" "pnes" ${CMAKE_BINARY_DIR}/release/pnes/sce_sys/param.sfo
-            COMMAND cp -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.self ${CMAKE_BINARY_DIR}/release/pnes/eboot.bin
-            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/pnes/data/skin ${CMAKE_BINARY_DIR}/release/pnes/
-            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/pnes/data/psp2/skin ${CMAKE_BINARY_DIR}/release/pnes/
-            COMMAND cd ${CMAKE_BINARY_DIR}/release/pnes && zip -r ../../${PROJECT_NAME}-${PNES_VERSION_MAJOR}.${PNES_VERSION_MINOR}_vita.vpk . && cd ${CMAKE_BINARY_DIR}
-            )
+            COMMAND rm -rf ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND mkdir -p ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/sce_sys
+            COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID="${TITLE_ID}" "${PROJECT_NAME}" ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/sce_sys/param.sfo
+            COMMAND cp -f ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.self ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/eboot.bin
+            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
+            COMMAND cd ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME} && zip -r ../../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_vita.vpk .
+            COMMAND cd ${CMAKE_CURRENT_BINARY_DIR})
 endif (BUILD_VITA)
 
 #####################

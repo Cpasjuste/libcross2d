@@ -62,6 +62,7 @@ if (BUILD_SFML)
     # VITA PLATORM
     #####################
 elseif (BUILD_VITA)
+    set(TITLE_ID CROSS0001)
     set(PLATFORM_DIRS
             source/platforms/psp2
             source/platforms/psp2/vita-shader-collection/includes
@@ -78,7 +79,7 @@ elseif (BUILD_VITA)
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub
-            jpeg z m c
+            jpeg png z m c
             )
     #png
     list(APPEND FLAGS -Wl,-q -D__PSP2__

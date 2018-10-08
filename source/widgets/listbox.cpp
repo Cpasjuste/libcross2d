@@ -241,7 +241,7 @@ void ListBox::setHighlightOutlineColor(const Color &color) {
     highlight->setOutlineColor(color);
 }
 
-void ListBox::setHighlightAlpha(u_int8_t alpha) {
+void ListBox::setHighlightAlpha(uint8_t alpha) {
     Color c = highlight->getFillColor();
     highlight->setFillColor({c.r, c.g, c.b, alpha});
 }

@@ -6,9 +6,9 @@
 #include <psp2/display.h>
 #include <psp2/kernel/threadmgr.h>
 
-#include "platforms/psp2/psp2_renderer.h"
-#include "platforms/psp2/psp2_texture.h"
-#include "platforms/psp2/psp2_shaders.h"
+#include "cross2d/platforms/psp2/psp2_renderer.h"
+#include "cross2d/platforms/psp2/psp2_texture.h"
+#include "cross2d/platforms/psp2/psp2_shaders.h"
 
 using namespace c2d;
 
@@ -37,14 +37,23 @@ PSP2Renderer::PSP2Renderer(const Vector2f &size) : Renderer(size) {
     shaderList = (ShaderList *) new PSP2ShaderList("");
 }
 
-void PSP2Renderer::draw(const VertexArray &vertices,
+void PSP2Renderer::draw(VertexArray *vertexArray,
                         const Transform &transform,
                         const Texture *texture) {
 
-    unsigned int count = vertices.getVertexCount();
+    Vertex *vertices;
+    size_t vertexCount;
+
+    if (!vertexArray || vertexArray->getVertexCount() < 1) {
+        printf("gl_render::draw: no vertices\n");
+        return;
+    }
+
+    vertices = vertexArray->getVertices().data();
+    vertexCount = vertexArray->getVertexCount();
 
     uint16_t *v2d_indices = (uint16_t *) vita2d_pool_memalign(
-            count * sizeof(uint16_t), sizeof(uint16_t));
+            vertexCount * sizeof(uint16_t), sizeof(uint16_t));
 
     if (!v2d_indices) {
         printf("PSP2Render::draw: vita2d_pool_memalign failed (v2d_indices)\n");
@@ -52,7 +61,7 @@ void PSP2Renderer::draw(const VertexArray &vertices,
     }
 
     SceGxmPrimitiveType type;
-    switch (vertices.getPrimitiveType()) {
+    switch (vertexArray->getPrimitiveType()) {
 
         case PrimitiveType::Triangles:
             type = SCE_GXM_PRIMITIVE_TRIANGLES;
@@ -95,7 +104,7 @@ void PSP2Renderer::draw(const VertexArray &vertices,
 
         vita2d_texture_vertex *v2d_vertices =
                 (vita2d_texture_vertex *) vita2d_pool_memalign(
-                        count * sizeof(vita2d_texture_vertex),
+                        vertexCount * sizeof(vita2d_texture_vertex),
                         sizeof(vita2d_texture_vertex));
 
         if (!v2d_vertices) {
@@ -103,7 +112,7 @@ void PSP2Renderer::draw(const VertexArray &vertices,
             return;
         }
 
-        for (unsigned int i = 0; i < count; i++) {
+        for (unsigned int i = 0; i < vertexCount; i++) {
             Vector2f v = transform.transformPoint(vertices[i].position);
 
             v2d_vertices[i].x = v.x;
@@ -120,14 +129,14 @@ void PSP2Renderer::draw(const VertexArray &vertices,
         sceGxmSetUniformDataF(vertex_wvp_buffer, _vita2d_textureWvpParam, 0, 16, _vita2d_ortho_matrix);
         sceGxmSetFragmentTexture(vita2d_get_context(), 0, &tex->tex->gxm_tex);
         sceGxmSetVertexStream(vita2d_get_context(), 0, v2d_vertices);
-        sceGxmDraw(vita2d_get_context(), type, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, count);
+        sceGxmDraw(vita2d_get_context(), type, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, vertexCount);
 
     } else {
 
         vita2d_color_vertex *v2d_vertices =
                 (vita2d_color_vertex *)
                         vita2d_pool_memalign(
-                                count * sizeof(vita2d_color_vertex),
+                                vertexCount * sizeof(vita2d_color_vertex),
                                 sizeof(vita2d_color_vertex));
 
         if (!v2d_vertices) {
@@ -135,7 +144,7 @@ void PSP2Renderer::draw(const VertexArray &vertices,
             return;
         }
 
-        for (unsigned int i = 0; i < count; i++) {
+        for (unsigned int i = 0; i < vertexCount; i++) {
             Vector2f v = transform.transformPoint(vertices[i].position);
             v2d_vertices[i].x = v.x;
             v2d_vertices[i].y = v.y;
@@ -156,7 +165,7 @@ void PSP2Renderer::draw(const VertexArray &vertices,
         sceGxmSetUniformDataF(vertexDefaultBuffer, _vita2d_colorWvpParam, 0, 16, _vita2d_ortho_matrix);
 
         sceGxmSetVertexStream(vita2d_get_context(), 0, v2d_vertices);
-        sceGxmDraw(vita2d_get_context(), type, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, count);
+        sceGxmDraw(vita2d_get_context(), type, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, vertexCount);
     }
 }
 
@@ -166,10 +175,10 @@ void PSP2Renderer::flip(bool draw) {
         vita2d_start_drawing();
         // clear screen
         vita2d_set_clear_color(
-                RGBA8((unsigned int) getFillColor().r,
-                      (unsigned int) getFillColor().g,
-                      (unsigned int) getFillColor().b,
-                      (unsigned int) getFillColor().a));
+                RGBA8((unsigned int) m_clearColor.r,
+                      (unsigned int) m_clearColor.g,
+                      (unsigned int) m_clearColor.b,
+                      (unsigned int) m_clearColor.a));
         vita2d_clear_screen();
     }
 
