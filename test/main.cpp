@@ -54,7 +54,7 @@ int main() {
     // add all this crap to the renderer
     renderer->add(rect);
 
-    auto *input = new C2DInput(nullptr);
+    auto *input = new C2DInput();
     input->setJoystickMapping(0, C2D_DEFAULT_JOY_KEYS, 0);
 
     // add some tweening :)
@@ -92,9 +92,9 @@ int main() {
         renderer->flip();
     }
 
-    // will delete widgets recursively
     delete (input);
     delete (font);
+    // will delete child's (textures, shapes, text..)
     delete (renderer);
 
     return 0;
