@@ -1,38 +1,16 @@
-Build and run (Linux/deb)
--------------------------
+cross2d
+-------
 
-- Install dependencies
-    ```
-    sudo apt-get install build-essential cmake git libsdl2-dev libfreetype6-dev libglm-dev
-    ```
-- Build
-    ```
-    git clone --recursive git@github.com:Cpasjuste/libcross2d.git
-    cd libcross2d
-    mkdir cmake-build && cd cmake-build
-    cmake -DBUILD_SDL2=1 ../
-    make
-    ./cross2d.elf
-    ```
+- a c++ cross platform 2d graphic, input and audio library
+- currently run on Linux, Switch, 3DS and PS Vita
+- quickly prototype your application on desktop (Linux)
+- use hardware acceleration on Linux, Switch, 3DS and PS Vita
+- use some of the great [sfml](https://www.sfml-dev.org/) library stuff (fonts, shapes, matrices) 
+- use [tweeny](https://github.com/mobius3/tweeny) for the (minimal) tween engine
+- use some of the great [libretro](https://github.com/libretro/glsl-shaders) shaders (Linux, Switch)
+- preliminary developed for my own use, but could now probably be used to ease development 
+- is still a work in progress
 
-
-Build and run (Nintendo Switch)
--------------------------------
-
-- Install dependencies
-    ```
-    wget https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb
-    sudo dpkg -i devkitpro-pacman.deb
-    sudo dkp-pacman -S switch-dev
-    sudo dkp-pacman -S switch-bzip2 switch-freetype switch-glad switch-glm switch-libdrm_nouveau switch-libpng switch-mesa switch-pkg-config switch-sdl2 switch-zlib
-    ```
-
-- Build
-    ```
-    git clone --recursive git@github.com:Cpasjuste/libcross2d.git
-    cd libcross2d
-    mkdir cmake-build && cd cmake-build
-    export DEVKITPRO=/opt/devkitpro
-    cmake -DBUILD_SWITCH=1 ../
-    make cross2d.nro
-    ```
+Where to start ?
+----------------
+You **should** follow the [libcross2d-examples readme](https://github.com/Cpasjuste/libcross2d-examples/blob/master/README.md).
