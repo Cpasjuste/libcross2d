@@ -3,16 +3,21 @@
 //
 
 #include "cross2d/c2d.h"
-#include "main.h"
 
-#include "../res/title.h"
+#ifdef __PSP2__
+#define TEX_PATH "data/gbatemp.png"
+#elif __3DS__
+#define TEX_PATH "data/gbatemp.png"
+#else
+#define TEX_PATH "data/gbatemp.png"
+#endif
 
 using namespace c2d;
 
 int main() {
 
     // create main renderer
-    auto *renderer = new C2DRenderer(Vector2f(SCR_W, SCR_H));
+    auto *renderer = new C2DRenderer(Vector2f(1280, 720));
     renderer->setClearColor(Color::Black);
 
     // create a rect
@@ -26,7 +31,7 @@ int main() {
     rect->setOutlineThickness(8);
 
     // create a texture and add it to the rect
-    auto *tex = new C2DTexture((const unsigned char *) pfba_title, pfba_title_length);
+    auto *tex = new C2DTexture(TEX_PATH);
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
         tex->setScale(0.5f, 0.5f);
@@ -38,7 +43,7 @@ int main() {
     auto *font = new C2DFont();
     if (font->load()) {
         // create a text and add it to the rect
-        auto *text = new C2DText("cross2d", *font);
+        auto *text = new C2DText("libcross2d", *font);
         text->setOutlineColor(Color::Blue);
         text->setOutlineThickness(2);
         text->setPosition(rect->getSize().x / 2, 32);
@@ -50,7 +55,7 @@ int main() {
     renderer->add(rect);
 
     auto *input = new C2DInput(nullptr);
-    input->setJoystickMapping(0, KEYS, 0);
+    input->setJoystickMapping(0, C2D_DEFAULT_JOY_KEYS, 0);
 
     // add some tweening :)
     auto *tweenPos = new TweenPosition(
@@ -58,11 +63,11 @@ int main() {
             {renderer->getSize().x / 2 + 256, rect->getPosition().y},
             4.0f, TweenLoop::PingPong);
     rect->add(tweenPos);
-    auto *tweenRot = new TweenRotation(0, 360, 8.0f, TweenLoop::PingPong);
+    auto *tweenRot = new TweenRotation(0, 360, 5.0f, TweenLoop::PingPong);
     rect->add(tweenRot);
-    auto *tweenScale = new TweenScale(rect->getScale(), {2, 2}, 8.0f, TweenLoop::PingPong);
+    auto *tweenScale = new TweenScale(rect->getScale(), {2.0f, 2.0f}, 3.0f, TweenLoop::PingPong);
     rect->add(tweenScale);
-    auto *tweenColor = new TweenColor(rect->getFillColor(), Color::Black, 3.0f, TweenLoop::PingPong);
+    auto *tweenColor = new TweenColor(rect->getFillColor(), Color::Cyan, 3.0f, TweenLoop::PingPong);
     rect->add(tweenColor);
     auto *tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     rect->add(tweenAlpha);

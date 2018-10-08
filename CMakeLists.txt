@@ -265,6 +265,12 @@ target_compile_options(cross2d PUBLIC ${FLAGS} -Wno-narrowing)
 add_executable(cross2d.elf test/main.cpp)
 target_link_libraries(cross2d.elf cross2d)
 
+#############
+# targets
+#############
+include(Targets.cmake)
+
+#[[
 #####################
 # PS3 target
 #####################
@@ -303,3 +309,4 @@ if (BUILD_SWITCH)
             DEPENDS cross2d.elf
             COMMAND elf2nro cross2d.elf cross2d.nro)
 endif (BUILD_SWITCH)
+]]
