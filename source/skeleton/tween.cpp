@@ -125,7 +125,7 @@ void Tween::step() {
 
     auto *object = (C2DObject *) transform;
 
-    auto float4 = tween.step((float) delta.asMilliseconds(), true);
+    auto float4 = tween.step((int32_t) delta.asMilliseconds(), true);
     if (type == TweenType::Position) {
         transform->setPosition(float4[0], float4[1]);
     } else if (type == TweenType::Rotation) {
