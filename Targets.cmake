@@ -6,9 +6,9 @@ add_custom_target(${PROJECT_NAME}.data
 add_dependencies(${PROJECT_NAME}.elf ${PROJECT_NAME}.data)
 
 #####################
-# PSP2 (vita) target
+# VITA target
 #####################
-if (BUILD_PSP2)
+if (BUILD_VITA)
     vita_create_self(${PROJECT_NAME}.self ${PROJECT_NAME}.elf)
     add_custom_target(${PROJECT_NAME}_vita_release.zip
             DEPENDS ${PROJECT_NAME}.self
@@ -20,12 +20,12 @@ if (BUILD_PSP2)
             COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/pnes/data/psp2/skin ${CMAKE_BINARY_DIR}/release/pnes/
             COMMAND cd ${CMAKE_BINARY_DIR}/release/pnes && zip -r ../../${PROJECT_NAME}-${PNES_VERSION_MAJOR}.${PNES_VERSION_MINOR}_vita.vpk . && cd ${CMAKE_BINARY_DIR}
             )
-endif (BUILD_PSP2)
+endif (BUILD_VITA)
 
 #####################
-# NX (SWITCH) target
+# SWITCH target
 #####################
-if (BUILD_NX)
+if (BUILD_SWITCH)
     set_target_properties(${PROJECT_NAME}.elf PROPERTIES LINK_FLAGS "-specs=${DEVKITPRO}/libnx/switch.specs")
     add_custom_target(${PROJECT_NAME}.nro
             DEPENDS ${PROJECT_NAME}.elf
@@ -39,4 +39,4 @@ if (BUILD_NX)
             COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
             COMMAND cd ${CMAKE_BINARY_DIR}/release && zip -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_switch.zip ${PROJECT_NAME}
             COMMAND cd ${CMAKE_CURRENT_BINARY_DIR})
-endif (BUILD_NX)
+endif (BUILD_SWITCH)

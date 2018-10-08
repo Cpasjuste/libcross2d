@@ -5,12 +5,12 @@ cmake_minimum_required(VERSION 3.0)
 option(BUILD_SFML "Build with SFML support (hardware rendering, fast)" OFF)
 option(BUILD_SDL1 "Build with SDL1 support (software, osmesa) support" OFF)
 option(BUILD_SDL1_GL "Build with SDL1 support (hardware rendering, fast, needs BUILD_SDL1=ON)" OFF)
-option(BUILD_SDL2 "Build with SDL2 support (software)" ON)
-option(BUILD_SDL2_GL "Build with SDL2 support (hardware rendering, fast, needs BUILD_SDL2=ON)" ON)
-option(BUILD_PSP2 "Build with PSP2 support (hardware rendering, fast)" OFF)
+option(BUILD_SDL2 "Build with SDL2 support" OFF)
+option(BUILD_SDL2_SOFT "Build with SDL2 support (software rendering, needs BUILD_SDL2=ON)" OFF)
+option(BUILD_VITA "Build with Ps Vita support (hardware rendering, fast)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
-option(BUILD_NX "Build with NX (SWITCH) support" OFF)
+option(BUILD_SWITCH "Build with Nintendo Switch support" OFF)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
@@ -58,11 +58,10 @@ if (BUILD_SFML)
             SDL2
             sfml-graphics sfml-window sfml-system
             GL freetype z)
-    #png
     #####################
-    # PSP2 PLATORM
+    # VITA PLATORM
     #####################
-elseif (BUILD_PSP2)
+elseif (BUILD_VITA)
     set(PLATFORM_DIRS
             source/platforms/psp2
             source/platforms/psp2/vita-shader-collection/includes
@@ -159,9 +158,9 @@ elseif (BUILD_3DS)
             -ffunction-sections -fomit-frame-pointer
             )
     #####################
-    # NX PLATORM
+    # SWITCH PLATORM
     #####################
-elseif (BUILD_NX)
+elseif (BUILD_SWITCH)
     set(PLATFORM_DIRS
             source/platforms/gl
             source/platforms/sdl2
@@ -202,7 +201,8 @@ elseif (BUILD_SDL2)
             source/platforms/posix/*.c*)
     set(PLATFORM_LIBS SDL2 ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
     list(APPEND FLAGS -D__SDL2__)
-    if (BUILD_SDL2_GL)
+    if (BUILD_SDL2_SOFT)
+    else ()
         list(APPEND PLATFORM_DIRS source/platforms/gl)
         file(GLOB SHADERS_SRC source/platforms/gl/shaders/*.c*)
         list(APPEND PLATFORM_SRC
@@ -213,7 +213,7 @@ elseif (BUILD_SDL2)
                 )
         list(APPEND FLAGS -D__SDL2_GL__ -D__GL__)
         list(APPEND PLATFORM_LIBS GL)
-    endif (BUILD_SDL2_GL)
+    endif (BUILD_SDL2_SOFT)
     #####################
     # SDL1 PLATORM
     #####################
@@ -276,18 +276,18 @@ if (BUILD_PS3)
 endif (BUILD_PS3)
 
 #####################
-# PSP2 (vita) target
+# VITA target
 #####################
-if (BUILD_PSP2)
+if (BUILD_VITA)
     vita_create_self(cross2d.self cross2d.elf)
     vita_create_vpk(cross2d.vpk "CROSS2D00" cross2d.self
             VERSION "01.00" NAME "CROSS2D"
             FILE ${CMAKE_CURRENT_SOURCE_DIR}/res/default.ttf default.ttf
             FILE ${CMAKE_CURRENT_SOURCE_DIR}/res/title.png title.png)
-endif (BUILD_PSP2)
+endif (BUILD_VITA)
 
 #####################
-# CTR (3DS) target
+# 3DS target
 #####################
 if (BUILD_3DS)
     set_target_properties(cross2d.elf PROPERTIES LINK_FLAGS "-specs=3dsx.specs")
@@ -295,11 +295,11 @@ if (BUILD_3DS)
 endif (BUILD_3DS)
 
 #####################
-# NX (SWITCH) target
+# SWITCH target
 #####################
-if (BUILD_NX)
+if (BUILD_SWITCH)
     set_target_properties(cross2d.elf PROPERTIES LINK_FLAGS "-specs=${DEVKITPRO}/libnx/switch.specs")
     add_custom_target(cross2d.nro
             DEPENDS cross2d.elf
             COMMAND elf2nro cross2d.elf cross2d.nro)
-endif (BUILD_NX)
+endif (BUILD_SWITCH)
