@@ -23,11 +23,16 @@ Build and run (Nintendo Switch)
     ```
     wget https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb
     sudo dpkg -i devkitpro-pacman.deb
-    sudo dkp-pacman -S
+    sudo dkp-pacman -S switch-dev
+    sudo dkp-pacman -S switch-bzip2 switch-freetype switch-glad switch-glm switch-libdrm_nouveau switch-libpng switch-mesa switch-pkg-config switch-sdl2 switch-zlib
     ```
 
 - Build
     ```
+    git clone --recursive git@github.com:cpasjuste/libcross2d.git
+    cd libcross2d
+    mkdir cmake-build && cd cmake-build
+    export DEVKITPRO=/opt/devkitpro
     cmake -DBUILD_SWITCH=1 ../
     make cross2d.nro
     ```
