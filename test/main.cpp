@@ -44,7 +44,6 @@ int main() {
     if (font->load()) {
         // create a text and add it to the rect
         auto *text = new C2DText("libcross2d", *font);
-        text->setOutlineColor(Color::Blue);
         text->setOutlineThickness(2);
         text->setPosition(rect->getSize().x / 2, 32);
         text->setOrigin(Origin::Center);
@@ -67,7 +66,7 @@ int main() {
     rect->add(tweenRot);
     auto *tweenScale = new TweenScale(rect->getScale(), {2.0f, 2.0f}, 3.0f, TweenLoop::PingPong);
     rect->add(tweenScale);
-    auto *tweenColor = new TweenColor(rect->getFillColor(), Color::Cyan, 3.0f, TweenLoop::PingPong);
+    auto *tweenColor = new TweenColor(rect->getFillColor(), Color(0x9bc4e2ff), 3.0f, TweenLoop::PingPong);
     rect->add(tweenColor);
     auto *tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     rect->add(tweenAlpha);
