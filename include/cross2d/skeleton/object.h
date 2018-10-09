@@ -63,7 +63,7 @@ namespace c2d {
 
         virtual void setLayer(int layer);
 
-
+        virtual std::vector<C2DObject *> getChilds();
 
         Type getType() const {
             return type;

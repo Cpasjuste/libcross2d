@@ -2,6 +2,8 @@
 // Created by cpasjuste on 12/12/17.
 //
 
+#include <cross2d/skeleton/object.h>
+
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -17,12 +19,10 @@ void C2DObject::add(C2DObject *object) {
 
 void C2DObject::remove(C2DObject *object) {
 
-    if (object) {
-        if (!childs.empty()) {
-            childs.erase(std::remove(
-                    childs.begin(), childs.end(), object),
-                         childs.end());
-        }
+    if (!childs.empty()) {
+        childs.erase(std::remove(
+                childs.begin(), childs.end(), object),
+                     childs.end());
     }
 }
 
@@ -146,6 +146,10 @@ void C2DObject::setLayer(int layer) {
                   parent->childs.end(),
                   sortByLayer);
     }
+}
+
+std::vector<C2DObject *> C2DObject::getChilds() {
+    return childs;
 }
 
 C2DObject::~C2DObject() {
