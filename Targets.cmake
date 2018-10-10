@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
-add_custom_target(${PROJECT_NAME}.data
-        COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/data ${CMAKE_CURRENT_BINARY_DIR})
+add_custom_target(${PROJECT_NAME}.data COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/data ${CMAKE_CURRENT_BINARY_DIR})
 add_dependencies(${PROJECT_NAME}.elf ${PROJECT_NAME}.data)
 
 #####################

@@ -27,7 +27,7 @@
 extern c2d::Renderer *c2d_renderer;
 
 #ifdef __PSP2__
-
+#define NO_KEYBOARD 1
 #ifdef __PSP2_DEBUG__
 
 #include <psp2/kernel/clib.h>
@@ -44,15 +44,15 @@ extern c2d::Renderer *c2d_renderer;
 
 #define C2DRenderer PSP2Renderer
 #define C2DTexture PSP2Texture
+#define C2DInput SDL2Input
+#define C2DAudio SDL2Audio
+#define C2DIo PSP2Io
+#define C2DClock PSP2Clock
 #define C2DRectangle RectangleShape
 #define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape
 #define C2DFont Font
 #define C2DText Text
-#define C2DInput SDL2Input
-#define C2DAudio SDL2Audio
-#define C2DIo PSP2Io
-#define C2DClock PSP2Clock
 
 #define KEY_JOY_UP_DEFAULT      8
 #define KEY_JOY_DOWN_DEFAULT    6
@@ -74,6 +74,7 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         3
 
 #elif __3DS__
+#define NO_KEYBOARD 1
 
 #include <3ds.h>
 #include <citro3d.h>
@@ -115,10 +116,10 @@ extern c2d::Renderer *c2d_renderer;
 
 #elif __SWITCH__
 
+#define NO_KEYBOARD 1
 #define GL_ABGR_EXT 0x8000
 //#define __SVC_DEBUG__ 1
 //#define __NET_DEBUG__ 1
-#define NO_KEYBOARD 1
 
 #include <switch.h>
 #include <glad/glad.h>

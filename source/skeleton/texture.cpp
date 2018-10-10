@@ -6,36 +6,34 @@
 
 using namespace c2d;
 
-Texture::Texture(const char *p) : Shape() {
+Texture::Texture(const std::string &p) : Shape() {
 
-    printf("Texture(%p): %s\n", this, p);
-
-    format = Format::RGBA8;
-    bpp = 4;
-
-    setFillColor(Color::White);
-
-    strncpy(path, p, 511);
+    printf("Texture(%p): %s\n", this, p.c_str());
 
     type = Type::Texture;
+    format = Format::RGBA8;
+    bpp = 4;
+    path = p;
+
+    setFillColor(Color::White);
 }
 
 Texture::Texture(const unsigned char *buffer, int bufferSize) : Shape() {
 
     printf("Texture(%p)\n", this);
 
+    type = Type::Texture;
     format = Format::RGBA8;
     bpp = 4;
 
     setFillColor(Color::White);
-
-    type = Type::Texture;
 }
 
 Texture::Texture(const Vector2f &size, Format fmt) : Shape() {
 
     printf("Texture(%p): %i x %i\n", this, (int) size.x, (int) size.y);
 
+    type = Type::Texture;
     format = fmt;
     bpp = fmt == Format::RGB565 ? 2 : 4;
     pitch = (int) (size.x * bpp);
@@ -43,7 +41,6 @@ Texture::Texture(const Vector2f &size, Format fmt) : Shape() {
     setFillColor(Color::White);
     setSize(size);
 
-    type = Type::Texture;
 }
 
 void Texture::setSize(const Vector2f &size) {

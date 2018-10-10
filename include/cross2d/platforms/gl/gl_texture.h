@@ -13,7 +13,7 @@ namespace c2d {
 
     public:
 
-        GLTexture(const char *path);
+        GLTexture(const std::string &path);
 
         GLTexture(const unsigned char *buffer, int bufferSize);
 
@@ -22,7 +22,7 @@ namespace c2d {
 
         ~GLTexture();
 
-        int save(const char *path);
+        int save(const std::string &path);
 
         int lock(FloatRect *rect, void **pixels, int *pitch);
 

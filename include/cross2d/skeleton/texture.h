@@ -24,7 +24,7 @@ namespace c2d {
         };
 
         // START - to implement, device specific code
-        Texture(const char *path);
+        Texture(const std::string &path);
 
         Texture(const unsigned char *buffer, int bufferSize);
 
@@ -38,7 +38,7 @@ namespace c2d {
 
         virtual void unlock() {};
 
-        virtual int save(const char *path) { return -1; };
+        virtual int save(const std::string &path) { return -1; };
 
         virtual void setFilter(Filter filter) { this->filter = filter; };
 
@@ -57,7 +57,7 @@ namespace c2d {
 
         c2d::Vector2f getPoint(std::size_t index) const;
 
-        char path[512];
+        std::string path;
         int bpp = 4;
         int pitch = 0;
         Format format = Format::RGBA8;

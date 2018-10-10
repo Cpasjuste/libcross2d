@@ -2,10 +2,9 @@
 // Created by cpasjuste on 17/11/17.
 //
 
-#ifndef POSIX_IO_H
-#define POSIX_IO_H
+#ifndef C2D_POSIX_IO_H
+#define C2D_POSIX_IO_H
 
-#include <dirent.h>
 #include "cross2d/skeleton/io.h"
 
 namespace c2d {
@@ -27,4 +26,4 @@ namespace c2d {
     };
 }
 
-#endif //POSIX_IO_H
+#endif //C2D_POSIX_IO_H

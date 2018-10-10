@@ -3,6 +3,7 @@
 //
 
 #include <cstring>
+#include <dirent.h>
 #include <sys/stat.h>
 
 #include "cross2d/platforms/posix/posix_io.h"
@@ -15,7 +16,11 @@ bool POSIXIo::exist(const std::string &path) {
 }
 
 bool POSIXIo::create(const std::string &path) {
+#ifdef __PSP2__
+    return sceIoMkdir(path.c_str(), 0777) == 0;
+#else
     return mkdir(path.c_str(), 0755) == 0;
+#endif
 }
 
 size_t POSIXIo::getSize(const std::string &file) {
@@ -52,8 +57,8 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort) {
                 file.name = ent->d_name;
                 file.path = path + "/" + file.name;
                 file.size = getSize(path);
-                file.type = ent->d_type == DT_DIR ? Type::Directory : Type::File;
-                file.color = ent->d_type == DT_DIR ? Color::Yellow : Color::White;
+                file.type = getType(path);
+                file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
                 files.push_back(file);
             }
             closedir(dir);

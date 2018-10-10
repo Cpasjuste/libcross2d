@@ -10,23 +10,18 @@
 
 using namespace c2d;
 
-PSP2Texture::PSP2Texture(const char *p) : Texture(p) {
+PSP2Texture::PSP2Texture(const std::string &p) : Texture(p) {
 
-    char *ext = strrchr(path, '.');
-    if (ext) {
-        if (strcasecmp(ext + 1, "jpg") == 0
-            || strcasecmp(ext + 1, "jpeg") == 0) {
-            tex = vita2d_load_JPEG_file(path);
-        } else if (strcasecmp(ext + 1, "png") == 0) {
-            tex = vita2d_load_PNG_file(path);
-        } else if (strcasecmp(ext + 1, "bmp") == 0) {
-            tex = vita2d_load_BMP_file(path);
-        }
+    if (Utility::endsWith(path, "jpg") || Utility::endsWith(path, "jpeg")) {
+        tex = vita2d_load_JPEG_file(path.c_str());
+    } else if (Utility::endsWith(path, "bmp")) {
+        tex = vita2d_load_BMP_file(path.c_str());
+    } else if (Utility::endsWith(path, "png")) {
+        tex = vita2d_load_PNG_file(path.c_str());
     }
 
-    tex = vita2d_load_PNG_file(path);
     if (!tex) {
-        printf("PSP2Texture: could not create texture from `%s`\n", path);
+        printf("PSP2Texture: could not create texture from `%s`\n", path.c_str());
         return;
     }
 

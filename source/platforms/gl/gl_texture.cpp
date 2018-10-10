@@ -14,13 +14,13 @@
 
 using namespace c2d;
 
-GLTexture::GLTexture(const char *path) : Texture(path) {
+GLTexture::GLTexture(const std::string &p) : Texture(p) {
 
     int w, h, n = 0;
 
-    pixels = stbi_load(path, &w, &h, &n, 4);
+    pixels = stbi_load(path.c_str(), &w, &h, &n, 4);
     if (!pixels) {
-        printf("GLTexture(%p): couldn't create texture (%s)\n", this, path);
+        printf("GLTexture(%p): couldn't create texture (%s)\n", this, path.c_str());
         return;
     }
 
@@ -37,7 +37,7 @@ GLTexture::GLTexture(const char *path) : Texture(path) {
         pitch = getTextureRect().width * bpp;
         available = true;
     } else {
-        printf("GLTexture(%p): couldn't create texture: %s\n", this, path);
+        printf("GLTexture(%p): couldn't create texture: %s\n", this, path.c_str());
     }
 
     printf("GLTexture(%p): %ix%i\n", this, w, h);
@@ -66,7 +66,7 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
         pitch = getTextureRect().width * bpp;
         available = true;
     } else {
-        printf("GLTexture(%p): couldn't create texture: %s\n", this, path);
+        printf("GLTexture(%p): couldn't create texture\n", this);
     }
 
     printf("GLTexture(%p): %ix%i\n", this, w, h);
@@ -172,7 +172,7 @@ int GLTexture::resize(const Vector2f &size, bool copyPixels) {
 }
 #endif
 
-int GLTexture::save(const char *path) {
+int GLTexture::save(const std::string &path) {
 
     int res;
     int width = getTextureRect().width;
@@ -194,10 +194,10 @@ int GLTexture::save(const char *path) {
             *(tmp + i * 3 + 0) = (unsigned char) (((nColour >> 11) & 0x1F) << 3);
             *(tmp + i * 3 + 0) |= *(tmp + i * 3 + 2) >> 5;
         }
-        res = stbi_write_png(path, width, height, 3, tmp, width * 3);
+        res = stbi_write_png(path.c_str(), width, height, 3, tmp, width * 3);
         free(tmp);
     } else {
-        res = stbi_write_png(path, width, height, 4, pixels, width * 4);
+        res = stbi_write_png(path.c_str(), width, height, 4, pixels, width * 4);
     }
 
     return res;

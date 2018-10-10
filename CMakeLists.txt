@@ -64,11 +64,13 @@ if (BUILD_SFML)
 elseif (BUILD_VITA)
     set(TITLE_ID CROSS0001)
     set(PLATFORM_DIRS
+            source/platforms/posix
             source/platforms/psp2
             source/platforms/psp2/vita-shader-collection/includes
             ${VITASDK}/arm-vita-eabi/include/freetype2
             )
     file(GLOB PLATFORM_SRC
+            source/platforms/posix/posix_io.cpp
             source/platforms/psp2/*.c*
             source/platforms/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
             source/platforms/sdl2/sdl2_input.cpp # TODO: get rid of sdl2, use sdl2 input for now
@@ -245,10 +247,10 @@ elseif (BUILD_SDL1)
     endif (BUILD_SDL1_GL)
 endif (BUILD_SFML)
 
-add_library(cross2d ${CROSS2D_SRC} ${PLATFORM_SRC})
-target_include_directories(cross2d PUBLIC ${CROSS2D_DIR} ${PLATFORM_DIRS})
-target_link_libraries(cross2d PUBLIC ${PLATFORM_LIBS})
-target_compile_options(cross2d PUBLIC ${FLAGS} -Wno-narrowing)
+add_library(${PROJECT_NAME} ${CROSS2D_SRC} ${PLATFORM_SRC})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CROSS2D_DIR} ${PLATFORM_DIRS})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${PLATFORM_LIBS})
+target_compile_options(${PROJECT_NAME} PUBLIC ${FLAGS} -Wno-narrowing)
 
 #install(FILES ${CMAKE_BINARY_DIR}/libcross2d.a DESTINATION lib)
 #install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/cross2d DESTINATION include)
@@ -256,8 +258,8 @@ target_compile_options(cross2d PUBLIC ${FLAGS} -Wno-narrowing)
 #####################
 # test executable
 #####################
-add_executable(cross2d.elf test/main.cpp)
-target_link_libraries(cross2d.elf cross2d)
+add_executable(${PROJECT_NAME}.elf test/main.cpp)
+target_link_libraries(${PROJECT_NAME}.elf cross2d)
 
 #############
 # targets

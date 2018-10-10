@@ -4,14 +4,6 @@
 
 #include "cross2d/c2d.h"
 
-#ifdef __PSP2__
-#define TEX_PATH "app0:/data/gbatemp.png"
-#elif __3DS__
-#define TEX_PATH "data/gbatemp.png"
-#else
-#define TEX_PATH "data/gbatemp.png"
-#endif
-
 using namespace c2d;
 
 int main() {
@@ -19,6 +11,9 @@ int main() {
     // create main renderer
     auto *renderer = new C2DRenderer(Vector2f(1280, 720));
     renderer->setClearColor(Color::Black);
+
+    // create io for file/path helper
+    auto *io = new C2DIo();
 
     // create a rect
     auto *rect = new C2DRectangle(
@@ -31,7 +26,7 @@ int main() {
     rect->setOutlineThickness(8);
 
     // create a texture and add it to the rect
-    auto *tex = new C2DTexture(TEX_PATH);
+    auto *tex = new C2DTexture(io->getDataPath() + "gbatemp.png");
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
         tex->setScale(0.5f, 0.5f);
@@ -43,7 +38,7 @@ int main() {
     auto *font = new C2DFont();
     if (font->load()) {
         // create a text and add it to the rect
-        auto *text = new C2DText("libcross2d", *font);
+        auto *text = new C2DText("cross2d", *font);
         text->setOutlineThickness(2);
         text->setPosition(rect->getSize().x / 2, 32);
         text->setOrigin(Origin::Center);

@@ -10,9 +10,6 @@
 #include "cross2d/skeleton/sfml/Color.hpp"
 #include "texture.h"
 
-#define C2D_IO_FILE 0
-#define C2D_IO_DIR  1
-
 namespace c2d {
 
     class Io {
@@ -27,7 +24,8 @@ namespace c2d {
 
         class File {
         public:
-            File() {};
+            File() = default;
+
             std::string name;
             std::string path;
             size_t size = 0;
@@ -37,17 +35,37 @@ namespace c2d {
             Texture *icon = nullptr;
         };
 
-        Io() {};
+        Io() = default;
 
-        virtual ~Io() {};
+        virtual ~Io() = default;
 
-        virtual bool exist(const std::string &path) { return false; };
+        ///
+        /// \return assume read only data path
+        virtual std::string getDataPath() const {
+            return "./data/";
+        }
 
-        virtual size_t getSize(const std::string &file) { return 0; };
+        ///
+        /// \return read/write home path
+        virtual std::string getHomePath() const {
+            return "./";
+        }
 
-        virtual Type getType(const std::string &file) { return Type::Unknown; };
+        virtual bool exist(const std::string &path) {
+            return false;
+        };
 
-        virtual bool create(const std::string &path) { return false; };
+        virtual size_t getSize(const std::string &file) {
+            return 0;
+        };
+
+        virtual Type getType(const std::string &file) {
+            return Type::Unknown;
+        };
+
+        virtual bool create(const std::string &path) {
+            return false;
+        };
 
         virtual std::vector<Io::File> getDirList(const std::string &path, bool sort = false) {
             return std::vector<Io::File>();

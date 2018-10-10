@@ -5,24 +5,21 @@
 #ifndef C2D_PSP2_IO_H
 #define C2D_PSP2_IO_H
 
-#include "cross2d/skeleton/io.h"
+#include "cross2d/platforms/posix/posix_io.h"
 
 namespace c2d {
 
-    class PSP2Io : public Io {
+    class PSP2Io : public POSIXIo {
 
     public:
 
-        virtual bool exist(const std::string &path) override;
+        std::string getDataPath() const override {
+            return "app0:/data/";
+        }
 
-        virtual size_t getSize(const std::string &file) override;
-
-        virtual Type getType(const std::string &file) override;
-
-        virtual bool create(const std::string &path) override;
-
-        virtual std::vector<Io::File> getDirList(const std::string &path, bool sort = false) override;
-
+        std::string getHomePath() const override {
+            return "ux0:/data/";
+        }
     };
 }
 
