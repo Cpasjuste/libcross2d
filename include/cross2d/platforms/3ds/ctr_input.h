@@ -2,29 +2,30 @@
 // Created by cpasjuste on 11/01/17.
 //
 
-#ifndef _CTR_INPUT_H
-#define _CTR_INPUT_H
+#ifndef C2D_CTR_INPUT_H
+#define C2D_CTR_INPUT_H
 
 #include "cross2d/skeleton/renderer.h"
 #include "cross2d/skeleton/input.h"
 
 namespace c2d {
 
-    class CTRInput : Input {
+    class CTRInput : public Input {
 
     public:
-        CTRInput(Renderer *renderer);
 
-        virtual ~CTRInput();
+        explicit CTRInput(Renderer *renderer = nullptr);
 
-        virtual Player *Update(int rotate = 0);
+        ~CTRInput() override;
 
-        virtual int GetButton(int player);
+        Player *update(int rotate = 0) override;
+
+        int waitButton(int player = 0) override;
 
     private:
-        virtual void process_buttons(Input::Player &player, int rotate = 0);
+        void process_buttons(Input::Player &player, int rotate = 0);
 
     };
 }
 
-#endif //_CTR_INPUT_H
+#endif //C2D_CTR_INPUT_H

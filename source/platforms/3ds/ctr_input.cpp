@@ -3,7 +3,7 @@
 //
 
 #include <3ds.h>
-#include "3ds/ctr_input.h"
+#include "cross2d/platforms/3ds/ctr_input.h"
 
 using namespace c2d;
 
@@ -19,46 +19,37 @@ static int key_id[KEY_COUNT]{
         Input::Key::KEY_FIRE3,
         Input::Key::KEY_FIRE4,
         Input::Key::KEY_FIRE5,
-        Input::Key::KEY_FIRE6,
-        Input::Key::KEY_MENU1,
-        Input::Key::KEY_MENU2
+        Input::Key::KEY_FIRE6
 };
 
 CTRInput::CTRInput(Renderer *r) : Input(r) {
 
     players[0].enabled = true;
 
-    for (int k = 0; k < KEY_COUNT; k++) {
-        players[0].mapping[k] = 0;
+    for (auto &player : players) {
+        for (int &key : player.mapping) {
+            key = 0;
+        }
     }
 }
 
 CTRInput::~CTRInput() {
 
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-        players[i].enabled = false;
+    for (auto &player : players) {
+        player.enabled = false;
     }
 }
 
-int CTRInput::GetButton(int player) {
+int CTRInput::waitButton(int player) {
 
     // TODO:
-    /*
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_JOYBUTTONDOWN) {
-            return event.jbutton.button;
-        }
-    }
-    */
-
     return -1;
 }
 
-Input::Player *CTRInput::Update(int rotate) {
+Input::Player *CTRInput::update(int rotate) {
 
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-        players[i].state = 0;
+    for (auto &player : players) {
+        player.state = 0;
     }
 
 

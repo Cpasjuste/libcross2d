@@ -3,7 +3,7 @@
 //
 
 #include <citro3d.h>
-#include "3ds/ctr_renderer.h"
+#include "cross2d/platforms/3ds/ctr_renderer.h"
 
 using namespace c2d;
 
@@ -21,7 +21,7 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
 
     gfxInitDefault();
     gfxSet3D(false);
-    consoleInit(GFX_BOTTOM, NULL);
+    consoleInit(GFX_BOTTOM, nullptr);
 
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
     // Initialize the render target
@@ -46,7 +46,7 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     // Configure depth test to overwrite pixels with the same depth (needed to draw overlapping sprites)
     C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
 
-    this->shaders = new Shaders("");
+    //this->shaders = new Shaders("");
 
     available = true;
 }
@@ -141,14 +141,20 @@ void startDrawing(bool vertexColor) {
     AttrInfo_AddLoader(attrInfo, 1, GPU_FLOAT, vertexColor ? 4 : 2);    // v1=texcoord or color
 }
 
-void CTRRenderer::draw(const VertexArray &vertices,
+void CTRRenderer::draw(VertexArray *vertexArray,
                        const Transform &transform,
                        const Texture *texture) {
 
-    unsigned int count = vertices.getVertexCount();
+    if (!vertexArray || vertexArray->getVertexCount() < 1) {
+        printf("ctr_renderer::draw: no vertices\n");
+        return;
+    }
+
+    Vertex *vertices = vertexArray->getVertices().data();
+    size_t vertexCount = vertexArray->getVertexCount();
 
     GPU_Primitive_t type;
-    switch (vertices.getPrimitiveType()) {
+    switch (vertexArray->getPrimitiveType()) {
 
         case PrimitiveType::Triangles:
             type = GPU_TRIANGLES;
@@ -184,7 +190,7 @@ void CTRRenderer::draw(const VertexArray &vertices,
 
     C3D_ImmDrawBegin(type);
 
-    for (unsigned int i = 0; i < count; i++) {
+    for (unsigned int i = 0; i < vertexCount; i++) {
 
         Vector2f v = transform.transformPoint(vertices[i].position);
 
@@ -201,15 +207,19 @@ void CTRRenderer::draw(const VertexArray &vertices,
     C3D_ImmDrawEnd();
 }
 
-void CTRRenderer::flip() {
+void CTRRenderer::flip(bool draw) {
 
-    C3D_FrameBegin(0);
-    C3D_FrameDrawOn(target);
+    if (draw) {
+        C3D_FrameBegin(0);
+        C3D_FrameDrawOn(target);
+    }
 
     // call base class (draw childs)
-    Renderer::flip();
+    Renderer::flip(draw);
 
-    C3D_FrameEnd(0);
+    if (draw) {
+        C3D_FrameEnd(0);
+    }
 }
 
 void CTRRenderer::delay(unsigned int ms) {

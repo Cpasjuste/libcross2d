@@ -2,39 +2,42 @@
 // Created by cpasjuste on 01/12/16.
 //
 
-#ifndef _CTR_TEXTURE_H_
-#define _CTR_TEXTURE_H_
+#ifndef C2D_CTR_TEXTURE_H
+#define C2D_CTR_TEXTURE_H
 
-class Texture;
+#include "cross2d/skeleton/texture.h"
+#include "citro3d.h"
 
-class CTRTexture : Texture {
+namespace c2d {
 
-public:
-    CTRTexture(Renderer *renderer, const char *path);
+    class CTRTexture : public Texture {
 
-    CTRTexture(Renderer *renderer, int w, int h, GPU_TEXCOLOR format = GPU_RGB565);
+    public:
 
-    ~CTRTexture();
+        CTRTexture(const std::string &path);
 
-    void Draw(int x, int y, int w, int h, float rotation);
+        CTRTexture(const Vector2f &size = Vector2f(0, 0), Format format = Format::RGBA8);
 
-    int Lock(const Rect &rect, void **pixels, int *pitch);
+        ~CTRTexture();
 
-    void Unlock();
+        int lock(FloatRect *rect, void **pixels, int *pitch);
 
-    void SetFiltering(int filter);
+        void unlock();
 
-private:
-    void Tile();
+        void setFilter(Filter filter);
 
-    void TileSoft();
+    private:
 
-    C3D_Tex tex;
-    u8 *pixels = NULL;
-    GPU_TEXCOLOR fmt = GPU_RGB565;
+        void tile();
 
-    int bpp = 4;
-    int size = 0;
-};
+        void tileSoft();
 
-#endif //_CTR_TEXTURE_H_
+        C3D_Tex tex;
+        u8 *pixels = nullptr;
+        //GPU_TEXCOLOR fmt = GPU_RGB565;
+        //int bpp = 4;
+        //int size = 0;
+    };
+}
+
+#endif //C2D_CTR_TEXTURE_H

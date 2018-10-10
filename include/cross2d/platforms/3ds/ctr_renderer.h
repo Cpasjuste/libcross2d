@@ -2,10 +2,11 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#ifndef _CTR_RENDERER_H_
-#define _CTR_RENDERER_H_
+#ifndef C2D_CTR_RENDERER_H_
+#define C2D_CTR_RENDERER_H_
 
 #include "cross2d/skeleton/renderer.h"
+#include "citro3d.h"
 
 namespace c2d {
 
@@ -17,13 +18,15 @@ namespace c2d {
 
         ~CTRRenderer();
 
-        void draw(const VertexArray &vertices,
+        void draw(VertexArray *vertexArray,
                   const Transform &transform,
-                  const Texture *texture);
+                  const Texture *texture) override;
 
-        void flip();
+        //void clear() override;
 
-        void delay(unsigned int ms);
+        void flip(bool draw = true) override;
+
+        void delay(unsigned int ms) override;
 
         C3D_RenderTarget *target;
 
@@ -36,4 +39,4 @@ namespace c2d {
     };
 }
 
-#endif //_CTR_RENDERER_H_
+#endif //C2D_CTR_RENDERER_H_

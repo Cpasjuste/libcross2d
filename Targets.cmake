@@ -42,3 +42,22 @@ if (BUILD_SWITCH)
             COMMAND cd ${CMAKE_BINARY_DIR}/release && zip -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_switch.zip ${PROJECT_NAME}
             COMMAND cd ${CMAKE_CURRENT_BINARY_DIR})
 endif (BUILD_SWITCH)
+
+#####################
+# 3DS target
+#####################
+if (BUILD_3DS)
+    set_target_properties(${PROJECT_NAME}.elf PROPERTIES LINK_FLAGS "-specs=${DEVKITPRO}/devkitARM/arm-none-eabi/lib/3dsx.specs")
+    add_custom_target(${PROJECT_NAME}.3dsx
+            DEPENDS ${PROJECT_NAME}.elf
+            COMMAND ${DEVKITPRO}/tools/bin/smdhtool --create "${PROJECT_NAME}" "${PROJECT_NAME}" "${PROJECT_AUTHOR}" ${CMAKE_CURRENT_SOURCE_DIR}/data/3ds/icon.png ${PROJECT_NAME}.smdh
+            COMMAND ${DEVKITPRO}/tools/bin/3dsxtool ${PROJECT_NAME}.elf ${PROJECT_NAME}.3dsx --smdh=${PROJECT_NAME}.smdh)
+    add_custom_target(${PROJECT_NAME}_3ds_release.zip
+            DEPENDS ${PROJECT_NAME}.3dsx
+            COMMAND rm -rf ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND mkdir -p ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data
+            COMMAND cp -f ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.3dsx ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
+            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data/common/* ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data
+            COMMAND cd ${CMAKE_BINARY_DIR}/release && zip -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_3ds.zip ${PROJECT_NAME}
+            COMMAND cd ${CMAKE_CURRENT_BINARY_DIR})
+endif (BUILD_3DS)

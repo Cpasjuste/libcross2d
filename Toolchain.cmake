@@ -39,7 +39,6 @@ if (BUILD_3DS)
     set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
     set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
     set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Shared libs not available")
-    include(source/3ds/cmake/Tools3DS.cmake)
 endif (BUILD_3DS)
 
 if (BUILD_SWITCH)

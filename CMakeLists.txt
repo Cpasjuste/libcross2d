@@ -139,25 +139,27 @@ elseif (BUILD_3DS)
             source/platforms/posix
             ${DEVKITPRO}/libctru/include
             ${DEVKITPRO}/portlibs/3ds/include
+            ${DEVKITPRO}/portlibs/3ds/include/freetype2
             ${DEVKITPRO}/portlibs/armv6k/include
             )
     file(GLOB PLATFORM_SRC
             source/platforms/3ds/*.c*
             source/platforms/posix/*.c*
-            source/platforms/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
+            #source/platforms/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
             # TODO: fix that crap...
             source/platforms/3ds/vshaders.v.o
             )
 
     set(PLATFORM_LIBS
-            ${DEVKITPRO}/portlibs/3ds/lib/libSDL2.a
-            #${DEVKITPRO}/portlibs/armv6k/lib/libpng.a
-            ${DEVKITPRO}/portlibs/armv6k/lib/libz.a
+            #${DEVKITPRO}/portlibs/3ds/lib/libSDL2.a
+            ${DEVKITPRO}/portlibs/3ds/lib/libfreetype.a
+            ${DEVKITPRO}/portlibs/3ds/lib/libpng.a
+            ${DEVKITPRO}/portlibs/3ds/lib/libbz2.a
+            ${DEVKITPRO}/portlibs/3ds/lib/libz.a
             ${DEVKITPRO}/libctru/lib/libcitro3d.a
             ${DEVKITPRO}/libctru/lib/libctru.a
             m)
-    list(APPEND FLAGS -O3 -DARM11 -D_3DS -D__3DS__
-            -D__CITRO3D__
+    list(APPEND FLAGS -O3 -DARM11 -D_3DS -D__3DS__ -D__CITRO3D__
             -ffunction-sections -fomit-frame-pointer
             )
     #####################
@@ -265,44 +267,3 @@ target_link_libraries(${PROJECT_NAME}.elf cross2d)
 # targets
 #############
 include(Targets.cmake)
-
-#[[
-#####################
-# PS3 target
-#####################
-if (BUILD_PS3)
-    add_custom_target(cross2d.ps3
-            DEPENDS cross2d.elf
-            COMMAND ${PSL1GHT}/bin/sprxlinker cross2d.elf)
-    add_dependencies(cross2d.ps3 cross2d.elf)
-endif (BUILD_PS3)
-
-#####################
-# VITA target
-#####################
-if (BUILD_VITA)
-    vita_create_self(cross2d.self cross2d.elf)
-    vita_create_vpk(cross2d.vpk "CROSS2D00" cross2d.self
-            VERSION "01.00" NAME "CROSS2D"
-            FILE ${CMAKE_CURRENT_SOURCE_DIR}/res/default.ttf default.ttf
-            FILE ${CMAKE_CURRENT_SOURCE_DIR}/res/title.png title.png)
-endif (BUILD_VITA)
-
-#####################
-# 3DS target
-#####################
-if (BUILD_3DS)
-    set_target_properties(cross2d.elf PROPERTIES LINK_FLAGS "-specs=3dsx.specs")
-    add_3dsx_target(cross2d.elf NO_SMDH)
-endif (BUILD_3DS)
-
-#####################
-# SWITCH target
-#####################
-if (BUILD_SWITCH)
-    set_target_properties(cross2d.elf PROPERTIES LINK_FLAGS "-specs=${DEVKITPRO}/libnx/switch.specs")
-    add_custom_target(cross2d.nro
-            DEPENDS cross2d.elf
-            COMMAND elf2nro cross2d.elf cross2d.nro)
-endif (BUILD_SWITCH)
-]]
