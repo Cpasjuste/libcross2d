@@ -27,6 +27,8 @@
 extern c2d::Renderer *c2d_renderer;
 
 #ifdef __PSP2__
+#define C2D_SCREEN_WIDTH 960
+#define C2D_SCREEN_HEIGHT 544
 #define NO_KEYBOARD 1
 #ifdef __PSP2_DEBUG__
 
@@ -74,6 +76,8 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         3
 
 #elif __3DS__
+#define C2D_SCREEN_WIDTH 400
+#define C2D_SCREEN_HEIGHT 240
 #define NO_KEYBOARD 1
 
 #include <3ds.h>
@@ -115,7 +119,8 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         0
 
 #elif __SWITCH__
-
+#define C2D_SCREEN_WIDTH 1280
+#define C2D_SCREEN_HEIGHT 720
 #define NO_KEYBOARD 1
 #define GL_ABGR_EXT 0x8000
 //#define __SVC_DEBUG__ 1
@@ -167,6 +172,8 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RX         2
 #define KEY_JOY_AXIS_RY         3
 #elif __SDL2__
+#define C2D_SCREEN_WIDTH 1280
+#define C2D_SCREEN_HEIGHT 720
 
 #include <SDL2/SDL.h>
 
@@ -223,6 +230,9 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         5
 
 #elif __SDL1__
+#define C2D_SCREEN_WIDTH 1280
+#define C2D_SCREEN_HEIGHT 720
+
 #include "platforms/sdl1/sdl1_renderer.h"
 #include "platforms/gl/gl_texture.h"
 #include "platforms/sdl1/sdl1_input.h"
@@ -262,6 +272,8 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         5
 
 #elif __PS3__
+#define C2D_SCREEN_WIDTH 1280
+#define C2D_SCREEN_HEIGHT 720
 
 #include "platforms/ps3/tiny3d_renderer.h"
 #include "platforms/ps3/tiny3d_texture.h"
@@ -299,6 +311,8 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         3
 
 #elif __SFML__
+#define C2D_SCREEN_WIDTH 1280
+#define C2D_SCREEN_HEIGHT 720
 
 #include "platforms/sfml/sfml_renderer.h"
 #include "platforms/sfml/sfml_texture.h"
