@@ -26,13 +26,13 @@ namespace c2d {
 
         void setFilter(Filter filter);
 
+        C3D_Tex tex;
     private:
 
         void tile();
 
         void tileSoft();
 
-        C3D_Tex tex;
         u8 *pixels = nullptr;
         //GPU_TEXCOLOR fmt = GPU_RGB565;
         //int bpp = 4;

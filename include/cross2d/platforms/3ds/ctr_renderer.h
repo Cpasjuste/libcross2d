@@ -22,7 +22,7 @@ namespace c2d {
                   const Transform &transform,
                   const Texture *texture) override;
 
-        //void clear() override;
+        void clear() override;
 
         void flip(bool draw = true) override;
 

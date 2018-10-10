@@ -60,8 +60,9 @@ CTRTexture::CTRTexture(const std::string &path) : Texture(path) {
 
     setSize(w, h);
     setTexture(this, true);
+    setTextureRect(IntRect(0, 0, tex.width, tex.height));
     pitch = getTextureRect().width * bpp;
-    tileSoft();
+    //tileSoft();
     available = true;
 }
 
@@ -76,6 +77,7 @@ CTRTexture::CTRTexture(const Vector2f &size, Format format) : Texture(size, form
     if (format == Format::RGB565) {
         fmt = GPU_RGB565;
     }
+
     bool res = C3D_TexInitVRAM(&tex, pow2((int) size.x), pow2((int) size.y), fmt);
     if (!res) {
         printf("CTRTexture: couldn't create texture (C3D_TexInit)\n");
@@ -86,39 +88,10 @@ CTRTexture::CTRTexture(const Vector2f &size, Format format) : Texture(size, form
 
     setSize(size);
     setTexture(this, true);
+    setTextureRect(IntRect(0, 0, tex.width, tex.height));
     pitch = getTextureRect().width * bpp;
     available = true;
 }
-
-/*
-void CTRTexture::Draw(int x, int y, int w, int h, float r) {
-
-#ifdef __CITRO3D__
-    ((CTRRenderer *) renderer)->StartDrawing(false);
-
-    C3D_TexBind(0, &tex);
-
-    float _w = w;//(((float) tex.width / (float) width) * (float) w);
-    float _h = h;//(((float) tex.height / (float) height) * (float) h);
-
-    C3D_ImmDrawBegin(GPU_TRIANGLE_STRIP);
-    C3D_ImmSendAttrib(x, y, 0.5f, 0.0f);
-    C3D_ImmSendAttrib(0.0f, 0.0f, 0.0f, 0.0f);
-
-    C3D_ImmSendAttrib(x, y + _h, 0.5f, 0.0f);
-    C3D_ImmSendAttrib(0.0f, 1.0f, 0.0f, 0.0f);
-
-    C3D_ImmSendAttrib(x + _w, y, 0.5f, 0.0f);
-    C3D_ImmSendAttrib(1.0f, 0.0f, 0.0f, 0.0f);
-
-    C3D_ImmSendAttrib(x + _w, y + _h, 0.5f, 0.0f);
-    C3D_ImmSendAttrib(1.0f, 1.0f, 0.0f, 0.0f);
-    C3D_ImmDrawEnd();
-#else
-
-#endif
-}
-*/
 
 int CTRTexture::lock(FloatRect *rect, void **pix, int *p) {
 
@@ -139,7 +112,7 @@ void CTRTexture::unlock() {
 
     // tile buffer for 3ds...
     if (pixels) {
-        tile();
+        //tile();
     }
 }
 
@@ -155,7 +128,7 @@ void CTRTexture::tile() {
     GSPGPU_FlushDataCache(pixels, (u32) getSize().y * pitch);
     GSPGPU_FlushDataCache(tex.data, tex.size);
 
-    GX_TRANSFER_FORMAT outFmt =
+    GX_TRANSFER_FORMAT fmt =
             format == Format::RGB565 ? GX_TRANSFER_FMT_RGB565 : GX_TRANSFER_FMT_RGBA8;
 
     C3D_SafeDisplayTransfer(
@@ -163,7 +136,7 @@ void CTRTexture::tile() {
             (u32) GX_BUFFER_DIM((int) getSize().x, (int) getSize().y),
             (u32 *) tex.data,
             (u32) GX_BUFFER_DIM(tex.width, tex.height),
-            (u32) TILE_FLAGS(GX_TRANSFER_FMT_RGB565, outFmt)
+            (u32) TILE_FLAGS(fmt, fmt)
     );
 
     gspWaitForPPF();

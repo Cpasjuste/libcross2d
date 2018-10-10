@@ -2,54 +2,27 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#if 0
-#include <citro3d.h>
+extern "C" {
+#include "citro2d.h"
+#include "citro2d/source/internal.h"
+}
+
 #include "cross2d/platforms/3ds/ctr_texture.h"
 #include "cross2d/platforms/3ds/ctr_renderer.h"
 
 using namespace c2d;
-
-#define CLEAR_COLOR 0x000000FF
-#define DISPLAY_TRANSFER_FLAGS \
-    (GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
-    GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
-    GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
-extern const u8 vshader_shbin[];
-extern const u32 vshader_shbin_size;
 
 CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
 
     osSetSpeedupEnable(true);
 
     gfxInitDefault();
-    gfxSet3D(false);
-    consoleInit(GFX_BOTTOM, nullptr);
-    //consoleDebugInit(debugDevice_SVC);
-
-    printf("CTRRenderer\n");
-
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
-    // Initialize the render target
-    target = C3D_RenderTargetCreate((int) getSize().y, (int) getSize().x, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-    //C3D_RenderTargetSetClear(target, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
-    C3D_RenderTargetSetOutput(target, GFX_TOP, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
+    C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
+    C2D_Prepare();
+    consoleInit(GFX_BOTTOM, nullptr);
 
-    // Load the vertex shader, create a shader program and bind it
-    vshader_dvlb = DVLB_ParseFile((u32 *) vshader_shbin, vshader_shbin_size);
-    shaderProgramInit(&program);
-    shaderProgramSetVsh(&program, &vshader_dvlb->DVLE[0]);
-    C3D_BindProgram(&program);
-
-    // Get the location of the uniforms
-    uloc_projection = shaderInstanceGetUniformLocation(program.vertexShader, "projection");
-
-    // Compute the projection matrix
-    // Note: we're setting top to height here so origin is at top left.
-    Mtx_OrthoTilt(&mtx_projection, 0.0, getSize().x, getSize().y, 0.0, 0.0, 1.0, true);
-    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uloc_projection, &mtx_projection);
-
-    // Configure depth test to overwrite pixels with the same depth (needed to draw overlapping sprites)
-    C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
+    target = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
 
     available = true;
 }
@@ -63,6 +36,12 @@ void CTRRenderer::draw(VertexArray *vertexArray,
         return;
     }
 
+    C2Di_Context *ctx = C2Di_GetContext();
+    if (!(ctx->flags & C2DiF_Active))
+        return;
+    if (vertexArray->getVertexCount() > (ctx->vtxBufSize - ctx->vtxBufPos))
+        return;
+
     Vertex *vertices = vertexArray->getVertices().data();
     size_t vertexCount = vertexArray->getVertexCount();
 
@@ -70,14 +49,17 @@ void CTRRenderer::draw(VertexArray *vertexArray,
     switch (vertexArray->getPrimitiveType()) {
 
         case PrimitiveType::Triangles:
+            printf("GPU_TRIANGLES\n");
             type = GPU_TRIANGLES;
             break;
 
         case PrimitiveType::TriangleStrip:
+            printf("GPU_TRIANGLE_STRIP\n");
             type = GPU_TRIANGLE_STRIP;
             break;
 
         case PrimitiveType::TriangleFan:
+            //printf("GPU_TRIANGLE_FAN\n");
             type = GPU_TRIANGLE_FAN;
             break;
 
@@ -86,6 +68,20 @@ void CTRRenderer::draw(VertexArray *vertexArray,
             return;
     }
 
+    if (texture) {
+        //C2Di_SetTex(&((CTRTexture *) texture)->tex);
+    }
+    C2Di_Update();
+
+    for (unsigned int i = 0; i < vertexCount; i++) {
+        Vertex v = vertices[i];
+        Vector2f pos = transform.transformPoint(v.position);
+        unsigned long color = C2D_Color32(
+                v.color.r, v.color.g, v.color.b, v.color.a);
+        C2Di_AppendVtx(pos.x, pos.y, 0.5f, v.texCoords.x, v.texCoords.y, 1.0f, color);
+    }
+
+    /*
     C3D_TexEnv *env = C3D_GetTexEnv(0);
     C3D_TexEnvInit(env);
     C3D_TexEnvSrc(env, C3D_Both, texture ? GPU_TEXTURE0 : GPU_PRIMARY_COLOR, 0, 0);
@@ -122,20 +118,24 @@ void CTRRenderer::draw(VertexArray *vertexArray,
     }
 
     C3D_ImmDrawEnd();
+    */
 }
 
 void CTRRenderer::clear() {
 
-    C3D_RenderTargetClear(target, C3D_CLEAR_ALL,
-                          m_clearColor.toRGBA(), 0);
+    C2D_TargetClear(target,
+                    C2D_Color32(m_clearColor.r,
+                                m_clearColor.g,
+                                m_clearColor.b,
+                                m_clearColor.a));
 }
 
 void CTRRenderer::flip(bool draw) {
 
     if (draw) {
+        C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
         clear();
-        C3D_FrameBegin(0);
-        C3D_FrameDrawOn(target);
+        C2D_SceneBegin(target);
     }
 
     // call base class (draw childs)
@@ -154,10 +154,7 @@ void CTRRenderer::delay(unsigned int ms) {
 
 CTRRenderer::~CTRRenderer() {
 
-    shaderProgramFree(&program);
-    DVLB_Free(vshader_dvlb);
-    C3D_RenderTargetDelete(target);
+    C2D_Fini();
     C3D_Fini();
     gfxExit();
 }
-#endif
