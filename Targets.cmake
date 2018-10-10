@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
-add_custom_target(${PROJECT_NAME}.data COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/data ${CMAKE_CURRENT_BINARY_DIR})
+add_custom_target(${PROJECT_NAME}.data
+        COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/data
+        COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/data/common/* ${CMAKE_CURRENT_BINARY_DIR}/data)
 add_dependencies(${PROJECT_NAME}.elf ${PROJECT_NAME}.data)
 
 #####################
@@ -12,10 +14,12 @@ if (BUILD_VITA)
     add_custom_target(${PROJECT_NAME}_vita_release.vpk
             DEPENDS ${PROJECT_NAME}.self
             COMMAND rm -rf ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND mkdir -p ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data
             COMMAND mkdir -p ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/sce_sys
             COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID="${TITLE_ID}" "${PROJECT_NAME}" ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/sce_sys/param.sfo
             COMMAND cp -f ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.self ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/eboot.bin
-            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
+            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data/vita/* ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
+            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data/common/* ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data
             COMMAND cd ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME} && zip -r ../../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_vita.vpk .
             COMMAND cd ${CMAKE_CURRENT_BINARY_DIR})
 endif (BUILD_VITA)
@@ -32,9 +36,9 @@ if (BUILD_SWITCH)
     add_custom_target(${PROJECT_NAME}_switch_release.zip
             DEPENDS ${PROJECT_NAME}.nro
             COMMAND rm -rf ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
-            COMMAND mkdir -p ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
-            COMMAND cp -f ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.nro ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/${PROJECT_NAME}.nro
-            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
+            COMMAND mkdir -p ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data
+            COMMAND cp -f ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.nro ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
+            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data/common/* ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data
             COMMAND cd ${CMAKE_BINARY_DIR}/release && zip -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_switch.zip ${PROJECT_NAME}
             COMMAND cd ${CMAKE_CURRENT_BINARY_DIR})
 endif (BUILD_SWITCH)
