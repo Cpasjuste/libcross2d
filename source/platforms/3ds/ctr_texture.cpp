@@ -58,11 +58,12 @@ CTRTexture::CTRTexture(const std::string &path) : Texture(path) {
         return;
     }
 
+    //tex.border = 0xFFFFFFFF;
     setSize(w, h);
-    setTexture(this, true);
+    setTexture(this);
     setTextureRect(IntRect(0, 0, tex.width, tex.height));
-    pitch = getTextureRect().width * bpp;
-    //tileSoft();
+    pitch = w * bpp;
+    upload();
     available = true;
 }
 
@@ -78,7 +79,7 @@ CTRTexture::CTRTexture(const Vector2f &size, Format format) : Texture(size, form
         fmt = GPU_RGB565;
     }
 
-    bool res = C3D_TexInitVRAM(&tex, pow2((int) size.x), pow2((int) size.y), fmt);
+    bool res = C3D_TexInit(&tex, pow2((int) size.x), pow2((int) size.y), fmt);
     if (!res) {
         printf("CTRTexture: couldn't create texture (C3D_TexInit)\n");
         linearFree(pixels);
@@ -87,9 +88,9 @@ CTRTexture::CTRTexture(const Vector2f &size, Format format) : Texture(size, form
     }
 
     setSize(size);
-    setTexture(this, true);
+    setTexture(this);
     setTextureRect(IntRect(0, 0, tex.width, tex.height));
-    pitch = getTextureRect().width * bpp;
+    pitch = (int) size.x * bpp;
     available = true;
 }
 
@@ -112,7 +113,7 @@ void CTRTexture::unlock() {
 
     // tile buffer for 3ds...
     if (pixels) {
-        //tile();
+        upload();
     }
 }
 
@@ -123,26 +124,39 @@ void CTRTexture::setFilter(Filter filter) {
     C3D_TexSetFilter(&tex, GPU_LINEAR, param);
 }
 
-void CTRTexture::tile() {
+void CTRTexture::upload() {
 
-    GSPGPU_FlushDataCache(pixels, (u32) getSize().y * pitch);
-    GSPGPU_FlushDataCache(tex.data, tex.size);
+    C3D_TexUpload(&tex, pixels);
 
-    GX_TRANSFER_FORMAT fmt =
-            format == Format::RGB565 ? GX_TRANSFER_FMT_RGB565 : GX_TRANSFER_FMT_RGBA8;
+    /*
+GSPGPU_FlushDataCache(pixels, (u32) getSize().y * pitch);
+GSPGPU_FlushDataCache(tex.data, tex.size);
 
-    C3D_SafeDisplayTransfer(
-            (u32 *) pixels,
-            (u32) GX_BUFFER_DIM((int) getSize().x, (int) getSize().y),
-            (u32 *) tex.data,
-            (u32) GX_BUFFER_DIM(tex.width, tex.height),
-            (u32) TILE_FLAGS(fmt, fmt)
-    );
+GX_TRANSFER_FORMAT fmt =
+        format == Format::RGB565 ? GX_TRANSFER_FMT_RGB565 : GX_TRANSFER_FMT_RGBA8;
 
-    gspWaitForPPF();
+C3D_SafeDisplayTransfer(
+        (u32 *) pixels,
+        (u32) GX_BUFFER_DIM((int) getSize().x, (int) getSize().y),
+        (u32 *) tex.data,
+        (u32) GX_BUFFER_DIM(tex.width, tex.height),
+        (u32) TILE_FLAGS(fmt, fmt)
+);
+
+     gspWaitForPPF();
+*/
+
+    /*
+    C3D_SafeTextureCopy((u32 *) pixels,
+                        (u32) GX_BUFFER_DIM((int) getSize().x, (int) getSize().y),
+                        (u32 *) tex.data,
+                        (u32) GX_BUFFER_DIM(tex.width, tex.height),
+                        (u32) getSize().y * pitch,
+                        (u32) TILE_FLAGS(fmt, fmt));
+    */
 }
 
-void CTRTexture::tileSoft() {
+void CTRTexture::uploadSoft() {
 
     if (pixels && tex.data) {
         // TODO: add support for non-RGBA8 textures

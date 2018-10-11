@@ -136,7 +136,6 @@ elseif (BUILD_3DS)
     #add_shbin_library(shaders.3ds src/3ds/vshader.v.pica)
     set(PLATFORM_DIRS
             source/platforms/3ds
-            source/platforms/3ds/citro2d/include
             source/platforms/posix
             ${DEVKITPRO}/libctru/include
             ${DEVKITPRO}/portlibs/3ds/include
@@ -145,12 +144,11 @@ elseif (BUILD_3DS)
             )
     file(GLOB PLATFORM_SRC
             source/platforms/3ds/*.c*
-            source/platforms/3ds/citro2d/source/*.c
             source/platforms/posix/*.c*
             #source/platforms/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
             # TODO: fix that crap...
             source/platforms/3ds/vshaders.v.o
-            source/platforms/3ds/citro2d/source/render2d.shbin.o
+            source/platforms/3ds/render2d.shbin.o
             )
 
     set(PLATFORM_LIBS

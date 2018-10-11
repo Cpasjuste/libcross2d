@@ -29,9 +29,9 @@ namespace c2d {
         C3D_Tex tex;
     private:
 
-        void tile();
+        void upload();
 
-        void tileSoft();
+        void uploadSoft();
 
         u8 *pixels = nullptr;
         //GPU_TEXCOLOR fmt = GPU_RGB565;

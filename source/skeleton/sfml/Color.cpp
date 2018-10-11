@@ -85,6 +85,9 @@ namespace c2d {
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
+    uint32_t Color::toABGR() const {
+        return r | (g << 8) | (b << 16) | (a << 24);
+    }
 
 ////////////////////////////////////////////////////////////
     bool operator==(const Color &left, const Color &right) {
