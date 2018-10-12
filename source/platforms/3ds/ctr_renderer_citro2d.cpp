@@ -87,7 +87,7 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     C3D_TexEnvInit(env);
     C3D_TexEnvSrc(env, C3D_RGB, GPU_PREVIOUS, GPU_PRIMARY_COLOR, GPU_TEXTURE3);
     C3D_TexEnvOpRgb(env, GPU_TEVOP_RGB_SRC_COLOR, GPU_TEVOP_RGB_SRC_COLOR, GPU_TEVOP_RGB_ONE_MINUS_SRC_ALPHA);
-    C3D_TexEnvSrc(env, C3D_Alpha, GPU_PREVIOUS, GPU_PRIMARY_COLOR, 0);
+    C3D_TexEnvSrc(env, C3D_Alpha, GPU_PREVIOUS, GPU_PRIMARY_COLOR, (GPU_TEVSRC) 0);
     C3D_TexEnvFunc(env, C3D_RGB, GPU_INTERPOLATE);
     C3D_TexEnvFunc(env, C3D_Alpha, GPU_MODULATE);
     // Set texenv5 to apply the fade color
@@ -127,7 +127,7 @@ void CTRRenderer::draw(VertexArray *vertexArray,
                        const Texture *texture) {
 
     if (!vertexArray || vertexArray->getVertexCount() < 1) {
-        printf("ctr_renderer::draw: no vertices\n");
+        //printf("ctr_renderer::draw: no vertices\n");
         return;
     }
 
@@ -150,11 +150,12 @@ void CTRRenderer::draw(VertexArray *vertexArray,
             return;
     }
 
-    C3D_TexEnvSrc(C3D_GetTexEnv(0), C3D_Both, texture ? GPU_TEXTURE0 : GPU_CONSTANT, 0, 0);
-
     if (texture) {
         C3D_TexBind(0, &((CTRTexture *) texture)->tex);
     }
+
+    C3D_TexEnvSrc(C3D_GetTexEnv(0), C3D_Both,
+                  texture ? GPU_TEXTURE0 : GPU_CONSTANT, (GPU_TEVSRC) 0, (GPU_TEVSRC) 0);
 
     for (unsigned int i = 0; i < vertexCount; i++) {
 
@@ -168,8 +169,8 @@ void CTRRenderer::draw(VertexArray *vertexArray,
         vtx->texcoord[0] = v.texCoords.x;
         vtx->texcoord[1] = v.texCoords.y;
         vtx->blend[0] = 0.0f; // reserved for future expansion
-        vtx->blend[1] = 1.0f;
-        vtx->color = v.color.toABGR();
+        vtx->blend[1] = texture ? 0.0f : 1.0f;
+        vtx->color = texture ? 0xFF << 24 : v.color.toARGB();
     }
 
     size_t len = ctx.vtxBufPos - ctx.vtxBufLastPos;

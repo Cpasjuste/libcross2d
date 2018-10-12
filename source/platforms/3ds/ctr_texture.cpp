@@ -45,20 +45,34 @@ CTRTexture::CTRTexture(const std::string &path) : Texture(path) {
 
     int w, h, n = 0;
 
-    pixels = stbi_load(path.c_str(), &w, &h, &n, 4);
-    if (!pixels) {
+    u8 *buf = stbi_load(path.c_str(), &w, &h, &n, 4);
+    if (!buf) {
         printf("CTRTexture(%p): couldn't create texture (%s)\n", this, path.c_str());
         return;
     }
 
-    if (!C3D_TexInit(&tex, pow2(w), pow2(h), GPU_RGBA8)) {
+    int pow2w = pow2(w), pow2h = pow2(h);
+    pixels = (u8 *) linearAlloc((size_t) (pow2w * pow2h * 4));
+    if (!pixels) {
+        free(buf);
+        return;
+    }
+
+    for (int i = 0; i < h; i++) {
+        memcpy(pixels, buf, (size_t) w * 4);
+        pixels += w * 4;
+        buf += pow2w * 4;
+    }
+
+    free(buf);
+
+    if (!C3D_TexInit(&tex, (u16) pow2w, (u16) pow2h, GPU_RGBA8)) {
         printf("CTRTexture: couldn't create texture (C3D_TexInit)\n");
         linearFree(pixels);
         pixels = nullptr;
         return;
     }
 
-    //tex.border = 0xFFFFFFFF;
     setSize(w, h);
     setTexture(this);
     setTextureRect(IntRect(0, 0, tex.width, tex.height));
@@ -129,23 +143,20 @@ void CTRTexture::upload() {
     C3D_TexUpload(&tex, pixels);
 
     /*
-GSPGPU_FlushDataCache(pixels, (u32) getSize().y * pitch);
-GSPGPU_FlushDataCache(tex.data, tex.size);
+    GSPGPU_FlushDataCache(pixels, (u32) getSize().y * pitch);
+    GSPGPU_FlushDataCache(tex.data, tex.size);
 
-GX_TRANSFER_FORMAT fmt =
-        format == Format::RGB565 ? GX_TRANSFER_FMT_RGB565 : GX_TRANSFER_FMT_RGBA8;
+    GX_TRANSFER_FORMAT fmt =
+            format == Format::RGB565 ? GX_TRANSFER_FMT_RGB565 : GX_TRANSFER_FMT_RGBA8;
 
-C3D_SafeDisplayTransfer(
-        (u32 *) pixels,
-        (u32) GX_BUFFER_DIM((int) getSize().x, (int) getSize().y),
-        (u32 *) tex.data,
-        (u32) GX_BUFFER_DIM(tex.width, tex.height),
-        (u32) TILE_FLAGS(fmt, fmt)
-);
-
-     gspWaitForPPF();
-*/
-
+    C3D_SafeDisplayTransfer(
+            (u32 *) pixels,
+            (u32) GX_BUFFER_DIM((int) getSize().x, (int) getSize().y),
+            (u32 *) tex.data,
+            (u32) GX_BUFFER_DIM(tex.width, tex.height),
+            (u32) TILE_FLAGS(fmt, fmt)
+    );
+    */
     /*
     C3D_SafeTextureCopy((u32 *) pixels,
                         (u32) GX_BUFFER_DIM((int) getSize().x, (int) getSize().y),
@@ -154,6 +165,8 @@ C3D_SafeDisplayTransfer(
                         (u32) getSize().y * pitch,
                         (u32) TILE_FLAGS(fmt, fmt));
     */
+
+    //gspWaitForPPF();
 }
 
 void CTRTexture::uploadSoft() {
