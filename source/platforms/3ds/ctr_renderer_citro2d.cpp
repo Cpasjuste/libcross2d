@@ -166,11 +166,11 @@ void CTRRenderer::draw(VertexArray *vertexArray,
         vtx->pos[0] = pos.x;
         vtx->pos[1] = pos.y;
         vtx->pos[2] = 0.5f;
-        vtx->texcoord[0] = v.texCoords.x;
-        vtx->texcoord[1] = v.texCoords.y;
-        vtx->blend[0] = 0.0f; // reserved for future expansion
-        vtx->blend[1] = texture ? 0.0f : 1.0f;
-        vtx->color = texture ? 0xFF << 24 : v.color.toARGB();
+        vtx->texcoord[0] = texture ? v.texCoords.x / texture->getTextureRect().width : 0;
+        vtx->texcoord[1] = texture ? v.texCoords.y / texture->getTextureRect().height : 0;
+        vtx->blend[0] = 0; // reserved for future expansion
+        vtx->blend[1] = texture ? (v.color != Color::White ? 1.0f : 0) : 1.0f;
+        vtx->color = v.color.toABGR();
     }
 
     size_t len = ctx.vtxBufPos - ctx.vtxBufLastPos;

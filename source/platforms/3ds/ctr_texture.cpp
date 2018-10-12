@@ -43,47 +43,52 @@ static inline u32 get_morton_offset(u32 x, u32 y, u32 bytes_per_pixel) {
 
 CTRTexture::CTRTexture(const std::string &path) : Texture(path) {
 
-    int w, h, n = 0;
+    int img_w, img_h, n = 0;
+    int p2_w, p2_h;
 
-    u8 *buf = stbi_load(path.c_str(), &w, &h, &n, 4);
-    if (!buf) {
+    u8 *img = stbi_load(path.c_str(), &img_w, &img_h, &n, bpp);
+    if (!img) {
         printf("CTRTexture(%p): couldn't create texture (%s)\n", this, path.c_str());
         return;
     }
 
-    int pow2w = pow2(w), pow2h = pow2(h);
-    pixels = (u8 *) linearAlloc((size_t) (pow2w * pow2h * 4));
+    // copy img to power of 2 pixel data
+    p2_w = pow2(img_w), p2_h = pow2(img_h);
+    pixels = (u8 *) linearAlloc((size_t) (p2_w * p2_h * bpp));
     if (!pixels) {
-        free(buf);
+        free(img);
         return;
     }
 
-    for (int i = 0; i < h; i++) {
-        memcpy(pixels, buf, (size_t) w * 4);
-        pixels += w * 4;
-        buf += pow2w * 4;
+    u8 *dst = pixels;
+    for (int i = 0; i < img_h; i++) {
+        memcpy(dst, img, (size_t) img_w * bpp);
+        dst += p2_w * bpp;
+        img += img_w * bpp;
     }
+    free(img);
 
-    free(buf);
-
-    if (!C3D_TexInit(&tex, (u16) pow2w, (u16) pow2h, GPU_RGBA8)) {
+    if (!C3D_TexInit(&tex, (u16) p2_w, (u16) p2_h, GPU_RGBA8)) {
         printf("CTRTexture: couldn't create texture (C3D_TexInit)\n");
         linearFree(pixels);
         pixels = nullptr;
         return;
     }
 
-    setSize(w, h);
+    setSize(img_w, img_h);
     setTexture(this);
-    setTextureRect(IntRect(0, 0, tex.width, tex.height));
-    pitch = w * bpp;
-    upload();
+    setTextureRect(IntRect(0, 0, p2_w, p2_h));
+    m_vertices.setPrimitiveType(TriangleStrip);
+    pitch = p2_w * bpp;
     available = true;
+    uploadSoft();
 }
 
 CTRTexture::CTRTexture(const Vector2f &size, Format format) : Texture(size, format) {
 
-    pixels = (u8 *) linearAlloc((size_t) getSize().y * pitch);
+    int p2_w = pow2((int) getSize().x), p2_h = pow2((int) getSize().y);
+
+    pixels = (u8 *) linearAlloc((size_t) p2_w * p2_h * bpp);
     if (!pixels) {
         return;
     }
@@ -93,7 +98,7 @@ CTRTexture::CTRTexture(const Vector2f &size, Format format) : Texture(size, form
         fmt = GPU_RGB565;
     }
 
-    bool res = C3D_TexInit(&tex, pow2((int) size.x), pow2((int) size.y), fmt);
+    bool res = C3D_TexInit(&tex, (u16) p2_w, (u16) p2_h, fmt);
     if (!res) {
         printf("CTRTexture: couldn't create texture (C3D_TexInit)\n");
         linearFree(pixels);
@@ -103,8 +108,9 @@ CTRTexture::CTRTexture(const Vector2f &size, Format format) : Texture(size, form
 
     setSize(size);
     setTexture(this);
-    setTextureRect(IntRect(0, 0, tex.width, tex.height));
-    pitch = (int) size.x * bpp;
+    setTextureRect(IntRect(0, 0, p2_w, p2_h));
+    m_vertices.setPrimitiveType(TriangleStrip);
+    pitch = p2_w * bpp;
     available = true;
 }
 
@@ -127,7 +133,7 @@ void CTRTexture::unlock() {
 
     // tile buffer for 3ds...
     if (pixels) {
-        upload();
+        uploadSoft();
     }
 }
 
@@ -138,48 +144,50 @@ void CTRTexture::setFilter(Filter filter) {
     C3D_TexSetFilter(&tex, GPU_LINEAR, param);
 }
 
+#if 0
 void CTRTexture::upload() {
 
-    C3D_TexUpload(&tex, pixels);
+    //C3D_TexUpload(&tex, pixels);
 
-    /*
-    GSPGPU_FlushDataCache(pixels, (u32) getSize().y * pitch);
-    GSPGPU_FlushDataCache(tex.data, tex.size);
+    GSPGPU_FlushDataCache(pixels, (u32) getTextureRect().height * pitch);
+    //GSPGPU_FlushDataCache(tex.data, tex.size);
 
     GX_TRANSFER_FORMAT fmt =
             format == Format::RGB565 ? GX_TRANSFER_FMT_RGB565 : GX_TRANSFER_FMT_RGBA8;
 
     C3D_SafeDisplayTransfer(
             (u32 *) pixels,
-            (u32) GX_BUFFER_DIM((int) getSize().x, (int) getSize().y),
+            (u32) GX_BUFFER_DIM(getTextureRect().width, getTextureRect().height),
             (u32 *) tex.data,
             (u32) GX_BUFFER_DIM(tex.width, tex.height),
             (u32) TILE_FLAGS(fmt, fmt)
     );
-    */
+    gspWaitForPPF();
+
     /*
     C3D_SafeTextureCopy((u32 *) pixels,
-                        (u32) GX_BUFFER_DIM((int) getSize().x, (int) getSize().y),
+                        (u32) GX_BUFFER_DIM(getTextureRect().width, getTextureRect().height),
                         (u32 *) tex.data,
                         (u32) GX_BUFFER_DIM(tex.width, tex.height),
                         (u32) getSize().y * pitch,
                         (u32) TILE_FLAGS(fmt, fmt));
-    */
 
-    //gspWaitForPPF();
+    gspWaitForPPF();
+    */
 }
+#endif
 
 void CTRTexture::uploadSoft() {
 
-    if (pixels && tex.data) {
-        // TODO: add support for non-RGBA8 textures
-        int i, j, w = (int) getSize().x, h = (int) getSize().y;
+    if (pixels) {
+        // TODO: add RGB565 supportRGB565
+        int i, j, w = getTextureRect().width, h = getTextureRect().height;
         for (j = 0; j < h; j++) {
             for (i = 0; i < w; i++) {
                 u32 coarse_y = static_cast<u32>(j & ~7);
-                u32 dst_offset = get_morton_offset(i, j, bpp) + coarse_y * tex.width * bpp;
+                u32 dst_offset = get_morton_offset((u32) i, (u32) j, (u32) bpp) + coarse_y * tex.width * bpp;
                 u32 v = ((u32 *) pixels)[i + (h - 1 - j) * w];
-                *(u32 *) ((u32) tex.data + dst_offset) = __builtin_bswap32(v); /* RGBA8 -> ABGR8 */
+                *(u32 *) ((u32) tex.data + dst_offset) = __builtin_bswap32(v); // RGBA8 -> ABGR8
             }
         }
     }

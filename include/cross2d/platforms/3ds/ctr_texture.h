@@ -29,14 +29,11 @@ namespace c2d {
         C3D_Tex tex;
     private:
 
-        void upload();
+        //void upload();
 
         void uploadSoft();
 
         u8 *pixels = nullptr;
-        //GPU_TEXCOLOR fmt = GPU_RGB565;
-        //int bpp = 4;
-        //int size = 0;
     };
 }
 
