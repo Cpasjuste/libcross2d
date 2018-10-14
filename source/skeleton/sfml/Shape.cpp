@@ -163,7 +163,7 @@ namespace c2d {
     void Shape::setOrigin(const Origin &origin) {
 
         m_origin = origin;
-        float pad_x = 0, pad_y = 0;
+        float pad_x = 1, pad_y = 1;
         if (m_textureRect.width > 0) {
             pad_x = m_bounds.width / m_textureRect.width;
             pad_y = m_bounds.height / m_textureRect.height;
