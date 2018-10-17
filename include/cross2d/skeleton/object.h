@@ -52,7 +52,7 @@ namespace c2d {
 
         virtual Visibility getVisibility();
 
-        virtual void setVisibility(Visibility visibility, bool tweenPlay = true);
+        virtual void setVisibility(Visibility visibility, bool tweenPlay = false);
 
         // deletion mode
         virtual DeleteMode getDeleteMode();
