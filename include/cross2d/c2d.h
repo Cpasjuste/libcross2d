@@ -17,6 +17,7 @@
 #include "cross2d/skeleton/texture.h"
 #include "cross2d/skeleton/utility.h"
 #include "cross2d/skeleton/tween.h"
+#include "cross2d/skeleton/config.h"
 #include "cross2d/widgets/button.h"
 #include "cross2d/widgets/textbox.h"
 #include "cross2d/widgets/listbox.h"
