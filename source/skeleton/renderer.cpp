@@ -17,6 +17,12 @@ Renderer::Renderer(const Vector2f &size) : Transformable() {
 
     deltaClock = new C2DClock();
     elapsedClock = new C2DClock();
+
+    input = new C2DInput();
+    input->setJoystickMapping(0, C2D_DEFAULT_JOY_KEYS);
+    input->setKeyboardMapping(C2D_DEFAULT_KB_KEYS);
+
+    io = new C2DIo();
 }
 
 void Renderer::setSize(const Vector2f &size) {
@@ -35,6 +41,9 @@ const Vector2f &Renderer::getSize() const {
 void Renderer::flip(bool draw) {
 
     //printf("Renderer(%p): flip\n", this);
+
+    // update inputs
+    input->update();
 
     // call base class (draw childs)
     if (draw) {
@@ -89,6 +98,8 @@ Renderer::~Renderer() {
 
     printf("~Renderer(%p)\n", this);
 
+    delete (io);
+    delete (input);
     delete (deltaClock);
     delete (elapsedClock);
     if (shaderList) {

@@ -12,9 +12,6 @@ int main() {
     auto *renderer = new C2DRenderer(Vector2f(1280, 720));
     renderer->setClearColor(Color::Black);
 
-    // create io for file/path helper
-    auto *io = new C2DIo();
-
     // create a rect
     auto *rect = new C2DRectangle(
             {renderer->getSize().x / 2, renderer->getSize().y / 2,
@@ -26,7 +23,7 @@ int main() {
     rect->setOutlineThickness(8);
 
     // create a texture and add it to the rect
-    auto *tex = new C2DTexture(io->getDataPath() + "gbatemp.png");
+    auto *tex = new C2DTexture(renderer->getIo()->getDataPath() + "gbatemp.png");
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
         tex->setScale(0.5f, 0.5f);
@@ -48,9 +45,6 @@ int main() {
     // add all this crap to the renderer
     renderer->add(rect);
 
-    auto *input = new C2DInput();
-    input->setJoystickMapping(0, C2D_DEFAULT_JOY_KEYS, 0);
-
     // add some tweening :)
     auto *tweenPos = new TweenPosition(
             {renderer->getSize().x / 2 - 256, rect->getPosition().y},
@@ -66,15 +60,11 @@ int main() {
     auto *tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     rect->add(tweenAlpha);
 
-    while (renderer->getElapsedTime().asSeconds() < 20) {
+    while (true) {
 
-        // handle input
-        unsigned int key = input->update()[0].state;
-        if (key) {
-            printf("input[0]: 0x%08X\n", key);
-            if (key & EV_QUIT) {
-                break;
-            }
+        // stop if any key is pressed
+        if (renderer->getInput()->getKeys()) {
+            break;
         }
 
         // time / delta time
@@ -86,7 +76,6 @@ int main() {
         renderer->flip();
     }
 
-    delete (input);
     delete (font);
     // will delete child's (textures, shapes, text..)
     delete (renderer);

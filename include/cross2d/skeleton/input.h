@@ -5,8 +5,6 @@
 #ifndef C2D_INPUT_H
 #define C2D_INPUT_H
 
-#include "renderer.h"
-
 #define PLAYER_COUNT 4
 #define KEY_COUNT 12
 
@@ -58,13 +56,17 @@ namespace c2d {
             int mapping[KEY_COUNT];
         };
 
-        explicit Input(Renderer *renderer = nullptr);
+        explicit Input();
 
         virtual ~Input();
 
         virtual Player *update(int rotate = 0); // to implement
 
         virtual int waitButton(int player = 0) { return -1; }; // to implement
+
+        unsigned int getKeys(int player = 0);
+
+        Player *getPlayer(int player = 0);
 
         int clear(int player = 0);
 
@@ -78,9 +80,9 @@ namespace c2d {
 
         Player players[PLAYER_COUNT];
         Keyboard keyboard;
-        Renderer *renderer;
 
     private:
+
         Clock *repeatClock;
         int repeatDelay = 150;
         bool repeat = false;
