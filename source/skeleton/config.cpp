@@ -30,7 +30,7 @@ bool Config::load() {
 
     printf("Config::load: %s\n", path.c_str());
     if (!config_read_file(&config, path.c_str())) {
-        printf("Config::load: could not read file\n");
+        printf("Config::load: file not found: %s\n", path.c_str());
         return false;
     }
 
@@ -40,14 +40,14 @@ bool Config::load() {
         return false;
     }
 
-    for (int i = 0; i < sections.size(); i++) {
-        config_setting_t *settings = config_setting_lookup(root, sections[i].getName().c_str());
+    for (auto &section : sections) {
+        config_setting_t *settings = config_setting_lookup(root, section.getName().c_str());
         if (!settings) {
-            printf("Config::load: section not found, skipping: %s\n", sections[i].getName().c_str());
+            printf("Config::load: section not found, skipping: %s\n", section.getName().c_str());
             continue;
         }
-        for (int j = 0; j < sections[i].getOptions().size(); j++) {
-            if (sections[i].getOption("").getType() == Option::Type::String) {
+        for (auto &option : *section.getOptions()) {
+            if (option.getType() == Option::Type::String) {
                 const char *value;
                 if (!config_setting_lookup_string(settings, option.getName().c_str(), &value)) {
                     printf("Config::load: option not found, skipping: %s\n", option.getName().c_str());
@@ -78,6 +78,10 @@ bool Config::load() {
 
 bool Config::save() {
 
+    // generate new config
+    config_destroy(&config);
+    config_init(&config);
+
     // create root
     config_setting_t *root = config_root_setting(&config);
 
@@ -89,7 +93,7 @@ bool Config::save() {
 
     for (auto &section : sections) {
         config_setting_t *setting = config_setting_add(setting_root, section.getName().c_str(), CONFIG_TYPE_GROUP);
-        for (Option &option : section.getOptions()) {
+        for (Option &option : *section.getOptions()) {
             if (option.getType() == Option::Type::String) {
                 config_setting_t *s = config_setting_add(setting, option.getName().c_str(), CONFIG_TYPE_STRING);
                 config_setting_set_string(s, option.getString().c_str());
@@ -112,18 +116,42 @@ void Config::add(const Section &section) {
     sections.push_back(section);
 }
 
-std::vector<Section> Config::getSections() const {
-    return sections;
-}
-
-Section Config::getSection(const std::string &name) const {
-    for (Section section : sections) {
+Section *Config::getSection(const std::string &name) {
+    for (Section &section : sections) {
         if (section.getName() == name) {
-            return section;
+            return &section;
         }
     }
+    return nullptr;
+}
 
-    return Section("");
+Section *Config::getSection(int id) {
+    for (Section &section : sections) {
+        if (section.getId() == id) {
+            return &section;
+        }
+    }
+    return nullptr;
+}
+
+std::vector<Section> *Config::getSections() {
+    return &sections;
+}
+
+Option *Config::getOption(const std::string &sectionName, const std::string &optionName) {
+    Section *section = getSection(sectionName);
+    if (section) {
+        return section->getOption(optionName);
+    }
+    return nullptr;
+}
+
+Option *Config::getOption(int sectionId, int optionId) {
+    Section *section = getSection(sectionId);
+    if (section) {
+        return section->getOption(optionId);
+    }
+    return nullptr;
 }
 
 int Config::getVersion() const {
@@ -149,4 +177,3 @@ void Config::setName(const std::string &name) {
 Config::~Config() {
     config_destroy(&config);
 }
-

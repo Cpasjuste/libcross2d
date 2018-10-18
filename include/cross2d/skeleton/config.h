@@ -31,9 +31,15 @@ namespace c2d {
 
             void add(const Section &section);
 
-            std::vector<Section> getSections() const;
+            Section *getSection(const std::string &name);
 
-            Section getSection(const std::string &name) const;
+            Section *getSection(int id);
+
+            std::vector<Section> *getSections();
+
+            Option *getOption(const std::string &sectionName, const std::string &optionName);
+
+            Option *getOption(int sectionId, int optionId);
 
             int getVersion() const;
 

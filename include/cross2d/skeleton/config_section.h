@@ -17,7 +17,7 @@ namespace c2d {
         class Section {
 
         public:
-            Section(const std::string &name);
+            Section(const std::string &name, int id = 0);
 
             void add(const Option &option);
 
@@ -25,18 +25,23 @@ namespace c2d {
 
             bool remove(int id);
 
-            Option getOption(const std::string &name) const;
+            Option *getOption(const std::string &name);
 
-            Option getOption(int id) const;
+            Option *getOption(int id);
 
-            std::vector<Option> getOptions() const;
+            std::vector<Option> *getOptions();
 
             std::string getName() const;
+
+            int getId() const;
+
+            void setId(int id);
 
         private:
 
             std::string name;
             std::vector<Option> options;
+            int id = 0;
         };
     }
 }

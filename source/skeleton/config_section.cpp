@@ -10,9 +10,10 @@
 
 using namespace c2d::config;
 
-Section::Section(const std::string &name) {
+Section::Section(const std::string &name, int id) {
 
     this->name = name;
+    this->id = id;
 }
 
 void Section::add(const Option &option) {
@@ -53,29 +54,37 @@ std::string Section::getName() const {
     return name;
 }
 
-std::vector<Option> Section::getOptions() const {
-
-    return options;
+int Section::getId() const {
+    return id;
 }
 
-Option Section::getOption(const std::string &name) const {
+void Section::setId(int id) {
+    this->id = id;
+}
 
-    for (Option option : options) {
+Option *Section::getOption(const std::string &name) {
+
+    for (Option &option : options) {
         if (option.getName() == name) {
-            return option;
+            return &option;
         }
     }
 
-    return Option("", 0, 0);
+    return nullptr;
 }
 
-Option Section::getOption(int id) const {
+Option *Section::getOption(int id) {
 
-    for (Option option : options) {
+    for (Option &option : options) {
         if (option.getId() == id) {
-            return option;
+            return &option;
         }
     }
 
-    return Option("", 0, 0);
+    return nullptr;
+}
+
+std::vector<Option> *Section::getOptions() {
+
+    return &options;
 }
