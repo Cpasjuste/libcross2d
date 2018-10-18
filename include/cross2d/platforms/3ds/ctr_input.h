@@ -14,7 +14,7 @@ namespace c2d {
 
     public:
 
-        explicit CTRInput(Renderer *renderer = nullptr);
+        explicit CTRInput();
 
         ~CTRInput() override;
 

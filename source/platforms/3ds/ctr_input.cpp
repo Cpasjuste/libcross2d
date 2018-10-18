@@ -22,7 +22,7 @@ static int key_id[KEY_COUNT]{
         Input::Key::KEY_FIRE6
 };
 
-CTRInput::CTRInput(Renderer *r) : Input(r) {
+CTRInput::CTRInput() : Input() {
 
     players[0].enabled = true;
 
