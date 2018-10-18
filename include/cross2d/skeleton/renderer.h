@@ -14,6 +14,8 @@
 #include "shader_list.h"
 #include "cross2d/skeleton/sfml/RectangleShape.hpp"
 #include "cross2d/skeleton/sfml/Clock.hpp"
+#include "cross2d/skeleton/input.h"
+#include "cross2d/skeleton/io.h"
 
 #ifndef MAX_PATH
 #define MAX_PATH 512
@@ -62,10 +64,16 @@ namespace c2d {
 
         float getFps() const;
 
+        Io *getIo() { return io; };
+
+        Input *getInput() { return input; };
+
     protected:
 
         Vector2f m_size;
         Color m_clearColor = Color::Black;
+        Input *input = nullptr;
+        Io *io = nullptr;
         ShaderList *shaderList = nullptr;
         Clock *deltaClock = nullptr, *elapsedClock = nullptr;
         Time deltaTime, elapsedTime;

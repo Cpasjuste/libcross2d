@@ -6,9 +6,8 @@
 
 using namespace c2d;
 
-Input::Input(Renderer *r) : keyboard() {
+Input::Input() : keyboard() {
 
-    this->renderer = r;
     repeatClock = new C2DClock();
 }
 
@@ -73,4 +72,18 @@ void Input::setKeyboardMapping(const int *mapping) {
 
 Input::~Input() {
     delete (repeatClock);
+}
+
+unsigned int Input::getKeys(int player) {
+    if (player < PLAYER_COUNT) {
+        return players[player].state;
+    }
+    return 0;
+}
+
+Input::Player *Input::getPlayer(int player) {
+    if (player < PLAYER_COUNT) {
+        return &players[player];
+    }
+    return nullptr;
 }

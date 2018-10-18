@@ -23,8 +23,7 @@ static int key_id[KEY_COUNT]{
         Input::Key::KEY_FIRE6
 };
 
-SDL2Input::SDL2Input(Renderer *r)
-        : Input(r) {
+SDL2Input::SDL2Input() : Input() {
 
     if (SDL_WasInit(SDL_INIT_JOYSTICK) == 0) {
         printf("SDL2Input: SDL_INIT_JOYSTICK\n");
