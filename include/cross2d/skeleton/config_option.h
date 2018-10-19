@@ -2,8 +2,8 @@
 // Created by cpasjuste on 17/10/18.
 //
 
-#ifndef C2D_ITEM_H
-#define C2D_ITEM_H
+#ifndef C2D_CONFIG_OPTION_H
+#define C2D_CONFIG_OPTION_H
 
 #include <string>
 #include <vector>
@@ -69,4 +69,4 @@ namespace c2d {
     }
 }
 
-#endif //C2D_ITEM_H
+#endif //C2D_CONFIG_OPTION_H
