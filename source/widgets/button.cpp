@@ -19,14 +19,18 @@ Button::Button(const c2d::FloatRect &rect, c2d::Font &font,
     setText(text);
 }
 
-void Button::setText(const std::string &text) {
+void Button::setText(const std::string &t) {
 
-    this->text->setScale(1, 1);
-    this->text->setString(text);
-    this->text->setOrigin(Origin::Center);
-    float width = this->text->getGlobalBounds().width;
+    text->setScale(1, 1);
+    text->setString(t);
+    text->setOrigin(Origin::Center);
+    float width = text->getGlobalBounds().width;
     if (width > getSize().x - 8) {
         float scaling = (getSize().x - 16) / width;
-        this->text->setScale(scaling, scaling);
+        text->setScale(scaling, scaling);
     }
+}
+
+c2d::Text *Button::getText() {
+    return text;
 }

@@ -5,6 +5,9 @@
 #ifndef CROSS2D_BUTTON_H
 #define CROSS2D_BUTTON_H
 
+#include "cross2d/skeleton/sfml/RectangleShape.hpp"
+#include "cross2d/skeleton/sfml/Text.hpp"
+
 namespace c2d {
 
     class Button : public c2d::RectangleShape {
@@ -15,6 +18,8 @@ namespace c2d {
                int fontSize, const std::string &text);
 
         void setText(const std::string &text);
+        
+        c2d::Text *getText();
 
     private:
 
