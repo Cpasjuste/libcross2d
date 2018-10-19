@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+
 #include "config_section.h"
 #include "cross2d/skeleton/libconfig/libconfig.h"
 
@@ -14,14 +15,15 @@ namespace c2d {
 
     namespace config {
 
-        class Config {
+        class Config : public Section {
 
         public:
 
-            Config(const std::string &name, const std::string &path, int version = 1);
+            Config(const std::string &name, const std::string &path,
+                   int version = 1);
 
             Config(const std::string &name, const std::string &path,
-                   const std::vector<Section> &sections, int version = 1);
+                   int version, const std::vector<Section> &sections);
 
             ~Config();
 
@@ -29,7 +31,7 @@ namespace c2d {
 
             bool save();
 
-            void add(const Section &section);
+            void addSection(const Section &section);
 
             Section *getSection(const std::string &name);
 
@@ -47,15 +49,10 @@ namespace c2d {
 
             const std::string &getPath() const;
 
-            const std::string &getName() const;
-
-            void setName(const std::string &name);
-
         private:
 
-            std::string name;
-            std::string path;
             int version;
+            std::string path;
             std::vector<config::Section> sections;
             config_t config;
         };

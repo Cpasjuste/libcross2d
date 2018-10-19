@@ -17,19 +17,8 @@ namespace c2d {
         class Section {
 
         public:
+
             Section(const std::string &name, int id = 0);
-
-            void add(const Option &option);
-
-            bool remove(const std::string &name);
-
-            bool remove(int id);
-
-            Option *getOption(const std::string &name);
-
-            Option *getOption(int id);
-
-            std::vector<Option> *getOptions();
 
             std::string getName() const;
 
@@ -37,9 +26,37 @@ namespace c2d {
 
             void setId(int id);
 
+            // child options
+            void addOption(const Option &option);
+
+            bool removeOption(const std::string &name);
+
+            bool removeOption(int id);
+
+            Option *getOption(const std::string &name);
+
+            Option *getOption(int id);
+
+            std::vector<Option> *getOptions();
+
+#if 0       // TODO: handle recursive load/save in config
+            // child sections
+            void addSection(const Section &section);
+
+            bool removeSection(const std::string &name);
+
+            bool removeSection(int id);
+
+            Section *getSection(const std::string &name);
+
+            Section *getSection(int id);
+
+            std::vector<Section> *getSections();
+#endif
         private:
 
             std::string name;
+            //std::vector<Section> sections;
             std::vector<Option> options;
             int id = 0;
         };

@@ -2,24 +2,21 @@
 // Created by cpasjuste on 17/10/18.
 //
 
-#include <cross2d/skeleton/config.h>
-
 #include "cross2d/skeleton/config.h"
 #include "libconfig/libconfig.h"
 
 using namespace c2d::config;
 
-Config::Config(const std::string &name, const std::string &path, int version) {
+Config::Config(const std::string &name, const std::string &path, int version) : Section(name) {
 
-    this->name = name;
     this->path = path;
     this->version = version;
     config_init(&config);
 }
 
-Config::Config(const std::string &name, const std::string &path, const std::vector<Section> &sections, int version) {
+Config::Config(const std::string &name, const std::string &path, int version,
+               const std::vector<Section> &sections) : Section(name) {
 
-    this->name = name;
     this->path = path;
     this->sections = sections;
     this->version = version;
@@ -34,11 +31,13 @@ bool Config::load() {
         return false;
     }
 
-    config_setting_t *root = config_lookup(&config, name.c_str());
+    config_setting_t *root = config_lookup(&config, getName().c_str());
     if (!root) {
-        printf("Config::load: could not find root config: %s\n", name.c_str());
+        printf("Config::load: could not find root config: %s\n", getName().c_str());
         return false;
     }
+
+#error  TODO: parse own options, recurse sections
 
     for (auto &section : sections) {
         config_setting_t *settings = config_setting_lookup(root, section.getName().c_str());
@@ -86,7 +85,7 @@ bool Config::save() {
     config_setting_t *root = config_root_setting(&config);
 
     // create main group
-    config_setting_t *setting_root = config_setting_add(root, name.c_str(), CONFIG_TYPE_GROUP);
+    config_setting_t *setting_root = config_setting_add(root, getName().c_str(), CONFIG_TYPE_GROUP);
     // add version
     config_setting_t *setting_version = config_setting_add(setting_root, "VERSION", CONFIG_TYPE_INT);
     config_setting_set_int(setting_version, version);
@@ -111,7 +110,7 @@ bool Config::save() {
     return config_write_file(&config, path.c_str()) == 1;
 }
 
-void Config::add(const Section &section) {
+void Config::addSection(const Section &section) {
 
     sections.push_back(section);
 }
@@ -164,14 +163,6 @@ void Config::setVersion(int version) {
 
 const std::string &Config::getPath() const {
     return path;
-}
-
-const std::string &Config::getName() const {
-    return name;
-}
-
-void Config::setName(const std::string &name) {
-    this->name = name;
 }
 
 Config::~Config() {

@@ -3,8 +3,6 @@
 //
 
 #include <algorithm>
-#include <cross2d/skeleton/config_section.h>
-
 
 #include "cross2d/skeleton/config_section.h"
 
@@ -16,12 +14,28 @@ Section::Section(const std::string &name, int id) {
     this->id = id;
 }
 
-void Section::add(const Option &option) {
+
+std::string Section::getName() const {
+
+    return name;
+}
+
+int Section::getId() const {
+    return id;
+}
+
+void Section::setId(int id) {
+    this->id = id;
+}
+
+
+/// childs options
+void Section::addOption(const Option &option) {
 
     options.push_back(option);
 }
 
-bool Section::remove(const std::string &name) {
+bool Section::removeOption(const std::string &name) {
 
     auto found = std::find_if(options.begin(), options.end(), [&name](Option const &option) {
         return name == option.getName();
@@ -35,10 +49,10 @@ bool Section::remove(const std::string &name) {
     return false;
 }
 
-bool Section::remove(int id) {
+bool Section::removeOption(int id) {
 
-    auto found = std::find_if(options.begin(), options.end(), [&id](Option const &item) {
-        return id == item.getId();
+    auto found = std::find_if(options.begin(), options.end(), [&id](Option const &option) {
+        return id == option.getId();
     });
 
     if (found != options.end()) {
@@ -47,19 +61,6 @@ bool Section::remove(int id) {
     }
 
     return false;
-}
-
-std::string Section::getName() const {
-
-    return name;
-}
-
-int Section::getId() const {
-    return id;
-}
-
-void Section::setId(int id) {
-    this->id = id;
 }
 
 Option *Section::getOption(const std::string &name) {
@@ -88,3 +89,66 @@ std::vector<Option> *Section::getOptions() {
 
     return &options;
 }
+
+#if 0       // TODO: handle recursive load/save in config
+/// childs section
+void Section::addSection(const Section &section) {
+
+    sections.push_back(section);
+}
+
+bool Section::removeSection(const std::string &name) {
+
+    auto found = std::find_if(sections.begin(), sections.end(), [&name](Section const &section) {
+        return name == section.getName();
+    });
+
+    if (found != sections.end()) {
+        sections.erase(found);
+        return true;
+    }
+
+    return false;
+}
+
+bool Section::removeSection(int id) {
+
+    auto found = std::find_if(sections.begin(), sections.end(), [&id](Section const &section) {
+        return id == section.getId();
+    });
+
+    if (found != sections.end()) {
+        sections.erase(found);
+        return true;
+    }
+
+    return false;
+}
+
+Section *Section::getSection(const std::string &name) {
+
+    for (Section &section : sections) {
+        if (section.getName() == name) {
+            return &section;
+        }
+    }
+
+    return nullptr;
+}
+
+Section *Section::getSection(int id) {
+
+    for (Section &section : sections) {
+        if (section.getId() == id) {
+            return &section;
+        }
+    }
+
+    return nullptr;
+}
+
+std::vector<Section> *Section::getSections() {
+
+    return &sections;
+}
+#endif
