@@ -37,7 +37,7 @@ bool Config::load() {
         return false;
     }
 
-#error  TODO: parse own options, recurse sections
+//#error  TODO: parse own options, recurse sections
 
     for (auto &section : sections) {
         config_setting_t *settings = config_setting_lookup(root, section.getName().c_str());
