@@ -2,8 +2,8 @@
 // Created by cpasjuste on 05/02/18.
 //
 
-#ifndef CROSS2D_MESSAGEBOX_H
-#define CROSS2D_MESSAGEBOX_H
+#ifndef C2D_MESSAGEBOX_H
+#define C2D_MESSAGEBOX_H
 
 namespace c2d {
 
@@ -16,7 +16,7 @@ namespace c2d {
         };
 
         MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
-                   c2d::Font &font, int fontSize);
+                   c2d::Font *font, int fontSize);
 
         int show(const std::string &title, const std::string &message,
                  const std::string &buttonLeftText = "", const std::string &buttonRightText = "",
@@ -38,4 +38,4 @@ namespace c2d {
     };
 }
 
-#endif //CROSS2D_MESSAGEBOX_H
+#endif //C2D_MESSAGEBOX_H

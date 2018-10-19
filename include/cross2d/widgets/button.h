@@ -2,8 +2,8 @@
 // Created by cpasjuste on 05/02/18.
 //
 
-#ifndef CROSS2D_BUTTON_H
-#define CROSS2D_BUTTON_H
+#ifndef C2D_BUTTON_H
+#define C2D_BUTTON_H
 
 #include "cross2d/skeleton/sfml/RectangleShape.hpp"
 #include "cross2d/skeleton/sfml/Text.hpp"
@@ -14,7 +14,7 @@ namespace c2d {
 
     public:
 
-        Button(const c2d::FloatRect &rect, c2d::Font &font,
+        Button(const c2d::FloatRect &rect, c2d::Font *font,
                int fontSize, const std::string &text);
 
         void setText(const std::string &text);
@@ -27,4 +27,4 @@ namespace c2d {
     };
 }
 
-#endif //CROSS2D_BUTTON_H
+#endif //C2D_BUTTON_H

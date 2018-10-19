@@ -106,7 +106,7 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         bool loadFromFile(const std::string &filename);
 
-        bool load();
+        bool loadDefault();
 
         ////////////////////////////////////////////////////////////
         /// \brief Load the font from a file in memory

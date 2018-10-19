@@ -23,6 +23,9 @@ Renderer::Renderer(const Vector2f &size) : Transformable() {
     input->setKeyboardMapping(C2D_DEFAULT_KB_KEYS);
 
     io = new C2DIo();
+
+    font = new C2DFont();
+    font->loadDefault();
 }
 
 void Renderer::setSize(const Vector2f &size) {
@@ -98,6 +101,7 @@ Renderer::~Renderer() {
 
     printf("~Renderer(%p)\n", this);
 
+    delete (font);
     delete (io);
     delete (input);
     delete (deltaClock);

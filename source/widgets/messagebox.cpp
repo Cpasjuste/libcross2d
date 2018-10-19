@@ -7,11 +7,11 @@
 using namespace c2d;
 
 MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
-                       c2d::Font &font, int fontSize)
+                       c2d::Font *font, int fontSize)
         : RectangleShape(rect) {
 
     this->input = input;
-    float line_height = font.getLineSpacing((unsigned int) fontSize) + 16;
+    float line_height = font->getLineSpacing((unsigned int) fontSize) + 16;
 
     this->title = new Text("TITLE", font, (unsigned int) fontSize);
     this->title->setScale(1.5f, 1.5f);

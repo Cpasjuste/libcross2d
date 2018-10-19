@@ -81,7 +81,7 @@ namespace c2d {
         /// \param characterSize  Base size of characters, in pixels
         ///
         ////////////////////////////////////////////////////////////
-        Text(const std::string &string, const c2d::Font &font, unsigned int characterSize = 30);
+        Text(const std::string &string, Font *font = nullptr, unsigned int characterSize = 30);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the text's string

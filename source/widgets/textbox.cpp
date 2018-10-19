@@ -6,7 +6,7 @@
 
 using namespace c2d;
 
-TextBox::TextBox(const std::string &string, const Font &font,
+TextBox::TextBox(const std::string &string, Font *font,
                  const FloatRect &rect,
                  const Color &fillColor,
                  const Color &textColor) : RectangleShape(rect) {

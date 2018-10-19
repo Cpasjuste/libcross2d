@@ -13,7 +13,7 @@ namespace c2d {
 
     public:
 
-        ListBoxLine(const FloatRect &rect, const std::string &str, const Font &font,
+        ListBoxLine(const FloatRect &rect, const std::string &str, Font *font,
                     unsigned int fontSize, Texture *icon = nullptr, bool use_icons = false);
 
         ~ListBoxLine();
@@ -38,7 +38,7 @@ namespace c2d {
 
     public:
 
-        ListBox(const Font &font, int fontSize, const FloatRect &rect,
+        ListBox(Font *font, int fontSize, const FloatRect &rect,
                 const std::vector<Io::File> &fileList, bool useIcons = false);
 
         ~ListBox();

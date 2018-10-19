@@ -14,6 +14,7 @@
 #include "shader_list.h"
 #include "cross2d/skeleton/sfml/RectangleShape.hpp"
 #include "cross2d/skeleton/sfml/Clock.hpp"
+#include "cross2d/skeleton/sfml/Font.hpp"
 #include "cross2d/skeleton/input.h"
 #include "cross2d/skeleton/io.h"
 
@@ -66,6 +67,8 @@ namespace c2d {
 
         Io *getIo() { return io; };
 
+        Font *getFont() { return font; };
+
         Input *getInput() { return input; };
 
     protected:
@@ -74,6 +77,7 @@ namespace c2d {
         Color m_clearColor = Color::Black;
         Input *input = nullptr;
         Io *io = nullptr;
+        Font *font = nullptr;
         ShaderList *shaderList = nullptr;
         Clock *deltaClock = nullptr, *elapsedClock = nullptr;
         Time deltaTime, elapsedTime;

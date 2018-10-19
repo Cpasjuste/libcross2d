@@ -8,7 +8,7 @@ using namespace c2d;
 
 ListBoxLine::ListBoxLine(
         const FloatRect &rect, const std::string &str,
-        const Font &font, unsigned int fontSize, Texture *i, bool ui) : RectangleShape(rect) {
+        Font *font, unsigned int fontSize, Texture *i, bool ui) : RectangleShape(rect) {
 
     printf("ListBoxLine(%p)\n", this);
 
@@ -98,7 +98,7 @@ ListBoxLine::~ListBoxLine() {
     printf("~ListBoxLine(%p)\n", this);
 }
 
-ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
+ListBox::ListBox(Font *font, int fontSize, const FloatRect &rect,
                  const std::vector<Io::File> &fileList, bool useIcons)
         : RectangleShape(rect) {
 
@@ -116,7 +116,7 @@ ListBox::ListBox(const Font &font, int fontSize, const FloatRect &rect,
     if (use_icons) {
         line_height = 34; // 32px + 2px margin
     } else {
-        line_height = (int) font.getLineSpacing((unsigned int) fontSize) + 8;
+        line_height = (int) font->getLineSpacing((unsigned int) fontSize) + 8;
     }
     max_lines = (int) (getSize().y / line_height);
     if ((max_lines * line_height) < getSize().y) {

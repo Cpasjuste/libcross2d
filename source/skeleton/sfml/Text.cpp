@@ -91,7 +91,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     Text::Text() :
             m_string(),
-            m_font(NULL),
+            m_font(c2d_renderer->getFont()),
             m_characterSize(30),
             m_style(Regular),
             m_fillColor(255, 255, 255),
@@ -106,9 +106,9 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    Text::Text(const std::string &string, const Font &font, unsigned int characterSize) :
+    Text::Text(const std::string &string, Font *font, unsigned int characterSize) :
             m_string(string),
-            m_font(&font),
+            m_font(font),
             m_characterSize(characterSize),
             m_style(Regular),
             m_fillColor(255, 255, 255),
@@ -119,6 +119,9 @@ namespace c2d {
             m_bounds(),
             m_geometryNeedUpdate(true) {
         type = Type::Text;
+        if (!m_font) {
+            m_font = c2d_renderer->getFont();
+        }
         ensureGeometryUpdate();
     }
 

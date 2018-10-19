@@ -6,7 +6,7 @@
 
 using namespace c2d;
 
-Button::Button(const c2d::FloatRect &rect, c2d::Font &font,
+Button::Button(const c2d::FloatRect &rect, c2d::Font *font,
                int fontSize, const std::string &text)
         : RectangleShape(rect) {
 

@@ -152,10 +152,10 @@ namespace c2d {
     }
 
 ////////////////////////////////////////////////////////////
-    bool Font::load() {
+    bool Font::loadDefault() {
         bool res = loadFromMemory(
                 c2d_font_default, (std::size_t) c2d_font_default_length);
-        setOffset({0, -4});
+        setOffset({0, -6});
         return res;
     }
 

@@ -32,15 +32,11 @@ int main() {
     }
 
     // create a font
-    auto *font = new C2DFont();
-    if (font->load()) {
-        // create a text and add it to the rect
-        auto *text = new C2DText("cross2d", *font);
-        text->setOutlineThickness(2);
-        text->setPosition(rect->getSize().x / 2, 32);
-        text->setOrigin(Origin::Center);
-        rect->add(text);
-    }
+    auto *text = new C2DText("cross2d");
+    text->setOutlineThickness(2);
+    text->setPosition(rect->getSize().x / 2, 32);
+    text->setOrigin(Origin::Center);
+    rect->add(text);
 
     // add all this crap to the renderer
     renderer->add(rect);
@@ -76,7 +72,6 @@ int main() {
         renderer->flip();
     }
 
-    delete (font);
     // will delete child's (textures, shapes, text..)
     delete (renderer);
 
