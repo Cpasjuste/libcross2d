@@ -32,6 +32,8 @@ namespace c2d {
 
             void setName(const std::string &name);
 
+            ///
+            /// \return the option value as string (doing float/int to string if needed)
             std::string getString() const;
 
             void setString(const std::string &value);

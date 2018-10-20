@@ -21,6 +21,7 @@
 #include "cross2d/widgets/button.h"
 #include "cross2d/widgets/textbox.h"
 #include "cross2d/widgets/listbox.h"
+#include "cross2d/widgets/configbox.h"
 #include "cross2d/widgets/messagebox.h"
 #include "cross2d/widgets/progress.h"
 

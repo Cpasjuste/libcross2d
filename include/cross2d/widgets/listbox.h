@@ -5,7 +5,9 @@
 #ifndef CROSS2D_LISTBOX_H
 #define CROSS2D_LISTBOX_H
 
-#include "cross2d/c2d.h"
+#include "cross2d/skeleton/sfml/RectangleShape.hpp"
+#include "cross2d/skeleton/sfml/Text.hpp"
+#include "cross2d/skeleton/io.h"
 
 namespace c2d {
 
@@ -17,6 +19,10 @@ namespace c2d {
                     unsigned int fontSize, Texture *icon = nullptr, bool use_icons = false);
 
         ~ListBoxLine();
+
+        void setSize(const Vector2f &size);
+
+        void setSize(float width, float height);
 
         void setString(const std::string &string);
 
@@ -39,7 +45,8 @@ namespace c2d {
     public:
 
         ListBox(Font *font, int fontSize, const FloatRect &rect,
-                const std::vector<Io::File> &fileList, bool useIcons = false);
+                const std::vector<Io::File> &fileList = std::vector<Io::File>(),
+                bool useIcons = false);
 
         ~ListBox();
 
@@ -47,23 +54,19 @@ namespace c2d {
 
         void setSelection(int index);
 
+        void setSize(const Vector2f &size);
+
+        void setSize(float width, float height);
+
         void setTextOutlineColor(const Color &color);
 
         void setTextOutlineThickness(float thickness);
 
-        void setHighlight(bool enable);
-
-        void setHighlightColor(const Color &color);
-
-        void setHighlightOutlineColor(const Color &color);
-
-        void setHighlightAlpha(uint8_t alpha);
-
-        void setHighlightTween(Tween *tween);
-
-        void setHighlightThickness(float thickness);
+        void setHighlightEnabled(bool enable);
 
         void setHighlightUseFileColor(bool enable);
+
+        RectangleShape *getHighlight();
 
         int getMaxLines();
 
@@ -84,7 +87,8 @@ namespace c2d {
         int max_lines;
         int index = 0;
         bool use_icons = false;
-        bool highlight_use_files_color = true;
+        bool use_highlight = true;
+        bool highlight_use_files_color = false;
     };
 }
 

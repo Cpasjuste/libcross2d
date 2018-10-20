@@ -2,6 +2,8 @@
 // Created by cpasjuste on 05/01/18.
 //
 
+#include <cross2d/widgets/listbox.h>
+
 #include "cross2d/widgets/listbox.h"
 
 using namespace c2d;
@@ -24,7 +26,7 @@ ListBoxLine::ListBoxLine(
 
     if (use_icons) {
         // add iconRect
-        iconRect = new C2DRectangle(Vector2f(32, 32));
+        iconRect = new RectangleShape(Vector2f(32, 32));
         iconRect->setOrigin(Origin::Center);
         iconRect->setPosition(Vector2f(1, getSize().y / 2));
         iconRect->setFillColor(Color::Transparent);
@@ -42,6 +44,15 @@ ListBoxLine::ListBoxLine(
     add(text);
 }
 
+void ListBoxLine::setSize(const Vector2f &size) {
+    ListBoxLine::setSize(size.x, size.y);
+}
+
+void ListBoxLine::setSize(float width, float height) {
+    RectangleShape::setSize(width, height);
+    text->setSizeMax(Vector2f(getSize().x - 8, 0));
+}
+
 void ListBoxLine::setString(const std::string &string) {
 
     text->setString(string);
@@ -54,10 +65,9 @@ void ListBoxLine::setColor(const Color &color) {
         iconRect->setOutlineColor(color);
     }
 
-    // TODO
-    //if (icon) {
-    //    icon->setOutlineColor(color);
-    //}
+    if (icon) {
+        icon->setOutlineColor(color);
+    }
 }
 
 void ListBoxLine::setIcon(Texture *i) {
@@ -69,8 +79,7 @@ void ListBoxLine::setIcon(Texture *i) {
         icon = i;
         if (icon) {
             if (icon->available) {
-                // TODO
-                //icon->setOutlineThickness(1);
+                icon->setOutlineThickness(1);
                 icon->setOrigin(iconRect->getOrigin());
                 icon->setPosition(iconRect->getPosition());
                 if (icon->getLocalBounds().width != 32 || icon->getLocalBounds().height != 32) {
@@ -147,7 +156,6 @@ ListBox::ListBox(Font *font, int fontSize, const FloatRect &rect,
 ListBox::~ListBox() {
     // no need to delete lines widgets (ptr),
     // will be delete by parent (widget)
-    //lines.clear();
     printf("~ListBox(%p)\n", this);
     files.clear();
 }
@@ -188,7 +196,21 @@ void ListBox::setSelection(int idx) {
     if (files.empty()) {
         highlight->setVisibility(Visibility::Hidden, false);
     } else {
-        highlight->setVisibility(Visibility::Visible, false);
+        if (use_highlight) {
+            highlight->setVisibility(Visibility::Visible, false);
+        }
+    }
+}
+
+void ListBox::setSize(const Vector2f &size) {
+    ListBox::setSize(size.x, size.y);
+}
+
+void ListBox::setSize(float width, float height) {
+    RectangleShape::setSize(width, height);
+    highlight->setSize(width, highlight->getSize().y);
+    for (auto &line : lines) {
+        line->setSize(width, line->getSize().y);
     }
 }
 
@@ -224,30 +246,10 @@ void ListBox::setTextOutlineThickness(float thickness) {
     }
 }
 
-void ListBox::setHighlight(bool enable) {
+void ListBox::setHighlightEnabled(bool enable) {
+    use_highlight = enable;
     highlight->setVisibility(enable ? Visibility::Visible
                                     : Visibility::Hidden);
-}
-
-void ListBox::setHighlightTween(Tween *tween) {
-    highlight->add(tween);
-}
-
-void ListBox::setHighlightColor(const Color &color) {
-    highlight->setFillColor(color);
-}
-
-void ListBox::setHighlightOutlineColor(const Color &color) {
-    highlight->setOutlineColor(color);
-}
-
-void ListBox::setHighlightAlpha(uint8_t alpha) {
-    Color c = highlight->getFillColor();
-    highlight->setFillColor({c.r, c.g, c.b, alpha});
-}
-
-void ListBox::setHighlightThickness(float thickness) {
-    highlight->setOutlineThickness(thickness);
 }
 
 void ListBox::setHighlightUseFileColor(bool enable) {
@@ -260,4 +262,8 @@ int ListBox::getIndex() {
 
 int ListBox::getMaxLines() {
     return max_lines;
+}
+
+RectangleShape *ListBox::getHighlight() {
+    return highlight;
 }

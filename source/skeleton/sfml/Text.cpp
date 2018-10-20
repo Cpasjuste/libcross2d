@@ -395,6 +395,10 @@ namespace c2d {
 
     void Text::draw(Transform &transform) {
 
+        if(m_string.empty()) {
+            return;
+        }
+
         ensureGeometryUpdate();
         setOrigin(m_text_origin);
 

@@ -60,6 +60,11 @@ void Option::setType(Option::Type type) {
 }
 
 std::string Option::getString() const {
+    if (type == Type::Integer) {
+        return std::to_string(value_integer);
+    } else if (type == Type::Float) {
+        return std::to_string(value_float);
+    }
     return value_string;
 }
 
