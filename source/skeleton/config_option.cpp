@@ -2,6 +2,8 @@
 // Created by cpasjuste on 17/10/18.
 //
 
+#include <cross2d/skeleton/config_option.h>
+
 #include "cross2d/skeleton/config_option.h"
 
 using namespace c2d::config;
@@ -86,5 +88,13 @@ float Option::getFloat() {
 
 void Option::setFloat(float value) {
     value_float = value;
+}
+
+bool Option::isSavable() const {
+    return savable;
+}
+
+void Option::setSavable(bool savable) {
+    this->savable = savable;
 }
 

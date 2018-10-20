@@ -58,6 +58,10 @@ namespace c2d {
 
             void setType(Option::Type type);
 
+            bool isSavable() const;
+
+            void setSavable(bool savable);
+
         private:
 
             std::string name;
@@ -66,6 +70,7 @@ namespace c2d {
             int value_integer;
             float value_float;
             Type type;
+            bool savable = true;
             int id = 0;
         };
     }
