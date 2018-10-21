@@ -2,8 +2,6 @@
 // Created by cpasjuste on 17/10/18.
 //
 
-#include <cross2d/skeleton/config.h>
-
 #include "cross2d/skeleton/config.h"
 #include "libconfig/libconfig.h"
 
@@ -64,4 +62,3 @@ const std::string &Config::getPath() const {
 Config::~Config() {
     config_destroy(&config);
 }
-

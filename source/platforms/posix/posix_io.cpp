@@ -2,6 +2,7 @@
 // Created by cpasjuste on 17/11/17.
 //
 
+#include <unistd.h>
 #include <cstring>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -9,6 +10,21 @@
 #include "cross2d/platforms/posix/posix_io.h"
 
 using namespace c2d;
+
+std::string POSIXIo::getHomePath() const {
+
+    char buf[1024];
+    if (getcwd(buf, sizeof(buf))) {
+        return std::string(buf) + "/";
+    }
+
+    return Io::getHomePath();
+}
+
+std::string POSIXIo::getDataPath() const {
+
+    return getHomePath() + "data/";
+}
 
 bool POSIXIo::exist(const std::string &path) {
     struct stat st{};

@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
+#####################
+# Linux data
+#####################
 add_custom_target(${PROJECT_NAME}.data
         COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/data
         COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/data/common/* ${CMAKE_CURRENT_BINARY_DIR}/data)
@@ -32,13 +35,12 @@ if (BUILD_SWITCH)
     add_custom_target(${PROJECT_NAME}.nro
             DEPENDS ${PROJECT_NAME}.elf
             COMMAND ${DEVKITPRO}/tools/bin/nacptool --create "${PROJECT_NAME}" "${PROJECT_AUTHOR}" "${VERSION_MAJOR}.${VERSION_MINOR}" ${PROJECT_NAME}.nacp
-            COMMAND ${DEVKITPRO}/tools/bin/elf2nro ${PROJECT_NAME}.elf ${PROJECT_NAME}.nro --icon=${CMAKE_CURRENT_SOURCE_DIR}/data/switch/icon.jpg --nacp=${PROJECT_NAME}.nacp)
+            COMMAND ${DEVKITPRO}/tools/bin/elf2nro ${PROJECT_NAME}.elf ${PROJECT_NAME}.nro --icon=${CMAKE_CURRENT_SOURCE_DIR}/data/switch/icon.jpg --nacp=${PROJECT_NAME}.nacp --romfsdir=${CMAKE_CURRENT_SOURCE_DIR}/data/common)
     add_custom_target(${PROJECT_NAME}_switch_release.zip
             DEPENDS ${PROJECT_NAME}.nro
             COMMAND rm -rf ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
             COMMAND mkdir -p ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data
             COMMAND cp -f ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.nro ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
-            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data/common/* ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data
             COMMAND cd ${CMAKE_BINARY_DIR}/release && zip -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_switch.zip ${PROJECT_NAME}
             COMMAND cd ${CMAKE_CURRENT_BINARY_DIR})
 endif (BUILD_SWITCH)
@@ -51,7 +53,7 @@ if (BUILD_3DS)
     add_custom_target(${PROJECT_NAME}.3dsx
             DEPENDS ${PROJECT_NAME}.elf
             COMMAND ${DEVKITPRO}/tools/bin/smdhtool --create "${PROJECT_NAME}" "${PROJECT_NAME}" "${PROJECT_AUTHOR}" ${CMAKE_CURRENT_SOURCE_DIR}/data/3ds/icon.png ${PROJECT_NAME}.smdh
-            COMMAND ${DEVKITPRO}/tools/bin/3dsxtool ${PROJECT_NAME}.elf ${PROJECT_NAME}.3dsx --smdh=${PROJECT_NAME}.smdh)
+            COMMAND ${DEVKITPRO}/tools/bin/3dsxtool ${PROJECT_NAME}.elf ${PROJECT_NAME}.3dsx --smdh=${PROJECT_NAME}.smdh --romfs=${CMAKE_CURRENT_SOURCE_DIR}/data/common)
     add_custom_target(${PROJECT_NAME}_3ds_release.zip
             DEPENDS ${PROJECT_NAME}.3dsx
             COMMAND rm -rf ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}

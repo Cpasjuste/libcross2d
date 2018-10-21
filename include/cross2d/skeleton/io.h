@@ -48,13 +48,13 @@ namespace c2d {
         virtual ~Io() = default;
 
         ///
-        /// \return assume read only data path
+        /// \return read only data path
         virtual std::string getDataPath() const {
             return "./data/";
         }
 
         ///
-        /// \return read/write home path
+        /// \return read/write data path
         virtual std::string getHomePath() const {
             return "./";
         }

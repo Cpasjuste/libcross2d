@@ -13,16 +13,19 @@ namespace c2d {
 
     public:
 
-        virtual bool exist(const std::string &path) override;
+        bool exist(const std::string &path) override;
 
-        virtual size_t getSize(const std::string &file) override;
+        size_t getSize(const std::string &file) override;
 
-        virtual Type getType(const std::string &file) override;
+        Type getType(const std::string &file) override;
 
-        virtual bool create(const std::string &path) override;
+        bool create(const std::string &path) override;
 
-        virtual std::vector<Io::File> getDirList(const std::string &path, bool sort = false) override;
+        std::vector<Io::File> getDirList(const std::string &path, bool sort) override;
 
+        std::string getHomePath() const override;
+
+        std::string getDataPath() const override;
     };
 }
 

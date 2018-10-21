@@ -88,14 +88,14 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/3ds/ctr_texture.h"
 #include "platforms/3ds/ctr_input.h"
 //#include "platforms/sdl2/sdl2_audio.h"
-#include "platforms/posix/posix_io.h"
+#include "platforms/3ds/ctr_io.h"
 #include "platforms/posix/posix_clock.h"
 
 #define C2DRenderer CTRRenderer
 #define C2DTexture CTRTexture
 #define C2DInput CTRInput
 #define C2DAudio CTRAudio
-#define C2DIo POSIXIo
+#define C2DIo CTRIo
 #define C2DClock POSIXClock
 #define C2DRectangle RectangleShape
 #define C2DRoundedRectangle RoundedRectangleShape
@@ -138,7 +138,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/gl/gl_shaders.h"
 #include "platforms/sdl2/sdl2_input.h"
 #include "platforms/sdl2/sdl2_audio.h"
-#include "platforms/posix/posix_io.h"
+#include "platforms/switch/switch_io.h"
 #include "platforms/posix/posix_clock.h"
 
 #define C2DRenderer SDL2Renderer
@@ -150,8 +150,8 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DText Text
 #define C2DInput SDL2Input
 #define C2DAudio SDL2Audio
-#define C2DIo POSIXIo
 #define C2DClock POSIXClock
+#define C2DIo NXIo
 
 // https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
 #define KEY_JOY_UP_DEFAULT      13          // KEY_DUP
