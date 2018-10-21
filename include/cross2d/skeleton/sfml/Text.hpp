@@ -37,9 +37,9 @@
 #include <vector>
 
 #ifdef __3DS__
-#define C2D_DEFAULT_CHAR_SIZE 15
+#define C2D_DEFAULT_CHAR_SIZE 12
 #else
-#define C2D_DEFAULT_CHAR_SIZE 30
+#define C2D_DEFAULT_CHAR_SIZE 24
 #endif
 
 namespace c2d {
