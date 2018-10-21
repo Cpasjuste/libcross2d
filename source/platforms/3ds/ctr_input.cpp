@@ -64,7 +64,8 @@ Input::Player *CTRInput::update(int rotate) {
 
     process_buttons(players[0], rotate);
 
-    return players;
+    // mandatory to handle repeat delay if needed
+    return Input::update(rotate);
 }
 
 void CTRInput::process_buttons(Input::Player &player, int rotate) {
