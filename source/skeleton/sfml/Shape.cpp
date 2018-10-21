@@ -163,39 +163,34 @@ namespace c2d {
     void Shape::setOrigin(const Origin &origin) {
 
         m_origin = origin;
-        float pad_x = 1, pad_y = 1;
-        if (m_textureRect.width > 0) {
-            pad_x = m_bounds.width / m_textureRect.width;
-            pad_y = m_bounds.height / m_textureRect.height;
-        }
 
         switch (origin) {
             case Origin::Left:
-                Transformable::setOrigin(0, pad_y * m_bounds.height / 2);
+                Transformable::setOrigin(0, m_bounds.height / 2);
                 break;
             case Origin::TopLeft:
                 Transformable::setOrigin(0, 0);
                 break;
             case Origin::Top:
-                Transformable::setOrigin(pad_x * m_bounds.width / 2, 0);
+                Transformable::setOrigin(m_bounds.width / 2, 0);
                 break;
             case Origin::TopRight:
-                Transformable::setOrigin(pad_x * m_bounds.width, 0);
+                Transformable::setOrigin(m_bounds.width, 0);
                 break;
             case Origin::Right:
-                Transformable::setOrigin(pad_x * m_bounds.width, pad_y * m_bounds.height / 2);
+                Transformable::setOrigin(m_bounds.width, m_bounds.height / 2);
                 break;
             case Origin::BottomRight:
-                Transformable::setOrigin(pad_x * m_bounds.width, pad_y * m_bounds.height);
+                Transformable::setOrigin(m_bounds.width, m_bounds.height);
                 break;
             case Origin::Bottom:
-                Transformable::setOrigin(pad_x * m_bounds.width / 2, pad_y * m_bounds.height);
+                Transformable::setOrigin(m_bounds.width / 2, m_bounds.height);
                 break;
             case Origin::BottomLeft:
-                Transformable::setOrigin(0, pad_y * m_bounds.height);
+                Transformable::setOrigin(0, m_bounds.height);
                 break;
             case Origin::Center:
-                Transformable::setOrigin(pad_x * m_bounds.width / 2, pad_y * m_bounds.height / 2);
+                Transformable::setOrigin(m_bounds.width / 2, m_bounds.height / 2);
                 break;
             default:
                 break;

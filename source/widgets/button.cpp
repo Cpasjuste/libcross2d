@@ -10,7 +10,7 @@ Button::Button(const c2d::FloatRect &rect, c2d::Font *font,
                int fontSize, const std::string &text)
         : RectangleShape(rect) {
 
-    this->text = new Text(text, font, (unsigned int) fontSize);
+    this->text = new Text(text, (unsigned int) fontSize, font);
     this->text->setPosition(getSize().x / 2, getSize().y / 2);
     this->text->setOutlineColor(Color::Black);
     this->text->setOutlineThickness(1);

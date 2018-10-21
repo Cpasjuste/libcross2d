@@ -16,7 +16,7 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 
     /// from citro2d (init)
-    ctx.vtxBufSize = 6 * 4096;
+    ctx.vtxBufSize = 64 * 1024;
     ctx.vtxBuf = (C2Di_Vertex *) linearAlloc(ctx.vtxBufSize * sizeof(C2Di_Vertex));
     if (!ctx.vtxBuf)
         return;
@@ -166,8 +166,12 @@ void CTRRenderer::draw(VertexArray *vertexArray,
         vtx->pos[0] = pos.x;
         vtx->pos[1] = pos.y;
         vtx->pos[2] = 0.5f;
-        vtx->texcoord[0] = texture ? v.texCoords.x / texture->getTextureRect().width : 0;
-        vtx->texcoord[1] = texture ? v.texCoords.y / texture->getTextureRect().height : 0;
+        vtx->texcoord[0] = texture ? v.texCoords.x /
+                                     (texture->getTextureRect().width *
+                                      (texture->getTextureRect().width / texture->getSize().x)) : 0;
+        vtx->texcoord[1] = texture ? v.texCoords.y /
+                                     (texture->getTextureRect().height *
+                                      (texture->getTextureRect().height / texture->getSize().y)) : 0;
         vtx->blend[0] = 0; // reserved for future expansion
         vtx->blend[1] = texture ? (v.color != Color::White ? 1.0f : 0) : 1.0f;
         vtx->color = v.color.toABGR();

@@ -13,7 +13,7 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
     this->input = input;
     float line_height = font->getLineSpacing((unsigned int) fontSize) + 16;
 
-    this->title = new Text("TITLE", font, (unsigned int) fontSize);
+    this->title = new Text("TITLE", (unsigned int) fontSize, font);
     this->title->setScale(1.5f, 1.5f);
     this->title->setOutlineColor(Color::Black);
     this->title->setOutlineThickness(1);
@@ -22,7 +22,7 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
     this->title->setOrigin(Origin::Center);
     add(this->title);
 
-    this->message = new Text("MESSAGE", font, (unsigned int) fontSize);
+    this->message = new Text("MESSAGE", (unsigned int) fontSize, font);
     this->message->setOutlineColor(Color::Black);
     this->message->setOutlineThickness(1);
     this->message->setSizeMax(getSize().x - 16, getSize().y - 8);
@@ -40,7 +40,7 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
         add(buttons[i]);
     }
 
-    this->timeout = new Text("9", font, (unsigned int) fontSize);
+    this->timeout = new Text("9", (unsigned int) fontSize, font);
     this->timeout->setOutlineColor(Color::Black);
     this->timeout->setOutlineThickness(1);
     this->timeout->setSizeMax(getSize().x - 16, getSize().y - 8);

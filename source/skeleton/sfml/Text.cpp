@@ -92,7 +92,7 @@ namespace c2d {
     Text::Text() :
             m_string(),
             m_font(c2d_renderer->getFont()),
-            m_characterSize(30),
+            m_characterSize(C2D_DEFAULT_CHAR_SIZE),
             m_style(Regular),
             m_fillColor(255, 255, 255),
             m_outlineColor(0, 0, 0),
@@ -106,7 +106,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    Text::Text(const std::string &string, Font *font, unsigned int characterSize) :
+    Text::Text(const std::string &string, unsigned int characterSize, Font *font) :
             m_string(string),
             m_font(font),
             m_characterSize(characterSize),
@@ -395,7 +395,7 @@ namespace c2d {
 
     void Text::draw(Transform &transform) {
 
-        if(m_string.empty()) {
+        if (m_string.empty()) {
             return;
         }
 

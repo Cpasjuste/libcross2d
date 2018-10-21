@@ -17,7 +17,7 @@ ListBoxLine::ListBoxLine(
 
     icon = i;
     use_icons = ui;
-    text = new Text(str, font, fontSize);
+    text = new Text(str, fontSize, font);
     text->setOutlineThickness(2);
     text->setOutlineColor(Color::Black);
     text->setOrigin(Origin::Left);

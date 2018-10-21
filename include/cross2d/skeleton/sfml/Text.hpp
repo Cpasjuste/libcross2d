@@ -36,7 +36,11 @@
 #include <string>
 #include <vector>
 
+#ifdef __3DS__
+#define C2D_DEFAULT_CHAR_SIZE 15
+#else
 #define C2D_DEFAULT_CHAR_SIZE 30
+#endif
 
 namespace c2d {
 ////////////////////////////////////////////////////////////
@@ -81,7 +85,7 @@ namespace c2d {
         /// \param characterSize  Base size of characters, in pixels
         ///
         ////////////////////////////////////////////////////////////
-        Text(const std::string &string, Font *font = nullptr, unsigned int characterSize = 30);
+        Text(const std::string &string, unsigned int characterSize = C2D_DEFAULT_CHAR_SIZE, Font *font = nullptr);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the text's string

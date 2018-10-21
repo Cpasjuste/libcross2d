@@ -13,7 +13,7 @@ TextBox::TextBox(const std::string &string, Font *font,
 
     setFillColor(fillColor);
 
-    text = new Text(string, font);
+    text = new Text(string, C2D_DEFAULT_CHAR_SIZE, font);
     text->setFillColor(textColor);
 
     if (rect.width <= 0 || rect.height <= 0) {
