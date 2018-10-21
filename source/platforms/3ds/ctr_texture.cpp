@@ -61,11 +61,13 @@ CTRTexture::CTRTexture(const std::string &path) : Texture(path) {
     }
 
     u8 *dst = pixels;
+    int dst_pitch = p2_w * bpp;
     u8 *src = img;
+    int src_pitch = img_w * bpp;
     for (int i = 0; i < img_h; i++) {
         memcpy(dst, src, (size_t) img_w * bpp);
-        dst += p2_w * bpp;
-        src += img_w * bpp;
+        dst += dst_pitch * bpp;
+        src += src_pitch;
     }
     free(img);
 
@@ -178,8 +180,8 @@ void CTRTexture::upload() {
 void CTRTexture::uploadSoft() {
 
     if (pixels) {
-        // TODO: add RGB565 supportRGB565
-        int i, j, w = getTextureRect().width, h = getTextureRect().height;
+        // TODO: add RGB565 support
+        int i, j, w = (int) getSize().x, h = (int) getSize().y;
         for (j = 0; j < h; j++) {
             for (i = 0; i < w; i++) {
                 u32 coarse_y = static_cast<u32>(j & ~7);
