@@ -64,11 +64,6 @@ Input::Player *CTRInput::update(int rotate) {
 
     process_buttons(players[0], rotate);
 
-    // 3ds needs screen refresh/swap every frames ?
-    if (players[0].state <= 0) {
-        players[0].state = EV_REFRESH;
-    }
-
     return players;
 }
 

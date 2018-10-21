@@ -61,10 +61,11 @@ CTRTexture::CTRTexture(const std::string &path) : Texture(path) {
     }
 
     u8 *dst = pixels;
+    u8 *src = img;
     for (int i = 0; i < img_h; i++) {
-        memcpy(dst, img, (size_t) img_w * bpp);
+        memcpy(dst, src, (size_t) img_w * bpp);
         dst += p2_w * bpp;
-        img += img_w * bpp;
+        src += img_w * bpp;
     }
     free(img);
 
