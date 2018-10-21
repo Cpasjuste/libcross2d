@@ -43,15 +43,12 @@ extern int c2d_font_default_length;
 namespace c2d {
 ////////////////////////////////////////////////////////////
     Font::Font() :
-            m_library(NULL),
-            m_face(NULL),
-            m_streamRec(NULL),
-            m_stroker(NULL),
-            m_refCount(NULL),
+            m_library(nullptr),
+            m_face(nullptr),
+            m_streamRec(nullptr),
+            m_stroker(nullptr),
+            m_refCount(nullptr),
             m_info() {
-#ifdef SFML_SYSTEM_ANDROID
-        m_stream = NULL;
-#endif
     }
 
 
@@ -65,9 +62,6 @@ namespace c2d {
             m_info(copy.m_info),
             m_pages(copy.m_pages),
             m_pixelBuffer(copy.m_pixelBuffer) {
-#ifdef SFML_SYSTEM_ANDROID
-        m_stream = NULL;
-#endif
 
         // Note: as FreeType doesn't provide functions for copying/cloning,
         // we must share all the FreeType pointers
@@ -80,19 +74,11 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     Font::~Font() {
         cleanup();
-
-#ifdef SFML_SYSTEM_ANDROID
-
-        if (m_stream)
-            delete (priv::ResourceStream*)m_stream;
-
-#endif
     }
 
 
 ////////////////////////////////////////////////////////////
     bool Font::loadFromFile(const std::string &filename) {
-#ifndef SFML_SYSTEM_ANDROID
 
         // Cleanup the previous resources
         cleanup();
@@ -139,16 +125,6 @@ namespace c2d {
         m_info.family = face->family_name ? face->family_name : std::string();
 
         return true;
-
-#else
-
-        if (m_stream)
-            delete (priv::ResourceStream*)m_stream;
-    
-        m_stream = new priv::ResourceStream(filename);
-        return loadFromStream(*(priv::ResourceStream*)m_stream);
-
-#endif
     }
 
 ////////////////////////////////////////////////////////////
@@ -220,8 +196,9 @@ namespace c2d {
     Font::getGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const {
         // Get the page corresponding to the character size
         GlyphTable &glyphs = m_pages[characterSize].glyphs;
-        m_pages[characterSize].texture->setFilter(m_filtering);
-
+        if (m_pages[characterSize].texture) {
+            m_pages[characterSize].texture->setFilter(m_filtering);
+        }
         // Build the key by combining the code point, bold flag, and outline thickness
         uint64_t key = (static_cast<uint64_t>(*&outlineThickness) << 32)
                        | (static_cast<uint64_t>(bold ? 1 : 0) << 31)
@@ -350,10 +327,6 @@ namespace c2d {
         std::swap(m_pages, temp.m_pages);
         std::swap(m_pixelBuffer, temp.m_pixelBuffer);
 
-#ifdef SFML_SYSTEM_ANDROID
-        std::swap(m_stream, temp.m_stream);
-#endif
-
         return *this;
     }
 
@@ -389,11 +362,11 @@ namespace c2d {
         }
 
         // Reset members
-        m_library = NULL;
-        m_face = NULL;
-        m_stroker = NULL;
-        m_streamRec = NULL;
-        m_refCount = NULL;
+        m_library = nullptr;
+        m_face = nullptr;
+        m_stroker = nullptr;
+        m_streamRec = nullptr;
+        m_refCount = nullptr;
         m_pages.clear();
         std::vector<uint8_t>().swap(m_pixelBuffer);
     }
@@ -414,7 +387,13 @@ namespace c2d {
             return glyph;
 
         // Load the glyph corresponding to the code point
+#ifdef __3DS__
+        // FT_LOAD_FORCE_AUTOHINT crash on 3ds (?!)
+        FT_Int32 flags = FT_LOAD_TARGET_NORMAL;
+#else
         FT_Int32 flags = FT_LOAD_TARGET_NORMAL | FT_LOAD_FORCE_AUTOHINT;
+#endif
+
         if (outlineThickness != 0)
             flags |= FT_LOAD_NO_BITMAP;
         if (FT_Load_Char(face, codePoint, flags) != 0)
@@ -594,7 +573,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     IntRect Font::findGlyphRect(Page &page, unsigned int width, unsigned int height) const {
         // Find the line that fits well the glyph
-        Row *row = NULL;
+        Row *row = nullptr;
         float bestRatio = 0;
         for (std::vector<Row>::iterator it = page.rows.begin(); it != page.rows.end() && !row; ++it) {
             float ratio = static_cast<float>(height) / it->height;
@@ -637,14 +616,15 @@ namespace c2d {
                     texture->setFilter(m_filtering);
 
                     uint8_t *src;
-                    page.texture->lock(NULL, reinterpret_cast<void **>(&src), NULL);
+                    int src_pitch;
+                    page.texture->lock(nullptr, reinterpret_cast<void **>(&src), &src_pitch);
 
                     uint8_t *dst;
                     int dst_pitch;
-                    texture->lock(NULL, reinterpret_cast<void **>(&dst), &dst_pitch);
+                    texture->lock(nullptr, reinterpret_cast<void **>(&dst), &dst_pitch);
                     for (int i = 0; i < (int) textureHeight; ++i) {
                         std::memcpy(dst, src, (size_t) (textureWidth * 4));
-                        src += textureWidth * 4;
+                        src += src_pitch;
                         dst += dst_pitch;
                     }
                     texture->unlock();
@@ -711,14 +691,14 @@ namespace c2d {
 
         if (texture) {
             delete (texture);
-            texture = NULL;
+            texture = nullptr;
         }
 
         texture = new C2DTexture(Vector2f(128, 128), Texture::Format::RGBA8);
 
         // Reserve a 2x2 white square for texturing underlines
         uint8_t *buffer;
-        texture->lock(NULL, reinterpret_cast<void **>(&buffer), NULL);
+        texture->lock(nullptr, reinterpret_cast<void **>(&buffer), nullptr);
         for (int x = 0; x < 2; ++x) {
             for (int y = 0; y < 2; ++y) {
                 uint8_t *pixel = &buffer[(x + y * texture->getTextureRect().width) * texture->bpp];
@@ -736,7 +716,7 @@ namespace c2d {
         if (texture) {
             printf("~Page Texture\n");
             delete (texture);
-            texture = NULL;
+            texture = nullptr;
         }
     }
 

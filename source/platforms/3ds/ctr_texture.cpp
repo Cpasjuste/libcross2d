@@ -94,10 +94,7 @@ CTRTexture::CTRTexture(const Vector2f &size, Format format) : Texture(size, form
         return;
     }
 
-    GPU_TEXCOLOR fmt = GPU_RGBA8;
-    if (format == Format::RGB565) {
-        fmt = GPU_RGB565;
-    }
+    GPU_TEXCOLOR fmt = format == Format::RGB565 ? GPU_RGB565 : GPU_RGBA8;
 
     bool res = C3D_TexInit(&tex, (u16) p2_w, (u16) p2_h, fmt);
     if (!res) {

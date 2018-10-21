@@ -89,14 +89,14 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/3ds/ctr_input.h"
 //#include "platforms/sdl2/sdl2_audio.h"
 #include "platforms/3ds/ctr_io.h"
-#include "platforms/posix/posix_clock.h"
+#include "platforms/3ds/ctr_clock.h"
 
 #define C2DRenderer CTRRenderer
 #define C2DTexture CTRTexture
 #define C2DInput CTRInput
 #define C2DAudio CTRAudio
 #define C2DIo CTRIo
-#define C2DClock POSIXClock
+#define C2DClock CTRClock
 #define C2DRectangle RectangleShape
 #define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape
