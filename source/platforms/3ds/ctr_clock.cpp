@@ -8,7 +8,7 @@
 
 using namespace c2d;
 
-#define TICKS_PER_MSEC (0x80C0000/1000)
+#define TICKS_PER_MSEC (268123.480)
 
 CTRClock::CTRClock() : Clock() {
 
