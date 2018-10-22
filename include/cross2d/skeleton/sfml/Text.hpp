@@ -337,9 +337,7 @@ namespace c2d {
 
         void setOrigin(const Origin &origin);
 
-        void setSizeMax(const c2d::Vector2f &maxSize);
-
-        void setSizeMax(float x, float y);
+        void setWidth(float width);
 
         void setLineSpacingModifier(int size);
 

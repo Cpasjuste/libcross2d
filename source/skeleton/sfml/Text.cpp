@@ -345,7 +345,7 @@ namespace c2d {
 
         switch (origin) {
             case Origin::Left:
-                Transformable::setOrigin(0, m_characterSize / 2);
+                Transformable::setOrigin(0, (float) m_characterSize / 2);
                 break;
             case Origin::TopLeft:
                 Transformable::setOrigin(0, 0);
@@ -357,7 +357,7 @@ namespace c2d {
                 Transformable::setOrigin(m_bounds.width, 0);
                 break;
             case Origin::Right:
-                Transformable::setOrigin(m_bounds.width, m_characterSize / 2);
+                Transformable::setOrigin(m_bounds.width, (float) m_characterSize / 2);
                 break;
             case Origin::BottomRight:
                 Transformable::setOrigin(m_bounds.width, m_characterSize);
@@ -369,7 +369,7 @@ namespace c2d {
                 Transformable::setOrigin(0, m_characterSize);
                 break;
             case Origin::Center:
-                Transformable::setOrigin(m_bounds.width / 2, m_characterSize / 2);
+                Transformable::setOrigin(m_bounds.width / 2, (float) m_characterSize / 2);
                 break;
             default:
                 break;
@@ -378,14 +378,9 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
 
-    void Text::setSizeMax(const c2d::Vector2f &size) {
-        maxSize = size;
-        m_geometryNeedUpdate = true;
-    }
-
-    void Text::setSizeMax(float x, float y) {
-        maxSize.x = x;
-        maxSize.y = y;
+    void Text::setWidth(float width) {
+        maxSize.x = 0;
+        maxSize.y = width;
         m_geometryNeedUpdate = true;
     }
 
