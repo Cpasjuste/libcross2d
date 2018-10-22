@@ -1,7 +1,7 @@
 //
 // Created by cpasjuste on 17/10/18.
 //
-f
+
 #include "cross2d/skeleton/config_option.h"
 
 using namespace c2d::config;
