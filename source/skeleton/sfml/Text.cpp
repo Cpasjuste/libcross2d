@@ -453,6 +453,7 @@ namespace c2d {
         float y = static_cast<float>(m_characterSize);
 
         // fix top not at 0 if needed (font->setOffset)
+        // TODO: find a better fix
         float scale = (float) getCharacterSize() / (float) C2D_DEFAULT_CHAR_SIZE;
         x += m_font->getOffset().x * scale;
         y += m_font->getOffset().y * scale;
