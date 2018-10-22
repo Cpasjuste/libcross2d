@@ -379,8 +379,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
 
     void Text::setWidth(float width) {
-        maxSize.x = 0;
-        maxSize.y = width;
+        maxSize.x = width;
         m_geometryNeedUpdate = true;
     }
 

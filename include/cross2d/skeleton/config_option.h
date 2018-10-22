@@ -62,6 +62,10 @@ namespace c2d {
 
             void setSavable(bool savable);
 
+            void *getUserData();
+
+            void setUserData(void *data);
+
         private:
 
             std::string name;
@@ -72,6 +76,7 @@ namespace c2d {
             Type type;
             bool savable = true;
             int id = 0;
+            void *data;
         };
     }
 }

@@ -1,7 +1,7 @@
 //
 // Created by cpasjuste on 17/10/18.
 //
-
+f
 #include "cross2d/skeleton/config_option.h"
 
 using namespace c2d::config;
@@ -96,3 +96,10 @@ void Option::setSavable(bool savable) {
     this->savable = savable;
 }
 
+void *Option::getUserData() {
+    return data;
+}
+
+void Option::setUserData(void *data) {
+    this->data = data;
+}

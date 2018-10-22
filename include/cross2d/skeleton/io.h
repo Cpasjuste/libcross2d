@@ -27,7 +27,7 @@ namespace c2d {
             File() = default;
 
             File(const std::string &name, const std::string &path,
-                 Type type, const Color &color = Color::White) {
+                 Type type = Type::File, const Color &color = Color::White) {
                 this->name = name;
                 this->path = path;
                 this->type = type;

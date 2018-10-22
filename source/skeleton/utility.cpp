@@ -23,7 +23,7 @@ char *Utility::removeExt(const char *str, char sep) {
 
     // If it has an extension separator.
     if (lastdot != nullptr) {
-        // and it's before the extenstion separator.
+        // and it's before the extenstion separator.a
         if (lastsep != nullptr) {
             if (lastsep < lastdot) {
                 // then remove it.
@@ -37,6 +37,10 @@ char *Utility::removeExt(const char *str, char sep) {
 
     // Return the modified string.
     return retstr;
+}
+
+bool Utility::startWith(const std::string &value, const std::string &str) {
+    return str.compare(0, value.length(), value) == 0;
 }
 
 bool Utility::endsWith(const std::string &value, const std::string &ending) {
@@ -54,3 +58,4 @@ std::string Utility::removeLastSlash(const std::string &string) {
 
     return str;
 }
+

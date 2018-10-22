@@ -2,8 +2,6 @@
 // Created by cpasjuste on 05/01/18.
 //
 
-#include <cross2d/widgets/listbox.h>
-
 #include "cross2d/widgets/listbox.h"
 
 using namespace c2d;
@@ -13,7 +11,6 @@ ListBoxLine::ListBoxLine(
         Font *font, unsigned int fontSize, Texture *i, bool ui) : RectangleShape(rect) {
 
     printf("ListBoxLine(%p)\n", this);
-
 
     icon = i;
     use_icons = ui;
@@ -54,7 +51,6 @@ void ListBoxLine::setSize(float width, float height) {
 }
 
 void ListBoxLine::setString(const std::string &string) {
-
     text->setString(string);
 }
 
@@ -64,7 +60,6 @@ void ListBoxLine::setColor(const Color &color) {
     if (iconRect) {
         iconRect->setOutlineColor(color);
     }
-
     if (icon) {
         icon->setOutlineColor(color);
     }
@@ -125,7 +120,7 @@ ListBox::ListBox(Font *font, int fontSize, const FloatRect &rect,
     if (use_icons) {
         line_height = 34; // 32px + 2px margin
     } else {
-        line_height = (int) font->getLineSpacing((unsigned int) fontSize) + 8;
+        line_height = fontSize + 10;
     }
     max_lines = (int) (getSize().y / line_height);
     if ((max_lines * line_height) < getSize().y) {
@@ -144,7 +139,7 @@ ListBox::ListBox(Font *font, int fontSize, const FloatRect &rect,
         if (use_icons) {
             icon = files.size() > i ? files[i].icon : nullptr;
         }
-        ListBoxLine *line = new ListBoxLine(r, "BLpT92,(", font, (unsigned int) fontSize, icon, use_icons);
+        ListBoxLine *line = new ListBoxLine(r, "", font, (unsigned int) fontSize, icon, use_icons);
         lines.push_back(line);
         add(line);
     }
