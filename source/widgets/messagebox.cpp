@@ -4,6 +4,10 @@
 
 #include "cross2d/c2d.h"
 
+#ifdef __WINDOWS__
+#undef MessageBox
+#endif
+
 using namespace c2d;
 
 MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,

@@ -5,6 +5,10 @@
 #ifndef C2D_MESSAGEBOX_H
 #define C2D_MESSAGEBOX_H
 
+#ifdef __WINDOWS__
+#undef MessageBox
+#endif
+
 namespace c2d {
 
     class MessageBox : public RectangleShape {

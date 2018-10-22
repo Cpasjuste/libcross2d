@@ -184,9 +184,12 @@ extern c2d::Renderer *c2d_renderer;
 
 #if defined(__SDL2_GL__)
 #define GL_GLEXT_PROTOTYPES 1
-
+#ifdef __WINDOWS__
+#include <GL/glew.h>
+#else
 #include <GL/gl.h>
 #include <GL/glext.h>
+#endif
 #include "cross2d/platforms/sdl2/sdl2_gl_renderer.h"
 #include "cross2d/platforms/gl/gl_shaders.h"
 #include "cross2d/platforms/gl/gl_texture.h"

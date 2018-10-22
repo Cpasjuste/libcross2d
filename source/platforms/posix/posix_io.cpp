@@ -34,6 +34,8 @@ bool POSIXIo::exist(const std::string &path) {
 bool POSIXIo::create(const std::string &path) {
 #ifdef __PSP2__
     return sceIoMkdir(path.c_str(), 0777) == 0;
+#elif __WINDOWS__
+    return mkdir(path.c_str()) == 0;
 #else
     return mkdir(path.c_str(), 0755) == 0;
 #endif

@@ -2,12 +2,21 @@ cmake_minimum_required(VERSION 3.0)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
 #####################
-# Linux data
+# Linux/Windows data
 #####################
-add_custom_target(${PROJECT_NAME}.data
-        COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/data
-        COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/data/common/* ${CMAKE_CURRENT_BINARY_DIR}/data)
-add_dependencies(${PROJECT_NAME}.elf ${PROJECT_NAME}.data)
+if (BUILD_WINDOWS AND NOT MSYS)
+    string(REGEX REPLACE "/" "\\\\" P_DST ${CMAKE_CURRENT_BINARY_DIR}/data)
+    string(REGEX REPLACE "/" "\\\\" P_SRC ${CMAKE_CURRENT_SOURCE_DIR}/data/common/)
+    add_custom_target(${PROJECT_NAME}.data
+            COMMAND if not exist ${P_DST} mkdir ${P_DST}
+            COMMAND copy ${P_SRC}* ${P_DST})
+    add_dependencies(${PROJECT_NAME}.elf ${PROJECT_NAME}.data)
+else ()
+    add_custom_target(${PROJECT_NAME}.data
+            COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/data
+            COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/data/common/* ${CMAKE_CURRENT_BINARY_DIR}/data)
+    add_dependencies(${PROJECT_NAME}.elf ${PROJECT_NAME}.data)
+endif ()
 
 #####################
 # VITA target

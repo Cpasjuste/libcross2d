@@ -1,6 +1,17 @@
 # setup toolchains
 message(STATUS "Using custom toolchain: ${CMAKE_TOOLCHAIN_FILE}")
 
+if (BUILD_WINDOWS)
+	set(BUILD_SDL2 ON)
+	set(CMAKE_SYSTEM_NAME "Windows")
+	set(CMAKE_SYSTEM_PROCESSOR "x86_64")
+	set(MINGW_PREFIX "/mingw64")
+	set(MINGW_TOOL_PREFIX  "${MINGW_PREFIX}/bin/")
+	set(CMAKE_FIND_ROOT_PATH ${MINGW_PREFIX})
+	set(CMAKE_INSTALL_PREFIX ${MINGW_PREFIX})
+	set(WASAPI_INCLUDE_DIR ${MINGW_PREFIX}/include)
+endif (BUILD_WINDOWS)
+
 if (BUILD_VITA)
     set(CMAKE_SYSTEM_NAME "Generic")
     if (DEFINED ENV{VITASDK})

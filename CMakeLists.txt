@@ -22,7 +22,7 @@ set(CMAKE_TOOLCHAIN_FILE Toolchain.cmake)
 project(cross2d)
 
 # flags
-set(FLAGS -Wall)
+set(FLAGS -Wall -DLIBCONFIG_STATIC)
 
 ##############
 # CROSS2D
@@ -197,51 +197,53 @@ elseif (BUILD_SWITCH)
     # SDL2 PLATORM
     #####################
 elseif (BUILD_SDL2)
+    find_package(SDL2 REQUIRED)
     find_package(ZLIB REQUIRED)
     find_package(Freetype REQUIRED)
     set(PLATFORM_DIRS
-            source/platforms/sdl2
             source/platforms/posix
+            ${SDL2_INCLUDE_DIRS}
             ${FREETYPE_INCLUDE_DIRS}
             ${ZLIB_INCLUDE_DIRS})
     file(GLOB PLATFORM_SRC
             source/platforms/sdl2/*.c*
             source/platforms/posix/*.c*)
-    set(PLATFORM_LIBS SDL2 ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
+    set(PLATFORM_LIBS ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
     list(APPEND FLAGS -D__SDL2__)
     if (BUILD_SDL2_SOFT)
     else ()
+        find_package(OpenGL REQUIRED)
         list(APPEND PLATFORM_DIRS source/platforms/gl)
         file(GLOB SHADERS_SRC source/platforms/gl/shaders/*.c*)
         list(APPEND PLATFORM_SRC
                 source/platforms/gl/gl_renderer.cpp
                 source/platforms/gl/gl_texture.cpp
                 source/platforms/gl/gl_shaders.cpp
-                ${SHADERS_SRC}
-                )
+                ${SHADERS_SRC})
         list(APPEND FLAGS -D__SDL2_GL__ -D__GL__)
-        list(APPEND PLATFORM_LIBS GL)
+        list(APPEND PLATFORM_LIBS ${OPENGL_LIBRARIES})
+        if (BUILD_WINDOWS)
+            find_package(GLEW REQUIRED)
+            list(APPEND PLATFORM_LIBS ${GLEW_LIBRARIES})
+        endif (BUILD_WINDOWS)
     endif (BUILD_SDL2_SOFT)
     #####################
     # SDL1 PLATORM
     #####################
 elseif (BUILD_SDL1)
     find_package(ZLIB REQUIRED)
-    #find_package(PNG REQUIRED)
     find_package(Freetype REQUIRED)
     set(PLATFORM_DIRS
             source/platforms/sdl1
             source/platforms/gl
             source/platforms/posix
             ${FREETYPE_INCLUDE_DIRS}
-            #${PNG_INCLUDE_DIRS}
             ${ZLIB_INCLUDE_DIRS})
     file(GLOB PLATFORM_SRC
             source/platforms/sdl1/*.c*
             source/platforms/gl/*.c*
             source/platforms/posix/*.c*)
     set(PLATFORM_LIBS SDL ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
-    #${PNG_LIBRARIES}
     list(APPEND FLAGS -D__SDL1__ -D__GL__)
     if (BUILD_SDL1_GL)
         list(APPEND FLAGS -D__SDL1_GL__)
@@ -251,6 +253,10 @@ elseif (BUILD_SDL1)
         list(APPEND PLATFORM_LIBS OSMesa pthread ${ZLIB_LIBRARIES})
     endif (BUILD_SDL1_GL)
 endif (BUILD_SFML)
+
+if (BUILD_WINDOWS)
+    list(APPEND FLAGS -D__WINDOWS__)
+endif (BUILD_WINDOWS)
 
 add_library(${PROJECT_NAME} ${CROSS2D_SRC} ${PLATFORM_SRC})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CROSS2D_DIR} ${PLATFORM_DIRS})

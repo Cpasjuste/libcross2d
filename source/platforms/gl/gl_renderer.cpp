@@ -23,6 +23,8 @@ void GLRenderer::initGL() {
 
 #ifdef __SWITCH__
     gladLoadGL();
+#elif __WINDOWS__
+    glewInit();
 #endif
 
     // vao
@@ -50,7 +52,7 @@ void GLRenderer::draw(VertexArray *vertexArray,
     GLShader *shader;
 
     if (!vertexArray || vertexArray->getVertexCount() < 1) {
-        printf("gl_render::draw: no vertices\n");
+        //printf("gl_render::draw: no vertices\n");
         return;
     }
 
