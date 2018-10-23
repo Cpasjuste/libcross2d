@@ -38,17 +38,17 @@ void ConfigBox::load(config::Group *group) {
     this->group = group;
     index = 0;
 
-    std::vector<Io::File *> leftItems;
-    std::vector<Io::File *> rightItems;
+    std::vector<Io::File> leftItems;
+    std::vector<Io::File> rightItems;
 
     for (Group &g : *group->getGroups()) {
-        leftItems.push_back(new Io::File(g.getName(), ""));
-        rightItems.emplace_back(new Io::File("ENTER", ""));
+        leftItems.emplace_back(g.getName(), "");
+        rightItems.emplace_back("ENTER", "");
     }
 
     for (Option &option : *group->getOptions()) {
-        leftItems.emplace_back(new Io::File(option.getName(), ""));
-        rightItems.emplace_back(new Io::File(option.getString(), ""));
+        leftItems.emplace_back(option.getName(), "");
+        rightItems.emplace_back(option.getString(), "");
     }
 
     listBoxLeft->setFiles(leftItems);
@@ -75,11 +75,7 @@ Group *ConfigBox::getGroup() {
 }
 
 config::Option *ConfigBox::getSelection() {
-    Io::File *selection = listBoxLeft->getSelection();
-    if (selection) {
-        return group->getOption(selection->name);
-    }
-    return nullptr;
+    return group->getOption(listBoxLeft->getSelection().name);
 }
 
 config::Option *ConfigBox::navigate(const ConfigBox::Navigation &navigation) {
@@ -105,7 +101,7 @@ config::Option *ConfigBox::navigate(const ConfigBox::Navigation &navigation) {
         if (getSelection()) {
             selection = getSelection();
         } else {
-            Group *g = group->getGroup(listBoxLeft->getSelection()->name);
+            Group *g = group->getGroup(listBoxLeft->getSelection().name);
             if (g) {
                 history.push_back(group);
                 load(g);
