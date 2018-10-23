@@ -712,9 +712,9 @@ namespace c2d {
     }
 
     Font::Page::~Page() {
-        printf("~Page\n");
+        //printf("~Page\n");
         if (texture) {
-            printf("~Page Texture\n");
+            //printf("~Page Texture\n");
             delete (texture);
             texture = nullptr;
         }

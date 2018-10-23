@@ -10,7 +10,7 @@ ListBoxLine::ListBoxLine(
         const FloatRect &rect, const std::string &str,
         Font *font, unsigned int fontSize, Texture *i, bool ui) : RectangleShape(rect) {
 
-    printf("ListBoxLine(%p)\n", this);
+    //printf("ListBoxLine(%p)\n", this);
 
     icon = i;
     use_icons = ui;
@@ -99,14 +99,14 @@ Text *ListBoxLine::getText() {
 }
 
 ListBoxLine::~ListBoxLine() {
-    printf("~ListBoxLine(%p)\n", this);
+    //printf("~ListBoxLine(%p)\n", this);
 }
 
 ListBox::ListBox(Font *font, int fontSize, const FloatRect &rect,
                  const std::vector<Io::File> &fileList, bool useIcons)
         : RectangleShape(rect) {
 
-    printf("ListBox(%p)\n", this);
+    //printf("ListBox(%p)\n", this);
 
     setFiles(fileList);
     init(font, fontSize, useIcons);
@@ -117,7 +117,7 @@ ListBox::ListBox(Font *font, int fontSize, const FloatRect &rect,
                  const std::vector<Io::File *> &fileList, bool useIcons)
         : RectangleShape(rect) {
 
-    printf("ListBox(%p)\n", this);
+    //printf("ListBox(%p)\n", this);
 
     setFiles(fileList);
     init(font, fontSize, useIcons);
@@ -306,7 +306,7 @@ RectangleShape *ListBox::getHighlight() {
 ListBox::~ListBox() {
     // no need to delete lines widgets (ptr),
     // will be delete by parent (widget)
-    printf("~ListBox(%p)\n", this);
+    //printf("~ListBox(%p)\n", this);
     if (files_are_mine) {
         for (auto &file : files) {
             delete (file);
