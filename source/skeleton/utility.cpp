@@ -39,7 +39,7 @@ char *Utility::removeExt(const char *str, char sep) {
     return retstr;
 }
 
-bool Utility::startWith(const std::string &value, const std::string &str) {
+bool Utility::startWith(const std::string &str, const std::string &value) {
     return str.compare(0, value.length(), value) == 0;
 }
 
