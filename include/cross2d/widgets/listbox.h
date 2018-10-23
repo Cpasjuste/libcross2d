@@ -45,12 +45,16 @@ namespace c2d {
     public:
 
         ListBox(Font *font, int fontSize, const FloatRect &rect,
-                const std::vector<Io::File> &fileList = std::vector<Io::File>(),
-                bool useIcons = false);
+                const std::vector<Io::File> &fileList, bool useIcons = false);
+
+        ListBox(Font *font, int fontSize, const FloatRect &rect,
+                const std::vector<Io::File *> &fileList, bool useIcons = false);
 
         ~ListBox();
 
         void setFiles(const std::vector<Io::File> &fileList);
+
+        void setFiles(const std::vector<Io::File *> fileList);
 
         void setSelection(int index);
 
@@ -72,15 +76,17 @@ namespace c2d {
 
         std::vector<ListBoxLine *> getLines();
 
-        const std::vector<c2d::Io::File> getFiles() const;
+        std::vector<c2d::Io::File *> getFiles();
 
-        const Io::File getSelection() const;
+        Io::File *getSelection();
 
         int getIndex();
 
     private:
 
-        std::vector<Io::File> files;
+        void init(Font *font, int fontSize, bool useIcons);
+
+        std::vector<Io::File *> files;
         std::vector<ListBoxLine *> lines;
         RectangleShape *highlight;
         float line_height;
@@ -89,6 +95,7 @@ namespace c2d {
         bool use_icons = false;
         bool use_highlight = true;
         bool highlight_use_files_color = false;
+        bool files_are_mine = false;
     };
 }
 

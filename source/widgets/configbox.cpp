@@ -13,10 +13,10 @@ ConfigBox::ConfigBox(Font *font, int fontSize, const c2d::FloatRect &rect)
     FloatRect leftRect = {0, 0, rect.width / 2, rect.height};
     FloatRect rightRect = {rect.width / 2, 0, rect.width / 2, rect.height};
 
-    listBoxLeft = new ListBox(font, fontSize, leftRect);
+    listBoxLeft = new ListBox(font, fontSize, leftRect, std::vector<Io::File>());
     add(listBoxLeft);
 
-    listBoxRight = new ListBox(font, fontSize, rightRect);
+    listBoxRight = new ListBox(font, fontSize, rightRect, std::vector<Io::File>());
     add(listBoxRight);
 }
 
@@ -75,7 +75,7 @@ Group *ConfigBox::getGroup() {
 }
 
 config::Option *ConfigBox::getSelection() {
-    return group->getOption(listBoxLeft->getSelection().name);
+    return group->getOption(listBoxLeft->getSelection()->name);
 }
 
 config::Option *ConfigBox::navigate(const ConfigBox::Navigation &navigation) {
@@ -101,7 +101,7 @@ config::Option *ConfigBox::navigate(const ConfigBox::Navigation &navigation) {
         if (getSelection()) {
             selection = getSelection();
         } else {
-            Group *g = group->getGroup(listBoxLeft->getSelection().name);
+            Group *g = group->getGroup(listBoxLeft->getSelection()->name);
             if (g) {
                 history.push_back(group);
                 load(g);
