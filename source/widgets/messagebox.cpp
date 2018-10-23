@@ -117,7 +117,7 @@ int MessageBox::show(const std::string &title, const std::string &message,
     }
 
     setVisibility(Visibility::Visible);
-    setLayer(1000);
+    setLayer(10000);
 
     input->clear(0);
 
@@ -129,7 +129,6 @@ int MessageBox::show(const std::string &title, const std::string &message,
             int elapsed = (int) clock.getElapsedTime().asSeconds();
             if (elapsed >= timeout) {
                 setVisibility(Visibility::Hidden);
-                input->clear(0);
                 ret = TIMEOUT;
                 break;
             }
@@ -142,13 +141,11 @@ int MessageBox::show(const std::string &title, const std::string &message,
             key = input->waitButton();
             if (key > -1) {
                 setVisibility(Visibility::Hidden);
-                input->clear(0);
                 break;
             }
         } else {
-            key = input->update()[0].state;
+            key = input->getKeys();
             if (key > 0) {
-
                 if (key & Input::Key::KEY_LEFT) {
                     if (index > 0) {
                         index--;
@@ -159,12 +156,10 @@ int MessageBox::show(const std::string &title, const std::string &message,
                     }
                 } else if (key & Input::Key::KEY_FIRE1) {
                     setVisibility(Visibility::Hidden);
-                    input->clear(0);
                     ret = index == 1 ? RIGHT : LEFT;
                     break;
                 } else if (key & Input::Key::KEY_FIRE2) {
                     setVisibility(Visibility::Hidden);
-                    input->clear(0);
                     ret = CANCEL;
                     break;
                 }
@@ -175,8 +170,6 @@ int MessageBox::show(const std::string &title, const std::string &message,
                     buttons[index]->setFillColor(getOutlineColor());
                     buttons[index]->setOutlineColor(Color::White);
                 }
-
-                c2d_renderer->delay(150);
             }
         }
 
