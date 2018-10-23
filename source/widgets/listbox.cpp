@@ -103,7 +103,7 @@ ListBoxLine::~ListBoxLine() {
 }
 
 ListBox::ListBox(Font *font, int fontSize, const FloatRect &rect,
-                 const std::vector<Io::File> &fileList, bool useIcons)
+                 const std::vector<Io::File *> &fileList, bool useIcons)
         : RectangleShape(rect) {
 
     printf("ListBox(%p)\n", this);
@@ -137,7 +137,7 @@ ListBox::ListBox(Font *font, int fontSize, const FloatRect &rect,
         FloatRect r = {1, (line_height * i) + 1, getSize().x - 2, line_height - 2};
         Texture *icon = nullptr;
         if (use_icons) {
-            icon = files.size() > i ? files[i].icon : nullptr;
+            icon = files.size() > i ? files[i]->icon : nullptr;
         }
         ListBoxLine *line = new ListBoxLine(r, "", font, (unsigned int) fontSize, icon, use_icons);
         lines.push_back(line);
@@ -147,13 +147,6 @@ ListBox::ListBox(Font *font, int fontSize, const FloatRect &rect,
     // update texts
     setSelection(0);
 };
-
-ListBox::~ListBox() {
-    // no need to delete lines widgets (ptr),
-    // will be delete by parent (widget)
-    printf("~ListBox(%p)\n", this);
-    files.clear();
-}
 
 void ListBox::setSelection(int idx) {
 
@@ -167,21 +160,21 @@ void ListBox::setSelection(int idx) {
             lines[i]->setVisibility(Visibility::Hidden);
         } else {
             // set file
-            Io::File file = files[index_start + i];
+            Io::File *file = files[index_start + i];
             lines[i]->setVisibility(Visibility::Visible);
-            lines[i]->setString(file.name);
+            lines[i]->setString(file->name);
             // set text color based on file color
-            lines[i]->setIcon(file.icon);
-            lines[i]->setColor(file.color);
+            lines[i]->setIcon(file->icon);
+            lines[i]->setColor(file->color);
             // set highlight position and color
             if (index_start + i == (unsigned int) index) {
                 highlight->setPosition(lines[i]->getPosition());
                 Color color = highlight_use_files_color ?
-                              file.color : highlight->getFillColor();
+                              file->color : highlight->getFillColor();
                 color.a = highlight->getAlpha();
                 highlight->setFillColor(color);
                 color = highlight_use_files_color ?
-                        file.color : highlight->getOutlineColor();
+                        file->color : highlight->getOutlineColor();
                 color.a = highlight->getAlpha();
                 highlight->setOutlineColor(color);
             }
@@ -209,20 +202,24 @@ void ListBox::setSize(float width, float height) {
     }
 }
 
-void ListBox::setFiles(const std::vector<Io::File> &fileList) {
+void ListBox::setFiles(const std::vector<Io::File *> &fileList) {
 
     files = fileList;
     setSelection(0);
 }
 
-std::vector<c2d::Io::File> ListBox::getFiles() {
+std::vector<c2d::Io::File *> ListBox::getFiles() {
     return files;
 }
 
-Io::File ListBox::getSelection() {
-    Io::File file;
-    return (files.empty() ||
-            (int) files.size() <= index) ? file : files[index];
+Io::File *ListBox::getSelection() {
+
+    if (!files.empty() && files.size() > (unsigned int) index) {
+        printf("%s\n", files[index]->name.c_str());
+        return files[index];
+    }
+
+    return nullptr;
 }
 
 std::vector<ListBoxLine *> ListBox::getLines() {
@@ -249,6 +246,7 @@ void ListBox::setHighlightEnabled(bool enable) {
 
 void ListBox::setHighlightUseFileColor(bool enable) {
     highlight_use_files_color = enable;
+    setSelection(index);
 }
 
 int ListBox::getIndex() {
@@ -261,4 +259,17 @@ int ListBox::getMaxLines() {
 
 RectangleShape *ListBox::getHighlight() {
     return highlight;
+}
+
+ListBox::~ListBox() {
+    // no need to delete lines widgets (ptr),
+    // will be delete by parent (widget)
+    printf("~ListBox(%p)\n", this);
+    // TODO: auto delete files?
+    for (auto &file : files) {
+        if (file) {
+            delete (file);
+        }
+    }
+    files.clear();
 }

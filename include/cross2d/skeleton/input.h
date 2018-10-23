@@ -68,6 +68,8 @@ namespace c2d {
 
         Player *getPlayer(int player = 0);
 
+        Player *getPlayers();
+
         int clear(int player = 0);
 
         void setRepeatEnable(bool enable);

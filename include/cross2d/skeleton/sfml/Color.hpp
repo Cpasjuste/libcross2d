@@ -93,6 +93,7 @@ namespace c2d {
         static const Color Orange;
         static const Color Gray;
         static const Color GrayLight;
+        static const Color GrayDark;
         static const Color Transparent; ///< Transparent (black) predefined color
 
         ////////////////////////////////////////////////////////////

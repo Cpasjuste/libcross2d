@@ -87,3 +87,7 @@ Input::Player *Input::getPlayer(int player) {
     }
     return nullptr;
 }
+
+Input::Player *Input::getPlayers() {
+    return players;
+}
