@@ -325,8 +325,9 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     FloatRect Text::getGlobalBounds() const {
-        Transform t = transformation * getTransform();
-        return t.transformRect(getLocalBounds());
+        //Transform t = transformation * getTransform();
+        //return t.transformRect(getLocalBounds());
+        return getTransform().transformRect(getLocalBounds());
     }
 
 

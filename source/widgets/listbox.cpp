@@ -24,8 +24,7 @@ ListBoxLine::ListBoxLine(
     if (use_icons) {
         // add iconRect
         iconRect = new RectangleShape(Vector2f(32, 32));
-        iconRect->setOrigin(Origin::Center);
-        iconRect->setPosition(Vector2f(1, getSize().y / 2));
+        iconRect->setPosition(Vector2f(1, 1));
         iconRect->setFillColor(Color::Transparent);
         iconRect->setOutlineThickness(1);
         add(iconRect);

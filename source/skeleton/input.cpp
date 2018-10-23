@@ -30,7 +30,7 @@ Input::Player *Input::update(int rotate) {
         if (diff > 0) {
             repeatClock->restart();
         } else {
-            players[0].state = 0;
+            players[0].state = EV_DELAY;
         }
     }
 

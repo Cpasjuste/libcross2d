@@ -11,6 +11,7 @@
 #define EV_RESIZE 0x4000
 #define EV_QUIT 0x8000
 #define EV_REFRESH 0x10000
+#define EV_DELAY 0x20000
 
 namespace c2d {
 
