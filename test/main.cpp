@@ -9,8 +9,12 @@ using namespace c2d;
 int main(int argc, char **argv) {
 
     // create main renderer
-    auto *renderer = new C2DRenderer(Vector2f(1280, 720));
+    auto *renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
     renderer->setClearColor(Color::Black);
+
+    // scale font and texture for different resolution (devices),
+    // based on 720p resolution
+    float scaling = renderer->getSize().y / 720.0f;
 
     // create a rect
     auto *rect = new C2DRectangle(
@@ -20,22 +24,23 @@ int main(int argc, char **argv) {
     rect->setOrigin(Origin::Center);
     rect->setFillColor(Color::Gray);
     rect->setOutlineColor(Color::Orange);
-    rect->setOutlineThickness(8);
+    rect->setOutlineThickness(8 * scaling);
 
     // create a texture and add it to the rect
     auto *tex = new C2DTexture(renderer->getIo()->getDataPath() + "gbatemp.png");
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
-        tex->setScale(0.5f, 0.5f);
+        //tex->setScale(0.5f * scaling, 0.5f * scaling);
         tex->setOrigin(Origin::Center);
         rect->add(tex);
     }
 
     // create a font
-    auto *text = new C2DText("cross2d");
+    auto *text = new C2DText("libcross2d @ Cpasjuste");
     text->setOutlineThickness(2);
-    text->setPosition(rect->getSize().x / 2, 32);
-    text->setOrigin(Origin::Center);
+    text->setPosition(rect->getSize().x - 16 * scaling, rect->getSize().y - 16 * scaling);
+    text->setOrigin(Origin::BottomRight);
+    text->setScale(scaling, scaling);
     rect->add(text);
 
     // add all this crap to the renderer
@@ -43,8 +48,8 @@ int main(int argc, char **argv) {
 
     // add some tweening :)
     auto *tweenPos = new TweenPosition(
-            {renderer->getSize().x / 2 - 256, rect->getPosition().y},
-            {renderer->getSize().x / 2 + 256, rect->getPosition().y},
+            {renderer->getSize().x / 2 - (256 * scaling), rect->getPosition().y},
+            {renderer->getSize().x / 2 + (256 * scaling), rect->getPosition().y},
             4.0f, TweenLoop::PingPong);
     rect->add(tweenPos);
     auto *tweenRot = new TweenRotation(0, 360, 5.0f, TweenLoop::PingPong);

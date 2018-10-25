@@ -174,6 +174,11 @@ target_compile_options(${PROJECT_NAME} PUBLIC ${FLAGS} -Wno-narrowing)
 #####################
 # test executable
 #####################
+set(PROJECT_AUTHOR "Cpasjuste")
+set(VERSION_MAJOR "1")
+set(VERSION_MINOR "0")
+# ps vita
+set(TITLE_ID "CROSS0001")
 add_executable(${PROJECT_NAME}.elf test/main.cpp)
 target_link_libraries(${PROJECT_NAME}.elf cross2d)
 

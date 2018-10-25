@@ -48,7 +48,6 @@ if (BUILD_SWITCH)
     add_custom_target(${PROJECT_NAME}_switch_release.zip
             DEPENDS ${PROJECT_NAME}.nro
             COMMAND rm -rf ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
-            COMMAND mkdir -p ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data
             COMMAND cp -f ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.nro ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
             COMMAND cd ${CMAKE_BINARY_DIR}/release && zip -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_switch.zip ${PROJECT_NAME}
             COMMAND cd ${CMAKE_CURRENT_BINARY_DIR})
@@ -66,9 +65,7 @@ if (BUILD_3DS)
     add_custom_target(${PROJECT_NAME}_3ds_release.zip
             DEPENDS ${PROJECT_NAME}.3dsx
             COMMAND rm -rf ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
-            COMMAND mkdir -p ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data
             COMMAND cp -f ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.3dsx ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
-            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data/common/* ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data
             COMMAND cd ${CMAKE_BINARY_DIR}/release && zip -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_3ds.zip ${PROJECT_NAME}
             COMMAND cd ${CMAKE_CURRENT_BINARY_DIR})
 endif (BUILD_3DS)
