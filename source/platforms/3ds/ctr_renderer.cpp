@@ -172,15 +172,16 @@ void CTRRenderer::draw(VertexArray *vertexArray,
         vtx->texcoord[1] = texture ? v.texCoords.y /
                                      (texture->getTextureRect().height *
                                       (texture->getTextureRect().height / texture->getSize().y)) : 0;
-        vtx->blend[0] = 0; // reserved for future expansion
-        vtx->blend[1] = texture ? (v.color != Color::White ? 1.0f : 0) : 1.0f;
+        vtx->blend[0] = 0;
+        float blend = v.color.r == 255 && v.color.g == 255 && v.color.b == 255 ? 0 : 1;
+        vtx->blend[1] = texture ? blend : 1.0f;
         vtx->color = v.color.toABGR();
     }
 
-    size_t len = ctx.vtxBufPos - ctx.vtxBufLastPos;
-    if (!len) return;
-    C3D_DrawArrays(type, ctx.vtxBufLastPos, len);
-    ctx.vtxBufLastPos = ctx.vtxBufPos;
+    if (ctx.vtxBufPos - ctx.vtxBufLastPos) {
+        C3D_DrawArrays(type, ctx.vtxBufLastPos, ctx.vtxBufPos - ctx.vtxBufLastPos);
+        ctx.vtxBufLastPos = ctx.vtxBufPos;
+    }
 }
 
 void CTRRenderer::clear() {

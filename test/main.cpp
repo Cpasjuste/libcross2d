@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
     auto *tex = new C2DTexture(renderer->getIo()->getDataPath() + "gbatemp.png");
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
-        //tex->setScale(0.5f * scaling, 0.5f * scaling);
+        tex->setScale(0.5f * scaling, 0.5f * scaling);
         tex->setOrigin(Origin::Center);
         rect->add(tex);
     }
