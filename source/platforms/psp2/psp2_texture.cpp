@@ -25,6 +25,7 @@ PSP2Texture::PSP2Texture(const std::string &p) : Texture(p) {
         return;
     }
 
+    m_vertices.setPrimitiveType(TriangleStrip);
     setSize(vita2d_texture_get_width(tex), vita2d_texture_get_height(tex));
     setTexture(this, true);
     pitch = vita2d_texture_get_stride(tex);
@@ -35,8 +36,6 @@ PSP2Texture::PSP2Texture(const std::string &p) : Texture(p) {
 }
 
 PSP2Texture::PSP2Texture(const Vector2f &size, Format fmt) : Texture(size, fmt) {
-
-    printf("PSP2Texture(%p): %i x %i\n", this, (int) size.x, (int) size.y);
 
     vita2d_texture_set_alloc_memblock_type(SCE_KERNEL_MEMBLOCK_TYPE_USER_RW);
     tex = vita2d_create_empty_texture_format(
@@ -49,6 +48,7 @@ PSP2Texture::PSP2Texture(const Vector2f &size, Format fmt) : Texture(size, fmt) 
         return;
     }
 
+    m_vertices.setPrimitiveType(TriangleStrip);
     setSize(size.x, size.y);
     setTexture(this, true);
     pitch = vita2d_texture_get_stride(tex);
