@@ -13,11 +13,12 @@ using namespace c2d;
 
 std::string POSIXIo::getHomePath() const {
 
+#ifndef __PSP2__
     char buf[1024];
     if (getcwd(buf, sizeof(buf))) {
         return std::string(buf) + "/";
     }
-
+#endif
     return Io::getHomePath();
 }
 
