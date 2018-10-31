@@ -6,25 +6,25 @@
 
 using namespace c2d::config;
 
-Option::Option(const std::string &name, const std::string &value, int id) {
+Option::Option(const std::string &name, const std::vector<std::string> &array, int id) {
     setName(name);
     setId(id);
-    setString(value);
-    setType(Type::String);
+    setType(Type::StringArray);
+    setStringArray(array);
 }
 
-Option::Option(const std::string &name, int value, int id) {
+Option::Option(const std::string &name, const std::vector<int> &array, int id) {
     setName(name);
     setId(id);
-    setInteger(value);
-    setType(Type::Integer);
+    setType(Type::IntegerArray);
+    //setStringArray(array);
 }
 
-Option::Option(const std::string &name, float value, int id) {
+Option::Option(const std::string &name, const std::vector<float> &array, int id) {
     setName(name);
     setId(id);
-    setFloat(value);
-    setType(Type::Float);
+    setType(Type::FloatArray);
+    //setString(value);
 }
 
 std::string Option::getName() const {
@@ -60,16 +60,51 @@ void Option::setType(Option::Type type) {
 }
 
 std::string Option::getString() const {
-    if (type == Type::Integer) {
-        return std::to_string(value_integer);
+
+    if (type == Type::String) {
+        if (!string_array.empty()) {
+            return string_array[0];
+        }
+    } else if (type == Type::Integer) {
+        if (!integer_array.empty()) {
+            return std::to_string(integer_array[0]);
+        }
     } else if (type == Type::Float) {
-        return std::to_string(value_float);
+        if (!float_array.empty()) {
+            return std::to_string(float_array[0]);
+        }
     }
-    return value_string;
+
+    return "";
+}
+
+std::vector<std::string> Option::getStringArray() const {
+
+    std::vector<std::string> array;
+
+    if (type == Type::String) {
+        return string_array;
+    } else if (type == Type::Integer) {
+        for (int v : integer_array) {
+            array.emplace_back(std::to_string(v));
+        }
+    } else if (type == Type::Float) {
+        for (float v : float_array) {
+            array.emplace_back(std::to_string(v));
+        }
+    }
+
+    return array;
 }
 
 void Option::setString(const std::string &value) {
-    value_string = value;
+    if (!string_array.empty()) {
+        string_array[0] = value;
+    }
+}
+
+void Option::setStringArray(const std::vector<std::string> &array) {
+    string_array = array;
 }
 
 int Option::getInteger() {
@@ -80,12 +115,20 @@ void Option::setInteger(int value) {
     value_integer = value;
 }
 
+void Option::setIntegerArray(const std::vector<int> &array) {
+
+}
+
 float Option::getFloat() {
     return value_float;
 }
 
 void Option::setFloat(float value) {
     value_float = value;
+}
+
+void Option::setFloatArray(const std::vector<float> &array) {
+
 }
 
 bool Option::isSavable() const {
@@ -97,9 +140,9 @@ void Option::setSavable(bool savable) {
 }
 
 void *Option::getUserData() {
-    return data;
+    return user_data;
 }
 
 void Option::setUserData(void *data) {
-    this->data = data;
+    this->user_data = data;
 }

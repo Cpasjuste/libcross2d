@@ -22,29 +22,37 @@ namespace c2d {
                 Float
             };
 
-            Option(const std::string &name, const std::string &value, int id = 0);
+            Option(const std::string &name, const std::vector<std::string> &array, int id = 0);
 
-            Option(const std::string &name, int value, int id = 0);
+            Option(const std::string &name, const std::vector<int> &array, int id = 0);
 
-            Option(const std::string &name, float value, int id = 0);
+            Option(const std::string &name, const std::vector<float> &array, int id = 0);
 
             std::string getName() const;
 
             void setName(const std::string &name);
 
             ///
-            /// \return the option value as string (doing float/int to string if needed)
+            /// \return the option value as string (doing float/int conversion if needed)
             std::string getString() const;
 
+            std::vector<std::string> getStringArray() const;
+
             void setString(const std::string &value);
+
+            void setStringArray(const std::vector<std::string> &array);
 
             int getInteger();
 
             void setInteger(int value);
 
+            void setIntegerArray(const std::vector<int> &array);
+
             float getFloat();
 
             void setFloat(float value);
+
+            void setFloatArray(const std::vector<float> &array);
 
             std::string getComment() const;
 
@@ -70,13 +78,15 @@ namespace c2d {
 
             std::string name;
             std::string info;
-            std::string value_string;
-            int value_integer;
-            float value_float;
             Type type;
-            bool savable = true;
             int id = 0;
-            void *data;
+
+            std::vector<std::string> string_array;
+            std::vector<int> integer_array;
+            std::vector<float> float_array;
+
+            bool savable = true;
+            void *user_data;
         };
     }
 }
