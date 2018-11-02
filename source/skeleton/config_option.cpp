@@ -109,6 +109,14 @@ std::string Option::getString() const {
         return std::to_string(integer);
     } else if (type == Type::Float) {
         return std::to_string(floatRect.left);
+    } else if (type == Type::Vector2f) {
+        return std::to_string(floatRect.left) + ", " + std::to_string(floatRect.top);
+    } else if (type == Type::FloatRect) {
+        return std::to_string(floatRect.left) + ", " + std::to_string(floatRect.top) + ", "
+               + std::to_string(floatRect.width) + ", " + std::to_string(floatRect.height);
+    } else if (type == Type::Color) {
+        return std::to_string((int) floatRect.left) + ", " + std::to_string((int) floatRect.top) + ", "
+               + std::to_string((int) floatRect.width) + ", " + std::to_string((int) floatRect.height);
     } else if (type == Type::Choice) {
         return choices[choices_index];
     }
