@@ -218,14 +218,42 @@ bool Group::load(config_setting_t *parent) {
                 continue;
             }
             option.setInteger(value);
-        } else {
-            // Option::Type::Float
-            double value;
+        } else if (option.getType() == Option::Type::Float) {
+            double value = 0;
             if (!config_setting_lookup_float(settings, option.getName().c_str(), &value)) {
                 printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
                 continue;
             }
             option.setFloat((float) value);
+        } else if (option.getType() == Option::Type::Vector2f) {
+            std::vector<float> values = {option.getVector2f().x, option.getVector2f().y};
+            config_setting_t *sub = config_setting_lookup(settings, option.getName().c_str());
+            if (sub) {
+                for (int i = 0; i < 2; i++) {
+                    values[i] = (float) config_setting_get_float_elem(sub, (unsigned int) i);
+                }
+            }
+            option.setVector2f({values[0], values[1]});
+        } else if (option.getType() == Option::Type::FloatRect) {
+            FloatRect r = option.getFloatRect();
+            std::vector<float> values = {r.left, r.top, r.width, r.height};
+            config_setting_t *sub = config_setting_lookup(settings, option.getName().c_str());
+            if (sub) {
+                for (int i = 0; i < 4; i++) {
+                    values[i] = (float) config_setting_get_float_elem(sub, (unsigned int) i);
+                }
+            }
+            option.setFloatRect({values[0], values[1], values[2], values[3]});
+        } else if (option.getType() == Option::Type::Color) {
+            FloatRect r = option.getFloatRect();
+            std::vector<uint8_t> values = {(uint8_t) r.left, (uint8_t) r.top, (uint8_t) r.width, (uint8_t) r.height};
+            config_setting_t *sub = config_setting_lookup(settings, option.getName().c_str());
+            if (sub) {
+                for (int i = 0; i < 4; i++) {
+                    values[i] = (uint8_t) config_setting_get_int_elem(sub, (unsigned int) i);
+                }
+            }
+            option.setColor({values[0], values[1], values[2], values[3]});
         }
     }
 
@@ -244,22 +272,48 @@ bool Group::save(config_setting_t *parent) {
     }
 
     if (!parent) {
-        printf("Config::Group::save: could not save group (%s), parent is null\n", name.c_str());
+        printf("Config::Group::save: could not save group (%s), no parent\n", name.c_str());
         return false;
     }
 
     config_setting_t *root = config_setting_add(parent, name.c_str(), CONFIG_TYPE_GROUP);
     for (Option &option : options) {
+
         if (option.getType() == Option::Type::String) {
-            config_setting_t *s = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_STRING);
-            config_setting_set_string(s, option.getString().c_str());
+            config_setting_t *setting = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_STRING);
+            config_setting_set_string(setting, option.getString().c_str());
         } else if (option.getType() == Option::Type::Integer) {
-            config_setting_t *s = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_INT);
-            config_setting_set_int(s, option.getInteger());
-        } else {
-            // Option::Type::Float
-            config_setting_t *s = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_FLOAT);
-            config_setting_set_float(s, (double) option.getFloat());
+            config_setting_t *setting = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_INT);
+            config_setting_set_int(setting, option.getInteger());
+        } else if (option.getType() == Option::Type::Float) {
+            config_setting_t *setting = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_FLOAT);
+            config_setting_set_float(setting, (double) option.getFloat());
+        } else if (option.getType() == Option::Type::Vector2f) {
+            config_setting_t *array = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_ARRAY);
+            config_setting_t *subset = config_setting_add(array, nullptr, CONFIG_TYPE_FLOAT);
+            config_setting_set_float(subset, option.getVector2f().x);
+            subset = config_setting_add(array, nullptr, CONFIG_TYPE_FLOAT);
+            config_setting_set_float(subset, option.getVector2f().y);
+        } else if (option.getType() == Option::Type::FloatRect) {
+            config_setting_t *array = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_ARRAY);
+            config_setting_t *subset = config_setting_add(array, nullptr, CONFIG_TYPE_FLOAT);
+            config_setting_set_float(subset, option.getFloatRect().left);
+            subset = config_setting_add(array, nullptr, CONFIG_TYPE_FLOAT);
+            config_setting_set_float(subset, option.getFloatRect().top);
+            subset = config_setting_add(array, nullptr, CONFIG_TYPE_FLOAT);
+            config_setting_set_float(subset, option.getFloatRect().width);
+            subset = config_setting_add(array, nullptr, CONFIG_TYPE_FLOAT);
+            config_setting_set_float(subset, option.getFloatRect().height);
+        } else if (option.getType() == Option::Type::Color) {
+            config_setting_t *array = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_ARRAY);
+            config_setting_t *subset = config_setting_add(array, nullptr, CONFIG_TYPE_INT);
+            config_setting_set_int(subset, (int) option.getFloatRect().left);
+            subset = config_setting_add(array, nullptr, CONFIG_TYPE_INT);
+            config_setting_set_int(subset, (int) option.getFloatRect().top);
+            subset = config_setting_add(array, nullptr, CONFIG_TYPE_INT);
+            config_setting_set_int(subset, (int) option.getFloatRect().width);
+            subset = config_setting_add(array, nullptr, CONFIG_TYPE_INT);
+            config_setting_set_int(subset, (int) option.getFloatRect().height);
         }
     }
 

@@ -4,27 +4,49 @@
 
 #include "cross2d/skeleton/config_option.h"
 
+using namespace c2d;
 using namespace c2d::config;
 
-Option::Option(const std::string &name, const std::vector<std::string> &array, int id) {
+Option::Option(const std::string &name, const std::string &value, int id) {
     setName(name);
     setId(id);
-    setType(Type::StringArray);
-    setStringArray(array);
+    setString(value);
+    setType(Type::String);
 }
 
-Option::Option(const std::string &name, const std::vector<int> &array, int id) {
+Option::Option(const std::string &name, int value, int id) {
     setName(name);
     setId(id);
-    setType(Type::IntegerArray);
-    //setStringArray(array);
+    setInteger(value);
+    setType(Type::Integer);
 }
 
-Option::Option(const std::string &name, const std::vector<float> &array, int id) {
+Option::Option(const std::string &name, float value, int id) {
     setName(name);
     setId(id);
-    setType(Type::FloatArray);
-    //setString(value);
+    setFloat(value);
+    setType(Type::Float);
+}
+
+Option::Option(const std::string &name, const c2d::Vector2f &value, int id) {
+    setName(name);
+    setId(id);
+    setVector2f(value);
+    setType(Type::Vector2f);
+}
+
+Option::Option(const std::string &name, const c2d::FloatRect &value, int id) {
+    setName(name);
+    setId(id);
+    setFloatRect(value);
+    setType(Type::FloatRect);
+}
+
+Option::Option(const std::string &name, const Color &value, int id) {
+    setName(name);
+    setId(id);
+    setColor(value);
+    setType(Type::Color);
 }
 
 std::string Option::getName() const {
@@ -59,84 +81,12 @@ void Option::setType(Option::Type type) {
     this->type = type;
 }
 
-std::string Option::getString() const {
-
-    if (type == Type::String) {
-        if (!string_array.empty()) {
-            return string_array[0];
-        }
-    } else if (type == Type::Integer) {
-        if (!integer_array.empty()) {
-            return std::to_string(integer_array[0]);
-        }
-    } else if (type == Type::Float) {
-        if (!float_array.empty()) {
-            return std::to_string(float_array[0]);
-        }
-    }
-
-    return "";
-}
-
-std::vector<std::string> Option::getStringArray() const {
-
-    std::vector<std::string> array;
-
-    if (type == Type::String) {
-        return string_array;
-    } else if (type == Type::Integer) {
-        for (int v : integer_array) {
-            array.emplace_back(std::to_string(v));
-        }
-    } else if (type == Type::Float) {
-        for (float v : float_array) {
-            array.emplace_back(std::to_string(v));
-        }
-    }
-
-    return array;
-}
-
-void Option::setString(const std::string &value) {
-    if (!string_array.empty()) {
-        string_array[0] = value;
-    }
-}
-
-void Option::setStringArray(const std::vector<std::string> &array) {
-    string_array = array;
-}
-
-int Option::getInteger() {
-    return value_integer;
-}
-
-void Option::setInteger(int value) {
-    value_integer = value;
-}
-
-void Option::setIntegerArray(const std::vector<int> &array) {
-
-}
-
-float Option::getFloat() {
-    return value_float;
-}
-
-void Option::setFloat(float value) {
-    value_float = value;
-}
-
-void Option::setFloatArray(const std::vector<float> &array) {
-
-}
-
 bool Option::isSavable() const {
     return savable;
 }
 
-void Option::setSavable(bool savable) {
-    this->savable = savable;
+void Option::setSavable(bool s) {
+    savable = s;
 }
 
 void *Option::getUserData() {
@@ -144,5 +94,63 @@ void *Option::getUserData() {
 }
 
 void Option::setUserData(void *data) {
-    this->user_data = data;
+    user_data = data;
+}
+
+std::string Option::getString() const {
+    if (type == Type::Integer) {
+        return std::to_string(integer);
+    } else if (type == Type::Float) {
+        return std::to_string(floatRect.left);
+    }
+    return string;
+}
+
+void Option::setString(const std::string &value) {
+    string = value;
+}
+
+int Option::getInteger() {
+    return integer;
+}
+
+void Option::setInteger(int value) {
+    integer = value;
+}
+
+float Option::getFloat() {
+    return floatRect.left;
+}
+
+void Option::setFloat(float value) {
+    floatRect.left = value;
+}
+
+Vector2f Option::getVector2f() {
+    return {floatRect.left, floatRect.top};
+}
+
+void Option::setVector2f(const Vector2f &value) {
+    floatRect.left = value.x;
+    floatRect.top = value.y;
+}
+
+FloatRect Option::getFloatRect() {
+    return floatRect;
+}
+
+void Option::setFloatRect(const FloatRect &value) {
+    floatRect = value;
+}
+
+Color Option::getColor() {
+    return {(uint8_t) floatRect.left, (uint8_t) floatRect.top,
+            (uint8_t) floatRect.width, (uint8_t) floatRect.height};
+}
+
+void Option::setColor(const Color &color) {
+    floatRect.left = color.r;
+    floatRect.top = color.g;
+    floatRect.width = color.b;
+    floatRect.height = color.a;
 }
