@@ -26,8 +26,11 @@ namespace c2d {
                 Float,
                 Vector2f,
                 FloatRect,
-                Color
+                Color,
+                Choice
             };
+
+            /// Constructors
 
             Option(const std::string &name, const std::string &value, int id = 0);
 
@@ -40,6 +43,8 @@ namespace c2d {
             Option(const std::string &name, const FloatRect &value, int id = 0);
 
             Option(const std::string &name, const Color &value, int id = 0);
+
+            Option(const std::string &name, const std::vector<std::string> &values, int index, int id = 0);
 
             /// Type::String
 
@@ -77,6 +82,18 @@ namespace c2d {
 
             void setColor(const Color &color);
 
+            /// Type::Choice
+
+            int getChoiceIndex();
+
+            void setChoicesIndex(int index);
+
+            std::vector<std::string> getChoices();
+
+            void setChoices(const std::vector<std::string> &values, int index);
+
+            /// ...
+
             std::string getName() const;
 
             void setName(const std::string &name);
@@ -84,8 +101,6 @@ namespace c2d {
             int getId() const;
 
             void setId(int id);
-
-            int getSize();
 
             std::string getComment() const;
 
@@ -108,6 +123,8 @@ namespace c2d {
             std::string string;
             int integer;
             FloatRect floatRect;
+            std::vector<std::string> choices;
+            int choices_index;
 
             std::string name;
             std::string info;

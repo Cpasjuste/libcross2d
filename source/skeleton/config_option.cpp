@@ -49,6 +49,13 @@ Option::Option(const std::string &name, const Color &value, int id) {
     setType(Type::Color);
 }
 
+Option::Option(const std::string &name, const std::vector<std::string> &values, int index, int id) {
+    setName(name);
+    setId(id);
+    setChoices(values, index);
+    setType(Type::Choice);
+}
+
 std::string Option::getName() const {
     return name;
 }
@@ -102,6 +109,8 @@ std::string Option::getString() const {
         return std::to_string(integer);
     } else if (type == Type::Float) {
         return std::to_string(floatRect.left);
+    } else if (type == Type::Choice) {
+        return choices[choices_index];
     }
     return string;
 }
@@ -153,4 +162,21 @@ void Option::setColor(const Color &color) {
     floatRect.top = color.g;
     floatRect.width = color.b;
     floatRect.height = color.a;
+}
+
+int Option::getChoiceIndex() {
+    return choices_index;
+}
+
+void Option::setChoicesIndex(int index) {
+    choices_index = index;
+}
+
+std::vector<std::string> Option::getChoices() {
+    return choices;
+}
+
+void Option::setChoices(const std::vector<std::string> &values, int index) {
+    choices = values;
+    choices_index = index;
 }

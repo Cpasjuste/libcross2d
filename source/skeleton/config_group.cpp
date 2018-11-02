@@ -254,6 +254,13 @@ bool Group::load(config_setting_t *parent) {
                 }
             }
             option.setColor({values[0], values[1], values[2], values[3]});
+        } else if (option.getType() == Option::Type::Choice) {
+            int value = 0;
+            if (!config_setting_lookup_int(settings, option.getName().c_str(), &value)) {
+                printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
+                continue;
+            }
+            option.setChoicesIndex(value);
         }
     }
 
@@ -314,6 +321,9 @@ bool Group::save(config_setting_t *parent) {
             config_setting_set_int(subset, (int) option.getFloatRect().width);
             subset = config_setting_add(array, nullptr, CONFIG_TYPE_INT);
             config_setting_set_int(subset, (int) option.getFloatRect().height);
+        } else if (option.getType() == Option::Type::Choice) {
+            config_setting_t *setting = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_INT);
+            config_setting_set_int(setting, option.getChoiceIndex());
         }
     }
 
