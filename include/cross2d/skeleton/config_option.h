@@ -8,6 +8,10 @@
 #include <string>
 #include <vector>
 
+#include "cross2d/skeleton/sfml/Vector2.hpp"
+#include "cross2d/skeleton/sfml/Rect.hpp"
+#include "cross2d/skeleton/sfml/Color.hpp"
+
 namespace c2d {
 
     namespace config {
@@ -19,7 +23,10 @@ namespace c2d {
             enum class Type {
                 Integer,
                 String,
-                Float
+                Float,
+                Vector2f,
+                FloatRect,
+                Color
             };
 
             Option(const std::string &name, const std::string &value, int id = 0);
@@ -28,31 +35,61 @@ namespace c2d {
 
             Option(const std::string &name, float value, int id = 0);
 
-            std::string getName() const;
+            Option(const std::string &name, const Vector2f &value, int id = 0);
 
-            void setName(const std::string &name);
+            Option(const std::string &name, const FloatRect &value, int id = 0);
 
-            ///
-            /// \return the option value as string (doing float/int to string if needed)
+            Option(const std::string &name, const Color &value, int id = 0);
+
+            /// Type::String
+
             std::string getString() const;
 
             void setString(const std::string &value);
+
+            /// Type::Integer
 
             int getInteger();
 
             void setInteger(int value);
 
+            /// Type::Float
+
             float getFloat();
 
             void setFloat(float value);
 
-            std::string getComment() const;
+            /// Type::Vector2f
 
-            void setComment(const std::string &info);
+            Vector2f getVector2f();
+
+            void setVector2f(const Vector2f &value);
+
+            /// Type::FloatRect
+
+            FloatRect getFloatRect();
+
+            void setFloatRect(const FloatRect &value);
+
+            /// Type::Color
+
+            Color getColor();
+
+            void setColor(const Color &color);
+
+            std::string getName() const;
+
+            void setName(const std::string &name);
 
             int getId() const;
 
             void setId(int id);
+
+            int getSize();
+
+            std::string getComment() const;
+
+            void setComment(const std::string &info);
 
             Type getType() const;
 
@@ -68,15 +105,16 @@ namespace c2d {
 
         private:
 
+            std::string string;
+            int integer;
+            FloatRect floatRect;
+
             std::string name;
             std::string info;
-            std::string value_string;
-            int value_integer;
-            float value_float;
             Type type;
-            bool savable = true;
             int id = 0;
-            void *data;
+            bool savable = true;
+            void *user_data = nullptr;
         };
     }
 }
