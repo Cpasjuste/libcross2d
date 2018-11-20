@@ -2,8 +2,6 @@
 // Created by cpasjuste on 11/01/17.
 //
 
-#include <cmath>
-#include <SDL2/SDL.h>
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -20,7 +18,8 @@ static int key_id[KEY_COUNT]{
         Input::Key::KEY_FIRE3,
         Input::Key::KEY_FIRE4,
         Input::Key::KEY_FIRE5,
-        Input::Key::KEY_FIRE6
+        Input::Key::KEY_FIRE6,
+        Input::Key::KEY_TOUCH
 };
 
 SDL2Input::SDL2Input() : Input() {
@@ -118,6 +117,9 @@ Input::Player *SDL2Input::update(int rotate) {
 
         // buttons
         process_buttons(player, rotate);
+
+        // mouse (touch)
+        process_touch(player);
     }
 
     // keyboard
@@ -134,7 +136,7 @@ void SDL2Input::process_axis(Input::Player &player, int rotate) {
     }
 
     float analogX, analogY;
-    float deadZone = (float) player.dead_zone;
+    auto deadZone = (float) player.dead_zone;
     float scalingFactor, magnitude;
     bool up = false, down = false, left = false, right = false;
     Axis *currentStickXAxis = nullptr;
@@ -329,7 +331,7 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
 
 void SDL2Input::process_keyboard(Input::Player &player, int rotate) {
 #ifndef __SWITCH__
-    const Uint8 *keys = SDL_GetKeyboardState(NULL);
+    const Uint8 *keys = SDL_GetKeyboardState(nullptr);
 
     for (int i = 0; i < KEY_COUNT; i++) {
         if (keys[keyboard.mapping[i]]) {
@@ -363,4 +365,19 @@ void SDL2Input::process_keyboard(Input::Player &player, int rotate) {
         }
     }
 #endif
+}
+
+void SDL2Input::process_touch(Input::Player &player) {
+
+    int x, y;
+
+    player.touch = Vector2f(0, 0);
+
+    if (SDL_BUTTON(SDL_BUTTON_LEFT)) {
+        if (SDL_GetMouseState(&x, &y)) {
+            player.touch.x = x;
+            player.touch.y = y;
+            player.state |= Input::Key::KEY_TOUCH;
+        }
+    }
 }
