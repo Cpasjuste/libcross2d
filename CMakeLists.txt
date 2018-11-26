@@ -128,6 +128,7 @@ elseif (BUILD_SWITCH)
             -ffunction-sections -fomit-frame-pointer
             -D__SDL2_GL__ -D__GL__ -D__SWITCH__
             -D_GLIBCXX_USE_C99_MATH_TR1 -D_LDBL_EQ_DBL
+            -Wno-int-in-bool-context
             )
     set(PLATFORM_LIBS
             SDL2 glad EGL glapi drm_nouveau nx
