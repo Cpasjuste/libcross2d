@@ -133,15 +133,16 @@ extern c2d::Renderer *c2d_renderer;
 
 #include <switch.h>
 #include <glad/glad.h>
-#include "platforms/sdl2/sdl2_gl_renderer.h"
+#include "platforms/switch/switch_renderer.h"
 #include "platforms/gl/gl_texture.h"
 #include "platforms/gl/gl_shaders.h"
 #include "platforms/sdl2/sdl2_input.h"
 #include "platforms/sdl2/sdl2_audio.h"
 #include "platforms/switch/switch_io.h"
+#include "platforms/switch/switch_sys.h"
 #include "platforms/posix/posix_clock.h"
 
-#define C2DRenderer SDL2Renderer
+#define C2DRenderer SWITCHRenderer
 #define C2DTexture GLTexture
 #define C2DRectangle RectangleShape
 #define C2DRoundedRectangle RoundedRectangleShape

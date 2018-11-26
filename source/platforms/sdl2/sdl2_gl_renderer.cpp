@@ -8,19 +8,7 @@
 
 using namespace c2d;
 
-#if defined(__SWITCH__) && defined(__NET_DEBUG__)
-
-void initNxLink();
-
-void deinitNxLink();
-
-#endif
-
 SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
-
-#if defined(__SWITCH__) && defined(__NET_DEBUG__)
-    initNxLink();
-#endif
 
     printf("SDL2Renderer(GL)\n");
 
@@ -74,18 +62,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
     printf("SDL2Renderer(GL)(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }
 
-void SDL2Renderer::setSize(const c2d::Vector2f &size) {
-
-    setSize(size.x, size.y);
-}
-
-void SDL2Renderer::setSize(float width, float height) {
-
-    //TODO: bad idea, add set/getResolution
-    //SDL_SetWindowSize(window, (int) width, (int) height);
-    Renderer::setSize(width, height);
-}
-
 void SDL2Renderer::flip(bool draw) {
 
     if (draw) {
@@ -125,10 +101,6 @@ SDL2Renderer::~SDL2Renderer() {
     }
 
     SDL_Quit();
-
-#if defined(__SWITCH__) && defined(__NET_DEBUG__)
-    deinitNxLink();
-#endif
 }
 
 #endif
