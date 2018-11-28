@@ -7,6 +7,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
+#include "cross2d/skeleton/utility.h"
 #include "cross2d/platforms/posix/posix_io.h"
 
 using namespace c2d;
@@ -75,7 +76,7 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort) {
 
                 File file;
                 file.name = ent->d_name;
-                file.path = path + "/" + file.name;
+                file.path = Utility::removeLastSlash(path) + "/" + file.name;
                 if (stat(file.path.c_str(), &st) == 0) {
                     file.size = (size_t) st.st_size;
                     file.type = S_ISDIR(st.st_mode) ? Type::Directory : Type::File;

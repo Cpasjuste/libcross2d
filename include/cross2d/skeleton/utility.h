@@ -5,6 +5,8 @@
 #ifndef C2D_UTILITY_H
 #define C2D_UTILITY_H
 
+#include <string>
+
 namespace c2d {
 
     class Utility {
