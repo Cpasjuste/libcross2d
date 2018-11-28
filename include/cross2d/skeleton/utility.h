@@ -11,13 +11,13 @@ namespace c2d {
 
     public:
 
-        static char *removeExt(const char *str, char sep);
-
         static bool startWith(const std::string &str, const std::string &value);
 
         static bool endsWith(const std::string &value, const std::string &ending);
 
         static std::string removeLastSlash(const std::string &string);
+
+        static std::string removeExt(const std::string &str);
     };
 
 }
