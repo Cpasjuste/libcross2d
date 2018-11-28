@@ -18,8 +18,7 @@ static int key_id[KEY_COUNT]{
         Input::Key::KEY_FIRE3,
         Input::Key::KEY_FIRE4,
         Input::Key::KEY_FIRE5,
-        Input::Key::KEY_FIRE6,
-        Input::Key::KEY_TOUCH
+        Input::Key::KEY_FIRE6
 };
 
 SDL2Input::SDL2Input() : Input() {

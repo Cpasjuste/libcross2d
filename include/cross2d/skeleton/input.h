@@ -6,12 +6,11 @@
 #define C2D_INPUT_H
 
 #define PLAYER_COUNT 4
-#define KEY_COUNT 13
+#define KEY_COUNT 12
 
-#define EV_RESIZE 0x4000
-#define EV_QUIT 0x8000
-#define EV_REFRESH 0x10000
-#define EV_DELAY 0x20000
+#define EV_RESIZE   0x10000
+#define EV_QUIT     0x20000
+#define EV_DELAY    0x40000
 
 #include "cross2d/skeleton/sfml/Clock.hpp"
 #include "cross2d/skeleton/sfml/Vector2.hpp"
@@ -35,7 +34,7 @@ namespace c2d {
             KEY_FIRE4 = 0x0200,
             KEY_FIRE5 = 0x0400,
             KEY_FIRE6 = 0x0800,
-            KEY_TOUCH = 0x01000
+            KEY_TOUCH = 0x1000
         };
 
         struct Axis {

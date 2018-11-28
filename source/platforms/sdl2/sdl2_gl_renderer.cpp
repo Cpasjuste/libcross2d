@@ -18,7 +18,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
     }
 
     Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
-    if (getSize().x <= 0 || getSize().y != 0) { // force fullscreen if window size == 0
+    if (getSize().x <= 0 || getSize().y <= 0) { // force fullscreen if window size == 0
         flags |= SDL_WINDOW_FULLSCREEN;
     }
 
