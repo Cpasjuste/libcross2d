@@ -62,6 +62,7 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort) {
 
     std::vector<Io::File> files;
     struct dirent *ent;
+    struct stat st{};
     DIR *dir;
 
     if (!path.empty()) {
@@ -75,8 +76,10 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort) {
                 File file;
                 file.name = ent->d_name;
                 file.path = path + "/" + file.name;
-                file.size = getSize(file.path);
-                file.type = getType(file.path);
+                if (stat(file.path.c_str(), &st) == 0) {
+                    file.size = (size_t) st.st_size;
+                    file.type = S_ISDIR(st.st_mode) ? Type::Directory : Type::File;
+                }
                 file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
                 files.push_back(file);
             }
