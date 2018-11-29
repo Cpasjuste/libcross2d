@@ -185,6 +185,8 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         FloatRect getGlobalBounds() const;
 
+        VertexArray *getVertexArray();
+
     protected:
 
         virtual void draw(Transform &transform);

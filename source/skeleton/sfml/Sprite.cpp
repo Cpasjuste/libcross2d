@@ -122,6 +122,10 @@ namespace c2d {
     }
 
 
+    VertexArray *Sprite::getVertexArray() {
+        return &m_vertices;
+    }
+
 ////////////////////////////////////////////////////////////
     /*
     void Sprite::draw(RenderTarget &target, RenderStates states) const {
