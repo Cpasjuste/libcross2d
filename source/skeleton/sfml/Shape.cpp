@@ -198,6 +198,10 @@ namespace c2d {
         }
     }
 
+    VertexArray *Shape::getVertexArray() {
+        return &m_vertices;
+    }
+
 ////////////////////////////////////////////////////////////
     Shape::Shape() :
             m_texture(nullptr),

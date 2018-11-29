@@ -270,6 +270,8 @@ namespace c2d {
 
         void setOrigin(const Origin &origin);
 
+        VertexArray *getVertexArray();
+
     protected:
 
         ////////////////////////////////////////////////////////////
