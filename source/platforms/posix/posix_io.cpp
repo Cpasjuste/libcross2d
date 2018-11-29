@@ -7,8 +7,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-#include "cross2d/skeleton/utility.h"
-#include "cross2d/platforms/posix/posix_io.h"
+#include "cross2d/c2d.h"
 
 using namespace c2d;
 
@@ -63,7 +62,6 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort) {
 
     std::vector<Io::File> files;
     struct dirent *ent;
-    struct stat st{};
     DIR *dir;
 
     if (!path.empty()) {
@@ -77,10 +75,18 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort) {
                 File file;
                 file.name = ent->d_name;
                 file.path = Utility::removeLastSlash(path) + "/" + file.name;
+#ifdef __SWITCH__
+                auto *dirSt = (fsdev_dir_t *) dir->dirData->dirStruct;
+                FsDirectoryEntry *entry = &dirSt->entry_data[dirSt->index];
+                file.type = entry->type == ENTRYTYPE_DIR ? Type::Directory : Type::File;
+                file.size = entry->fileSize;
+#else
+                struct stat st{};
                 if (stat(file.path.c_str(), &st) == 0) {
                     file.size = (size_t) st.st_size;
                     file.type = S_ISDIR(st.st_mode) ? Type::Directory : Type::File;
                 }
+#endif
                 file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
                 files.push_back(file);
             }
