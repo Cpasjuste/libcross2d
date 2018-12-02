@@ -127,22 +127,10 @@ namespace c2d {
     }
 
 ////////////////////////////////////////////////////////////
-    /*
-    void Sprite::draw(RenderTarget &target, RenderStates states) const {
-        if (m_texture) {
-            states.transform *= getTransform();
-            states.texture = m_texture;
-            target.draw(m_vertices, 4, TriangleStrip, states);
-        }
-        }
-    }
-    */
     void Sprite::draw(Transform &transform) {
 
-        if (m_texture) {
-            Transform combined = transform * getTransform();
-            c2d_renderer->draw(&m_vertices, combined, m_texture);
-        }
+        Transform combined = transform * getTransform();
+        c2d_renderer->draw(&m_vertices, combined, m_texture);
         C2DObject::draw(transform);
     }
 
@@ -154,7 +142,6 @@ namespace c2d {
         m_vertices[1].position = Vector2f(0, bounds.height);
         m_vertices[2].position = Vector2f(bounds.width, 0);
         m_vertices[3].position = Vector2f(bounds.width, bounds.height);
-
         m_vertices.update();
     }
 
@@ -170,7 +157,6 @@ namespace c2d {
         m_vertices[1].texCoords = Vector2f(left, bottom);
         m_vertices[2].texCoords = Vector2f(right, top);
         m_vertices[3].texCoords = Vector2f(right, bottom);
-
         m_vertices.update();
     }
 

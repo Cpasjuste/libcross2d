@@ -56,7 +56,7 @@ void GLRenderer::draw(VertexArray *vertexArray,
         return;
     }
 
-    vertices = vertexArray->getVertices().data();
+    vertices = vertexArray->getVertices()->data();
     vertexCount = vertexArray->getVertexCount();
     glTexture = ((GLTexture *) texture);
     shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(0)->data :
