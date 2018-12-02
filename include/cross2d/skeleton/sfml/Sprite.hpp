@@ -189,7 +189,7 @@ namespace c2d {
 
     protected:
 
-        virtual void draw(Transform &transform);
+        virtual void onDraw(Transform &transform);
 
     private:
 

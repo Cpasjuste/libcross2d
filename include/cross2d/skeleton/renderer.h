@@ -32,8 +32,6 @@ namespace c2d {
 
         ~Renderer() override;
 
-        void draw(Transform &transform) override {};
-
         virtual void draw(VertexArray *vertexArray,
                           const Transform &transform,
                           const Texture *texture) {};
@@ -53,11 +51,11 @@ namespace c2d {
 
         void setSize(float width, float height);
 
-        const Vector2f &getSize() const;
+        const Vector2f getSize() const;
 
         void setClearColor(const Color &color);
 
-        const Color &getClearColor();
+        const Color getClearColor();
 
         Time getDeltaTime() const;
 
@@ -65,11 +63,11 @@ namespace c2d {
 
         float getFps() const;
 
-        Io *getIo() { return io; };
+        virtual Io *getIo() { return io; };
 
-        Font *getFont() { return font; };
+        virtual Font *getFont() { return font; };
 
-        Input *getInput() { return input; };
+        virtual Input *getInput() { return input; };
 
     protected:
 

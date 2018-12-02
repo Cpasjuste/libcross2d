@@ -8,12 +8,12 @@ using namespace c2d;
 
 ListBoxLine::ListBoxLine(
         const FloatRect &rect, const std::string &str,
-        Font *font, unsigned int fontSize, Texture *i, bool ui) : RectangleShape(rect) {
+        Font *font, unsigned int fontSize, Texture *i, bool use_ic) : RectangleShape(rect) {
 
     //printf("ListBoxLine(%p)\n", this);
 
     icon = i;
-    use_icons = ui;
+    use_icons = use_ic;
     text = new Text(str, fontSize, font);
     text->setOutlineThickness(2);
     text->setOutlineColor(Color::Black);

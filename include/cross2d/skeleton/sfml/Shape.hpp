@@ -117,7 +117,7 @@ namespace c2d {
         /// \see getFillColor, setOutlineColor
         ///
         ////////////////////////////////////////////////////////////
-        virtual void setAlpha(uint8_t alpha);
+        virtual void setAlpha(uint8_t alpha, bool recursive = false);
 
         virtual uint8_t getAlpha();
 
@@ -294,7 +294,7 @@ namespace c2d {
         /// \brief Draw the shape to the main renderer
         ///
         ////////////////////////////////////////////////////////////
-        virtual void draw(Transform &transform);
+        virtual void onDraw(Transform &transform);
 
     private:
 

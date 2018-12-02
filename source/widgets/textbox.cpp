@@ -26,13 +26,13 @@ TextBox::TextBox(const std::string &string, Font *font,
     add(text);
 }
 
-void TextBox::draw(Transform &transform) {
+void TextBox::onDraw(Transform &transform) {
 
     // update text position
     //text->setOrigin(text->getLocalBounds().width / 2, text->getLocalBounds().height / 2);
     text->setPosition(getLocalBounds().width / 2, getLocalBounds().height / 2);
 
-    Shape::draw(transform);
+    Shape::onDraw(transform);
 }
 
 Text *TextBox::getText() {

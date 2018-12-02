@@ -95,7 +95,7 @@ namespace c2d {
         return m_fillColor;
     }
 
-    void Shape::setAlpha(uint8_t alpha) {
+    void Shape::setAlpha(uint8_t alpha, bool recursive) {
 
         if (alpha != m_fillColor.a) {
             m_fillColor.a = alpha;
@@ -104,7 +104,9 @@ namespace c2d {
             updateOutlineColors();
         }
 
-        C2DObject::setAlpha(alpha);
+        if (recursive) {
+            C2DObject::setAlpha(alpha);
+        }
     }
 
     uint8_t Shape::getAlpha() {
@@ -255,7 +257,7 @@ namespace c2d {
         setOrigin(m_origin);
     }
 
-    void Shape::draw(Transform &transform) {
+    void Shape::onDraw(Transform &transform) {
 
         Transform combined = transform * getTransform();
         if (getFillColor().a != 0) {
@@ -265,7 +267,7 @@ namespace c2d {
             c2d_renderer->draw(&m_outlineVertices, combined, nullptr);
         }
 
-        C2DObject::draw(transform);
+        C2DObject::onDraw(transform);
     }
 
 ////////////////////////////////////////////////////////////

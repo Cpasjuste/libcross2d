@@ -37,7 +37,7 @@ void Renderer::setSize(float width, float height) {
     m_size.y = height;
 }
 
-const Vector2f &Renderer::getSize() const {
+const Vector2f Renderer::getSize() const {
     return m_size;
 }
 
@@ -47,11 +47,12 @@ void Renderer::flip(bool draw) {
 
     // update inputs
     input->update();
+    onInput(input->getPlayers());
 
     // call base class (draw childs)
     if (draw) {
         Transform trans = getTransform();
-        C2DObject::draw(trans);
+        onDraw(trans);
     }
 
     deltaTime = deltaClock->restart();
@@ -70,7 +71,7 @@ void Renderer::setClearColor(const Color &color) {
     m_clearColor = color;
 }
 
-const Color &Renderer::getClearColor() {
+const Color Renderer::getClearColor() {
     return m_clearColor;
 }
 

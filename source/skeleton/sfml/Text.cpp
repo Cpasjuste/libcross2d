@@ -203,7 +203,7 @@ namespace c2d {
     }
 
 /////////////////////////////////////////////////////////////
-    void Text::setAlpha(uint8_t alpha) {
+    void Text::setAlpha(uint8_t alpha, bool recursive) {
 
         if (alpha != m_fillColor.a) {
             Color color;
@@ -215,7 +215,9 @@ namespace c2d {
             setOutlineColor(color);
         }
 
-        C2DObject::setAlpha(alpha);
+        if (recursive) {
+            C2DObject::setAlpha(alpha);
+        }
     }
 
     uint8_t Text::getAlpha() {
@@ -388,7 +390,7 @@ namespace c2d {
         m_line_spacing = size;
     }
 
-    void Text::draw(Transform &transform) {
+    void Text::onDraw(Transform &transform) {
 
         if (m_string.empty()) {
             return;
@@ -404,7 +406,7 @@ namespace c2d {
         }
         c2d_renderer->draw(&m_vertices, combined, &getFont()->getTexture(getCharacterSize()));
 
-        C2DObject::draw(transform);
+        C2DObject::onDraw(transform);
     }
 
 ////////////////////////////////////////////////////////////
