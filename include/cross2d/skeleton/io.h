@@ -75,7 +75,7 @@ namespace c2d {
             return false;
         };
 
-        virtual std::vector<Io::File> getDirList(const std::string &path, bool sort = false) {
+        virtual std::vector<Io::File> getDirList(const std::string &path, bool sort = false, bool showHidden = false) {
             return std::vector<Io::File>();
         };
 

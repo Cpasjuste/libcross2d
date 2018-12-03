@@ -143,9 +143,9 @@ void Tween::step() {
     } else if (type == TweenType::Alpha) {
         auto alpha = (uint8_t) (float4[0]);
         if (object->getType() == Type::Text) {
-            ((Text *) transform)->setAlpha(alpha);
+            ((Text *) transform)->setAlpha(alpha, true);
         } else {
-            ((Shape *) transform)->setAlpha(alpha);
+            ((Shape *) transform)->setAlpha(alpha, true);
         }
     }
 }

@@ -216,7 +216,7 @@ namespace c2d {
         }
 
         if (recursive) {
-            C2DObject::setAlpha(alpha);
+            C2DObject::setAlpha(alpha, recursive);
         }
     }
 

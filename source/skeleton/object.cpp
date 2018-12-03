@@ -124,7 +124,7 @@ void C2DObject::setAlpha(uint8_t alpha, bool recursive) {
     if (recursive) {
         for (auto &child : childs) {
             if (child) {
-                child->setAlpha(alpha);
+                child->setAlpha(alpha, recursive);
             }
         }
     }

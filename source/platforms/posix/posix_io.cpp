@@ -58,7 +58,7 @@ Io::Type POSIXIo::getType(const std::string &file) {
     return S_ISDIR(st.st_mode) ? Type::Directory : Type::File;
 }
 
-std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort) {
+std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bool showHidden) {
 
     std::vector<Io::File> files;
     struct dirent *ent;
@@ -70,6 +70,12 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort) {
                 // skip "."
                 if (strlen(ent->d_name) == 1 && ent->d_name[0] == '.') {
                     continue;
+                }
+                // skip "hidden" files
+                if (!showHidden && ent->d_name[0] == '.') {
+                    if (strlen(ent->d_name) != 2 && ent->d_name[1] != '.') {
+                        continue;
+                    }
                 }
 
                 File file;

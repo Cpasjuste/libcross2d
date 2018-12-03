@@ -21,7 +21,7 @@ namespace c2d {
 
         bool create(const std::string &path) override;
 
-        std::vector<Io::File> getDirList(const std::string &path, bool sort) override;
+        std::vector<Io::File> getDirList(const std::string &path, bool sort, bool showHidden = false) override;
 
         std::string getHomePath() const override;
 
