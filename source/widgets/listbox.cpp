@@ -15,7 +15,6 @@ ListBoxLine::ListBoxLine(
     icon = i;
     use_icons = use_ic;
     text = new Text(str, fontSize, font);
-    text->setOutlineThickness(2);
     text->setOutlineColor(Color::Black);
     text->setOrigin(Origin::Left);
 
@@ -128,8 +127,6 @@ void ListBox::init(Font *font, int fontSize, bool useIcons) {
     use_icons = useIcons;
     // set default bg colors
     setFillColor(Color::GrayLight);
-    setOutlineColor(Color::Orange);
-    setOutlineThickness(2);
 
     // calculate number of lines shown
     if (use_icons) {
@@ -144,7 +141,6 @@ void ListBox::init(Font *font, int fontSize, bool useIcons) {
 
     // add selection rectangle (highlight)
     highlight = new RectangleShape(Vector2f(getSize().x - 2, line_height - 2));
-    highlight->setOutlineThickness(1);
     add(highlight);
 
     // add lines of text
