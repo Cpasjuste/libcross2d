@@ -2,8 +2,6 @@
 // Created by cpasjuste on 12/12/17.
 //
 
-#include <cross2d/skeleton/object.h>
-
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -199,5 +197,3 @@ C2DObject::~C2DObject() {
         parent->remove(this);
     }
 }
-
-
