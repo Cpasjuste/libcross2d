@@ -147,11 +147,10 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     FloatRect Shape::getGlobalBounds() const {
-        //Transform t = transformation * getTransform();
-        //return t.transformRect(getLocalBounds());
-        return getTransform().transformRect(getLocalBounds());
+        Transform t = transformation * getTransform();
+        return t.transformRect(getLocalBounds());
+        //return getTransform().transformRect(getLocalBounds());
     }
-
 
 ////////////////////////////////////////////////////////////
     const Origin Shape::getOrigin() const {

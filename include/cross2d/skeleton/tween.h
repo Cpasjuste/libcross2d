@@ -91,6 +91,8 @@ namespace c2d {
                 float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
             this->type = TweenType::Position;
         };
+
+        void setFromTo(const Vector2f &from, const Vector2f &to);
     };
 
     ///
@@ -105,6 +107,8 @@ namespace c2d {
                 float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
             this->type = TweenType::Rotation;
         }
+
+        void setFromTo(float from, float to);
     };
 
     ///
@@ -119,6 +123,8 @@ namespace c2d {
                 float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
             this->type = TweenType::Scale;
         }
+
+        void setFromTo(const Vector2f &from, const Vector2f &to);
     };
 
     ///
@@ -133,6 +139,8 @@ namespace c2d {
                 float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
             this->type = TweenType::Color;
         }
+
+        void setFromTo(const Color &from, const Color &to);
     };
 
     ///
@@ -147,6 +155,8 @@ namespace c2d {
                 float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
             this->type = TweenType::Alpha;
         }
+
+        void setFromTo(float from, float to);
     };
 }
 
