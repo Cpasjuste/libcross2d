@@ -187,6 +187,10 @@ namespace c2d {
 
         VertexArray *getVertexArray();
 
+        void setOrigin(const Origin &origin);
+
+        const Origin getOrigin() const;
+
     protected:
 
         virtual void onDraw(Transform &transform);
@@ -212,6 +216,7 @@ namespace c2d {
         VertexArray m_vertices;
         const Texture *m_texture;     ///< Texture of the sprite
         IntRect m_textureRect; ///< Rectangle defining the area of the source texture to display
+        Origin m_sprite_origin = Origin::TopLeft;
     };
 
 } // namespace c2d

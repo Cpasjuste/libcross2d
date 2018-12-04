@@ -154,46 +154,44 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-
-    void Shape::setOrigin(float x, float y) {
-        Transformable::setOrigin(x, y);
+    const Origin Shape::getOrigin() const {
+        return m_shape_origin;
     }
 
-    void Shape::setOrigin(const Vector2f &origin) {
-        Transformable::setOrigin(origin);
-    }
+
+////////////////////////////////////////////////////////////
 
     void Shape::setOrigin(const Origin &origin) {
 
-        m_origin = origin;
+        m_shape_origin = origin;
 
         switch (origin) {
             case Origin::Left:
-                Transformable::setOrigin(0, m_bounds.height / 2);
+                Transformable::setOriginVector(0, m_bounds.height / 2);
                 break;
             case Origin::TopLeft:
-                Transformable::setOrigin(0, 0);
+                Transformable::setOriginVector(0, 0);
                 break;
             case Origin::Top:
-                Transformable::setOrigin(m_bounds.width / 2, 0);
+                Transformable::setOriginVector(m_bounds.width / 2, 0);
                 break;
             case Origin::TopRight:
-                Transformable::setOrigin(m_bounds.width, 0);
+                Transformable::setOriginVector(m_bounds.width, 0);
                 break;
             case Origin::Right:
-                Transformable::setOrigin(m_bounds.width, m_bounds.height / 2);
+                Transformable::setOriginVector(m_bounds.width, m_bounds.height / 2);
                 break;
             case Origin::BottomRight:
-                Transformable::setOrigin(m_bounds.width, m_bounds.height);
+                Transformable::setOriginVector(m_bounds.width, m_bounds.height);
                 break;
             case Origin::Bottom:
-                Transformable::setOrigin(m_bounds.width / 2, m_bounds.height);
+                Transformable::setOriginVector(m_bounds.width / 2, m_bounds.height);
                 break;
             case Origin::BottomLeft:
-                Transformable::setOrigin(0, m_bounds.height);
+                Transformable::setOriginVector(0, m_bounds.height);
                 break;
             case Origin::Center:
-                Transformable::setOrigin(m_bounds.width / 2, m_bounds.height / 2);
+                Transformable::setOriginVector(m_bounds.width / 2, m_bounds.height / 2);
                 break;
             default:
                 break;
@@ -254,7 +252,7 @@ namespace c2d {
         updateOutline();
 
         // origin
-        setOrigin(m_origin);
+        setOrigin(m_shape_origin);
     }
 
     void Shape::onDraw(Transform &transform) {

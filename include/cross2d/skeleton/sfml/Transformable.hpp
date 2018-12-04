@@ -140,7 +140,7 @@ namespace c2d {
         /// \see getOrigin
         ///
         ////////////////////////////////////////////////////////////
-        virtual void setOrigin(float x, float y);
+        virtual void setOriginVector(float x, float y);
 
         ////////////////////////////////////////////////////////////
         /// \brief set the local origin of the object
@@ -157,9 +157,7 @@ namespace c2d {
         /// \see getOrigin
         ///
         ////////////////////////////////////////////////////////////
-        virtual void setOrigin(const Vector2f &origin);
-
-        virtual void setOrigin(const Origin &origin, bool outline = true) {};
+        virtual void setOriginVector(const Vector2f &origin);
 
         ////////////////////////////////////////////////////////////
         /// \brief get the position of the object
@@ -201,7 +199,7 @@ namespace c2d {
         /// \see setOrigin
         ///
         ////////////////////////////////////////////////////////////
-        const Vector2f &getOrigin() const;
+        const Vector2f &getOriginVector() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Move the object by a given offset

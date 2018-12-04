@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstdlib>
+
 #include "cross2d/c2d.h"
 
 namespace c2d {
@@ -126,7 +127,49 @@ namespace c2d {
         return &m_vertices;
     }
 
-////////////////////////////////////////////////////////////
+    void Sprite::setOrigin(const Origin &origin) {
+
+        FloatRect m_bounds = getLocalBounds();
+        m_sprite_origin = origin;
+
+        switch (origin) {
+            case Origin::Left:
+                Transformable::setOriginVector(0, m_bounds.height / 2);
+                break;
+            case Origin::TopLeft:
+                Transformable::setOriginVector(0, 0);
+                break;
+            case Origin::Top:
+                Transformable::setOriginVector(m_bounds.width / 2, 0);
+                break;
+            case Origin::TopRight:
+                Transformable::setOriginVector(m_bounds.width, 0);
+                break;
+            case Origin::Right:
+                Transformable::setOriginVector(m_bounds.width, m_bounds.height / 2);
+                break;
+            case Origin::BottomRight:
+                Transformable::setOriginVector(m_bounds.width, m_bounds.height);
+                break;
+            case Origin::Bottom:
+                Transformable::setOriginVector(m_bounds.width / 2, m_bounds.height);
+                break;
+            case Origin::BottomLeft:
+                Transformable::setOriginVector(0, m_bounds.height);
+                break;
+            case Origin::Center:
+                Transformable::setOriginVector(m_bounds.width / 2, m_bounds.height / 2);
+                break;
+            default:
+                break;
+        }
+    }
+
+    const Origin Sprite::getOrigin() const {
+        return m_sprite_origin;
+    }
+
+    ////////////////////////////////////////////////////////////
     void Sprite::onDraw(Transform &transform) {
 
         Transform combined = transform * getTransform();
@@ -136,6 +179,9 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Sprite::updatePositions() {
+
+        setOrigin(m_sprite_origin);
+
         FloatRect bounds = getLocalBounds();
 
         m_vertices[0].position = Vector2f(0, 0);
@@ -148,6 +194,9 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Sprite::updateTexCoords() {
+
+        setOrigin(m_sprite_origin);
+
         float left = static_cast<float>(m_textureRect.left);
         float right = left + m_textureRect.width;
         float top = static_cast<float>(m_textureRect.top);

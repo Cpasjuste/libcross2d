@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cmath>
+
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -334,49 +335,45 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void Text::setOrigin(float x, float y) {
-        Transformable::setOrigin(x, y);
-    }
-
-    void Text::setOrigin(const Vector2f &origin) {
-        Transformable::setOrigin(origin);
-    }
-
     void Text::setOrigin(const Origin &origin) {
 
         m_text_origin = origin;
 
         switch (origin) {
             case Origin::Left:
-                Transformable::setOrigin(0, (float) m_characterSize / 2);
+                Transformable::setOriginVector(0, (float) m_characterSize / 2);
                 break;
             case Origin::TopLeft:
-                Transformable::setOrigin(0, 0);
+                Transformable::setOriginVector(0, 0);
                 break;
             case Origin::Top:
-                Transformable::setOrigin(m_bounds.width / 2, 0);
+                Transformable::setOriginVector(m_bounds.width / 2, 0);
                 break;
             case Origin::TopRight:
-                Transformable::setOrigin(m_bounds.width, 0);
+                Transformable::setOriginVector(m_bounds.width, 0);
                 break;
             case Origin::Right:
-                Transformable::setOrigin(m_bounds.width, (float) m_characterSize / 2);
+                Transformable::setOriginVector(m_bounds.width, (float) m_characterSize / 2);
                 break;
             case Origin::BottomRight:
-                Transformable::setOrigin(m_bounds.width, m_characterSize);
+                Transformable::setOriginVector(m_bounds.width, m_characterSize);
                 break;
             case Origin::Bottom:
-                Transformable::setOrigin(m_bounds.width / 2, m_characterSize);
+                Transformable::setOriginVector(m_bounds.width / 2, m_characterSize);
                 break;
             case Origin::BottomLeft:
-                Transformable::setOrigin(0, m_characterSize);
+                Transformable::setOriginVector(0, m_characterSize);
                 break;
             case Origin::Center:
-                Transformable::setOrigin(m_bounds.width / 2, (float) m_characterSize / 2);
+                Transformable::setOriginVector(m_bounds.width / 2, (float) m_characterSize / 2);
                 break;
             default:
                 break;
         }
+    }
+
+    const Origin Text::getOrigin() const {
+        return m_text_origin;
     }
 
 ////////////////////////////////////////////////////////////

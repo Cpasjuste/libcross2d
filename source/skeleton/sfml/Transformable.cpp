@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cmath>
+
 #include "cross2d/skeleton/sfml/Transformable.hpp"
 
 namespace c2d {
@@ -89,16 +90,17 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void Transformable::setOrigin(float x, float y) {
+    void Transformable::setOriginVector(float x, float y) {
         m_origin.x = x;
         m_origin.y = y;
         m_transformNeedUpdate = true;
         m_inverseTransformNeedUpdate = true;
     }
 
+
 ////////////////////////////////////////////////////////////
-    void Transformable::setOrigin(const Vector2f &origin) {
-        setOrigin(origin.x, origin.y);
+    void Transformable::setOriginVector(const Vector2f &origin) {
+        setOriginVector(origin.x, origin.y);
     }
 
 
@@ -121,7 +123,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    const Vector2f &Transformable::getOrigin() const {
+    const Vector2f &Transformable::getOriginVector() const {
         return m_origin;
     }
 

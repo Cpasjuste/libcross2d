@@ -331,11 +331,9 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         c2d::FloatRect getGlobalBounds() const;
 
-        void setOrigin(float x, float y);
-
-        void setOrigin(const Vector2f &origin);
-
         void setOrigin(const Origin &origin);
+
+        const Origin getOrigin() const;
 
         void setWidth(float width);
 

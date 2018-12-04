@@ -264,11 +264,9 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         FloatRect getGlobalBounds() const;
 
-        void setOrigin(float x, float y);
-
-        void setOrigin(const Vector2f &origin);
-
         void setOrigin(const Origin &origin);
+
+        const Origin getOrigin() const;
 
         VertexArray *getVertexArray();
 
@@ -336,7 +334,7 @@ namespace c2d {
         VertexArray m_outlineVertices;  ///< Vertex array containing the outline geometry
         FloatRect m_insideBounds;     ///< Bounding rectangle of the inside (fill)
         FloatRect m_bounds;           ///< Bounding rectangle of the whole shape (outline + fill)
-        Origin m_origin = Origin::TopLeft;
+        Origin m_shape_origin = Origin::TopLeft;
     };
 
 } // namespace c2d
