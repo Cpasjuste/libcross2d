@@ -10,7 +10,6 @@
 
 #define EV_RESIZE   0x10000
 #define EV_QUIT     0x20000
-#define EV_DELAY    0x40000
 
 #include "cross2d/skeleton/sfml/Clock.hpp"
 #include "cross2d/skeleton/sfml/Vector2.hpp"
@@ -21,20 +20,21 @@ namespace c2d {
 
     public:
 
-        enum Key {
-            KEY_UP = 0x0001,
-            KEY_DOWN = 0x0002,
-            KEY_LEFT = 0x0004,
-            KEY_RIGHT = 0x0008,
-            KEY_COIN = 0x0010,
-            KEY_START = 0x0020,
-            KEY_FIRE1 = 0x0040,
-            KEY_FIRE2 = 0x0080,
-            KEY_FIRE3 = 0x0100,
-            KEY_FIRE4 = 0x0200,
-            KEY_FIRE5 = 0x0400,
-            KEY_FIRE6 = 0x0800,
-            KEY_TOUCH = 0x1000
+        enum Key : unsigned int {
+            Up = 0x0001,
+            Down = 0x0002,
+            Left = 0x0004,
+            Right = 0x0008,
+            Select = 0x0010,
+            Start = 0x0020,
+            Fire1 = 0x0040,
+            Fire2 = 0x0080,
+            Fire3 = 0x0100,
+            Fire4 = 0x0200,
+            Fire5 = 0x0400,
+            Fire6 = 0x0800,
+            Touch = 0x1000,
+            Delay = 0x2000
         };
 
         struct Axis {
@@ -43,7 +43,7 @@ namespace c2d {
         };
 
         struct Player {
-            int mapping[KEY_COUNT];
+            int mapping[KEY_COUNT]{};
             Axis lx{0, 0};
             Axis ly{1, 0};
             Axis rx{2, 0};
