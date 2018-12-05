@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cmath>
+
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -203,7 +204,7 @@ namespace c2d {
     }
 
 /////////////////////////////////////////////////////////////
-    void Text::setAlpha(uint8_t alpha) {
+    void Text::setAlpha(uint8_t alpha, bool recursive) {
 
         if (alpha != m_fillColor.a) {
             Color color;
@@ -215,7 +216,9 @@ namespace c2d {
             setOutlineColor(color);
         }
 
-        C2DObject::setAlpha(alpha);
+        if (recursive) {
+            C2DObject::setAlpha(alpha, recursive);
+        }
     }
 
     uint8_t Text::getAlpha() {
@@ -325,56 +328,52 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     FloatRect Text::getGlobalBounds() const {
-        //Transform t = transformation * getTransform();
-        //return t.transformRect(getLocalBounds());
-        return getTransform().transformRect(getLocalBounds());
+        Transform t = transformation * getTransform();
+        return t.transformRect(getLocalBounds());
+        //return getTransform().transformRect(getLocalBounds());
     }
 
 
 ////////////////////////////////////////////////////////////
-    void Text::setOrigin(float x, float y) {
-        Transformable::setOrigin(x, y);
-    }
-
-    void Text::setOrigin(const Vector2f &origin) {
-        Transformable::setOrigin(origin);
-    }
-
     void Text::setOrigin(const Origin &origin) {
 
         m_text_origin = origin;
 
         switch (origin) {
             case Origin::Left:
-                Transformable::setOrigin(0, (float) m_characterSize / 2);
+                Transformable::setOriginVector(0, (float) m_characterSize / 2);
                 break;
             case Origin::TopLeft:
-                Transformable::setOrigin(0, 0);
+                Transformable::setOriginVector(0, 0);
                 break;
             case Origin::Top:
-                Transformable::setOrigin(m_bounds.width / 2, 0);
+                Transformable::setOriginVector(m_bounds.width / 2, 0);
                 break;
             case Origin::TopRight:
-                Transformable::setOrigin(m_bounds.width, 0);
+                Transformable::setOriginVector(m_bounds.width, 0);
                 break;
             case Origin::Right:
-                Transformable::setOrigin(m_bounds.width, (float) m_characterSize / 2);
+                Transformable::setOriginVector(m_bounds.width, (float) m_characterSize / 2);
                 break;
             case Origin::BottomRight:
-                Transformable::setOrigin(m_bounds.width, m_characterSize);
+                Transformable::setOriginVector(m_bounds.width, m_characterSize);
                 break;
             case Origin::Bottom:
-                Transformable::setOrigin(m_bounds.width / 2, m_characterSize);
+                Transformable::setOriginVector(m_bounds.width / 2, m_characterSize);
                 break;
             case Origin::BottomLeft:
-                Transformable::setOrigin(0, m_characterSize);
+                Transformable::setOriginVector(0, m_characterSize);
                 break;
             case Origin::Center:
-                Transformable::setOrigin(m_bounds.width / 2, (float) m_characterSize / 2);
+                Transformable::setOriginVector(m_bounds.width / 2, (float) m_characterSize / 2);
                 break;
             default:
                 break;
         }
+    }
+
+    const Origin Text::getOrigin() const {
+        return m_text_origin;
     }
 
 ////////////////////////////////////////////////////////////
@@ -388,7 +387,7 @@ namespace c2d {
         m_line_spacing = size;
     }
 
-    void Text::draw(Transform &transform) {
+    void Text::onDraw(Transform &transform) {
 
         if (m_string.empty()) {
             return;
@@ -404,7 +403,7 @@ namespace c2d {
         }
         c2d_renderer->draw(&m_vertices, combined, &getFont()->getTexture(getCharacterSize()));
 
-        C2DObject::draw(transform);
+        C2DObject::onDraw(transform);
     }
 
 ////////////////////////////////////////////////////////////

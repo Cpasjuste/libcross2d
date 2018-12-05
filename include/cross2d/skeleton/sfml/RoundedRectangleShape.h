@@ -83,7 +83,7 @@ namespace c2d {
         /// \see SetRadius
         ///
         ////////////////////////////////////////////////////////////
-        const float getCornersRadius() const;
+        float getCornersRadius() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the number of points of each corner

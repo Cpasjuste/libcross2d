@@ -117,7 +117,7 @@ namespace c2d {
         /// \see getFillColor, setOutlineColor
         ///
         ////////////////////////////////////////////////////////////
-        virtual void setAlpha(uint8_t alpha);
+        virtual void setAlpha(uint8_t alpha, bool recursive = false);
 
         virtual uint8_t getAlpha();
 
@@ -264,11 +264,11 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         FloatRect getGlobalBounds() const;
 
-        void setOrigin(float x, float y);
-
-        void setOrigin(const Vector2f &origin);
-
         void setOrigin(const Origin &origin);
+
+        const Origin getOrigin() const;
+
+        VertexArray *getVertexArray();
 
     protected:
 
@@ -292,7 +292,7 @@ namespace c2d {
         /// \brief Draw the shape to the main renderer
         ///
         ////////////////////////////////////////////////////////////
-        virtual void draw(Transform &transform);
+        virtual void onDraw(Transform &transform);
 
     private:
 
@@ -334,7 +334,7 @@ namespace c2d {
         VertexArray m_outlineVertices;  ///< Vertex array containing the outline geometry
         FloatRect m_insideBounds;     ///< Bounding rectangle of the inside (fill)
         FloatRect m_bounds;           ///< Bounding rectangle of the whole shape (outline + fill)
-        Origin m_origin = Origin::TopLeft;
+        Origin m_shape_origin = Origin::TopLeft;
     };
 
 } // namespace c2d

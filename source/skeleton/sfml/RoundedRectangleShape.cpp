@@ -54,7 +54,7 @@ namespace c2d {
     }
 
 ////////////////////////////////////////////////////////////
-    const float RoundedRectangleShape::getCornersRadius() const {
+    float RoundedRectangleShape::getCornersRadius() const {
         return myRadius;
     }
 

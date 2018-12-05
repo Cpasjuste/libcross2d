@@ -9,6 +9,7 @@
 #include <vector>
 #include "cross2d/skeleton/sfml/Transform.hpp"
 #include "tween.h"
+#include "input.h"
 
 namespace c2d {
 
@@ -65,17 +66,17 @@ namespace c2d {
 
         virtual std::vector<C2DObject *> getChilds();
 
-        Type getType() const {
-            return type;
-        }
+        Type getType() const;
 
         bool available = false;
 
     protected:
 
-        virtual void draw(Transform &transform);
+        virtual void onInput(Input::Player *players);
 
-        virtual void setAlpha(uint8_t alpha);
+        virtual void onDraw(Transform &transform);
+
+        virtual void setAlpha(uint8_t alpha, bool recursive = false);
 
         Type type;
         Transform transformation;

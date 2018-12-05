@@ -65,7 +65,7 @@ namespace c2d {
         /// \see move, getPosition
         ///
         ////////////////////////////////////////////////////////////
-        void setPosition(float x, float y);
+        virtual void setPosition(float x, float y);
 
         ////////////////////////////////////////////////////////////
         /// \brief set the position of the object
@@ -79,7 +79,7 @@ namespace c2d {
         /// \see move, getPosition
         ///
         ////////////////////////////////////////////////////////////
-        void setPosition(const Vector2f &position);
+        virtual void setPosition(const Vector2f &position);
 
         ////////////////////////////////////////////////////////////
         /// \brief set the orientation of the object
@@ -93,7 +93,7 @@ namespace c2d {
         /// \see rotate, getRotation
         ///
         ////////////////////////////////////////////////////////////
-        void setRotation(float angle);
+        virtual void setRotation(float angle);
 
         ////////////////////////////////////////////////////////////
         /// \brief set the scale factors of the object
@@ -108,7 +108,7 @@ namespace c2d {
         /// \see scale, getScale
         ///
         ////////////////////////////////////////////////////////////
-        void setScale(float factorX, float factorY);
+        virtual void setScale(float factorX, float factorY);
 
         ////////////////////////////////////////////////////////////
         /// \brief set the scale factors of the object
@@ -122,7 +122,7 @@ namespace c2d {
         /// \see scale, getScale
         ///
         ////////////////////////////////////////////////////////////
-        void setScale(const Vector2f &factors);
+        virtual void setScale(const Vector2f &factors);
 
         ////////////////////////////////////////////////////////////
         /// \brief set the local origin of the object
@@ -140,7 +140,7 @@ namespace c2d {
         /// \see getOrigin
         ///
         ////////////////////////////////////////////////////////////
-        virtual void setOrigin(float x, float y);
+        virtual void setOriginVector(float x, float y);
 
         ////////////////////////////////////////////////////////////
         /// \brief set the local origin of the object
@@ -157,9 +157,7 @@ namespace c2d {
         /// \see getOrigin
         ///
         ////////////////////////////////////////////////////////////
-        virtual void setOrigin(const Vector2f &origin);
-
-        virtual void setOrigin(const Origin &origin, bool outline = true) {};
+        virtual void setOriginVector(const Vector2f &origin);
 
         ////////////////////////////////////////////////////////////
         /// \brief get the position of the object
@@ -169,7 +167,7 @@ namespace c2d {
         /// \see setPosition
         ///
         ////////////////////////////////////////////////////////////
-        const Vector2f &getPosition() const;
+        virtual const Vector2f &getPosition() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief get the orientation of the object
@@ -181,7 +179,7 @@ namespace c2d {
         /// \see setRotation
         ///
         ////////////////////////////////////////////////////////////
-        float getRotation() const;
+        virtual float getRotation() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief get the current scale of the object
@@ -191,7 +189,7 @@ namespace c2d {
         /// \see setScale
         ///
         ////////////////////////////////////////////////////////////
-        const Vector2f &getScale() const;
+        virtual const Vector2f &getScale() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief get the local origin of the object
@@ -201,7 +199,7 @@ namespace c2d {
         /// \see setOrigin
         ///
         ////////////////////////////////////////////////////////////
-        const Vector2f &getOrigin() const;
+        virtual const Vector2f &getOriginVector() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Move the object by a given offset
@@ -220,7 +218,7 @@ namespace c2d {
         /// \see setPosition
         ///
         ////////////////////////////////////////////////////////////
-        void move(float offsetX, float offsetY);
+        virtual void move(float offsetX, float offsetY);
 
         ////////////////////////////////////////////////////////////
         /// \brief Move the object by a given offset
@@ -237,7 +235,7 @@ namespace c2d {
         /// \see setPosition
         ///
         ////////////////////////////////////////////////////////////
-        void move(const Vector2f &offset);
+        virtual void move(const Vector2f &offset);
 
         ////////////////////////////////////////////////////////////
         /// \brief Rotate the object
@@ -252,7 +250,7 @@ namespace c2d {
         /// \param angle Angle of rotation, in degrees
         ///
         ////////////////////////////////////////////////////////////
-        void rotate(float angle);
+        virtual void rotate(float angle);
 
         ////////////////////////////////////////////////////////////
         /// \brief Scale the object
@@ -271,7 +269,7 @@ namespace c2d {
         /// \see setScale
         ///
         ////////////////////////////////////////////////////////////
-        void scale(float factorX, float factorY);
+        virtual void scale(float factorX, float factorY);
 
         ////////////////////////////////////////////////////////////
         /// \brief Scale the object
@@ -289,7 +287,7 @@ namespace c2d {
         /// \see setScale
         ///
         ////////////////////////////////////////////////////////////
-        void scale(const Vector2f &factor);
+        virtual void scale(const Vector2f &factor);
 
         ////////////////////////////////////////////////////////////
         /// \brief get the combined transform of the object
@@ -299,7 +297,7 @@ namespace c2d {
         /// \see getInverseTransform
         ///
         ////////////////////////////////////////////////////////////
-        const Transform &getTransform() const;
+        virtual const Transform &getTransform() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief get the inverse of the combined transform of the object
@@ -309,7 +307,7 @@ namespace c2d {
         /// \see getTransform
         ///
         ////////////////////////////////////////////////////////////
-        const Transform &getInverseTransform() const;
+        virtual const Transform &getInverseTransform() const;
 
     private:
 

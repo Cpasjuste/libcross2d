@@ -5,19 +5,21 @@
 #ifndef C2D_UTILITY_H
 #define C2D_UTILITY_H
 
+#include <string>
+
 namespace c2d {
 
     class Utility {
 
     public:
 
-        static char *removeExt(const char *str, char sep);
-
         static bool startWith(const std::string &str, const std::string &value);
 
         static bool endsWith(const std::string &value, const std::string &ending);
 
         static std::string removeLastSlash(const std::string &string);
+
+        static std::string removeExt(const std::string &str);
     };
 
 }

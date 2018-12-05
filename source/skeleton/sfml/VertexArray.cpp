@@ -128,8 +128,8 @@ namespace c2d {
         }
     }
 
-    std::vector<Vertex> VertexArray::getVertices() const {
-        return m_vertices;
+    std::vector<Vertex> *VertexArray::getVertices() {
+        return &m_vertices;
     }
 
     void VertexArray::update() {

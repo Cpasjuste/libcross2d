@@ -199,7 +199,7 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         void setOutlineThickness(float thickness);
 
-        void setAlpha(uint8_t alpha);
+        void setAlpha(uint8_t alpha, bool recursive = false);
 
         uint8_t getAlpha();
 
@@ -331,11 +331,9 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         c2d::FloatRect getGlobalBounds() const;
 
-        void setOrigin(float x, float y);
-
-        void setOrigin(const Vector2f &origin);
-
         void setOrigin(const Origin &origin);
+
+        const Origin getOrigin() const;
 
         void setWidth(float width);
 
@@ -349,7 +347,7 @@ namespace c2d {
         /// \brief Draw the shape to the main renderer
         ///
         ////////////////////////////////////////////////////////////
-        virtual void draw(Transform &transform);
+        virtual void onDraw(Transform &transform);
 
         ////////////////////////////////////////////////////////////
         /// \brief Make sure the text's geometry is updated

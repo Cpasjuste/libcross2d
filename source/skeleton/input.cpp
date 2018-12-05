@@ -30,7 +30,7 @@ Input::Player *Input::update(int rotate) {
         if (diff > 0) {
             repeatClock->restart();
         } else {
-            players[0].state = EV_DELAY;
+            players[0].state = Key::Delay;
         }
     }
 
@@ -48,8 +48,7 @@ void Input::setRepeatDelay(int ms) {
 int Input::clear(int player) {
     while (true) {
         Player p = update(0)[player];
-        if (!p.enabled || !p.state
-            || p.state & EV_REFRESH || p.state & EV_QUIT) {
+        if (!p.enabled || !p.state || p.state & EV_QUIT) {
             break;
         }
     }

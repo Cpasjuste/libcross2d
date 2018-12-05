@@ -25,7 +25,7 @@ namespace c2d {
 
     private:
 
-        void draw(Transform &transform) override;
+        void onDraw(Transform &transform) override;
 
         Text *text;
 

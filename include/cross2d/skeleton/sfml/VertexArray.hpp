@@ -170,7 +170,7 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         FloatRect getBounds() const;
 
-        std::vector<Vertex> getVertices() const;
+        std::vector<Vertex> *getVertices();
 
         /// Vertex Buffer Object (OpenGL)
         void bind() const;

@@ -146,19 +146,19 @@ int MessageBox::show(const std::string &title, const std::string &message,
         } else {
             key = input->getKeys();
             if (key > 0) {
-                if (key & Input::Key::KEY_LEFT) {
+                if (key & Input::Key::Left) {
                     if (index > 0) {
                         index--;
                     }
-                } else if (key & Input::Key::KEY_RIGHT) {
+                } else if (key & Input::Key::Right) {
                     if (index < choices - 1) {
                         index++;
                     }
-                } else if (key & Input::Key::KEY_FIRE1) {
+                } else if (key & Input::Key::Fire1) {
                     setVisibility(Visibility::Hidden);
                     ret = index == 1 ? RIGHT : LEFT;
                     break;
-                } else if (key & Input::Key::KEY_FIRE2) {
+                } else if (key & Input::Key::Fire2) {
                     setVisibility(Visibility::Hidden);
                     ret = CANCEL;
                     break;

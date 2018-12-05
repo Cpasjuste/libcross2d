@@ -6,39 +6,6 @@
 
 using namespace c2d;
 
-char *Utility::removeExt(const char *str, char sep) {
-
-    char *retstr, *lastdot, *lastsep;
-
-    // Error checks and allocate string.
-    if (str == nullptr)
-        return nullptr;
-    if ((retstr = (char *) malloc(strlen(str) + 1)) == nullptr)
-        return nullptr;
-
-    // Make a copy and find the relevant characters.
-    strcpy(retstr, str);
-    lastdot = strrchr(retstr, '.');
-    lastsep = (sep == 0) ? nullptr : strrchr(retstr, sep);
-
-    // If it has an extension separator.
-    if (lastdot != nullptr) {
-        // and it's before the extenstion separator.a
-        if (lastsep != nullptr) {
-            if (lastsep < lastdot) {
-                // then remove it.
-                *lastdot = '\0';
-            }
-        } else {
-            // Has extension separator with no path separator.
-            *lastdot = '\0';
-        }
-    }
-
-    // Return the modified string.
-    return retstr;
-}
-
 bool Utility::startWith(const std::string &str, const std::string &value) {
     return str.compare(0, value.length(), value) == 0;
 }
@@ -59,3 +26,6 @@ std::string Utility::removeLastSlash(const std::string &string) {
     return str;
 }
 
+std::string Utility::removeExt(const std::string &str) {
+    return str.substr(0, str.find_last_of('.'));
+}

@@ -2,8 +2,6 @@
 // Created by cpasjuste on 12/12/17.
 //
 
-#include <cross2d/skeleton/object.h>
-
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -42,7 +40,16 @@ void C2DObject::remove(Tween *tween) {
     }
 }
 
-void C2DObject::draw(Transform &transform) {
+void C2DObject::onInput(Input::Player *players) {
+
+    for (auto &child : childs) {
+        if (child) {
+            child->onInput(players);
+        }
+    }
+}
+
+void C2DObject::onDraw(Transform &transform) {
 
     //printf("C2DObject(%p): draw\n", this);
 
@@ -68,7 +75,7 @@ void C2DObject::draw(Transform &transform) {
     for (auto &child : childs) {
         if (child) {
             if (child->visibility_current == Visibility::Visible) {
-                child->draw(combinedTransform);
+                child->onDraw(combinedTransform);
             }
         }
     }
@@ -110,11 +117,13 @@ void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
     }
 }
 
-void C2DObject::setAlpha(uint8_t alpha) {
+void C2DObject::setAlpha(uint8_t alpha, bool recursive) {
 
-    for (auto &child : childs) {
-        if (child) {
-            child->setAlpha(alpha);
+    if (recursive) {
+        for (auto &child : childs) {
+            if (child) {
+                child->setAlpha(alpha, recursive);
+            }
         }
     }
 }
@@ -150,6 +159,10 @@ void C2DObject::setLayer(int layer) {
 
 std::vector<C2DObject *> C2DObject::getChilds() {
     return childs;
+}
+
+Type C2DObject::getType() const {
+    return type;
 }
 
 C2DObject::~C2DObject() {
