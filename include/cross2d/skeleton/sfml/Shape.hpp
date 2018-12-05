@@ -286,7 +286,7 @@ namespace c2d {
         /// getPointCount or getPoint is different).
         ///
         ////////////////////////////////////////////////////////////
-        void update();
+        virtual void update();
 
         ////////////////////////////////////////////////////////////
         /// \brief Draw the shape to the main renderer
