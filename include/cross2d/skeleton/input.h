@@ -5,11 +5,15 @@
 #ifndef C2D_INPUT_H
 #define C2D_INPUT_H
 
+#ifndef BIT
+#define BIT(n) (1U<<(n))
+#endif
+
 #define PLAYER_COUNT 4
 #define KEY_COUNT 12
 
-#define EV_RESIZE   0x10000
-#define EV_QUIT     0x20000
+#define EV_RESIZE   BIT(1)
+#define EV_QUIT     BIT(2)
 
 #include "cross2d/skeleton/sfml/Clock.hpp"
 #include "cross2d/skeleton/sfml/Vector2.hpp"
@@ -21,20 +25,20 @@ namespace c2d {
     public:
 
         enum Key : unsigned int {
-            Up = 0x0001,
-            Down = 0x0002,
-            Left = 0x0004,
-            Right = 0x0008,
-            Select = 0x0010,
-            Start = 0x0020,
-            Fire1 = 0x0040,
-            Fire2 = 0x0080,
-            Fire3 = 0x0100,
-            Fire4 = 0x0200,
-            Fire5 = 0x0400,
-            Fire6 = 0x0800,
-            Touch = 0x1000,
-            Delay = 0x2000
+            Up = BIT(3),
+            Down = BIT(4),
+            Left = BIT(5),
+            Right = BIT(6),
+            Select = BIT(7),
+            Start = BIT(8),
+            Fire1 = BIT(9),
+            Fire2 = BIT(10),
+            Fire3 = BIT(11),
+            Fire4 = BIT(12),
+            Fire5 = BIT(13),
+            Fire6 = BIT(14),
+            Touch = BIT(15),
+            Delay = BIT(16)
         };
 
         struct Axis {

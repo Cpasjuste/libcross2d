@@ -41,9 +41,11 @@ const Vector2f Renderer::getSize() const {
     return m_size;
 }
 
-void Renderer::flip(bool draw) {
+void Renderer::onInput(Input::Player *players) {
+    C2DObject::onInput(players);
+}
 
-    //printf("Renderer(%p): flip\n", this);
+void Renderer::flip(bool draw) {
 
     // update inputs
     input->update();
