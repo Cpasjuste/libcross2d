@@ -71,6 +71,8 @@ namespace c2d {
 
     protected:
 
+        virtual void onInput(Input::Player *players) override;
+
         Vector2f m_size;
         Color m_clearColor = Color::Black;
         Input *input = nullptr;

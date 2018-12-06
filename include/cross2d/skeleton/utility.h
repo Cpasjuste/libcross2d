@@ -13,9 +13,11 @@ namespace c2d {
 
     public:
 
-        static bool startWith(const std::string &str, const std::string &value);
+        static std::string toLower(const std::string &str);
 
-        static bool endsWith(const std::string &value, const std::string &ending);
+        static bool startWith(const std::string &str, const std::string &value, bool sensitive = true);
+
+        static bool endsWith(const std::string &value, const std::string &ending, bool sensitive = true);
 
         static std::string removeLastSlash(const std::string &string);
 
