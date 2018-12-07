@@ -50,13 +50,13 @@ namespace c2d {
 
         ///
         /// \return read only data path
-        virtual std::string getDataPath() const {
+        virtual std::string getDataReadPath() const {
             return "./data/";
         }
 
         ///
         /// \return read/write data path
-        virtual std::string getHomePath() const {
+        virtual std::string getDataWritePath() const {
             return "./";
         }
 

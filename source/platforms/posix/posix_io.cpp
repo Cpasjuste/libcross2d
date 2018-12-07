@@ -11,20 +11,28 @@
 
 using namespace c2d;
 
-std::string POSIXIo::getHomePath() const {
+std::string POSIXIo::getDataWritePath() const {
 
 #ifndef __PSP2__
     char buf[1024];
     if (getcwd(buf, sizeof(buf))) {
-        return std::string(buf) + "/";
+        std::string str = std::string(buf) + "/";
+#ifdef __SWITCH__
+        // some library does not like "sdmc:"
+        if (str.compare(0, 5, "sdmc:") == 0) {
+            str.erase(0, 5);
+        }
+#else
+        return str;
+#endif
     }
 #endif
-    return Io::getHomePath();
+    return Io::getDataWritePath();
 }
 
-std::string POSIXIo::getDataPath() const {
+std::string POSIXIo::getDataReadPath() const {
 
-    return getHomePath() + "data/";
+    return getDataWritePath() + "data/";
 }
 
 bool POSIXIo::exist(const std::string &path) {
@@ -67,6 +75,9 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bo
     if (!path.empty()) {
         if ((dir = opendir(path.c_str())) != nullptr) {
             while ((ent = readdir(dir)) != nullptr) {
+
+                printf("getDirList: %s\n", ent->d_name);
+
                 // skip "."
                 if (strlen(ent->d_name) == 1 && ent->d_name[0] == '.') {
                     continue;

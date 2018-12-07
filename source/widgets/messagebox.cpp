@@ -17,8 +17,7 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
     this->input = input;
     float line_height = font->getLineSpacing((unsigned int) fontSize) + 16;
 
-    this->title = new Text("TITLE", (unsigned int) fontSize, font);
-    this->title->setScale(1.5f, 1.5f);
+    this->title = new Text("TITLE", (unsigned int) ((float) fontSize * 1.5f), font);
     this->title->setOutlineColor(Color::Black);
     this->title->setOutlineThickness(1);
     this->title->setWidth(getSize().x - 16);
@@ -119,66 +118,80 @@ int MessageBox::show(const std::string &title, const std::string &message,
     setVisibility(Visibility::Visible);
     setLayer(10000);
 
-    input->clear(0);
+    if (choices > 0) {
 
-    clock.restart();
+        input->clear(0);
+        clock.restart();
 
-    while (true) {
+        while (true) {
 
-        if (timeout > 0) {
-            int elapsed = (int) clock.getElapsedTime().asSeconds();
-            if (elapsed >= timeout) {
-                setVisibility(Visibility::Hidden);
-                ret = TIMEOUT;
-                break;
-            }
-            snprintf(timeout_str, 16, "%i", timeout - elapsed);
-            this->timeout->setString(timeout_str);
-            this->timeout->setOrigin(Origin::Center);
-        }
-
-        if (pressed) {
-            key = input->waitButton();
-            if (key > -1) {
-                setVisibility(Visibility::Hidden);
-                break;
-            }
-        } else {
-            key = input->getKeys();
-            if (key > 0) {
-                if (key & Input::Key::Left) {
-                    if (index > 0) {
-                        index--;
-                    }
-                } else if (key & Input::Key::Right) {
-                    if (index < choices - 1) {
-                        index++;
-                    }
-                } else if (key & Input::Key::Fire1) {
+            if (timeout > 0) {
+                int elapsed = (int) clock.getElapsedTime().asSeconds();
+                if (elapsed >= timeout) {
                     setVisibility(Visibility::Hidden);
-                    ret = index == 1 ? RIGHT : LEFT;
-                    break;
-                } else if (key & Input::Key::Fire2) {
-                    setVisibility(Visibility::Hidden);
-                    ret = CANCEL;
+                    ret = TIMEOUT;
                     break;
                 }
+                snprintf(timeout_str, 16, "%i", timeout - elapsed);
+                this->timeout->setString(timeout_str);
+                this->timeout->setOrigin(Origin::Center);
+            }
 
-                if (choices) {
+            if (pressed) {
+                key = input->waitButton();
+                if (key > -1) {
+                    setVisibility(Visibility::Hidden);
+                    break;
+                }
+            } else {
+                key = input->getKeys();
+                if (key > 0 && key != Input::Key::Delay) {
+                    if (key & Input::Key::Left) {
+                        if (index > 0) {
+                            index--;
+                        }
+                    } else if (key & Input::Key::Right) {
+                        if (index < choices - 1) {
+                            index++;
+                        }
+                    } else if (key & Input::Key::Fire1) {
+                        setVisibility(Visibility::Hidden);
+                        ret = index == 1 ? RIGHT : LEFT;
+                        break;
+                    } else if (key & Input::Key::Fire2) {
+                        setVisibility(Visibility::Hidden);
+                        ret = CANCEL;
+                        break;
+                    }
+
                     setFillColor(getFillColor());
                     setOutlineColor(getOutlineColor());
                     buttons[index]->setFillColor(getOutlineColor());
                     buttons[index]->setOutlineColor(Color::White);
                 }
             }
+
+            c2d_renderer->flip();
         }
 
+        if (pressed) {
+            *pressed = key;
+        }
+    } else {
         c2d_renderer->flip();
     }
 
-    if (pressed) {
-        *pressed = key;
-    }
-
     return ret;
+}
+
+void MessageBox::hide() {
+    setVisibility(Visibility::Hidden);
+}
+
+c2d::Text *MessageBox::getTitleText() {
+    return title;
+}
+
+c2d::Text *MessageBox::getMessageText() {
+    return message;
 }
