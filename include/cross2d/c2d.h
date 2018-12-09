@@ -9,6 +9,7 @@
 #include "cross2d/skeleton/io.h"
 #include "cross2d/skeleton/input.h"
 #include "cross2d/skeleton/audio.h"
+#include "cross2d/skeleton/sfml/Rectangle.hpp"
 #include "cross2d/skeleton/sfml/RectangleShape.hpp"
 #include "cross2d/skeleton/sfml/RoundedRectangleShape.h"
 #include "cross2d/skeleton/sfml/CircleShape.hpp"

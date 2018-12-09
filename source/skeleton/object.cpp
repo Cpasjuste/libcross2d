@@ -11,6 +11,7 @@ void C2DObject::add(C2DObject *object) {
     if (object) {
         //printf("C2DObject(%p): add(%p)\n", this, C2DObject);
         object->parent = this;
+        object->setLayer(object->getLayer());
         childs.push_back(object);
     }
 }
@@ -40,13 +41,17 @@ void C2DObject::remove(Tween *tween) {
     }
 }
 
-void C2DObject::onInput(Input::Player *players) {
+bool C2DObject::onInput(Input::Player *players) {
 
     for (auto &child : childs) {
-        if (child) {
-            child->onInput(players);
+        if (child && child->isVisible()) {
+            if (child->onInput(players)) {
+                return true;
+            }
         }
     }
+
+    return false;
 }
 
 void C2DObject::onDraw(Transform &transform) {
@@ -136,9 +141,6 @@ int C2DObject::getLayer() {
 }
 
 static bool sortByLayer(C2DObject *o1, C2DObject *o2) {
-    if (!o1 || !o2) {
-        return false;
-    }
     return o1->getLayer() < o2->getLayer();
 }
 
@@ -146,9 +148,9 @@ void C2DObject::setLayer(int layer) {
 
     this->layer = layer;
     if (parent) {
-        std::sort(parent->childs.begin(),
-                  parent->childs.end(),
-                  sortByLayer);
+        std::stable_sort(parent->childs.begin(),
+                         parent->childs.end(),
+                         sortByLayer);
     }
 }
 

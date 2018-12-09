@@ -133,7 +133,8 @@ namespace c2d {
             m_string = string;
             m_geometryNeedUpdate = true;
             // PSP2 fix: update now as we can't delete vita2d_texture when drawing
-            ensureGeometryUpdate();
+
+            // ensureGeometryUpdate();
         }
     }
 

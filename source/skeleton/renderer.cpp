@@ -8,12 +8,11 @@ using namespace c2d;
 
 Renderer *c2d_renderer;
 
-Renderer::Renderer(const Vector2f &size) : Transformable() {
+Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 
     printf("Renderer(%p)\n", this);
 
     c2d_renderer = this;
-    setSize(size);
 
     deltaClock = new C2DClock();
     elapsedClock = new C2DClock();
@@ -28,28 +27,21 @@ Renderer::Renderer(const Vector2f &size) : Transformable() {
     font->loadDefault();
 }
 
-void Renderer::setSize(const Vector2f &size) {
-    m_size = size;
-}
-
-void Renderer::setSize(float width, float height) {
-    m_size.x = width;
-    m_size.y = height;
-}
-
-const Vector2f Renderer::getSize() const {
-    return m_size;
-}
-
-void Renderer::onInput(Input::Player *players) {
-    C2DObject::onInput(players);
+bool Renderer::onInput(Input::Player *players) {
+    return C2DObject::onInput(players);
 }
 
 void Renderer::flip(bool draw) {
 
     // update inputs
     input->update();
-    onInput(input->getPlayers());
+    for (auto &player : input->players) {
+        unsigned int keys = player.keys;
+        if (keys > 0 && keys != Input::Key::Delay) {
+            onInput(input->players);
+            break;
+        }
+    }
 
     // call base class (draw childs)
     if (draw) {

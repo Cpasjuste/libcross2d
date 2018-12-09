@@ -15,22 +15,22 @@ Input::Player *Input::update(int rotate) {
 
     float elapsed = repeatClock->getElapsedTime().asMilliseconds();
 
-    if (!repeat || players[0].state & EV_QUIT) {
-        stateOld = players[0].state;
+    if (!repeat || players[0].keys & EV_QUIT) {
+        stateOld = players[0].keys;
         return players;
     }
 
     if (elapsed >= repeatDelay) {
         repeatClock->restart();
-        stateOld = players[0].state;
+        stateOld = players[0].keys;
         return players;
     } else {
-        unsigned int diff = stateOld ^players[0].state;
-        stateOld = players[0].state;
+        unsigned int diff = stateOld ^players[0].keys;
+        stateOld = players[0].keys;
         if (diff > 0) {
             repeatClock->restart();
         } else {
-            players[0].state = Key::Delay;
+            players[0].keys = Key::Delay;
         }
     }
 
@@ -48,7 +48,7 @@ void Input::setRepeatDelay(int ms) {
 int Input::clear(int player) {
     while (true) {
         Player p = update(0)[player];
-        if (!p.enabled || !p.state || p.state & EV_QUIT) {
+        if (!p.enabled || !p.keys || p.keys & EV_QUIT) {
             break;
         }
     }
@@ -74,14 +74,14 @@ Input::~Input() {
 }
 
 unsigned int Input::getKeys(int player) {
-    if (player < PLAYER_COUNT) {
-        return players[player].state;
+    if (player < PLAYER_MAX) {
+        return players[player].keys;
     }
     return 0;
 }
 
 Input::Player *Input::getPlayer(int player) {
-    if (player < PLAYER_COUNT) {
+    if (player < PLAYER_MAX) {
         return &players[player];
     }
     return nullptr;

@@ -9,7 +9,7 @@
 #define BIT(n) (1U<<(n))
 #endif
 
-#define PLAYER_COUNT 4
+#define PLAYER_MAX 4
 #define KEY_COUNT 12
 
 #define EV_RESIZE   BIT(1)
@@ -52,7 +52,7 @@ namespace c2d {
             Axis ly{1, 0};
             Axis rx{2, 0};
             Axis ry{3, 0};
-            unsigned int state = 0;
+            unsigned int keys = 0;
             int dead_zone = 8000;
             bool enabled = false;
             void *data = nullptr;
@@ -90,7 +90,7 @@ namespace c2d {
 
         void setKeyboardMapping(const int *mapping);
 
-        Player players[PLAYER_COUNT];
+        Player players[PLAYER_MAX];
         Keyboard keyboard;
 
     private:

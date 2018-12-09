@@ -19,7 +19,7 @@ namespace c2d {
     };
 
     enum class TweenLoop : int {
-        None = 1, PingPong
+        None = 1, Loop = 2, PingPong = 3,
     };
 
     enum class TweenDirection : int {

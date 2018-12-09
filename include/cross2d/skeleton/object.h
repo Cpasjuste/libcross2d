@@ -72,7 +72,7 @@ namespace c2d {
 
     protected:
 
-        virtual void onInput(Input::Player *players);
+        virtual bool onInput(Input::Player *players);
 
         virtual void onDraw(Transform &transform);
 
