@@ -68,7 +68,6 @@ namespace c2d {
     FloatRect Rectangle::getGlobalBounds() const {
         Transform t = transformation * getTransform();
         return t.transformRect(getLocalBounds());
-        //return getTransform().transformRect(getLocalBounds());
     }
 
     void Rectangle::setOrigin(const Origin &origin) {
@@ -112,14 +111,5 @@ namespace c2d {
     const Origin Rectangle::getOrigin() const {
         return m_rect_origin;
     }
-
-////////////////////////////////////////////////////////////
-/*
-    void Rectangle::onDraw(Transform &transform) {
-
-        Transform combined = transform * getTransform();
-        C2DObject::onDraw(transform);
-    }
-*/
 
 } // namespace c2d

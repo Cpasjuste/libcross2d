@@ -121,6 +121,24 @@ namespace c2d {
         return t.transformRect(getLocalBounds());
     }
 
+    void Sprite::setAlpha(uint8_t alpha, bool recursive) {
+
+        if (alpha != m_vertices[0].color.a) {
+            m_vertices[0].color.a = alpha;
+            m_vertices[1].color.a = alpha;
+            m_vertices[2].color.a = alpha;
+            m_vertices[3].color.a = alpha;
+            m_shape_dirty = true;
+        }
+
+        if (recursive) {
+            C2DObject::setAlpha(alpha, recursive);
+        }
+    }
+
+    uint8_t Sprite::getAlpha() {
+        return m_vertices[0].color.a;
+    }
 
     VertexArray *Sprite::getVertexArray() {
         return &m_vertices;
@@ -178,10 +196,8 @@ namespace c2d {
             m_shape_dirty = false;
         }
 
-        if (m_vertices[0].color.a != 0) {
-            Transform combined = transform * getTransform();
-            c2d_renderer->draw(&m_vertices, combined, m_texture);
-        }
+        Transform combined = transform * getTransform();
+        c2d_renderer->draw(&m_vertices, combined, m_texture);
 
         C2DObject::onDraw(transform);
     }

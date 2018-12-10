@@ -191,6 +191,10 @@ namespace c2d {
 
         const Origin getOrigin() const;
 
+        virtual void setAlpha(uint8_t alpha, bool recursive = false);
+
+        virtual uint8_t getAlpha();
+
     protected:
 
         void onDraw(Transform &transform) override;

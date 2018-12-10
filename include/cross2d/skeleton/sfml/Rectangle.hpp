@@ -78,10 +78,6 @@ namespace c2d {
 
         void setOrigin(const Origin &origin);
 
-    protected:
-
-        //void onDraw(Transform &transform) override;
-
     private:
 
         ////////////////////////////////////////////////////////////
