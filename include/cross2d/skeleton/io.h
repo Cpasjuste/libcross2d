@@ -9,6 +9,7 @@
 #include <vector>
 #include "cross2d/skeleton/sfml/Color.hpp"
 #include "texture.h"
+#include "utility.h"
 
 namespace c2d {
 
@@ -89,7 +90,7 @@ namespace c2d {
             if (a.type != Type::Directory && b.type == Type::Directory) {
                 return false;
             }
-            return a.name < b.name;
+            return Utility::toLower(a.name) < Utility::toLower(b.name);
         }
     };
 }
