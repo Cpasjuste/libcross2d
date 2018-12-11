@@ -66,7 +66,6 @@ namespace c2d {
 
         // Assign the new texture
         m_texture = texture;
-        m_shape_dirty = true;
     }
 
 
@@ -74,18 +73,21 @@ namespace c2d {
     void Sprite::setTextureRect(const IntRect &rectangle) {
         if (rectangle != m_textureRect) {
             m_textureRect = rectangle;
-            m_shape_dirty = true;
+            updatePositions();
+            updateTexCoords();
+            m_vertices.update();
         }
     }
 
 
 ////////////////////////////////////////////////////////////
     void Sprite::setColor(const Color &color) {
+        // Update the vertices' color
         m_vertices[0].color = color;
         m_vertices[1].color = color;
         m_vertices[2].color = color;
         m_vertices[3].color = color;
-        m_shape_dirty = true;
+        m_vertices.update();
     }
 
 
@@ -121,24 +123,6 @@ namespace c2d {
         return t.transformRect(getLocalBounds());
     }
 
-    void Sprite::setAlpha(uint8_t alpha, bool recursive) {
-
-        if (alpha != m_vertices[0].color.a) {
-            m_vertices[0].color.a = alpha;
-            m_vertices[1].color.a = alpha;
-            m_vertices[2].color.a = alpha;
-            m_vertices[3].color.a = alpha;
-            m_shape_dirty = true;
-        }
-
-        if (recursive) {
-            C2DObject::setAlpha(alpha, recursive);
-        }
-    }
-
-    uint8_t Sprite::getAlpha() {
-        return m_vertices[0].color.a;
-    }
 
     VertexArray *Sprite::getVertexArray() {
         return &m_vertices;
@@ -186,19 +170,30 @@ namespace c2d {
         return m_sprite_origin;
     }
 
+    void Sprite::setAlpha(uint8_t alpha, bool recursive) {
+
+        if (alpha != m_vertices[0].color.a) {
+            m_vertices[0].color.a = alpha;
+            m_vertices[1].color.a = alpha;
+            m_vertices[2].color.a = alpha;
+            m_vertices[3].color.a = alpha;
+            m_vertices.update();
+        }
+
+        if (recursive) {
+            C2DObject::setAlpha(alpha, recursive);
+        }
+    }
+
+    uint8_t Sprite::getAlpha() {
+        return m_vertices[0].color.a;
+    }
+
     ////////////////////////////////////////////////////////////
     void Sprite::onDraw(Transform &transform) {
 
-        if (m_shape_dirty) {
-            updatePositions();
-            updateTexCoords();
-            m_vertices.update();
-            m_shape_dirty = false;
-        }
-
         Transform combined = transform * getTransform();
         c2d_renderer->draw(&m_vertices, combined, m_texture);
-
         C2DObject::onDraw(transform);
     }
 

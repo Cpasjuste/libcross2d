@@ -197,7 +197,7 @@ namespace c2d {
 
     protected:
 
-        void onDraw(Transform &transform) override;
+        virtual void onDraw(Transform &transform);
 
     private:
 
@@ -221,7 +221,6 @@ namespace c2d {
         const Texture *m_texture;     ///< Texture of the sprite
         IntRect m_textureRect; ///< Rectangle defining the area of the source texture to display
         Origin m_sprite_origin = Origin::TopLeft;
-        bool m_shape_dirty = false;
     };
 
 } // namespace c2d
