@@ -114,6 +114,9 @@ void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
         }
     } else {
         visibility_current = visibility_wanted = v;
+        for (auto &tween : tweens) {
+            tween->reset();
+        }
     }
 }
 

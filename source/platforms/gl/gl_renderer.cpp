@@ -125,7 +125,11 @@ void GLRenderer::draw(VertexArray *vertexArray,
     //shader->SetUniformMatrix("MVPMatrix", glm::value_ptr(pmMtx));
 
     // set projection matrix
+#ifdef __SWITCH__
+    auto mtx = glm::orthoLH(0.0f, 1920.0f, 1080.0f, 0.0f, 0.0f, 1.0f);
+#else
     auto mtx = glm::orthoLH(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
+#endif
     shader->SetUniformMatrix("projectionMatrix", glm::value_ptr(mtx));
     // set model view matrix
     shader->SetUniformMatrix("modelViewMatrix", transform.getMatrix());

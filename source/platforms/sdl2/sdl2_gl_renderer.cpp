@@ -56,8 +56,9 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
 
     available = true;
 
+    // TODO: what?
     // set shape size after GL initialization, for gl buffer generation
-    setSize(size.x, size.y);
+    // setSize(size.x, size.y);
 
     printf("SDL2Renderer(GL)(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }
