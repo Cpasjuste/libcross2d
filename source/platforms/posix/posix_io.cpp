@@ -17,7 +17,6 @@ std::string POSIXIo::getDataWritePath() const {
     char buf[1024];
     if (getcwd(buf, sizeof(buf))) {
         std::string str = std::string(buf) + "/";
-        printf("POSIXIo::getDataWritePath: %s\n", str.c_str());
 #ifdef __SWITCH__
         // some library does not like "sdmc:"
         if (str.compare(0, 5, "sdmc:") == 0) {
