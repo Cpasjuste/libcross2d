@@ -26,6 +26,8 @@ namespace c2d {
 
         virtual void reset();
 
+        uint32_t getQueuedSize();
+
         SDL_AudioDeviceID getDeviceID();
 
     private:
