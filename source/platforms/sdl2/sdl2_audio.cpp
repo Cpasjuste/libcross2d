@@ -7,7 +7,7 @@
 
 using namespace c2d;
 
-SDL2Audio::SDL2Audio(int freq, int fps, C2DAudioCallback cb) : Audio(freq, fps, cb) {
+SDL2Audio::SDL2Audio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps, cb) {
 
     if (!available) {
         return;
