@@ -36,7 +36,7 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
 
     for (int i = 0; i < 2; i++) {
         buttons[i] = new Button(
-                FloatRect(0, 0, getSize().x / 3, getSize().y / 5),
+                FloatRect(0, 0, getSize().x / 4, getSize().y / 6),
                 font, fontSize, "BUTTON");
         buttons[i]->setOutlineThickness(1);
         buttons[i]->setOrigin(Origin::Top);
