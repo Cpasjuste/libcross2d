@@ -49,7 +49,7 @@ void PSP2Renderer::draw(VertexArray *vertexArray,
         return;
     }
 
-    vertices = vertexArray->getVertices().data();
+    vertices = vertexArray->getVertices()->data();
     vertexCount = vertexArray->getVertexCount();
 
     uint16_t *v2d_indices = (uint16_t *) vita2d_pool_memalign(

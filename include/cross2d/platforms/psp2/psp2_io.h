@@ -13,11 +13,11 @@ namespace c2d {
 
     public:
 
-        std::string getDataPath() const override {
+        std::string getDataReadPath() const override {
             return "app0:/data/";
         }
 
-        std::string getHomePath() const override {
+        std::string getDataWritePath() const override {
             return "ux0:/data/";
         }
     };

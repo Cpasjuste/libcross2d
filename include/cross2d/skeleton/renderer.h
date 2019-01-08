@@ -12,7 +12,7 @@
 
 #include "texture.h"
 #include "shader_list.h"
-#include "cross2d/skeleton/sfml/RectangleShape.hpp"
+#include "cross2d/skeleton/sfml/Rectangle.hpp"
 #include "cross2d/skeleton/sfml/Clock.hpp"
 #include "cross2d/skeleton/sfml/Font.hpp"
 #include "cross2d/skeleton/input.h"
