@@ -78,12 +78,12 @@ void Tween::setTransform(c2d::Transformable *t) {
 
 void Tween::play(TweenDirection direction, bool _reset) {
 
-    if (_reset) {
-        reset();
-    }
-
     if (direction != TweenDirection::Current) {
         setDirection(direction);
+    }
+
+    if (_reset) {
+        reset();
     }
 
     deltaClock->restart();
@@ -141,6 +141,8 @@ void Tween::step() {
                 state = TweenState::Stopped;
                 return;
             }
+        } else if (loop == TweenLoop::Loop) {
+            reset();
         } else if (loop == TweenLoop::PingPong) {
             if (direction == TweenDirection::Forward) {
                 setDirection(TweenDirection::Backward);

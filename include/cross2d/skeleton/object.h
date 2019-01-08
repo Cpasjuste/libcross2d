@@ -64,6 +64,8 @@ namespace c2d {
 
         virtual void setLayer(int layer);
 
+        virtual void setAlpha(uint8_t alpha, bool recursive = false);
+
         virtual std::vector<C2DObject *> getChilds();
 
         Type getType() const;
@@ -72,11 +74,9 @@ namespace c2d {
 
     protected:
 
-        virtual void onInput(Input::Player *players);
+        virtual bool onInput(Input::Player *players);
 
         virtual void onDraw(Transform &transform);
-
-        virtual void setAlpha(uint8_t alpha, bool recursive = false);
 
         Type type;
         Transform transformation;

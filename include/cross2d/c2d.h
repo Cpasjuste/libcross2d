@@ -9,6 +9,7 @@
 #include "cross2d/skeleton/io.h"
 #include "cross2d/skeleton/input.h"
 #include "cross2d/skeleton/audio.h"
+#include "cross2d/skeleton/sfml/Rectangle.hpp"
 #include "cross2d/skeleton/sfml/RectangleShape.hpp"
 #include "cross2d/skeleton/sfml/RoundedRectangleShape.h"
 #include "cross2d/skeleton/sfml/CircleShape.hpp"
@@ -130,7 +131,7 @@ extern c2d::Renderer *c2d_renderer;
 #define NO_KEYBOARD 1
 #define GL_ABGR_EXT 0x8000
 //#define __SVC_DEBUG__ 1
-#define __NET_DEBUG__ 1
+//#define __NET_DEBUG__ 1
 
 #include <switch.h>
 #include <glad/glad.h>

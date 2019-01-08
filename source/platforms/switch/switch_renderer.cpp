@@ -13,7 +13,6 @@ void initNxLink();
 void deinitNxLink();
 
 #endif
-
 int switch_stock_cpu_clock = 0;
 int switch_stock_gpu_clock = 0;
 int switch_stock_emc_clock = 0;
@@ -59,7 +58,10 @@ SWITCHRenderer::~SWITCHRenderer() {
             SwitchSys::setClock(SwitchSys::Module::Emc, switch_stock_emc_clock);
         }
     }
+
+    //printf("~SWITCHRenderer(): pcvExit\n");
     pcvExit();
+    //printf("~SWITCHRenderer(): pcvExit done\n");
 
 #ifdef __NET_DEBUG__
     deinitNxLink();

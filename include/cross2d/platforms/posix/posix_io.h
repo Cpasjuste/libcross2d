@@ -21,11 +21,11 @@ namespace c2d {
 
         bool create(const std::string &path) override;
 
-        std::vector<Io::File> getDirList(const std::string &path, bool sort, bool showHidden = false) override;
+        std::vector<Io::File> getDirList(const std::string &path, bool sort, bool showHidden) override;
 
-        std::string getHomePath() const override;
+        std::string getDataWritePath() const override;
 
-        std::string getDataPath() const override;
+        std::string getDataReadPath() const override;
     };
 }
 

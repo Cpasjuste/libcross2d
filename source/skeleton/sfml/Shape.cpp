@@ -61,6 +61,7 @@ namespace c2d {
 
         // Assign the new texture
         m_texture = texture;
+        m_shape_dirty = true;
     }
 
 
@@ -73,7 +74,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void Shape::setTextureRect(const IntRect &rect) {
         m_textureRect = rect;
-        updateTexCoords();
+        m_shape_dirty = true;
     }
 
 
@@ -86,7 +87,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void Shape::setFillColor(const Color &color) {
         m_fillColor = color;
-        updateFillColors();
+        m_shape_dirty = true;
     }
 
 
@@ -99,9 +100,8 @@ namespace c2d {
 
         if (alpha != m_fillColor.a) {
             m_fillColor.a = alpha;
-            updateFillColors();
             m_outlineColor.a = alpha;
-            updateOutlineColors();
+            m_shape_dirty = true;
         }
 
         if (recursive) {
@@ -116,7 +116,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void Shape::setOutlineColor(const Color &color) {
         m_outlineColor = color;
-        updateOutlineColors();
+        m_shape_dirty = true;
     }
 
 
@@ -129,7 +129,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void Shape::setOutlineThickness(float thickness) {
         m_outlineThickness = thickness;
-        update(); // recompute everything because the whole shape must be offset
+        m_shape_dirty = true;
     }
 
 
@@ -149,7 +149,6 @@ namespace c2d {
     FloatRect Shape::getGlobalBounds() const {
         Transform t = transformation * getTransform();
         return t.transformRect(getLocalBounds());
-        //return getTransform().transformRect(getLocalBounds());
     }
 
 ////////////////////////////////////////////////////////////
@@ -223,6 +222,7 @@ namespace c2d {
         if (count < 3) {
             m_vertices.resize(0);
             m_outlineVertices.resize(0);
+            m_shape_dirty = false;
             return;
         }
 
@@ -252,9 +252,15 @@ namespace c2d {
 
         // origin
         setOrigin(m_shape_origin);
+
+        m_shape_dirty = false;
     }
 
     void Shape::onDraw(Transform &transform) {
+
+        if (m_shape_dirty) {
+            update();
+        }
 
         Transform combined = transform * getTransform();
         if (getFillColor().a != 0) {

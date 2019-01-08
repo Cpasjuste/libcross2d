@@ -125,7 +125,11 @@ void GLRenderer::draw(VertexArray *vertexArray,
     //shader->SetUniformMatrix("MVPMatrix", glm::value_ptr(pmMtx));
 
     // set projection matrix
-    auto mtx = glm::orthoLH(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
+    int w, h;
+    SDL_Window *window = ((SDL2Renderer *) this)->getWindow();
+    SDL_GL_GetDrawableSize(window, &w, &h);
+    auto mtx = glm::orthoLH(0.0f, (float) w, (float) h, 0.0f, 0.0f, 1.0f);
+
     shader->SetUniformMatrix("projectionMatrix", glm::value_ptr(mtx));
     // set model view matrix
     shader->SetUniformMatrix("modelViewMatrix", transform.getMatrix());

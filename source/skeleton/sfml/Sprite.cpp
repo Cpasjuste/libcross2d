@@ -75,6 +75,7 @@ namespace c2d {
             m_textureRect = rectangle;
             updatePositions();
             updateTexCoords();
+            m_vertices.update();
         }
     }
 
@@ -110,9 +111,8 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     FloatRect Sprite::getLocalBounds() const {
-        float width = static_cast<float>(std::abs(m_textureRect.width));
-        float height = static_cast<float>(std::abs(m_textureRect.height));
-
+        auto width = (float) std::abs(m_textureRect.width);
+        auto height = (float) std::abs(m_textureRect.height);
         return {0.f, 0.f, width, height};
     }
 
@@ -121,7 +121,6 @@ namespace c2d {
     FloatRect Sprite::getGlobalBounds() const {
         Transform t = transformation * getTransform();
         return t.transformRect(getLocalBounds());
-        //return getTransform().transformRect(getLocalBounds());
     }
 
 
@@ -171,6 +170,25 @@ namespace c2d {
         return m_sprite_origin;
     }
 
+    void Sprite::setAlpha(uint8_t alpha, bool recursive) {
+
+        if (alpha != m_vertices[0].color.a) {
+            m_vertices[0].color.a = alpha;
+            m_vertices[1].color.a = alpha;
+            m_vertices[2].color.a = alpha;
+            m_vertices[3].color.a = alpha;
+            m_vertices.update();
+        }
+
+        if (recursive) {
+            C2DObject::setAlpha(alpha, recursive);
+        }
+    }
+
+    uint8_t Sprite::getAlpha() {
+        return m_vertices[0].color.a;
+    }
+
     ////////////////////////////////////////////////////////////
     void Sprite::onDraw(Transform &transform) {
 
@@ -190,7 +208,6 @@ namespace c2d {
         m_vertices[1].position = Vector2f(0, bounds.height);
         m_vertices[2].position = Vector2f(bounds.width, 0);
         m_vertices[3].position = Vector2f(bounds.width, bounds.height);
-        m_vertices.update();
     }
 
 
@@ -199,16 +216,15 @@ namespace c2d {
 
         setOrigin(m_sprite_origin);
 
-        float left = static_cast<float>(m_textureRect.left);
+        auto left = (float) m_textureRect.left;
         float right = left + m_textureRect.width;
-        float top = static_cast<float>(m_textureRect.top);
+        auto top = (float) m_textureRect.top;
         float bottom = top + m_textureRect.height;
 
         m_vertices[0].texCoords = Vector2f(left, top);
         m_vertices[1].texCoords = Vector2f(left, bottom);
         m_vertices[2].texCoords = Vector2f(right, top);
         m_vertices[3].texCoords = Vector2f(right, bottom);
-        m_vertices.update();
     }
 
 } // namespace c2d

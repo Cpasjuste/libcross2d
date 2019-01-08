@@ -12,7 +12,7 @@
 
 #include "texture.h"
 #include "shader_list.h"
-#include "cross2d/skeleton/sfml/RectangleShape.hpp"
+#include "cross2d/skeleton/sfml/Rectangle.hpp"
 #include "cross2d/skeleton/sfml/Clock.hpp"
 #include "cross2d/skeleton/sfml/Font.hpp"
 #include "cross2d/skeleton/input.h"
@@ -24,7 +24,7 @@
 
 namespace c2d {
 
-    class Renderer : public Transformable {
+    class Renderer : public Rectangle {
 
     public:
 
@@ -46,13 +46,6 @@ namespace c2d {
 
         virtual void setShaderList(ShaderList *list);
 
-        ///
-        void setSize(const Vector2f &size);
-
-        void setSize(float width, float height);
-
-        const Vector2f getSize() const;
-
         void setClearColor(const Color &color);
 
         const Color getClearColor();
@@ -71,9 +64,8 @@ namespace c2d {
 
     protected:
 
-        virtual void onInput(Input::Player *players) override;
+        bool onInput(Input::Player *players) override;
 
-        Vector2f m_size;
         Color m_clearColor = Color::Black;
         Input *input = nullptr;
         Io *io = nullptr;

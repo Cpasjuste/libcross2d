@@ -14,7 +14,7 @@ namespace c2d {
 
     public:
 
-        SDL2Audio(int rate = 48000, int fps = 60, C2DAudioCallback cb = nullptr);
+        SDL2Audio(int rate = 48000, float fps = 60, C2DAudioCallback cb = nullptr);
 
         virtual ~SDL2Audio();
 
@@ -25,6 +25,8 @@ namespace c2d {
         virtual void pause(int pause);
 
         virtual void reset();
+
+        uint32_t getQueuedSize();
 
         SDL_AudioDeviceID getDeviceID();
 

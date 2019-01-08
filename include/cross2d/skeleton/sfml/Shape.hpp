@@ -335,6 +335,7 @@ namespace c2d {
         FloatRect m_insideBounds;     ///< Bounding rectangle of the inside (fill)
         FloatRect m_bounds;           ///< Bounding rectangle of the whole shape (outline + fill)
         Origin m_shape_origin = Origin::TopLeft;
+        bool m_shape_dirty = false;
     };
 
 } // namespace c2d

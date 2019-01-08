@@ -35,14 +35,14 @@ namespace c2d {
     CircleShape::CircleShape(float radius, std::size_t pointCount) :
             m_radius(radius),
             m_pointCount(pointCount) {
-        update();
+        m_shape_dirty = true;
     }
 
 
 ////////////////////////////////////////////////////////////
     void CircleShape::setRadius(float radius) {
         m_radius = radius;
-        update();
+        m_shape_dirty = true;
     }
 
 
@@ -55,7 +55,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void CircleShape::setPointCount(std::size_t count) {
         m_pointCount = count;
-        update();
+        m_shape_dirty = true;
     }
 
 ////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ namespace c2d {
         float x = std::cos(angle) * m_radius;
         float y = std::sin(angle) * m_radius;
 
-        return Vector2f(m_radius + x, m_radius + y);
+        return {m_radius + x, m_radius + y};
     }
 
 } // namespace sf

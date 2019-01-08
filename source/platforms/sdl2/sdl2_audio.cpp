@@ -7,7 +7,7 @@
 
 using namespace c2d;
 
-SDL2Audio::SDL2Audio(int freq, int fps, C2DAudioCallback cb) : Audio(freq, fps, cb) {
+SDL2Audio::SDL2Audio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps, cb) {
 
     if (!available) {
         return;
@@ -58,11 +58,6 @@ SDL2Audio::~SDL2Audio() {
 
 void SDL2Audio::play() {
 
-    if (callback) {
-        printf("SDL2Audio::play: can't manually play, a callback was defined\n");
-        return;
-    }
-
     play(buffer, buffer_size);
 }
 
@@ -70,24 +65,22 @@ void SDL2Audio::play(const void *data, int len) {
 
     if (available && !paused) {
 
+        if (SDL_GetAudioDeviceStatus(deviceID) == SDL_AUDIO_PAUSED) {
+            SDL_PauseAudioDevice(deviceID, 0);
+        }
+
         if (callback) {
             printf("SDL2Audio::play: can't manually play, a callback was defined\n");
             return;
         }
 
-        if (SDL_GetAudioStatus() == SDL_AUDIO_PAUSED) {
-            SDL_PauseAudioDevice(deviceID, 0);
-        }
-
-        // sync
-        while (SDL_GetQueuedAudioSize(deviceID) > (Uint32) len) {
-            SDL_Delay(1);
-        }
-
+        //printf("SDL2Audio::play: len = %i, queued = %i\n", len, SDL_GetQueuedAudioSize(deviceID));
         SDL_QueueAudio(deviceID, data, (Uint32) len);
 
         // Clear the audio queue arbitrarily to avoid it backing up too far
-        if (SDL_GetQueuedAudioSize(deviceID) > (Uint32) (len * 3)) {
+        if (SDL_GetQueuedAudioSize(deviceID) > (Uint32) (buffer_size * 5)) {
+            printf("SDL2Audio::play: queue is full (buffer len = %i, queued = %i)\n",
+                   len, SDL_GetQueuedAudioSize(deviceID));
             SDL_ClearQueuedAudio(deviceID);
         }
     }
@@ -110,6 +103,10 @@ void SDL2Audio::pause(int pause) {
 
     Audio::pause(pause);
     SDL_PauseAudioDevice(deviceID, pause);
+}
+
+uint32_t SDL2Audio::getQueuedSize() {
+    return SDL_GetQueuedAudioSize(deviceID);
 }
 
 SDL_AudioDeviceID SDL2Audio::getDeviceID() {

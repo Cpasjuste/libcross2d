@@ -8,14 +8,14 @@
 
 using namespace c2d;
 
-Audio::Audio(int rate, int fps, C2DAudioCallback cb) {
+Audio::Audio(int rate, float fps, C2DAudioCallback cb) {
 
     sample_rate = rate;
     if (sample_rate <= 0) {
         return;
     }
 
-    buffer_len = (int) ((float) rate / (float) fps);
+    buffer_len = (int) ((float) rate / fps);
     buffer_size = buffer_len * channels * 2;
     buffer = (short *) malloc((size_t) buffer_size);
     if (buffer == nullptr) {
@@ -27,7 +27,7 @@ Audio::Audio(int rate, int fps, C2DAudioCallback cb) {
     callback = cb;
     available = true;
 
-    printf("Audio: rate = %i, fps = %i, buf_size = %i, buf_len = %i\n", rate, fps, buffer_size, buffer_len);
+    printf("Audio: rate = %i, fps = %f, buf_size = %i, buf_len = %i\n", rate, fps, buffer_size, buffer_len);
 }
 
 void Audio::reset() {
