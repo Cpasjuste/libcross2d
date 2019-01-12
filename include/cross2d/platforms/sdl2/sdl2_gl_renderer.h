@@ -14,9 +14,9 @@ namespace c2d {
 
     public:
 
-        SDL2Renderer(const Vector2f &size = Vector2f(0, 0));
+        explicit SDL2Renderer(const Vector2f &size = Vector2f(0, 0));
 
-        ~SDL2Renderer();
+        ~SDL2Renderer() override;
 
         virtual void flip(bool draw = true);
 

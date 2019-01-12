@@ -59,9 +59,7 @@ SWITCHRenderer::~SWITCHRenderer() {
         }
     }
 
-    //printf("~SWITCHRenderer(): pcvExit\n");
     pcvExit();
-    //printf("~SWITCHRenderer(): pcvExit done\n");
 
 #ifdef __NET_DEBUG__
     deinitNxLink();
