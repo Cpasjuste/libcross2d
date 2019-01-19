@@ -183,7 +183,7 @@ void ListBox::setSelection(int idx) {
                 highlight->setFillColor(color);
                 color = highlight_use_files_color ?
                         file->color : highlight->getOutlineColor();
-                color.a = highlight->getAlpha();
+                //color.a = highlight->getAlpha();
                 highlight->setOutlineColor(color);
             }
         }
