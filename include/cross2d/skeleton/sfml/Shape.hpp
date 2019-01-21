@@ -69,7 +69,7 @@ namespace c2d {
         /// \see getTexture, setTextureRect
         ///
         ////////////////////////////////////////////////////////////
-        void setTexture(const Texture *texture, bool resetRect = false);
+        void setTexture(Texture *texture, bool resetRect = false);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the sub-rectangle of the texture that the shape will display
@@ -83,7 +83,7 @@ namespace c2d {
         /// \see getTextureRect, setTexture
         ///
         ////////////////////////////////////////////////////////////
-        virtual void setTextureRect(const IntRect &rect);
+        void setTextureRect(const IntRect &rect);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the fill color of the shape
@@ -325,7 +325,7 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        const Texture *m_texture;          ///< Texture of the shape
+        Texture *m_texture;          ///< Texture of the shape
         IntRect m_textureRect;      ///< Rectangle defining the area of the source texture to display
         Color m_fillColor;        ///< Fill color
         Color m_outlineColor;     ///< Outline color
