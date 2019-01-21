@@ -57,6 +57,8 @@ namespace c2d {
 
         c2d::Vector2f getPoint(std::size_t index) const;
 
+        void setTextureRect(const IntRect &rect) override;
+
         std::string path;
         int bpp = 4;
         int pitch = 0;

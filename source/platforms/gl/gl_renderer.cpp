@@ -99,22 +99,26 @@ void GLRenderer::draw(VertexArray *vertexArray,
         shader->SetUniformMatrix("textureMatrix", texMtx);
 
         // set retroarch shader params
-        shader->SetUniform("InputSize", texture->getTextureRect().width, texture->getTextureRect().height);
-        shader->SetUniform("TextureSize", texture->getSize().x, texture->getSize().y);
-        // TODO: i don't get this..
-        Vector2f outSize = getSize(); // SCALE_TYPE_SCREEN
+        Vector2f inputSize = {texture->getTextureRect().width, texture->getTextureRect().height};
+        Vector2f textureSize = {texture->getSize().x, texture->getSize().y};
+        Vector2f outputSize = getSize(); // SCALE_TYPE_SCREEN
         if (shader->getScaleType() == GLShader::SCALE_TYPE_VIEWPORT) {
-            outSize = Vector2f{texture->getGlobalBounds().width, texture->getGlobalBounds().height};
+            outputSize = Vector2f{texture->getGlobalBounds().width, texture->getGlobalBounds().height};
         } else if (shader->getScaleType() == GLShader::SCALE_TYPE_SOURCE) {
-            outSize = Vector2f{texture->getTextureRect().width, texture->getTextureRect().height};
+            outputSize = Vector2f{(float) texture->getTextureRect().width * texture->getScale().x,
+                                  (float) texture->getTextureRect().height * texture->getScale().y};
         }
-        shader->SetUniform("OutputSize", outSize);
-        /*
+        shader->SetUniform("InputSize", inputSize);
+        shader->SetUniform("TextureSize", textureSize);
+        shader->SetUniform("OutputSize", outputSize);
         if (glTexture->shader) {
-            printf("tex: %i x %i, out: %f x %f\n", texture->getTextureRect().width, texture->getTextureRect().height,
-                   texture->getGlobalBounds().width, texture->getGlobalBounds().height);
+#if 0
+            printf("inputSize: %ix%i, textureSize: %ix%i, outputSize: %ix%i\n",
+                   (int) inputSize.x, (int) inputSize.y,
+                   (int) textureSize.x, (int) textureSize.y,
+                   (int) outputSize.x, (int) outputSize.y);
+#endif
         }
-        */
     } else {
         GL_CHECK(glDisableVertexAttribArray(2));
     }

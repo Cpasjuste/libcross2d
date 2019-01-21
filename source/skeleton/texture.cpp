@@ -76,6 +76,11 @@ Vector2f Texture::getPoint(std::size_t index) const {
     }
 }
 
+void Texture::setTextureRect(const IntRect &rect) {
+    pitch = rect.width * bpp;
+    Shape::setTextureRect(rect);
+}
+
 Texture::~Texture() {
     printf("~Texture(%p)\n", this);
 }

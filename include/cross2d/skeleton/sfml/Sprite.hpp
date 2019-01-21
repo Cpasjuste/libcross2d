@@ -123,6 +123,8 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         void setColor(const Color &color);
 
+        void setScale(float factorX, float factorY) override;
+
         ////////////////////////////////////////////////////////////
         /// \brief Get the source texture of the sprite
         ///

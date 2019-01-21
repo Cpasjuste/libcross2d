@@ -19,7 +19,7 @@ namespace c2d {
             SCALE_TYPE_VIEWPORT = 2
         };
 
-        GLShader(const char *vertex, const char *fragment, int scale_type = SCALE_TYPE_SCREEN);
+        GLShader(const char *vertex, const char *fragment, int scale_type = SCALE_TYPE_SOURCE);
 
         ~GLShader();
 

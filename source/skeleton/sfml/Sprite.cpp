@@ -192,6 +192,13 @@ namespace c2d {
         return m_vertices[0].color.a;
     }
 
+    void Sprite::setScale(float factorX, float factorY) {
+        if (m_texture) {
+            m_texture->setScale(factorX, factorY);
+        }
+        Transformable::setScale(factorX, factorY);
+    }
+
     ////////////////////////////////////////////////////////////
     void Sprite::onDraw(Transform &transform) {
 
