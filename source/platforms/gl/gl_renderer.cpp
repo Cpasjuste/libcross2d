@@ -94,13 +94,13 @@ void GLRenderer::draw(VertexArray *vertexArray,
                               0.f, 1.f, 0.f, 0.f,
                               0.f, 0.f, 1.f, 0.f,
                               0.f, 0.f, 0.f, 1.f};
-        texMtx[0] = 1.f / texture->getTextureRect().width;
-        texMtx[5] = 1.f / texture->getTextureRect().height;
+        texMtx[0] = 1.f / texture->getSize().x;
+        texMtx[5] = 1.f / texture->getSize().y;
         shader->SetUniformMatrix("textureMatrix", texMtx);
 
         // set retroarch shader params
         shader->SetUniform("InputSize", texture->getTextureRect().width, texture->getTextureRect().height);
-        shader->SetUniform("TextureSize", texture->getTextureRect().width, texture->getTextureRect().height);
+        shader->SetUniform("TextureSize", texture->getSize().x, texture->getSize().y);
         // TODO: i don't get this..
         Vector2f outSize = getSize(); // SCALE_TYPE_SCREEN
         if (shader->getScaleType() == GLShader::SCALE_TYPE_VIEWPORT) {

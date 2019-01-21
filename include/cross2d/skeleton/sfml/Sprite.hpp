@@ -135,7 +135,7 @@ namespace c2d {
         /// \see setTexture
         ///
         ////////////////////////////////////////////////////////////
-        const Texture *getTexture() const;
+        Texture *getTexture();
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the sub-rectangle of the texture displayed by the sprite
@@ -218,7 +218,7 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         //Vertex m_vertices[4]; ///< Vertices defining the sprite's geometry
         VertexArray m_vertices;
-        const Texture *m_texture;     ///< Texture of the sprite
+        Texture *m_texture;     ///< Texture of the sprite
         IntRect m_textureRect; ///< Rectangle defining the area of the source texture to display
         Origin m_sprite_origin = Origin::TopLeft;
     };

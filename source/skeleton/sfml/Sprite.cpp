@@ -73,6 +73,9 @@ namespace c2d {
     void Sprite::setTextureRect(const IntRect &rectangle) {
         if (rectangle != m_textureRect) {
             m_textureRect = rectangle;
+            if (m_texture) {
+                m_texture->setTextureRect(rectangle);
+            }
             updatePositions();
             updateTexCoords();
             m_vertices.update();
@@ -92,7 +95,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    const Texture *Sprite::getTexture() const {
+    Texture *Sprite::getTexture() {
         return m_texture;
     }
 
