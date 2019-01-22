@@ -46,5 +46,10 @@ std::string Utility::removeLastSlash(const std::string &string) {
 }
 
 std::string Utility::removeExt(const std::string &str) {
-    return str.substr(0, str.find_last_of('.'));
+    size_t pos = str.find_last_of('.');
+    if (pos != std::string::npos) {
+        return str.substr(0, pos);
+    } else {
+        return str;
+    }
 }
