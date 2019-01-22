@@ -19,9 +19,9 @@ namespace c2d {
 
         virtual ~Audio();
 
-        virtual void play() {};
+        virtual void play(bool sync = false) {};
 
-        virtual void play(const void *data, int len) {};
+        virtual void play(const void *data, int len, bool sync = false) {};
 
         virtual void pause(int pause);
 
