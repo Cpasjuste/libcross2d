@@ -82,8 +82,6 @@ namespace c2d {
 
         int clear(int player = 0);
 
-        void setRepeatEnable(bool enable);
-
         void setRepeatDelay(int ms);
 
         void setJoystickMapping(int player, const int *mapping, int deadzone = 8000);

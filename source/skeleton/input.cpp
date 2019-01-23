@@ -37,12 +37,9 @@ Input::Player *Input::update(int rotate) {
     return players;
 }
 
-void Input::setRepeatEnable(bool enable) {
-    repeat = enable;
-}
-
 void Input::setRepeatDelay(int ms) {
     repeatDelay = ms;
+    repeat = ms > 0;
 }
 
 int Input::clear(int player) {
