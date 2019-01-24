@@ -38,7 +38,7 @@ namespace c2d {
 
         virtual void clear() {};
 
-        virtual void flip(bool draw = true);
+        virtual void flip(bool draw = true, bool inputs = true);
 
         virtual void delay(unsigned int ms) {};
 

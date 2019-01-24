@@ -27,7 +27,7 @@ namespace c2d {
 
         void clear() override;
 
-        void flip(bool draw = true) override;
+        void flip(bool draw = true, bool inputs = true) override;
 
         unsigned int vao = 0;
     };

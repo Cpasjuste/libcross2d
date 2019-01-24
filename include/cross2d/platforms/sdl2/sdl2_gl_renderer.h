@@ -18,7 +18,7 @@ namespace c2d {
 
         ~SDL2Renderer() override;
 
-        virtual void flip(bool draw = true);
+        virtual void flip(bool draw = true, bool inputs = true);
 
         virtual void delay(unsigned int ms);
 

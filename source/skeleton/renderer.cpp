@@ -31,15 +31,17 @@ bool Renderer::onInput(Input::Player *players) {
     return C2DObject::onInput(players);
 }
 
-void Renderer::flip(bool draw) {
+void Renderer::flip(bool draw, bool inputs) {
 
     // update inputs
-    input->update();
-    for (auto &player : input->players) {
-        unsigned int keys = player.keys;
-        if (keys > 0 && keys != Input::Key::Delay) {
-            onInput(input->players);
-            break;
+    if (inputs) {
+        input->update();
+        for (auto &player : input->players) {
+            unsigned int keys = player.keys;
+            if (keys > 0 && keys != Input::Key::Delay) {
+                onInput(input->players);
+                break;
+            }
         }
     }
 

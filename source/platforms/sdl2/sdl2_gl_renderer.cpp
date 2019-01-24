@@ -67,12 +67,10 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
     printf("SDL2Renderer(GL)(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }
 
-void SDL2Renderer::flip(bool draw) {
+void SDL2Renderer::flip(bool draw, bool inputs) {
 
-    if (draw) {
-        // call base class (draw childs)
-        GLRenderer::flip();
-    }
+    // call base class (draw childs)
+    GLRenderer::flip(draw, inputs);
 
     // flip
     SDL_GL_SwapWindow(window);

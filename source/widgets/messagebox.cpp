@@ -118,7 +118,7 @@ int MessageBox::show(const std::string &title, const std::string &message,
     setVisibility(Visibility::Visible);
     setLayer(10000);
 
-    if (choices > 0) {
+    if (choices > 0 || timeout > 0) {
 
         input->clear(0);
         clock.restart();
@@ -144,7 +144,7 @@ int MessageBox::show(const std::string &title, const std::string &message,
                     break;
                 }
             } else {
-                key = input->getKeys();
+                key = input->update()->keys;
                 if (key > 0 && key != Input::Key::Delay) {
                     if (key & Input::Key::Left) {
                         if (index > 0) {
@@ -171,12 +171,15 @@ int MessageBox::show(const std::string &title, const std::string &message,
                 }
             }
 
-            c2d_renderer->flip();
+            c2d_renderer->flip(true, false);
         }
 
         if (pressed) {
             *pressed = key;
         }
+
+        input->clear();
+
     } else {
         c2d_renderer->flip();
     }

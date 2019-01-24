@@ -168,14 +168,14 @@ void GLRenderer::clear() {
     GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-void GLRenderer::flip(bool draw) {
+void GLRenderer::flip(bool draw, bool inputs) {
 
     if (draw) {
         clear();
     }
 
     // call base class (draw childs)
-    Renderer::flip(draw);
+    Renderer::flip(draw, inputs);
 }
 
 GLRenderer::~GLRenderer() {

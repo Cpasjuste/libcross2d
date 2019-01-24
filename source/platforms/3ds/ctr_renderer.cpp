@@ -191,7 +191,7 @@ void CTRRenderer::clear() {
                           m_clearColor.toRGBA(), 0);
 }
 
-void CTRRenderer::flip(bool draw) {
+void CTRRenderer::flip(bool draw, bool inputs) {
 
     if (draw) {
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -200,7 +200,7 @@ void CTRRenderer::flip(bool draw) {
     }
 
     // call base class (draw childs)
-    Renderer::flip(draw);
+    Renderer::flip(draw, inputs);
 
     if (draw) {
         C3D_FrameEnd(0);
