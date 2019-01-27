@@ -169,6 +169,8 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         virtual const Vector2f &getPosition() const;
 
+        virtual const Vector2f getGlobalPosition() const;
+
         ////////////////////////////////////////////////////////////
         /// \brief get the orientation of the object
         ///

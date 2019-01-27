@@ -110,6 +110,10 @@ namespace c2d {
     }
 
 
+    const Vector2f Transformable::getGlobalPosition() const {
+        return transformation.transformPoint(m_position);
+    }
+
 ////////////////////////////////////////////////////////////
     float Transformable::getRotation() const {
         return m_rotation;
