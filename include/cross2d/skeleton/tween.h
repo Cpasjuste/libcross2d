@@ -92,7 +92,7 @@ namespace c2d {
             this->type = TweenType::Position;
         };
 
-        void setFromTo(const Vector2f &from, const Vector2f &to);
+        void setFromTo(const Vector2f &from, const Vector2f &to, float duration = 0);
     };
 
     ///
@@ -108,7 +108,7 @@ namespace c2d {
             this->type = TweenType::Rotation;
         }
 
-        void setFromTo(float from, float to);
+        void setFromTo(float from, float to, float duration = 0);
     };
 
     ///
@@ -124,7 +124,7 @@ namespace c2d {
             this->type = TweenType::Scale;
         }
 
-        void setFromTo(const Vector2f &from, const Vector2f &to);
+        void setFromTo(const Vector2f &from, const Vector2f &to, float duration = 0);
     };
 
     ///
@@ -140,7 +140,7 @@ namespace c2d {
             this->type = TweenType::Color;
         }
 
-        void setFromTo(const Color &from, const Color &to);
+        void setFromTo(const Color &from, const Color &to, float duration = 0);
     };
 
     ///
@@ -156,7 +156,7 @@ namespace c2d {
             this->type = TweenType::Alpha;
         }
 
-        void setFromTo(float from, float to);
+        void setFromTo(float from, float to, float duration = 0);
     };
 }
 

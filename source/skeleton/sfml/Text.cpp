@@ -388,7 +388,7 @@ namespace c2d {
         m_line_spacing = size;
     }
 
-    void Text::onDraw(Transform &transform) {
+    void Text::onDraw(Transform &transform, bool draw) {
 
         if (m_string.empty()) {
             return;
@@ -397,14 +397,14 @@ namespace c2d {
         ensureGeometryUpdate();
         setOrigin(m_text_origin);
 
-        Transform combined = transform * getTransform();
-
-        if (getOutlineThickness() > 0) {
-            c2d_renderer->draw(&m_outlineVertices, combined, &getFont()->getTexture(getCharacterSize()));
+        if (draw) {
+            Transform combined = transform * getTransform();
+            if (getOutlineThickness() > 0) {
+                c2d_renderer->draw(&m_outlineVertices, combined, &getFont()->getTexture(getCharacterSize()));
+            }
+            c2d_renderer->draw(&m_vertices, combined, &getFont()->getTexture(getCharacterSize()));
         }
-        c2d_renderer->draw(&m_vertices, combined, &getFont()->getTexture(getCharacterSize()));
-
-        C2DObject::onDraw(transform);
+        C2DObject::onDraw(transform, draw);
     }
 
 ////////////////////////////////////////////////////////////

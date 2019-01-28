@@ -42,6 +42,10 @@ void Input::setRepeatDelay(int ms) {
     repeat = ms > 0;
 }
 
+int Input::getRepeatDelay() {
+    return repeatDelay;
+}
+
 int Input::clear(int player) {
     while (true) {
         Player p = update(0)[player];

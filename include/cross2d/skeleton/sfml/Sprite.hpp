@@ -199,7 +199,7 @@ namespace c2d {
 
     protected:
 
-        virtual void onDraw(Transform &transform);
+        virtual void onDraw(Transform &transform, bool draw = true) override;
 
     private:
 

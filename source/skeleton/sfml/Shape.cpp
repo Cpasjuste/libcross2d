@@ -257,21 +257,22 @@ namespace c2d {
         m_shape_dirty = false;
     }
 
-    void Shape::onDraw(Transform &transform) {
+    void Shape::onDraw(Transform &transform, bool draw) {
 
         if (m_shape_dirty) {
             update();
         }
 
-        Transform combined = transform * getTransform();
-        if (getFillColor().a != 0) {
-            c2d_renderer->draw(&m_vertices, combined, m_texture);
+        if (draw) {
+            Transform combined = transform * getTransform();
+            if (getFillColor().a != 0) {
+                c2d_renderer->draw(&m_vertices, combined, m_texture);
+            }
+            if (getOutlineColor().a != 0 && m_outlineThickness > 0) {
+                c2d_renderer->draw(&m_outlineVertices, combined, nullptr);
+            }
         }
-        if (getOutlineColor().a != 0 && m_outlineThickness > 0) {
-            c2d_renderer->draw(&m_outlineVertices, combined, nullptr);
-        }
-
-        C2DObject::onDraw(transform);
+        C2DObject::onDraw(transform, draw);
     }
 
 ////////////////////////////////////////////////////////////

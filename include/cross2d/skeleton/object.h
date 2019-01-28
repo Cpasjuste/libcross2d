@@ -76,7 +76,7 @@ namespace c2d {
 
         virtual bool onInput(Input::Player *players);
 
-        virtual void onDraw(Transform &transform);
+        virtual void onDraw(Transform &transform, bool draw = true);
 
         Type type;
         Transform transformation;

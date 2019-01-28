@@ -200,11 +200,12 @@ namespace c2d {
     }
 
     ////////////////////////////////////////////////////////////
-    void Sprite::onDraw(Transform &transform) {
-
-        Transform combined = transform * getTransform();
-        c2d_renderer->draw(&m_vertices, combined, m_texture);
-        C2DObject::onDraw(transform);
+    void Sprite::onDraw(Transform &transform, bool draw) {
+        if (draw) {
+            Transform combined = transform * getTransform();
+            c2d_renderer->draw(&m_vertices, combined, m_texture);
+        }
+        C2DObject::onDraw(transform, draw);
     }
 
 ////////////////////////////////////////////////////////////

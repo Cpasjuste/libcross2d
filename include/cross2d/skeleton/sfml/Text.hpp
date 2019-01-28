@@ -347,7 +347,7 @@ namespace c2d {
         /// \brief Draw the shape to the main renderer
         ///
         ////////////////////////////////////////////////////////////
-        virtual void onDraw(Transform &transform);
+        virtual void onDraw(Transform &transform, bool draw = true) override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Make sure the text's geometry is updated

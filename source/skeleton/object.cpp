@@ -54,7 +54,7 @@ bool C2DObject::onInput(Input::Player *players) {
     return false;
 }
 
-void C2DObject::onDraw(Transform &transform) {
+void C2DObject::onDraw(Transform &transform, bool draw) {
 
     //printf("C2DObject(%p): draw\n", this);
 
@@ -80,7 +80,7 @@ void C2DObject::onDraw(Transform &transform) {
     for (auto &child : childs) {
         if (child) {
             if (child->visibility_current == Visibility::Visible) {
-                child->onDraw(combinedTransform);
+                child->onDraw(combinedTransform, draw);
             }
         }
     }

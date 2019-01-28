@@ -84,6 +84,8 @@ namespace c2d {
 
         void setRepeatDelay(int ms);
 
+        int getRepeatDelay();
+
         void setJoystickMapping(int player, const int *mapping, int deadzone = 8000);
 
         void setKeyboardMapping(const int *mapping);

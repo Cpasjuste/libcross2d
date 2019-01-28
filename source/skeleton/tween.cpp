@@ -35,31 +35,31 @@ Tween::Tween(const Color &from, const Color &to, float duration, TweenLoop loop)
     this->deltaClock = new C2DClock();
 }
 
-void TweenPosition::setFromTo(const Vector2f &from, const Vector2f &to) {
+void TweenPosition::setFromTo(const Vector2f &from, const Vector2f &to, float duration) {
     tween = tweeny::from(from.x, from.y, 0.0f, 0.0f).to(to.x, to.y, 0.0f, 0.0f)
-            .during(tween.duration());
+            .during(duration > 0 ? duration * 1000 : tween.duration());
 }
 
-void TweenRotation::setFromTo(float from, float to) {
+void TweenRotation::setFromTo(float from, float to, float duration) {
     tween = tweeny::from(from, 0.0f, 0.0f, 0.0f).to(to, 0.0f, 0.0f, 0.0f)
-            .during(tween.duration());
+            .during(duration > 0 ? duration * 1000 : tween.duration());
 }
 
-void TweenScale::setFromTo(const Vector2f &from, const Vector2f &to) {
+void TweenScale::setFromTo(const Vector2f &from, const Vector2f &to, float duration) {
     tween = tweeny::from(from.x, from.y, 0.0f, 0.0f).to(to.x, to.y, 0.0f, 0.0f)
-            .during(tween.duration());
+            .during(duration > 0 ? duration * 1000 : tween.duration());
 }
 
-void TweenColor::setFromTo(const Color &from, const Color &to) {
+void TweenColor::setFromTo(const Color &from, const Color &to, float duration) {
     tween = tweeny::from(
             (float) from.r / 255.0f, (float) from.g / 255.0f, (float) from.b / 255.0f, (float) from.a / 255.0f)
             .to((float) to.r / 255.0f, (float) to.g / 255.0f, (float) to.b / 255.0f, (float) to.a / 255.0f)
-            .during(tween.duration());
+            .during(duration > 0 ? duration * 1000 : tween.duration());
 }
 
-void TweenAlpha::setFromTo(float from, float to) {
+void TweenAlpha::setFromTo(float from, float to, float duration) {
     tween = tweeny::from(from, 0.0f, 0.0f, 0.0f).to(to, 0.0f, 0.0f, 0.0f)
-            .during(tween.duration());
+            .during(duration > 0 ? duration * 1000 : tween.duration());
 }
 
 Tween::~Tween() {

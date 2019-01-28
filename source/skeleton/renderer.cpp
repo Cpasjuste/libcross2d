@@ -48,7 +48,7 @@ void Renderer::flip(bool draw, bool inputs) {
     // call base class (draw childs)
     if (draw) {
         Transform trans = getTransform();
-        onDraw(trans);
+        onDraw(trans, draw);
     }
 
     deltaTime = deltaClock->restart();
