@@ -73,6 +73,8 @@ namespace c2d {
         TweenDirection direction = TweenDirection::Current;
         TweenState state = TweenState::Playing;
         tweeny::tween<float, float, float, float> tween;
+        float from[4];
+        float to[4];
         // timer stuff
         Clock *deltaClock = nullptr;
         Time delta;
@@ -93,6 +95,14 @@ namespace c2d {
         };
 
         void setFromTo(const Vector2f &from, const Vector2f &to, float duration = 0);
+
+        const Vector2f getFrom() {
+            return {from[0], from[1]};
+        }
+
+        const Vector2f getTo() {
+            return {to[0], to[1]};
+        }
     };
 
     ///
@@ -109,6 +119,14 @@ namespace c2d {
         }
 
         void setFromTo(float from, float to, float duration = 0);
+
+        const float getFrom() {
+            return from[0];
+        }
+
+        const float getTo() {
+            return to[0];
+        }
     };
 
     ///
@@ -125,6 +143,14 @@ namespace c2d {
         }
 
         void setFromTo(const Vector2f &from, const Vector2f &to, float duration = 0);
+
+        const Vector2f getFrom() {
+            return {from[0], from[1]};
+        }
+
+        const Vector2f getTo() {
+            return {to[0], to[1]};
+        }
     };
 
     ///
@@ -141,6 +167,14 @@ namespace c2d {
         }
 
         void setFromTo(const Color &from, const Color &to, float duration = 0);
+
+        const Color getFrom() {
+            return {(uint8_t) from[0], (uint8_t) from[1], (uint8_t) from[2], (uint8_t) from[3]};
+        }
+
+        const Color getTo() {
+            return {(uint8_t) to[0], (uint8_t) to[1], (uint8_t) to[2], (uint8_t) to[3]};
+        }
     };
 
     ///
@@ -157,6 +191,14 @@ namespace c2d {
         }
 
         void setFromTo(float from, float to, float duration = 0);
+
+        const float getFrom() {
+            return from[0];
+        }
+
+        const float getTo() {
+            return to[0];
+        }
     };
 }
 
