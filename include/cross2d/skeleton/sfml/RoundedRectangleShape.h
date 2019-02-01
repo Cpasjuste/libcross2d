@@ -32,7 +32,7 @@ namespace c2d {
 /// \brief Specialized shape representing a rectangle
 /// with rounded corners
 ////////////////////////////////////////////////////////////
-    class RoundedRectangleShape : public c2d::Shape {
+    class RoundedRectangleShape : public c2d::RectangleShape {
     public:
         ////////////////////////////////////////////////////////////
         /// \brief Default constructor
@@ -44,26 +44,6 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         explicit RoundedRectangleShape(const c2d::Vector2f &size = c2d::Vector2f(0, 0), float radius = 5,
                                        unsigned int cornerPointCount = 8);
-
-        ////////////////////////////////////////////////////////////
-        /// \brief Set the size of the rounded rectangle
-        ///
-        /// \param size New size of the rounded rectangle
-        ///
-        /// \see GetSize
-        ///
-        ////////////////////////////////////////////////////////////
-        void setSize(const c2d::Vector2f &size);
-
-        ////////////////////////////////////////////////////////////
-        /// \brief Get the size of the rounded rectangle
-        ///
-        /// \return Size of the rounded rectangle
-        ///
-        /// \see SetSize
-        ///
-        ////////////////////////////////////////////////////////////
-        const c2d::Vector2f &getSize() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the radius of the rounded corners
@@ -101,7 +81,7 @@ namespace c2d {
         /// \return Number of points of the rounded rectangle
         ///
         ////////////////////////////////////////////////////////////
-        virtual std::size_t getPointCount() const;
+        std::size_t getPointCount() const override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get a point of the rounded rectangle
@@ -113,13 +93,12 @@ namespace c2d {
         /// \return Index-th point of the shape
         ///
         ////////////////////////////////////////////////////////////
-        virtual c2d::Vector2f getPoint(std::size_t index) const;
+        c2d::Vector2f getPoint(std::size_t index) const override;
 
     private:
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        c2d::Vector2f mySize;
         float myRadius;
         unsigned int myCornerPointCount;
     };

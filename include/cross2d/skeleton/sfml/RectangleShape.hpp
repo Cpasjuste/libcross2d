@@ -68,7 +68,7 @@ namespace c2d {
         /// \see setSize
         ///
         ////////////////////////////////////////////////////////////
-        const c2d::Vector2f &getSize() const;
+        virtual const c2d::Vector2f &getSize() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the number of points defining the shape

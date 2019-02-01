@@ -74,6 +74,15 @@ void TweenScale::setFromTo(const Vector2f &from, const Vector2f &to, float durat
     this->to[1] = to.y;
 }
 
+void TweenSize::setFromTo(const Vector2f &from, const Vector2f &to, float duration) {
+    tween = tweeny::from(from.x, from.y, 0.0f, 0.0f).to(to.x, to.y, 0.0f, 0.0f)
+            .during(duration > 0 ? duration * 1000 : tween.duration());
+    this->from[0] = from.x;
+    this->from[1] = from.y;
+    this->to[0] = to.x;
+    this->to[1] = to.y;
+}
+
 void TweenColor::setFromTo(const Color &from, const Color &to, float duration) {
     tween = tweeny::from(
             (float) from.r / 255.0f, (float) from.g / 255.0f, (float) from.b / 255.0f, (float) from.a / 255.0f)
@@ -195,6 +204,12 @@ void Tween::step() {
         transform->setRotation(float4[0]);
     } else if (type == TweenType::Scale) {
         transform->setScale(float4[0], float4[1]);
+    } else if (type == TweenType::Size) {
+        if (object->getType() == Type::Text) {
+            ((Text *) transform)->setCharacterSize((unsigned int) float4[0]);
+        } else {
+            ((RectangleShape *) transform)->setSize(float4[0], float4[1]);
+        }
     } else if (type == TweenType::Color) {
         Color color = {(uint8_t) (float4[0] * 255.0f), (uint8_t) (float4[1] * 255.0f),
                        (uint8_t) (float4[2] * 255.0f), (uint8_t) (float4[3] * 255.0f)};

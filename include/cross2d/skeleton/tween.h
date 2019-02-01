@@ -15,7 +15,7 @@ namespace c2d {
     class Transformable;
 
     enum class TweenType : int {
-        Position = 1, Rotation, Scale, Color, Alpha
+        Position = 1, Rotation, Scale, Size, Color, Alpha
     };
 
     enum class TweenLoop : int {
@@ -140,6 +140,30 @@ namespace c2d {
                 const Vector2f &from, const Vector2f &to,
                 float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
             this->type = TweenType::Scale;
+        }
+
+        void setFromTo(const Vector2f &from, const Vector2f &to, float duration = 0);
+
+        const Vector2f getFrom() {
+            return {from[0], from[1]};
+        }
+
+        const Vector2f getTo() {
+            return {to[0], to[1]};
+        }
+    };
+
+    ///
+    /// Scale tweener
+    ///
+    class TweenSize : public Tween {
+
+    public:
+
+        TweenSize(
+                const Vector2f &from, const Vector2f &to,
+                float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
+            this->type = TweenType::Size;
         }
 
         void setFromTo(const Vector2f &from, const Vector2f &to, float duration = 0);

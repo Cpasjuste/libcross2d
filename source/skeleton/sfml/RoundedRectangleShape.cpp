@@ -29,22 +29,11 @@ using namespace c2d;
 
 namespace c2d {
 ////////////////////////////////////////////////////////////
-    RoundedRectangleShape::RoundedRectangleShape(const Vector2f &size, float radius, unsigned int cornerPointCount) {
-        mySize = size;
+    RoundedRectangleShape::RoundedRectangleShape(const Vector2f &size, float radius, unsigned int cornerPointCount)
+            : RectangleShape(size) {
         myRadius = radius;
         myCornerPointCount = cornerPointCount;
         update();
-    }
-
-////////////////////////////////////////////////////////////
-    void RoundedRectangleShape::setSize(const Vector2f &size) {
-        mySize = size;
-        update();
-    }
-
-////////////////////////////////////////////////////////////
-    const Vector2f &RoundedRectangleShape::getSize() const {
-        return mySize;
     }
 
 ////////////////////////////////////////////////////////////
@@ -78,6 +67,7 @@ namespace c2d {
         Vector2f center;
         unsigned int centerIndex = index / myCornerPointCount;
         static const float pi = 3.141592654f;
+        Vector2f mySize = getSize();
 
         switch (centerIndex) {
             case 0:
