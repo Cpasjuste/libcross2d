@@ -266,7 +266,7 @@ namespace c2d {
 
         void setOrigin(const Origin &origin);
 
-        const Origin getOrigin() const;
+        Origin getOrigin() const;
 
         VertexArray *getVertexArray();
 

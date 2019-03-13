@@ -153,7 +153,7 @@ namespace c2d {
     }
 
 ////////////////////////////////////////////////////////////
-    const Origin Shape::getOrigin() const {
+    Origin Shape::getOrigin() const {
         return m_shape_origin;
     }
 

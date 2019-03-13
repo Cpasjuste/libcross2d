@@ -120,11 +120,11 @@ namespace c2d {
 
         void setFromTo(float from, float to, float duration = 0);
 
-        const float getFrom() {
+        float getFrom() {
             return from[0];
         }
 
-        const float getTo() {
+        float getTo() {
             return to[0];
         }
     };
@@ -216,11 +216,11 @@ namespace c2d {
 
         void setFromTo(float from, float to, float duration = 0);
 
-        const float getFrom() {
+        float getFrom() {
             return from[0];
         }
 
-        const float getTo() {
+        float getTo() {
             return to[0];
         }
     };

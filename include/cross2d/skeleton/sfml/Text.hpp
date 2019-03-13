@@ -333,7 +333,7 @@ namespace c2d {
 
         void setOrigin(const Origin &origin);
 
-        const Origin getOrigin() const;
+        Origin getOrigin() const;
 
         void setWidth(float width);
 

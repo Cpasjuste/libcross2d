@@ -373,7 +373,7 @@ namespace c2d {
         }
     }
 
-    const Origin Text::getOrigin() const {
+    Origin Text::getOrigin() const {
         return m_text_origin;
     }
 

@@ -74,7 +74,7 @@ namespace c2d {
 
         FloatRect getGlobalBounds() const;
 
-        const Origin getOrigin() const;
+        Origin getOrigin() const;
 
         void setOrigin(const Origin &origin);
 

@@ -169,7 +169,7 @@ namespace c2d {
         }
     }
 
-    const Origin Sprite::getOrigin() const {
+    Origin Sprite::getOrigin() const {
         return m_sprite_origin;
     }
 

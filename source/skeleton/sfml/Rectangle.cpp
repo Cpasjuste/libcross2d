@@ -108,7 +108,7 @@ namespace c2d {
         }
     }
 
-    const Origin Rectangle::getOrigin() const {
+    Origin Rectangle::getOrigin() const {
         return m_rect_origin;
     }
 

@@ -191,7 +191,7 @@ namespace c2d {
 
         void setOrigin(const Origin &origin);
 
-        const Origin getOrigin() const;
+        Origin getOrigin() const;
 
         virtual void setAlpha(uint8_t alpha, bool recursive = false);
 
