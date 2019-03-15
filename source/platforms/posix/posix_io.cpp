@@ -35,6 +35,9 @@ std::string POSIXIo::getDataReadPath() const {
 }
 
 bool POSIXIo::exist(const std::string &path) {
+    if (path.empty()) {
+        return false;
+    }
     struct stat st{};
     return (stat(path.c_str(), &st) == 0);
 }
