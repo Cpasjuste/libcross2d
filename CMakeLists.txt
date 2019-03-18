@@ -29,8 +29,7 @@ set(CROSS2D_DIR include)
 file(GLOB CROSS2D_SRC
         source/widgets/*.c*
         source/skeleton/*.c*
-        source/skeleton/sfml/*.c*
-        source/skeleton/libconfig/*.c)
+        source/skeleton/sfml/*.c*)
 
 #####################
 # PLATORM SPECIFIC
@@ -47,6 +46,7 @@ if (BUILD_VITA)
             ${VITASDK}/arm-vita-eabi/include/freetype2
             )
     file(GLOB PLATFORM_SRC
+            source/skeleton/libconfig/*.c
             source/platforms/posix/posix_io.cpp
             source/platforms/psp2/*.c*
             source/platforms/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
@@ -86,6 +86,7 @@ elseif (BUILD_3DS)
             ${DEVKITPRO}/portlibs/armv6k/include
             )
     file(GLOB PLATFORM_SRC
+            source/skeleton/libconfig/*.c
             source/platforms/3ds/*.c*
             source/platforms/posix/*.c*
             #source/platforms/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
@@ -132,7 +133,7 @@ elseif (BUILD_SWITCH)
             )
     set(PLATFORM_LIBS
             SDL2 glad EGL glapi drm_nouveau nx
-            freetype bz2 png z
+            freetype bz2 png config z
             )
     ########################
     # LINUX PLATORM (SDL2)
@@ -155,7 +156,7 @@ elseif (BUILD_LINUX)
             source/platforms/gl/shaders/*.c*
             source/platforms/sdl2/*.c*
             source/platforms/posix/*.c*)
-    set(PLATFORM_LIBS ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
+    set(PLATFORM_LIBS ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES} config)
     list(APPEND FLAGS -D__SDL2__ -D__SDL2_GL__ -D__GL__)
     if (BUILD_WINDOWS)
         find_package(GLEW REQUIRED)
