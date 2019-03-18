@@ -3,7 +3,6 @@
 //
 
 #include "cross2d/skeleton/config.h"
-#include "libconfig/libconfig.h"
 
 using namespace c2d::config;
 

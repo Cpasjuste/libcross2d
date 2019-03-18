@@ -3,8 +3,6 @@
 //
 
 #include <algorithm>
-#include <cross2d/skeleton/config_group.h>
-
 
 #include "cross2d/skeleton/config_group.h"
 

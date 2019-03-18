@@ -7,9 +7,9 @@
 
 #include <string>
 #include <vector>
+#include <libconfig.h>
 
 #include "cross2d/skeleton/config_option.h"
-#include "cross2d/skeleton/libconfig/libconfig.h"
 
 namespace c2d {
 
