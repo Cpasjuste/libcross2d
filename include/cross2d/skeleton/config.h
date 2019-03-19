@@ -25,6 +25,8 @@ namespace c2d {
 
             bool load();
 
+            bool loadFromString(const std::string &str);
+
             bool save();
 
             int getVersion() const;
