@@ -97,6 +97,8 @@ Input::Player *SDL2Input::update(int rotate) {
         if (event.type == SDL_QUIT) {
             players[0].keys |= EV_QUIT;
             return players;
+        } else if (event.type == SDL_JOYBUTTONDOWN) {
+            printf("button: %i\n", event.jbutton.button);
         }
     }
 
@@ -196,16 +198,16 @@ void SDL2Input::process_axis(Input::Player &player, int rotate) {
 
             if (right)
                 player.keys |= (rotate == 1) ? Input::Key::Down :
-                                (rotate == 3) ? Input::Key::Up : Input::Key::Right;
+                               (rotate == 3) ? Input::Key::Up : Input::Key::Right;
             if (left)
                 player.keys |= (rotate == 1) ? Input::Key::Up :
-                                (rotate == 3) ? Input::Key::Down : Input::Key::Left;
+                               (rotate == 3) ? Input::Key::Down : Input::Key::Left;
             if (up)
                 player.keys |= (rotate == 1) ? Input::Key::Right :
-                                (rotate == 3) ? Input::Key::Left : Input::Key::Up;
+                               (rotate == 3) ? Input::Key::Left : Input::Key::Up;
             if (down)
                 player.keys |= (rotate == 1) ? Input::Key::Left :
-                                (rotate == 3) ? Input::Key::Right : Input::Key::Down;
+                               (rotate == 3) ? Input::Key::Right : Input::Key::Down;
         } else {
             currentStickXAxis->value = 0;
             currentStickYAxis->value = 0;
@@ -225,29 +227,29 @@ void SDL2Input::process_hat(Input::Player &player, int rotate) {
         || value == SDL_HAT_LEFTUP
         || value == SDL_HAT_RIGHTUP) {
         player.keys |= (rotate == 1) ?
-                        Input::Key::Right : (rotate == 3) ? Input::Key::Left
-                                                          : Input::Key::Up;
+                       Input::Key::Right : (rotate == 3) ? Input::Key::Left
+                                                         : Input::Key::Up;
     }
     if (value == SDL_HAT_DOWN
         || value == SDL_HAT_LEFTDOWN
         || value == SDL_HAT_RIGHTDOWN) {
         player.keys |= (rotate == 1) ?
-                        Input::Key::Left : (rotate == 3) ? Input::Key::Right
-                                                         : Input::Key::Down;
+                       Input::Key::Left : (rotate == 3) ? Input::Key::Right
+                                                        : Input::Key::Down;
     }
     if (value == SDL_HAT_LEFT
         || value == SDL_HAT_LEFTDOWN
         || value == SDL_HAT_LEFTUP) {
         player.keys |= (rotate == 1) ?
-                        Input::Key::Up : (rotate == 3) ? Input::Key::Down
-                                                       : Input::Key::Left;
+                       Input::Key::Up : (rotate == 3) ? Input::Key::Down
+                                                      : Input::Key::Left;
     }
     if (value == SDL_HAT_RIGHT
         || value == SDL_HAT_RIGHTDOWN
         || value == SDL_HAT_RIGHTUP) {
         player.keys |= (rotate == 1) ?
-                        Input::Key::Down : (rotate == 3) ? Input::Key::Up
-                                                         : Input::Key::Right;
+                       Input::Key::Down : (rotate == 3) ? Input::Key::Up
+                                                        : Input::Key::Right;
     }
 }
 

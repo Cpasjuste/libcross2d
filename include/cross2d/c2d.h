@@ -143,6 +143,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/sdl2/sdl2_audio.h"
 #include "platforms/switch/switch_io.h"
 #include "platforms/switch/switch_sys.h"
+#include "platforms/switch/switch_input.h"
 #include "platforms/posix/posix_clock.h"
 
 #define C2DRenderer SWITCHRenderer
@@ -152,7 +153,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DCircle CircleShape
 #define C2DFont Font
 #define C2DText Text
-#define C2DInput SDL2Input
+#define C2DInput SWITCHInput
 #define C2DAudio SDL2Audio
 #define C2DClock POSIXClock
 #define C2DIo NXIo
