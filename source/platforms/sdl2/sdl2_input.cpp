@@ -97,8 +97,6 @@ Input::Player *SDL2Input::update(int rotate) {
         if (event.type == SDL_QUIT) {
             players[0].keys |= EV_QUIT;
             return players;
-        } else if (event.type == SDL_JOYBUTTONDOWN) {
-            printf("button: %i\n", event.jbutton.button);
         }
     }
 
