@@ -2,8 +2,6 @@
 // Created by cpasjuste on 11/01/17.
 //
 
-#include <cross2d/platforms/switch/switch_input.h>
-
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -13,6 +11,8 @@ SWITCHInput::SWITCHInput() : SDL2Input() {
 
 Input::Player *SWITCHInput::update(int rotate) {
 
+    Input::Player *players = SDL2Input::update(rotate);
+
     // handle joycon's states (@ rsn8887)
     if (!hidGetHandheldMode()) {
         if (single_joycon_mode) {
@@ -21,6 +21,18 @@ Input::Player *SWITCHInput::update(int rotate) {
             }
             hidSetNpadJoyHoldType(HidJoyHoldType_Horizontal);
             hidScanInput();
+            // handle missing (+) / (-) buttons on single joycon mode
+            for (int i = 0; i < PLAYER_MAX; i++) {
+                auto joystick = (SDL_Joystick *) players[i].data;
+                if (SDL_JoystickGetButton(joystick, KEY_JOY_LSTICK_DEFAULT)) {
+                    int index = (int) SDL_JoystickInstanceID(joystick);
+                    if (hidGetControllerType((HidControllerID) index) & TYPE_JOYCON_LEFT) {
+                        players[i].keys |= Input::Key::Start;
+                    } else if (hidGetControllerType((HidControllerID) index) & TYPE_JOYCON_RIGHT) {
+                        players[i].keys |= Input::Key::Select;
+                    }
+                }
+            }
         } else {
             // find all left/right single JoyCon pairs and join them together
             for (int id = 0; id < 8; id++) {
@@ -46,7 +58,7 @@ Input::Player *SWITCHInput::update(int rotate) {
         }
     }
 
-    return SDL2Input::update(rotate);
+    return players;
 }
 
 void SWITCHInput::setSingleJoyconMode(bool enable) {
