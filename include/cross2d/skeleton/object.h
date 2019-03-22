@@ -76,6 +76,9 @@ namespace c2d {
 
         virtual bool onInput(Input::Player *players);
 
+        // always called, even if the object is hidden
+        virtual void onUpdate();
+
         virtual void onDraw(Transform &transform, bool draw = true);
 
         Type type;

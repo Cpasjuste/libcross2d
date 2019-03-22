@@ -54,6 +54,14 @@ bool C2DObject::onInput(Input::Player *players) {
     return false;
 }
 
+void C2DObject::onUpdate() {
+    for (auto &child : childs) {
+        if (child) {
+            child->onUpdate();
+        }
+    }
+}
+
 void C2DObject::onDraw(Transform &transform, bool draw) {
 
     //printf("C2DObject(%p): draw\n", this);

@@ -45,6 +45,8 @@ void Renderer::flip(bool draw, bool inputs) {
         }
     }
 
+    onUpdate();
+
     // call base class (draw childs)
     if (draw) {
         Transform trans = getTransform();
