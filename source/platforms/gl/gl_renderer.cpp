@@ -29,14 +29,8 @@ void GLRenderer::initGL() {
 
     // vao
     GL_CHECK(glGenVertexArrays(1, &vao));
-    GL_CHECK(glBindVertexArray(vao));
-
     GL_CHECK(glDisable(GL_DEPTH_TEST));
     GL_CHECK(glDepthMask(GL_FALSE));
-
-    // enable position and color array by default
-    GL_CHECK(glEnableVertexAttribArray(0));
-    GL_CHECK(glEnableVertexAttribArray(1));
 
     // init shaders
     shaderList = (ShaderList *) new GLShaderList();
@@ -65,17 +59,20 @@ void GLRenderer::draw(VertexArray *vertexArray,
         shader = (GLShader *) glTexture->shader->data;
     }
 
-    // bind object vao
-    vertexArray->bind();
-
     // set shader
     GL_CHECK(glUseProgram(shader->GetProgram()));
+    // bind vao
+    GL_CHECK(glBindVertexArray(vao));
+    // bind vbo
+    vertexArray->bind();
 
     // set vertex position
+    GL_CHECK(glEnableVertexAttribArray(0));
     GL_CHECK(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                                    (void *) offsetof(Vertex, position)));
 
     // set vertex colors
+    GL_CHECK(glEnableVertexAttribArray(1));
     GL_CHECK(glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex),
                                    (void *) offsetof(Vertex, color)));
 
@@ -119,8 +116,6 @@ void GLRenderer::draw(VertexArray *vertexArray,
                    (int) outputSize.x, (int) outputSize.y);
 #endif
         }
-    } else {
-        GL_CHECK(glDisableVertexAttribArray(2));
     }
 
     //auto pMtx = glm::orthoLH(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
@@ -152,10 +147,21 @@ void GLRenderer::draw(VertexArray *vertexArray,
 
     if (glTexture || vertices[0].color.a < 255) {
         GL_CHECK(glDisable(GL_BLEND));
+        if (glTexture) {
+            GL_CHECK(glBindTexture(GL_TEXTURE_2D, 0));
+        }
     }
 
-    // unbind object vao
+    GL_CHECK(glDisableVertexAttribArray(0));
+    GL_CHECK(glDisableVertexAttribArray(1));
+    GL_CHECK(glDisableVertexAttribArray(2));
+
+    // unbind object vbo
     vertexArray->unbind();
+    // unbind object vao
+    glBindVertexArray(0);
+
+    GL_CHECK(glUseProgram(0));
 }
 
 void GLRenderer::clear() {
@@ -187,7 +193,7 @@ GLRenderer::~GLRenderer() {
         shaderList = nullptr;
     }
 
-    if (vao) {
+    if (glIsVertexArray(vao)) {
         GL_CHECK(glDeleteVertexArrays(1, &vao));
     }
 }

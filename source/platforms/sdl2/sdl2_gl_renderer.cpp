@@ -93,8 +93,6 @@ SDL2Renderer::~SDL2Renderer() {
 
     printf("~SDL2Renderer(GL)\n");
 
-    glFinish();
-
     if (context) {
         SDL_GL_DeleteContext(context);
     }

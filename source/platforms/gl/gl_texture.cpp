@@ -30,6 +30,7 @@ GLTexture::GLTexture(const std::string &p) : Texture(p) {
                  GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     if (texID) {
         setSize(w, h);
@@ -59,6 +60,7 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
     GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
     GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0,
                           GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     if (texID) {
         setSize(w, h);
@@ -107,6 +109,7 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
         setTexture(this, true);
+        glBindTexture(GL_TEXTURE_2D, 0);
         available = true;
     } else {
         printf("GLTexture(%p): couldn't create texture", this);
@@ -282,7 +285,7 @@ GLTexture::~GLTexture() {
         pixels = nullptr;
     }
 
-    if (texID) {
+    if (glIsTexture(texID) == GL_TRUE) {
         //printf("glDeleteTextures(%i)\n", texID);
         glDeleteTextures(1, &texID);
         texID = 0;

@@ -198,6 +198,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "cross2d/platforms/sdl2/sdl2_gl_renderer.h"
 #include "cross2d/platforms/gl/gl_shaders.h"
 #include "cross2d/platforms/gl/gl_texture.h"
+#include "cross2d/platforms/gl/gl_texture_buffer.h"
 
 #define C2DRenderer SDL2Renderer
 #define C2DTexture GLTexture
