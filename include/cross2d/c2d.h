@@ -137,8 +137,9 @@ extern c2d::Renderer *c2d_renderer;
 #include <switch.h>
 #include <glad/glad.h>
 #include "platforms/switch/switch_renderer.h"
-#include "platforms/gl/gl_texture.h"
 #include "platforms/gl/gl_shaders.h"
+#include "platforms/gl/gl_texture.h"
+#include "platforms/gl/gl_texture_buffer.h"
 #include "platforms/sdl2/sdl2_input.h"
 #include "platforms/sdl2/sdl2_audio.h"
 #include "platforms/switch/switch_io.h"
