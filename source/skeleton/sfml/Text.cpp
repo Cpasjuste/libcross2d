@@ -339,10 +339,11 @@ namespace c2d {
     void Text::setOrigin(const Origin &origin) {
 
         m_text_origin = origin;
+        float height = m_bounds.height > m_characterSize ? m_bounds.height : m_characterSize;
 
         switch (origin) {
             case Origin::Left:
-                Transformable::setOriginVector(0, (float) m_characterSize / 2);
+                Transformable::setOriginVector(0, height / 2);
                 break;
             case Origin::TopLeft:
                 Transformable::setOriginVector(0, 0);
@@ -354,19 +355,19 @@ namespace c2d {
                 Transformable::setOriginVector(m_bounds.width, 0);
                 break;
             case Origin::Right:
-                Transformable::setOriginVector(m_bounds.width, (float) m_characterSize / 2);
+                Transformable::setOriginVector(m_bounds.width, height / 2);
                 break;
             case Origin::BottomRight:
-                Transformable::setOriginVector(m_bounds.width, m_characterSize);
+                Transformable::setOriginVector(m_bounds.width, height);
                 break;
             case Origin::Bottom:
-                Transformable::setOriginVector(m_bounds.width / 2, m_characterSize);
+                Transformable::setOriginVector(m_bounds.width / 2, height);
                 break;
             case Origin::BottomLeft:
-                Transformable::setOriginVector(0, m_characterSize);
+                Transformable::setOriginVector(0, height);
                 break;
             case Origin::Center:
-                Transformable::setOriginVector(m_bounds.width / 2, (float) m_characterSize / 2);
+                Transformable::setOriginVector(m_bounds.width / 2, height / 2);
                 break;
             default:
                 break;
