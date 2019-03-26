@@ -81,8 +81,6 @@ namespace c2d {
             return std::vector<Io::File>();
         };
 
-    protected:
-
         static bool compare(const Io::File &a, const Io::File &b) {
             if (a.type == Type::Directory && b.type != Type::Directory) {
                 return true;
