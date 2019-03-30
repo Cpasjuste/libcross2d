@@ -60,6 +60,10 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Sprite::setTexture(Texture *texture, bool resetRect) {
+        if(!texture) {
+            return;
+        }
+
         // Recompute the texture area if requested, or if there was no valid texture & rect before
         if (resetRect || (!m_texture && (m_textureRect == IntRect())))
             setTextureRect(IntRect(0, 0, (int) texture->getSize().x, (int) texture->getSize().y));
@@ -73,9 +77,9 @@ namespace c2d {
     void Sprite::setTextureRect(const IntRect &rectangle) {
         if (rectangle != m_textureRect) {
             m_textureRect = rectangle;
-            if (m_texture) {
-                m_texture->setTextureRect(rectangle);
-            }
+            //if (m_texture) {
+            //    m_texture->setTextureRect(rectangle);
+            //}
             updatePositions();
             updateTexCoords();
             m_vertices.update();

@@ -33,9 +33,9 @@ GLTexture::GLTexture(const std::string &p) : Texture(p) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
     if (texID) {
+        pitch = w * bpp;
         setSize(w, h);
         setTexture(this, true);
-        pitch = w * bpp;
         available = true;
     } else {
         printf("GLTexture(%p): couldn't create texture: %s\n", this, path.c_str());
@@ -63,9 +63,9 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
     glBindTexture(GL_TEXTURE_2D, 0);
 
     if (texID) {
+        pitch = w * bpp;
         setSize(w, h);
         setTexture(this, true);
-        pitch = w * bpp;
         available = true;
     } else {
         printf("GLTexture(%p): couldn't create texture\n", this);
