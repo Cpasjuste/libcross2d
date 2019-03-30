@@ -63,6 +63,15 @@ namespace c2d {
         };
 
         ////////////////////////////////////////////////////////////
+        /// \brief Enumeration of the string overflow setting
+        ///
+        ////////////////////////////////////////////////////////////
+        enum Overflow {
+            Clamp = 0,  ///< Cut text if width is wider than maxWitdh
+            NewLine = 1
+        };
+
+        ////////////////////////////////////////////////////////////
         /// \brief Default constructor
         ///
         /// Creates an empty text.
@@ -157,6 +166,8 @@ namespace c2d {
         ///
         ////////////////////////////////////////////////////////////
         void setStyle(uint32_t style);
+
+        void setOverflow(uint32_t overflow);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the fill color of the text
@@ -256,6 +267,8 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         uint32_t getStyle() const;
 
+        uint32_t getOverflow() const;
+
         ////////////////////////////////////////////////////////////
         /// \brief Get the fill color of the text
         ///
@@ -335,7 +348,9 @@ namespace c2d {
 
         Origin getOrigin() const;
 
-        void setWidth(float width);
+        void setSizeMax(float width, float height);
+
+        void setSizeMax(const Vector2f &size);
 
         void setLineSpacingModifier(int size);
 
@@ -365,6 +380,7 @@ namespace c2d {
         const c2d::Font *m_font;               ///< Font used to display the string
         unsigned int m_characterSize;      ///< Base size of characters, in pixels
         uint32_t m_style;              ///< Text style (see Style enum)
+        uint32_t m_overflow;              ///< Text style (see Style enum)
         c2d::Color m_fillColor;          ///< Text fill color
         c2d::Color m_outlineColor;       ///< Text outline color
         float m_outlineThickness;   ///< Thickness of the text's outline

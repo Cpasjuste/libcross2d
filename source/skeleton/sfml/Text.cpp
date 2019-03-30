@@ -26,7 +26,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cmath>
-
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -95,6 +94,7 @@ namespace c2d {
             m_font(c2d_renderer->getFont()),
             m_characterSize(C2D_DEFAULT_CHAR_SIZE),
             m_style(Regular),
+            m_overflow(Clamp),
             m_fillColor(255, 255, 255),
             m_outlineColor(0, 0, 0),
             m_outlineThickness(0),
@@ -112,6 +112,7 @@ namespace c2d {
             m_font(font),
             m_characterSize(characterSize),
             m_style(Regular),
+            m_overflow(Clamp),
             m_fillColor(255, 255, 255),
             m_outlineColor(0, 0, 0),
             m_outlineThickness(0),
@@ -161,6 +162,13 @@ namespace c2d {
     void Text::setStyle(uint32_t style) {
         if (m_style != style) {
             m_style = style;
+            m_geometryNeedUpdate = true;
+        }
+    }
+
+    void Text::setOverflow(uint32_t overflow) {
+        if (m_overflow != overflow) {
+            m_overflow = overflow;
             m_geometryNeedUpdate = true;
         }
     }
@@ -248,6 +256,10 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     uint32_t Text::getStyle() const {
         return m_style;
+    }
+
+    uint32_t Text::getOverflow() const {
+        return m_overflow;
     }
 
 ////////////////////////////////////////////////////////////
@@ -380,8 +392,14 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
 
-    void Text::setWidth(float width) {
+    void Text::setSizeMax(const Vector2f &size) {
+        maxSize = size;
+        m_geometryNeedUpdate = true;
+    }
+
+    void Text::setSizeMax(float width, float height) {
         maxSize.x = width;
+        maxSize.y = height;
         m_geometryNeedUpdate = true;
     }
 
@@ -462,23 +480,33 @@ namespace c2d {
         uint32_t prevChar = 0;
         for (std::size_t i = 0; i < m_string.length(); ++i) {
 
-            uint32_t curChar = m_string[i];
+            auto curChar = (uint32_t) m_string[i];
+
+            // handle maxSize.y
+            if (maxSize.y > 0 && (y * getScale().y) > maxSize.y + 1) {
+                break;
+            }
 
             // Apply the kerning offset
             x += m_font->getKerning(prevChar, curChar, m_characterSize);
             prevChar = curChar;
 
-            // handle maxSize.x // TODO: handle maxSize.y ?
+            // handle maxSize.x
             if (maxSize.x > 0 && ((x + m_characterSize) * getScale().x > maxSize.x)) {
-                while (i < m_string.length()) {
-                    curChar = m_string[i];
-                    if (curChar == '\n') {
+                if (m_overflow == Clamp) {
+                    while (i < m_string.length()) {
+                        curChar = (uint32_t) m_string[i];
+                        if (curChar == '\n') {
+                            break;
+                        }
+                        i++;
+                    }
+                    if (i >= m_string.length()) {
                         break;
                     }
-                    i++;
-                }
-                if (i >= m_string.length()) {
-                    break;
+                } else {
+                    y += vspace;
+                    x = 0;
                 }
             }
 
