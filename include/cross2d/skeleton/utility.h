@@ -15,6 +15,8 @@ namespace c2d {
 
         static std::string toLower(const std::string &str);
 
+        static std::string toUpper(const std::string &str);
+
         static bool startWith(const std::string &str, const std::string &value, bool sensitive = true);
 
         static bool endsWith(const std::string &value, const std::string &ending, bool sensitive = true);

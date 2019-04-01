@@ -115,7 +115,7 @@ namespace c2d {
         /// \see getString
         ///
         ////////////////////////////////////////////////////////////
-        void setString(const std::string &string);
+        virtual void setString(const std::string &string);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the text's font

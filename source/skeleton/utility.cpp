@@ -13,6 +13,13 @@ std::string Utility::toLower(const std::string &str) {
     return ret;
 }
 
+std::string Utility::toUpper(const std::string &str) {
+    std::string ret = str;
+    std::transform(ret.begin(), ret.end(), ret.begin(),
+                   [](unsigned char c) { return std::toupper(c); });
+    return ret;
+}
+
 bool Utility::startWith(const std::string &str, const std::string &value, bool sensitive) {
     if (sensitive) {
         return str.compare(0, value.length(), value) == 0;
