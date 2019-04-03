@@ -132,7 +132,7 @@ namespace c2d {
         /// \see getFont
         ///
         ////////////////////////////////////////////////////////////
-        void setFont(const c2d::Font &font);
+        void setFont(c2d::Font *font);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the character size
@@ -245,7 +245,7 @@ namespace c2d {
         /// \see setFont
         ///
         ////////////////////////////////////////////////////////////
-        const c2d::Font *getFont() const;
+        c2d::Font *getFont();
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the character size
@@ -377,7 +377,7 @@ namespace c2d {
         // Member data
         ////////////////////////////////////////////////////////////
         std::string m_string;             ///< String to display
-        const c2d::Font *m_font;               ///< Font used to display the string
+        c2d::Font *m_font;               ///< Font used to display the string
         unsigned int m_characterSize;      ///< Base size of characters, in pixels
         uint32_t m_style;              ///< Text style (see Style enum)
         uint32_t m_overflow;              ///< Text style (see Style enum)

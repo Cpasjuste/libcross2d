@@ -36,9 +36,7 @@ void GLRenderer::initGL() {
     shaderList = (ShaderList *) new GLShaderList();
 }
 
-void GLRenderer::draw(VertexArray *vertexArray,
-                      const Transform &transform,
-                      const Texture *texture) {
+void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {
 
     Vertex *vertices;
     size_t vertexCount;
@@ -52,7 +50,7 @@ void GLRenderer::draw(VertexArray *vertexArray,
 
     vertices = vertexArray->getVertices()->data();
     vertexCount = vertexArray->getVertexCount();
-    glTexture = ((GLTexture *) texture);
+    glTexture = texture ? ((GLTexture *) texture) : nullptr;
     shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(0)->data :
              (GLShader *) ((GLShaderList *) shaderList)->color->data;
     if (glTexture && glTexture->shader) {

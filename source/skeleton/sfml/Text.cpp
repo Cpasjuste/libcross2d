@@ -141,9 +141,9 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    void Text::setFont(const Font &font) {
-        if (m_font != &font) {
-            m_font = &font;
+    void Text::setFont(Font *font) {
+        if (m_font != font) {
+            m_font = font;
             m_geometryNeedUpdate = true;
         }
     }
@@ -242,7 +242,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    const Font *Text::getFont() const {
+    Font *Text::getFont() {
         return m_font;
     }
 
@@ -419,9 +419,9 @@ namespace c2d {
         if (draw) {
             Transform combined = transform * getTransform();
             if (getOutlineThickness() > 0) {
-                c2d_renderer->draw(&m_outlineVertices, combined, &getFont()->getTexture(getCharacterSize()));
+                c2d_renderer->draw(&m_outlineVertices, combined, getFont()->getTexture(getCharacterSize()));
             }
-            c2d_renderer->draw(&m_vertices, combined, &getFont()->getTexture(getCharacterSize()));
+            c2d_renderer->draw(&m_vertices, combined, getFont()->getTexture(getCharacterSize()));
         }
         C2DObject::onDraw(transform, draw);
     }

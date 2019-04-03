@@ -7,8 +7,6 @@
 
 #include "cross2d/skeleton/renderer.h"
 
-#define MAX_VERTEX 0x10000
-
 namespace c2d {
 
     class GLRenderer : public Renderer {
@@ -21,9 +19,7 @@ namespace c2d {
 
         virtual void initGL();
 
-        void draw(VertexArray *vertexArray,
-                  const Transform &transform,
-                  const Texture *texture) override;
+        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
 
         void clear() override;
 

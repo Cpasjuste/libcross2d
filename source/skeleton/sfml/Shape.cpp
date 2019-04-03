@@ -72,7 +72,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void Shape::setTextureRect(const IntRect &rect) {
         if (m_texture) {
-            // TOOD: verify this
+            // TODO: verify this
             //printf("%i, %i\n",  m_texture->pitch, m_texture->bpp);
             m_texture->pitch = rect.width * m_texture->bpp;
         }
@@ -107,9 +107,7 @@ namespace c2d {
             m_shape_dirty = true;
         }
 
-        if (recursive) {
-            C2DObject::setAlpha(alpha, recursive);
-        }
+        C2DObject::setAlpha(alpha, recursive);
     }
 
     uint8_t Shape::getAlpha() {

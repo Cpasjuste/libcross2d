@@ -230,7 +230,7 @@ namespace c2d {
         /// \return Texture containing the glyphs of the requested size
         ///
         ////////////////////////////////////////////////////////////
-        const Texture &getTexture(unsigned int characterSize) const;
+        Texture *getTexture(unsigned int characterSize);
 
         void setFilter(Texture::Filter filter);
 

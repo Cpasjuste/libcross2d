@@ -193,7 +193,7 @@ namespace c2d {
 
         Origin getOrigin() const;
 
-        virtual void setAlpha(uint8_t alpha, bool recursive = false);
+        void setAlpha(uint8_t alpha, bool recursive = false) override;
 
         virtual uint8_t getAlpha();
 

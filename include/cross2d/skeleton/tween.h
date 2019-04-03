@@ -71,7 +71,7 @@ namespace c2d {
         TweenType type;
         TweenLoop loop;
         TweenDirection direction = TweenDirection::Current;
-        TweenState state = TweenState::Playing;
+        TweenState state = TweenState::Stopped;
         tweeny::tween<float, float, float, float> tween;
         float from[4];
         float to[4];
@@ -210,18 +210,18 @@ namespace c2d {
 
         TweenAlpha(
                 float from, float to,
-                float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
+                float duration, TweenLoop loop = TweenLoop::None) : Tween(from / 255, to / 255, duration, loop) {
             this->type = TweenType::Alpha;
         }
 
         void setFromTo(float from, float to, float duration = 0);
 
         float getFrom() {
-            return from[0];
+            return from[0] * 255;
         }
 
         float getTo() {
-            return to[0];
+            return to[0] * 255;
         }
     };
 }

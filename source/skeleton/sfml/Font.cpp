@@ -294,8 +294,8 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    const Texture &Font::getTexture(unsigned int characterSize) const {
-        return *m_pages[characterSize].texture;
+    Texture *Font::getTexture(unsigned int characterSize) {
+        return m_pages[characterSize].texture;
     }
 
     void Font::setFilter(Texture::Filter filter) {

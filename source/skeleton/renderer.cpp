@@ -27,10 +27,6 @@ Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
     font->loadDefault();
 }
 
-bool Renderer::onInput(Input::Player *players) {
-    return C2DObject::onInput(players);
-}
-
 void Renderer::flip(bool draw, bool inputs) {
 
     // update inputs

@@ -32,9 +32,7 @@ namespace c2d {
 
         ~Renderer() override;
 
-        virtual void draw(VertexArray *vertexArray,
-                          const Transform &transform,
-                          const Texture *texture) {};
+        virtual void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {};
 
         virtual void clear() {};
 
@@ -63,8 +61,6 @@ namespace c2d {
         virtual Input *getInput() { return input; };
 
     protected:
-
-        bool onInput(Input::Player *players) override;
 
         Color m_clearColor = Color::Black;
         Input *input = nullptr;

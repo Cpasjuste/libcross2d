@@ -27,7 +27,7 @@ namespace c2d {
     };
 
     enum class Type : int {
-        Shape, Texture, Text
+        Shape, Texture, Text, Sprite
     };
 
     class C2DObject {

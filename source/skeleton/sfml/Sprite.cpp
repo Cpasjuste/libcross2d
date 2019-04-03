@@ -36,6 +36,7 @@ namespace c2d {
             m_vertices(TriangleStrip, 4),
             m_texture(nullptr),
             m_textureRect() {
+        type = Type::Sprite;
     }
 
 
@@ -44,6 +45,7 @@ namespace c2d {
             m_vertices(TriangleStrip, 4),
             m_texture(nullptr),
             m_textureRect() {
+        type = Type::Sprite;
         setTexture(texture);
     }
 
@@ -53,6 +55,7 @@ namespace c2d {
             m_vertices(TriangleStrip, 4),
             m_texture(nullptr),
             m_textureRect() {
+        type = Type::Sprite;
         setTexture(texture);
         setTextureRect(rectangle);
     }
@@ -60,16 +63,17 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Sprite::setTexture(Texture *texture, bool resetRect) {
-        if(!texture) {
-            return;
-        }
 
-        // Recompute the texture area if requested, or if there was no valid texture & rect before
-        if (resetRect || (!m_texture && (m_textureRect == IntRect())))
-            setTextureRect(IntRect(0, 0, (int) texture->getSize().x, (int) texture->getSize().y));
-
-        // Assign the new texture
         m_texture = texture;
+
+        if (!texture) {
+            setTextureRect({0, 0, 0, 0});
+        } else {
+            // Recompute the texture area if requested, or if there was no valid texture & rect before
+            if (resetRect || (!m_texture && (m_textureRect == IntRect()))) {
+                setTextureRect(IntRect(0, 0, (int) texture->getSize().x, (int) texture->getSize().y));
+            }
+        }
     }
 
 

@@ -99,7 +99,7 @@ void TweenColor::setFromTo(const Color &from, const Color &to, float duration) {
 }
 
 void TweenAlpha::setFromTo(float from, float to, float duration) {
-    tween = tweeny::from(from, 0.0f, 0.0f, 0.0f).to(to, 0.0f, 0.0f, 0.0f)
+    tween = tweeny::from(from / 255, 0.0f, 0.0f, 0.0f).to(to / 255, 0.0f, 0.0f, 0.0f)
             .during(duration > 0 ? duration * 1000 : tween.duration());
     this->from[0] = from;
     this->to[0] = to;
@@ -119,10 +119,10 @@ void Tween::setTransform(c2d::Transformable *t) {
     transform = t;
 }
 
-void Tween::play(TweenDirection direction, bool _reset) {
+void Tween::play(TweenDirection dir, bool _reset) {
 
-    if (direction != TweenDirection::Current) {
-        setDirection(direction);
+    if (dir != TweenDirection::Current) {
+        setDirection(dir);
     }
 
     if (_reset) {
@@ -142,19 +142,19 @@ void Tween::reset() {
 
 TweenState Tween::getState() const {
     return state;
-};
+}
 
-void Tween::setState(TweenState state) {
-    this->state = state;
-};
+void Tween::setState(TweenState st) {
+    state = st;
+}
 
 TweenDirection Tween::getDirection() const {
     return direction;
-};
+}
 
-void Tween::setDirection(TweenDirection direction) {
+void Tween::setDirection(TweenDirection dir) {
 
-    this->direction = direction;
+    direction = dir;
 
     if (direction == TweenDirection::Backward) {
         tween.backward();
@@ -215,13 +215,17 @@ void Tween::step() {
                        (uint8_t) (float4[2] * 255.0f), (uint8_t) (float4[3] * 255.0f)};
         if (object->getType() == Type::Text) {
             ((Text *) transform)->setFillColor(color);
+        } else if (object->getType() == Type::Sprite) {
+            ((Sprite *) transform)->setColor(color);
         } else {
             ((Shape *) transform)->setFillColor(color);
         }
     } else if (type == TweenType::Alpha) {
-        auto alpha = (uint8_t) (float4[0]);
+        auto alpha = (uint8_t) (float4[0] * 255);
         if (object->getType() == Type::Text) {
             ((Text *) transform)->setAlpha(alpha, true);
+        } else if (object->getType() == Type::Sprite) {
+            ((Sprite *) transform)->setAlpha(alpha, true);
         } else {
             ((Shape *) transform)->setAlpha(alpha, true);
         }
