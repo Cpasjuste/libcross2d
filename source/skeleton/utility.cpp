@@ -2,6 +2,8 @@
 // Created by cpasjuste on 22/06/18.
 //
 
+#include <cross2d/skeleton/utility.h>
+
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -18,6 +20,28 @@ std::string Utility::toUpper(const std::string &str) {
     std::transform(ret.begin(), ret.end(), ret.begin(),
                    [](unsigned char c) { return std::toupper(c); });
     return ret;
+}
+
+std::vector<std::string> Utility::split(const std::string &str, const std::string &token) {
+
+    std::vector<std::string> result;
+    std::string s = str;
+
+    while (!s.empty()) {
+        size_t index = s.find(token);
+        if (index != std::string::npos) {
+            result.push_back(s.substr(0, index));
+            s = s.substr(index + token.size());
+            if (s.empty()) {
+                result.push_back(s);
+            }
+        } else {
+            result.push_back(s);
+            s = "";
+        }
+    }
+
+    return result;
 }
 
 bool Utility::startWith(const std::string &str, const std::string &value, bool sensitive) {
