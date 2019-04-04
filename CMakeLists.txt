@@ -40,6 +40,7 @@ if (BUILD_VITA)
     #####################
     set(TITLE_ID CROSS0001)
     set(PLATFORM_DIRS
+            source/skeleton/libconfig
             source/platforms/posix
             source/platforms/psp2
             source/platforms/psp2/vita-shader-collection/includes

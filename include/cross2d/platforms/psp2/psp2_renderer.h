@@ -13,17 +13,15 @@ namespace c2d {
 
     public:
 
-        PSP2Renderer(const Vector2f &size = Vector2f(0, 0));
+        explicit PSP2Renderer(const Vector2f &size = Vector2f(0, 0));
 
-        ~PSP2Renderer();
+        ~PSP2Renderer() override;
 
-        void draw(VertexArray *vertexArray,
-                  const Transform &transform,
-                  const Texture *texture);
+        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
 
-        void flip(bool draw = true, bool inputs = true);
+        void flip(bool draw = true, bool inputs = true) override;
 
-        void delay(unsigned int ms);
+        void delay(unsigned int ms) override;
     };
 }
 

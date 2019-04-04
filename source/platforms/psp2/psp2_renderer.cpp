@@ -37,9 +37,7 @@ PSP2Renderer::PSP2Renderer(const Vector2f &size) : Renderer(size) {
     shaderList = (ShaderList *) new PSP2ShaderList("");
 }
 
-void PSP2Renderer::draw(VertexArray *vertexArray,
-                        const Transform &transform,
-                        const Texture *texture) {
+void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {
 
     Vertex *vertices;
     size_t vertexCount;
