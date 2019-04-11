@@ -30,10 +30,10 @@ ListBoxLine::ListBoxLine(
         // icon added in ListBox::setSelection (setIcon)
         // set text
         text->setPosition(iconRect->getSize().x + 8, getSize().y / 2);
-        text->setSizeMax(getSize().x - 8 - iconRect->getSize().x, 0);
+        text->setSizeMax(getSize().x - fontSize - iconRect->getSize().x, 0);
     } else {
         text->setPosition(8, getSize().y / 2);
-        text->setSizeMax(getSize().x - 8, 0);
+        text->setSizeMax(getSize().x - fontSize, 0);
     }
 
     add(text);
