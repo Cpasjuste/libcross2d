@@ -33,7 +33,7 @@ ListBoxLine::ListBoxLine(
         text->setSizeMax(getSize().x - fontSize - iconRect->getSize().x, 0);
     } else {
         text->setPosition(8, getSize().y / 2);
-        text->setSizeMax(getSize().x - fontSize, 0);
+        text->setSizeMax(getSize().x - (fontSize + 8), 0);
     }
 
     add(text);
