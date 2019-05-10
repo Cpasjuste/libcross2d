@@ -35,9 +35,9 @@ namespace c2d {
         };
 
         enum class Module {
-            Cpu = PcvModule_Cpu,
-            Gpu = PcvModule_Gpu,
-            Emc = PcvModule_Emc
+            Cpu = PcvModule_CpuBus,
+            Gpu = PcvModule_GPU,
+            Emc = PcvModule_EMC
         };
 
         static int getClock(const Module &module);

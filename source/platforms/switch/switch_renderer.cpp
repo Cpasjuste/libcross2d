@@ -25,6 +25,8 @@ SWITCHRenderer::SWITCHRenderer(const Vector2f &size) : SDL2Renderer(size) {
     initNxLink();
 #endif
 
+    romfsInit();
+
     if (R_SUCCEEDED(pcvInitialize())) {
         switch_stock_cpu_clock = SwitchSys::getClock(SwitchSys::Module::Cpu);
         switch_stock_gpu_clock = SwitchSys::getClock(SwitchSys::Module::Gpu);
@@ -60,6 +62,8 @@ SWITCHRenderer::~SWITCHRenderer() {
     }
 
     pcvExit();
+
+    romfsExit();
 
 #ifdef __NET_DEBUG__
     deinitNxLink();

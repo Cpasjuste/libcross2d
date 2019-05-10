@@ -51,14 +51,19 @@ int main(int argc, char **argv) {
             {renderer->getSize().x / 2 - (256 * scaling), rect->getPosition().y},
             {renderer->getSize().x / 2 + (256 * scaling), rect->getPosition().y},
             4.0f, TweenLoop::PingPong);
+    tweenPos->play();
     rect->add(tweenPos);
     auto *tweenRot = new TweenRotation(0, 360, 5.0f, TweenLoop::PingPong);
+    tweenRot->play();
     rect->add(tweenRot);
     auto *tweenScale = new TweenScale(rect->getScale(), {2.0f, 2.0f}, 3.0f, TweenLoop::PingPong);
+    tweenScale->play();
     rect->add(tweenScale);
     auto *tweenColor = new TweenColor(rect->getFillColor(), Color(0x9bc4e2ff), 3.0f, TweenLoop::PingPong);
+    tweenColor->play();
     rect->add(tweenColor);
     auto *tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
+    tweenAlpha->play();
     rect->add(tweenAlpha);
 
     while (true) {
@@ -69,9 +74,9 @@ int main(int argc, char **argv) {
         }
 
         // time / delta time
-        float delta = renderer->getDeltaTime().asSeconds();
-        printf("Time: %f (delta: %f), fps: %2g\n",
-               renderer->getElapsedTime().asSeconds(), delta, renderer->getFps());
+        //float delta = renderer->getDeltaTime().asSeconds();
+        //printf("Time: %f (delta: %f), fps: %2g\n",
+        //       renderer->getElapsedTime().asSeconds(), delta, renderer->getFps());
 
         // renderer everything
         renderer->flip();

@@ -14,14 +14,6 @@ namespace c2d {
 
     public:
 
-        NXIo() {
-            romfsInit();
-        };
-
-        ~NXIo() override {
-            romfsExit();
-        }
-
         std::string getDataReadPath() const override {
             return "romfs:/";
         }
