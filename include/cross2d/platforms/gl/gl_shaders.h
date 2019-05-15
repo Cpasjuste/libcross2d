@@ -36,7 +36,7 @@ namespace c2d {
         int getScaleType();
 
     private:
-        GLuint program;
+        GLuint program = -1;
         int scale_type = 0;
         bool available = false;
 

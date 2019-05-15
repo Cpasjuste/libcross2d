@@ -104,7 +104,6 @@ void GLShader::SetUniform(const GLchar *n, int v) {
 }
 
 GLuint GLShader::GetProgram() {
-
     return program;
 }
 
