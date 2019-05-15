@@ -86,7 +86,7 @@ void SDL2Audio::play(const void *data, int len, bool sync) {
             // Clear the audio queue arbitrarily to avoid it backing up too far
             if (SDL_GetQueuedAudioSize(deviceID) > (size_t) (len * 5)) {
                 printf("SDL2Audio::play: queue is full (buffer len = %i, queued = %i)\n",
-                       len, (size_t) SDL_GetQueuedAudioSize(deviceID));
+                       len, SDL_GetQueuedAudioSize(deviceID));
                 SDL_ClearQueuedAudio(deviceID);
             }
         }
