@@ -22,6 +22,10 @@ SDL2Audio::SDL2Audio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps
     wanted.callback = cb;
     wanted.userdata = nullptr;
 
+#ifdef __WINDOWS__
+	SDL_setenv("SDL_AUDIODRIVER", "directsound", true);
+#endif
+
     if (!SDL_WasInit(SDL_INIT_AUDIO)) {
         if (SDL_InitSubSystem(SDL_INIT_AUDIO)) {
             printf("SDL2Audio: Initialize failed: %s.\n", SDL_GetError());
