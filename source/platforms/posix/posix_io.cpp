@@ -15,8 +15,7 @@
 
 using namespace c2d;
 
-std::string POSIXIo::getDataWritePath() const {
-
+std::string POSIXIo::getHomePath() const {
 #ifndef __PSP2__
     char buf[1024];
     if (getcwd(buf, sizeof(buf))) {
@@ -30,12 +29,17 @@ std::string POSIXIo::getDataWritePath() const {
         return str;
     }
 #endif
-    return Io::getDataWritePath();
+    return Io::getHomePath();
+}
+
+// for posix platforms (windows, linux),
+// both ro (read only) and rw (read write) data are merged in the same folder (data)
+std::string POSIXIo::getDataWritePath() const {
+    return getHomePath() + "data/";
 }
 
 std::string POSIXIo::getDataReadPath() const {
-
-    return getDataWritePath() + "data/";
+    return getHomePath() + "data/";
 }
 
 bool POSIXIo::exist(const std::string &path) {

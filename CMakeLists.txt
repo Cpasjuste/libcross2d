@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 
 # delete cmake cache folder before changing this options
 option(BUILD_LINUX "Build with SDL2 support" OFF)
-option(BUILD_WINDOWS "Build with Windows support (msys/mingw64)" OFF)
+option(BUILD_WINDOWS "Build with Windows support (msys/mingw64)" ON)
 option(BUILD_VITA "Build with Ps Vita support (hardware rendering, fast)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
@@ -17,6 +17,9 @@ endif ()
 set(CMAKE_TOOLCHAIN_FILE Toolchain.cmake)
 
 project(cross2d)
+
+# export tools
+set(ZIP zip CACHE STRING "zip executable path")
 
 # flags
 set(FLAGS -Wall -DLIBCONFIG_STATIC)
@@ -163,6 +166,7 @@ elseif (BUILD_LINUX)
         find_package(GLEW REQUIRED)
         list(APPEND PLATFORM_LIBS ${GLEW_LIBRARIES})
         list(APPEND FLAGS -D__WINDOWS__)
+        set(ZIP ${CMAKE_CURRENT_SOURCE_DIR}/tools/zip.exe CACHE STRING "zip executable path" FORCE)
     endif (BUILD_WINDOWS)
 endif ()
 
@@ -177,13 +181,14 @@ target_compile_options(${PROJECT_NAME} PUBLIC ${FLAGS} -Wno-narrowing)
 #####################
 # test executable
 #####################
+project(cross2d_test)
 set(PROJECT_AUTHOR "Cpasjuste")
 set(VERSION_MAJOR "1")
 set(VERSION_MINOR "0")
 # ps vita
 set(TITLE_ID "CROSS0001")
-add_executable(${PROJECT_NAME}.elf test/main.cpp)
-target_link_libraries(${PROJECT_NAME}.elf cross2d)
+add_executable(${PROJECT_NAME} test/main.cpp)
+target_link_libraries(${PROJECT_NAME} cross2d)
 
 #############
 # targets

@@ -50,15 +50,21 @@ namespace c2d {
         virtual ~Io() = default;
 
         ///
+        /// \return home path
+        virtual std::string getHomePath() const {
+            return "./";
+        }
+
+        ///
         /// \return read only data path
         virtual std::string getDataReadPath() const {
             return "./data/";
         }
 
         ///
-        /// \return read/write data path
+        /// \return read write data path
         virtual std::string getDataWritePath() const {
-            return "./";
+            return "./data/";
         }
 
         virtual bool exist(const std::string &path) {
