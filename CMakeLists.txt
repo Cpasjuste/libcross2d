@@ -3,18 +3,19 @@ cmake_minimum_required(VERSION 3.0)
 
 # delete cmake cache folder before changing this options
 option(BUILD_LINUX "Build with SDL2 support" OFF)
-option(BUILD_WINDOWS "Build with Windows support (msys/mingw64)" ON)
+option(BUILD_WINDOWS "Build with Windows support (msys/mingw64)" OFF)
+option(BUILD_SWITCH "Build with Nintendo Switch support" OFF)
+option(BUILD_3DS "Build with 3DS support" OFF)
 option(BUILD_VITA "Build with Ps Vita support (hardware rendering, fast)" OFF)
 option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
-option(BUILD_3DS "Build with 3DS support" OFF)
-option(BUILD_SWITCH "Build with Nintendo Switch support" OFF)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
 endif ()
 
 # setup toolchain
-set(CMAKE_TOOLCHAIN_FILE Toolchain.cmake)
+# set(CMAKE_TOOLCHAIN_FILE Toolchain.cmake)
+include(Toolchain.cmake)
 
 project(cross2d)
 

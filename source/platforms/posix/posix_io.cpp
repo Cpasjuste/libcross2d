@@ -32,16 +32,6 @@ std::string POSIXIo::getHomePath() const {
     return Io::getHomePath();
 }
 
-// for posix platforms (windows, linux),
-// both ro (read only) and rw (read write) data are merged in the same folder (data)
-std::string POSIXIo::getDataWritePath() const {
-    return getHomePath() + "data/";
-}
-
-std::string POSIXIo::getDataReadPath() const {
-    return getHomePath() + "data/";
-}
-
 bool POSIXIo::exist(const std::string &path) {
     if (path.empty()) {
         return false;
