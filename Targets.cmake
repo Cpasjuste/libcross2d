@@ -5,7 +5,6 @@ cmake_minimum_required(VERSION 3.0)
 # Copy data to binary directory (common to all platforms)
 ###########################################################
 add_custom_target(${PROJECT_NAME}.data
-        DEPENDS ${PROJECT_NAME}
         # copy source data to binary directory for program execution from cmake build directory
         # on linux and windows, both ro (read only) and rw (read write) data are merged together
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/common/read_only ${CMAKE_CURRENT_BINARY_DIR}
@@ -15,7 +14,7 @@ add_custom_target(${PROJECT_NAME}.data
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/common/read_only ${CMAKE_CURRENT_BINARY_DIR}/data_read_only
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/common/read_write ${CMAKE_CURRENT_BINARY_DIR}/data_read_write
         )
-#add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}.data)
+add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}.data)
 
 ########################
 # Linux/Win64 targets
