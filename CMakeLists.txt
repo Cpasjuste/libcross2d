@@ -169,7 +169,7 @@ elseif (BUILD_LINUX)
         list(APPEND PLATFORM_LIBS ${GLEW_LIBRARIES} harfbuzz graphite2 rpcrt4 dwrite bz2 png z
                 ole32 oleaut32 imm32 winmm version setupapi gdi32 opengl32 -static)
         list(APPEND FLAGS -D__WINDOWS__ -DGLEW_STATIC=1)
-        set(ZIP ${CMAKE_CURRENT_SOURCE_DIR}/tools/zip.exe CACHE STRING "zip executable path" FORCE)
+        set(ZIP "/msys64/usr/bin/zip" CACHE STRING "zip executable path" FORCE)
     endif (BUILD_WINDOWS)
 endif ()
 
