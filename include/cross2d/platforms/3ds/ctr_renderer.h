@@ -14,13 +14,11 @@ namespace c2d {
 
     public:
 
-        CTRRenderer(const Vector2f &size = Vector2f(0, 0));
+        explicit CTRRenderer(const Vector2f &size = Vector2f(0, 0));
 
-        ~CTRRenderer();
+        ~CTRRenderer() override;
 
-        void draw(VertexArray *vertexArray,
-                  const Transform &transform,
-                  const Texture *texture) override;
+        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
 
         void clear() override;
 

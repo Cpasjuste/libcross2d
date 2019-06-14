@@ -122,16 +122,14 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     available = true;
 }
 
-void CTRRenderer::draw(VertexArray *vertexArray,
-                       const Transform &transform,
-                       const Texture *texture) {
+void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {
 
     if (!vertexArray || vertexArray->getVertexCount() < 1) {
         //printf("ctr_renderer::draw: no vertices\n");
         return;
     }
 
-    Vertex *vertices = vertexArray->getVertices().data();
+    Vertex *vertices = vertexArray->getVertices()->data();
     size_t vertexCount = vertexArray->getVertexCount();
 
     GPU_Primitive_t type;

@@ -8,18 +8,18 @@
 using namespace c2d;
 
 static int key_id[KEY_COUNT]{
-        Input::Key::KEY_UP,
-        Input::Key::KEY_DOWN,
-        Input::Key::KEY_LEFT,
-        Input::Key::KEY_RIGHT,
-        Input::Key::KEY_COIN,
-        Input::Key::KEY_START,
-        Input::Key::KEY_FIRE1,
-        Input::Key::KEY_FIRE2,
-        Input::Key::KEY_FIRE3,
-        Input::Key::KEY_FIRE4,
-        Input::Key::KEY_FIRE5,
-        Input::Key::KEY_FIRE6
+        Input::Key::Up,
+        Input::Key::Down,
+        Input::Key::Left,
+        Input::Key::Right,
+        Input::Key::Select,
+        Input::Key::Start,
+        Input::Key::Fire1,
+        Input::Key::Fire2,
+        Input::Key::Fire3,
+        Input::Key::Fire4,
+        Input::Key::Fire5,
+        Input::Key::Fire6
 };
 
 CTRInput::CTRInput() : Input() {
@@ -49,12 +49,12 @@ int CTRInput::waitButton(int player) {
 Input::Player *CTRInput::update(int rotate) {
 
     for (auto &player : players) {
-        player.state = 0;
+        player.keys = 0;
     }
 
 
     if (!aptMainLoop()) {
-        players[0].state |= EV_QUIT;
+        players[0].keys |= EV_QUIT;
         return players;
     }
 
@@ -83,32 +83,32 @@ void CTRInput::process_buttons(Input::Player &player, int rotate) {
             mapping = 0;
 
         if (held & BIT(mapping)) {
-            if (rotate && key_id[i] == Input::Key::KEY_UP) {
+            if (rotate && key_id[i] == Input::Key::Up) {
                 if (rotate == 1) {
-                    player.state |= Input::Key::KEY_RIGHT;
+                    player.keys |= Input::Key::Right;
                 } else if (rotate == 3) {
-                    player.state |= Input::Key::KEY_LEFT;
+                    player.keys |= Input::Key::Left;
                 }
-            } else if (rotate && key_id[i] == Input::Key::KEY_DOWN) {
+            } else if (rotate && key_id[i] == Input::Key::Down) {
                 if (rotate == 1) {
-                    player.state |= Input::Key::KEY_LEFT;
+                    player.keys |= Input::Key::Left;
                 } else if (rotate == 3) {
-                    player.state |= Input::Key::KEY_RIGHT;
+                    player.keys |= Input::Key::Right;
                 }
-            } else if (rotate && key_id[i] == Input::Key::KEY_LEFT) {
+            } else if (rotate && key_id[i] == Input::Key::Left) {
                 if (rotate == 1) {
-                    player.state |= Input::Key::KEY_UP;
+                    player.keys |= Input::Key::Up;
                 } else if (rotate == 3) {
-                    player.state |= Input::Key::KEY_DOWN;
+                    player.keys |= Input::Key::Down;
                 }
-            } else if (rotate && key_id[i] == Input::Key::KEY_RIGHT) {
+            } else if (rotate && key_id[i] == Input::Key::Right) {
                 if (rotate == 1) {
-                    player.state |= Input::Key::KEY_DOWN;
+                    player.keys |= Input::Key::Down;
                 } else if (rotate == 3) {
-                    player.state |= Input::Key::KEY_UP;
+                    player.keys |= Input::Key::Up;
                 }
             } else {
-                player.state |= key_id[i];
+                player.keys |= key_id[i];
             }
         }
     }

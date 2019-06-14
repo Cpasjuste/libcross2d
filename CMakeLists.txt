@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 
 # delete cmake cache folder before changing this options
 option(BUILD_LINUX "Build with SDL2 support (opengl)" OFF)
-option(BUILD_LINUX_SOFT "Build with SDL2 support (software)" ON)
+option(BUILD_LINUX_SOFT "Build with SDL2 support (software)" OFF)
 option(BUILD_WINDOWS "Build with Windows support (msys/mingw64)" OFF)
 option(BUILD_SWITCH "Build with Nintendo Switch support" OFF)
 option(BUILD_3DS "Build with 3DS support" OFF)
