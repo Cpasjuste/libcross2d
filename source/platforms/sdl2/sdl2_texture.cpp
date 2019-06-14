@@ -4,25 +4,28 @@
 
 #ifndef __SDL2_GL__
 
-#include <png.h>
-#include "c2d.h"
-#include "skeleton/lodepng.h"
+#include "cross2d/c2d.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+
+#include "cross2d/skeleton/stb_image.h"
+#include "cross2d/skeleton/stb_image_write.h"
 
 using namespace c2d;
 
-SDL2Texture::SDL2Texture(const char *path) : Texture(path) {
+SDL2Texture::SDL2Texture(const std::string &path) : Texture(path) {
 
-    unsigned int w, h, error = 0;
+    int w, h, n = 0;
     unsigned char *pixels;
 
-    error = lodepng_decode32_file(&pixels, &w, &h, path);
-    if (error) {
-        printf("SDL2Texture: couldn't create texture: %s\n", lodepng_error_text(error));
+    pixels = stbi_load(path.c_str(), &w, &h, &n, 4);
+    if (!pixels) {
+        printf("SDL2Texture(%p): couldn't create texture (%s)\n", this, path.c_str());
         return;
     }
 
-    setTextureRect(IntRect(0, 0, w, h));
-    pitch = getTextureRect().width * bpp;
+    pitch = w * bpp;
 
     SDL_Surface *tmp =
             SDL_CreateRGBSurfaceWithFormatFrom(pixels, w, h, 32, pitch, SDL_PIXELFORMAT_RGBA32);
@@ -42,6 +45,8 @@ SDL2Texture::SDL2Texture(const char *path) : Texture(path) {
 
     SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
 
+    setSize(w, h);
+    setTexture(this, true);
     available = true;
 
     printf("SDL2Texture(%p)\n", this);
@@ -49,12 +54,12 @@ SDL2Texture::SDL2Texture(const char *path) : Texture(path) {
 
 SDL2Texture::SDL2Texture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
 
-    unsigned int w, h, error = 0;
+    int w, h, n = 0;
     unsigned char *pixels;
 
-    error = lodepng_decode32(&pixels, &w, &h, buffer, (size_t) bufferSize);
-    if (error) {
-        printf("SDL2Texture: couldn't create texture: %s\n", lodepng_error_text(error));
+    pixels = stbi_load_from_memory(buffer, bufferSize, &w, &h, &n, 4);
+    if (!pixels) {
+        printf("GLTexture(%p): couldn't create texture from buffer\n", this);
         return;
     }
 
@@ -85,13 +90,12 @@ SDL2Texture::SDL2Texture(const unsigned char *buffer, int bufferSize) : Texture(
 
 }
 
-SDL2Texture::SDL2Texture(const Vector2f &size, int format) : Texture(size, format) {
+SDL2Texture::SDL2Texture(const Vector2f &size, Format format) : Texture(size, format) {
 
     tex = SDL_CreateTexture(
             ((SDL2Renderer *) c2d_renderer)->renderer,
-            format == C2D_TEXTURE_FMT_RGBA8 ? SDL_PIXELFORMAT_RGBA32 : SDL_PIXELFORMAT_RGB565,
-            SDL_TEXTUREACCESS_STREAMING,
-            (int) size.x, (int) size.y);
+            format == Format::RGBA8 ? SDL_PIXELFORMAT_RGBA32 : SDL_PIXELFORMAT_RGB565,
+            SDL_TEXTUREACCESS_STREAMING, (int) size.x, (int) size.y);
 
     if (!tex) {
         printf("SDL2Texture: couldn't create texture: %s\n", SDL_GetError());
@@ -134,135 +138,41 @@ void SDL2Texture::unlock() {
     SDL_UnlockTexture(tex);
 }
 
-int SDL2Texture::save(const char *path) {
+int SDL2Texture::save(const std::string &path) {
 
-    unsigned char *pixels = nullptr;
-    unsigned char *converted = nullptr;
-    png_bytep *rows = nullptr;
-
-    const char *szAuthor = "Cpasjuste";
-    const char *szDescription = "Screenshot";
-    const char *szCopyright = "Cpasjuste";
-    const char *szSoftware = "libcross2d @ libpng";
-    const char *szSource = "libcross2d";
-
-    FILE *ff = nullptr;
-    png_text text_ptr[7];
-    int num_text = 7;
-    time_t currentTime;
-    png_time_struct png_time_now;
-
-    int w = getTextureRect().width, h = getTextureRect().height;
-
-    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-    if (!png_ptr) {
-        return -1;
-    }
-
-    png_infop info_ptr = png_create_info_struct(png_ptr);
-    if (!info_ptr) {
-        png_destroy_write_struct(&png_ptr, (png_infopp) nullptr);
-        return -1;
-    }
-
-    if (setjmp(png_jmpbuf(png_ptr))) {
-        png_destroy_write_struct(&png_ptr, &info_ptr);
-        fclose(ff);
-        remove(path);
-        return -1;
-    }
+    int res;
+    unsigned char pixels;
+    int width = getTextureRect().width;
+    int height = getTextureRect().height;
 
     SDL_LockTexture(tex, nullptr, (void **) &pixels, nullptr);
 
-    // Convert the image to 32-bit
-    if (bpp < 4) {
-        unsigned char *pTemp = (unsigned char *) malloc(w * h * sizeof(int));
-        if (bpp == 2) {
-            for (int i = 0; i < h * w; i++) {
-                signed short nColour = ((signed short *) pixels)[i];
-                // Red
-                *(pTemp + i * 4 + 0) = (unsigned char) ((nColour & 0x1F) << 3);
-                *(pTemp + i * 4 + 0) |= *(pTemp + 4 * i + 0) >> 5;
-                // Green
-                *(pTemp + i * 4 + 1) = (unsigned char) (((nColour >> 5) & 0x3F) << 2);
-                *(pTemp + i * 4 + 1) |= *(pTemp + i * 4 + 1) >> 6;
-                // Blue
-                *(pTemp + i * 4 + 2) = (unsigned char) (((nColour >> 11) & 0x1F) << 3);
-                *(pTemp + i * 4 + 2) |= *(pTemp + i * 4 + 2) >> 5;
-            }
-        } else {
-            memset(pTemp, 0, w * h * sizeof(int));
-            for (int i = 0; i < h * w; i++) {
-                *(pTemp + i * 4 + 0) = *(pixels + i * 3 + 0);
-                *(pTemp + i * 4 + 1) = *(pixels + i * 3 + 1);
-                *(pTemp + i * 4 + 2) = *(pixels + i * 3 + 2);
-            }
-        }
-        converted = pTemp;
-        pixels = converted;
-    }
-
-    // Get the time
-    time(&currentTime);
-    png_convert_from_time_t(&png_time_now, currentTime);
-
-    ff = fopen(path, "wb");
-    if (ff == nullptr) {
-        printf("C2DUINXVideo::save: fopen failed: `%s`\n", path);
-        png_destroy_write_struct(&png_ptr, &info_ptr);
-        if (converted) {
-            free(converted);
-        }
+    if (!pixels) {
         return -1;
     }
 
-    // Fill the PNG text fields
-    text_ptr[0].key = (png_charp) "Title";
-    text_ptr[0].text = (png_charp) "ROM";
-    text_ptr[1].key = (png_charp) "Author";
-    text_ptr[1].text = (png_charp) szAuthor;
-    text_ptr[2].key = (png_charp) "Description";
-    text_ptr[2].text = (png_charp) szDescription;
-    text_ptr[3].key = (png_charp) "Copyright";
-    text_ptr[3].text = (png_charp) szCopyright;
-    text_ptr[4].key = (png_charp) "Software";
-    text_ptr[4].text = (png_charp) szSoftware;
-    text_ptr[5].key = (png_charp) "Source";
-    text_ptr[5].text = (png_charp) szSource;
-    text_ptr[6].key = (png_charp) "Comment";
-    text_ptr[6].text = (png_charp) "Created by running the game in an emulator";
-    for (int i = 0; i < num_text; i++) {
-        text_ptr[i].compression = PNG_TEXT_COMPRESSION_NONE;
-    }
-    png_set_text(png_ptr, info_ptr, text_ptr, num_text);
-    png_init_io(png_ptr, ff);
-    png_set_IHDR(png_ptr, info_ptr, (png_uint_32) w, (png_uint_32) h, 8,
-                 PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
-                 PNG_COMPRESSION_TYPE_DEFAULT,
-                 PNG_FILTER_TYPE_DEFAULT);
-    png_write_info(png_ptr, info_ptr);
-    png_set_filler(png_ptr, 0, PNG_FILLER_AFTER);
-    png_set_bgr(png_ptr);
-    rows = (png_bytep *) malloc(h * sizeof(png_bytep));
-    for (int y = 0; y < h; y++) {
-        rows[y] = pixels + (y * w * sizeof(int));
-    }
-    png_write_image(png_ptr, rows);
-    png_write_end(png_ptr, info_ptr);
-    if (rows) {
-        free(rows);
-    }
-    fclose(ff);
-    png_destroy_write_struct(&png_ptr, &info_ptr);
-
-    if (converted) {
-        free(converted);
+    if (bpp == 2) {
+        // convert rgb565 to bgr888
+        auto *tmp = (unsigned char *) malloc((size_t) width * (size_t) height * 3);
+        for (int i = 0; i < width * height; i++) {
+            signed short nColour = ((signed short *) pixels)[i];
+            *(tmp + i * 3 + 2) = (unsigned char) ((nColour & 0x1F) << 3);
+            *(tmp + i * 3 + 2) |= *(tmp + 3 * i + 0) >> 5;
+            *(tmp + i * 3 + 1) = (unsigned char) (((nColour >> 5) & 0x3F) << 2);
+            *(tmp + i * 3 + 1) |= *(tmp + i * 3 + 1) >> 6;
+            *(tmp + i * 3 + 0) = (unsigned char) (((nColour >> 11) & 0x1F) << 3);
+            *(tmp + i * 3 + 0) |= *(tmp + i * 3 + 2) >> 5;
+        }
+        res = stbi_write_png(path.c_str(), width, height, 3, tmp, width * 3);
+        free(tmp);
+    } else {
+        res = stbi_write_png(path.c_str(), width, height, 4, (const void *) pixels, width * 4);
     }
 
-    return 0;
+    return res;
 }
 
-void SDL2Texture::setFiltering(int filter) {
+void SDL2Texture::setFilter(Filter filter) {
 
 #if 0
     if (!tex || filter == filtering) {

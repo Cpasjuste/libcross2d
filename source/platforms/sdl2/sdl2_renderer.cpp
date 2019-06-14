@@ -8,38 +8,21 @@
 
 #ifndef __SDL2_GL__
 
-#ifdef __SWITCH__
-
-#include <switch.h>
-
-#endif
-
-#include "c2d.h"
+#include "cross2d/c2d.h"
 
 using namespace c2d;
 
 SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
-
-#ifdef __SWITCH__
-#ifdef SVC_DEBUG
-    consoleDebugInit(debugDevice_SVC);
-    stdout = stderr;
-#endif
-#endif
 
     if ((SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't init sdl: %s\n", SDL_GetError());
         return;
     }
 
-#ifdef __SWITCH__
-    Uint32 flags = SDL_WINDOW_FULLSCREEN;
-#else
     Uint32 flags = 0;
-    if (!getSize().x || !getSize().y) { // force fullscreen if window size == 0
+    if (getSize().x <= 0 || getSize().y <= 0) { // force fullscreen if window size == 0
         flags |= SDL_WINDOW_FULLSCREEN;
     }
-#endif
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 1);
@@ -76,23 +59,26 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : Renderer(size) {
         }
     }
 
-    // set default scale quality to linear filtering
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+    // set default scale quality to point filtering
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 
     available = true;
 }
 
-void SDL2Renderer::draw(VertexArray *vertexArray,
-                        const Transform &transform,
-                        const Texture *texture) {
+void SDL2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {
+
+    if (!vertexArray || vertexArray->getVertexCount() < 1) {
+        printf("SDL2Renderer::draw: no vertices\n");
+        return;
+    }
 
     size_t count = vertexArray->getVertexCount();
     int type = vertexArray->getPrimitiveType();
-    Vertex *vertices = vertexArray->getVertices().data();
+    Vertex *vertices = vertexArray->getVertices()->data();
+    SDL2Texture *tex = texture ? ((SDL2Texture *) texture) : nullptr;
 
-    //printf("draw: type=%i | vertex=%i\n", type, (int) count);
+    //printf("draw: type=%i | vertex=%i | tex=%p\n", type, (int) count, tex);
 
-    SDL2Texture *tex = ((SDL2Texture *) texture);
     if (type == 4) {
         // TriangleStrip (outline)
         // TODO: fix this ugly crap
@@ -147,10 +133,11 @@ void SDL2Renderer::draw(VertexArray *vertexArray,
                (int) (p[1].x - p[0].x), (int) (p[1].y - p[0].y)};
         SDL_RenderFillRect(renderer, &dst);
 
-        SDL_SetRenderDrawColor(renderer, getFillColor().r,
-                               getFillColor().g,
-                               getFillColor().b,
-                               getFillColor().a);
+        SDL_SetRenderDrawColor(renderer,
+                               m_clearColor.r,
+                               m_clearColor.g,
+                               m_clearColor.b,
+                               m_clearColor.a);
         if (vertices[0].color.a < 255) {
             SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
         }
@@ -209,10 +196,10 @@ void SDL2Renderer::draw(VertexArray *vertexArray,
                                        vertices[i].color.b,
                                        vertices[i].color.a);
                 SDL_RenderFillRect(renderer, &dst);
-                SDL_SetRenderDrawColor(renderer, getFillColor().r,
-                                       getFillColor().g,
-                                       getFillColor().b,
-                                       getFillColor().a);
+                SDL_SetRenderDrawColor(renderer, m_clearColor.r,
+                                       m_clearColor.g,
+                                       m_clearColor.b,
+                                       m_clearColor.a);
                 if (vertices[i].color.a < 255) {
                     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
                 }
@@ -224,10 +211,10 @@ void SDL2Renderer::draw(VertexArray *vertexArray,
 void SDL2Renderer::clear() {
 
     SDL_SetRenderDrawColor(renderer,
-                           getFillColor().r,
-                           getFillColor().g,
-                           getFillColor().b,
-                           getFillColor().a);
+                           m_clearColor.r,
+                           m_clearColor.g,
+                           m_clearColor.b,
+                           m_clearColor.a);
 
     for (int i = 0; i < 2; i++) {
         SDL_RenderClear(renderer);
@@ -235,19 +222,19 @@ void SDL2Renderer::clear() {
     }
 }
 
-void SDL2Renderer::flip(bool draw) {
+void SDL2Renderer::flip(bool draw, bool inputs) {
 
     if (draw) {
         SDL_SetRenderDrawColor(renderer,
-                               getFillColor().r,
-                               getFillColor().g,
-                               getFillColor().b,
-                               getFillColor().a);
+                               m_clearColor.r,
+                               m_clearColor.g,
+                               m_clearColor.b,
+                               m_clearColor.a);
         SDL_RenderClear(renderer);
     }
 
     // call base class (draw childs)
-    Renderer::flip(draw);
+    Renderer::flip(draw, inputs);
 
     if (draw) {
         SDL_RenderPresent(renderer);
@@ -270,46 +257,5 @@ SDL2Renderer::~SDL2Renderer() {
 
     SDL_Quit();
 }
-
-//-----------------------------------------------------------------------------
-// nxlink support
-//-----------------------------------------------------------------------------
-
-#ifdef __SWITCH__
-#ifdef NET_DEBUG
-
-#include <unistd.h>
-
-static int s_nxlinkSock = -1;
-
-static void initNxLink() {
-    if (R_FAILED(socketInitializeDefault()))
-        return;
-
-    s_nxlinkSock = nxlinkStdio();
-    if (s_nxlinkSock >= 0)
-        printf("printf output now goes to nxlink server");
-    else
-        socketExit();
-}
-
-static void deinitNxLink() {
-    if (s_nxlinkSock >= 0) {
-        close(s_nxlinkSock);
-        socketExit();
-        s_nxlinkSock = -1;
-    }
-}
-
-extern "C" void userAppInit() {
-    initNxLink();
-}
-
-extern "C" void userAppExit() {
-    deinitNxLink();
-}
-
-#endif
-#endif
 
 #endif // __SDL2_GL__

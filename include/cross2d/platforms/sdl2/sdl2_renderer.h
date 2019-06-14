@@ -5,7 +5,7 @@
 #ifndef SDL2_RENDERER_H
 #define SDL2_RENDERER_H
 
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
 
 namespace c2d {
 
@@ -13,25 +13,23 @@ namespace c2d {
 
     public:
 
-        SDL2Renderer(const Vector2f &size = Vector2f(0, 0));
+        explicit SDL2Renderer(const Vector2f &size = Vector2f(0, 0));
 
-        ~SDL2Renderer();
+        ~SDL2Renderer() override;
 
-        void draw(VertexArray *vertices,
-                  const Transform &transform,
-                  const Texture *texture);
+        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
 
-        void clear();
+        void clear() override;
 
-        void flip(bool draw = true);
+        void flip(bool draw = true, bool inputs = true) override;
 
-        void delay(unsigned int ms);
+        void delay(unsigned int ms) override;
 
-        SDL_Renderer *renderer = NULL;
+        SDL_Renderer *renderer = nullptr;
 
     private:
 
-        SDL_Window *window = NULL;
+        SDL_Window *window = nullptr;
     };
 }
 

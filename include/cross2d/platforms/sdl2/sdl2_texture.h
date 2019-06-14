@@ -13,22 +13,21 @@ namespace c2d {
 
     public:
 
-        SDL2Texture(const char *path);
+        explicit SDL2Texture(const std::string &path);
 
         SDL2Texture(const unsigned char *buffer, int bufferSize);
 
-        SDL2Texture(const Vector2f &size = Vector2f(0, 0),
-                    int format = C2D_TEXTURE_FMT_RGBA8);
+        explicit SDL2Texture(const Vector2f &size = Vector2f(0, 0), Format format = Format::RGBA8);
 
-        ~SDL2Texture();
+        ~SDL2Texture() override;
 
-        int lock(FloatRect *rect, void **pixels, int *pitch);
+        int lock(FloatRect *rect, void **pixels, int *pitch) override;
 
-        void unlock();
+        void unlock() override;
 
-        int save(const char *path);
+        int save(const std::string &path) override;
 
-        void setFiltering(int filter);
+        void setFilter(Filter filter) override;
 
         SDL_Texture *tex = nullptr;
     };
