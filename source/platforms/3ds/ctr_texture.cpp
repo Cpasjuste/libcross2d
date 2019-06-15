@@ -87,6 +87,52 @@ CTRTexture::CTRTexture(const std::string &path) : Texture(path) {
     uploadSoft();
 }
 
+CTRTexture::CTRTexture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
+
+    int img_w, img_h, n = 0;
+    int p2_w, p2_h;
+
+    u8 *img = stbi_load_from_memory(buffer, bufferSize, &img_w, &img_h, &n, 4);
+    if (!img) {
+        printf("CTRTexture(%p): couldn't create texture from buffer\n", this);
+        return;
+    }
+
+    // copy img to power of 2 pixel data
+    p2_w = pow2(img_w), p2_h = pow2(img_h);
+    pixels = (u8 *) linearAlloc((size_t) (p2_w * p2_h * bpp));
+    if (!pixels) {
+        free(img);
+        return;
+    }
+
+    u8 *dst = pixels;
+    int dst_pitch = p2_w * bpp;
+    u8 *src = img;
+    int src_pitch = img_w * bpp;
+    for (int i = 0; i < img_h; i++) {
+        memcpy(dst, src, (size_t) img_w * bpp);
+        dst += dst_pitch;
+        src += src_pitch;
+    }
+    free(img);
+
+    if (!C3D_TexInit(&tex, (u16) p2_w, (u16) p2_h, GPU_RGBA8)) {
+        printf("CTRTexture: couldn't create texture (C3D_TexInit)\n");
+        linearFree(pixels);
+        pixels = nullptr;
+        return;
+    }
+
+    setSize(img_w, img_h);
+    setTexture(this);
+    setTextureRect(IntRect(0, 0, p2_w, p2_h));
+    m_vertices.setPrimitiveType(TriangleStrip);
+    pitch = p2_w * bpp;
+    available = true;
+    uploadSoft();
+}
+
 CTRTexture::CTRTexture(const Vector2f &size, Format format) : Texture(size, format) {
 
     int p2_w = pow2((int) getSize().x), p2_h = pow2((int) getSize().y);

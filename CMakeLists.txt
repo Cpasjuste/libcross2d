@@ -88,6 +88,7 @@ elseif (BUILD_3DS)
             source/platforms/posix
             ${DEVKITPRO}/libctru/include
             ${DEVKITPRO}/portlibs/3ds/include
+            #${DEVKITPRO}/portlibs/3ds/include/SDL2
             ${DEVKITPRO}/portlibs/3ds/include/freetype2
             ${DEVKITPRO}/portlibs/armv6k/include
             )
@@ -101,17 +102,8 @@ elseif (BUILD_3DS)
             source/platforms/3ds/render2d.shbin.o
             )
 
-    set(PLATFORM_LIBS
-            ${DEVKITPRO}/portlibs/3ds/lib/libfreetype.a
-            ${DEVKITPRO}/portlibs/3ds/lib/libpng.a
-            ${DEVKITPRO}/portlibs/3ds/lib/libbz2.a
-            ${DEVKITPRO}/portlibs/3ds/lib/libz.a
-            ${DEVKITPRO}/libctru/lib/libcitro3d.a
-            ${DEVKITPRO}/libctru/lib/libctru.a
-            m)
-    list(APPEND FLAGS -O3 -DARM11 -D_3DS -D__3DS__ -D__CITRO3D__
-            -ffunction-sections -fomit-frame-pointer
-            )
+    set(PLATFORM_LIBS freetype png bz2 z citro3d ctru m)
+    list(APPEND FLAGS -O3 -DARM11 -D_3DS -D__3DS__ -D__CITRO3D__)
     #####################
     # SWITCH PLATORM
     #####################

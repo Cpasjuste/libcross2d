@@ -26,7 +26,7 @@ bool Config::load() {
 
 bool Config::loadFromString(const std::string &str) {
 
-    printf("Config::loadFromString: %s\n", str.c_str());
+    //printf("Config::loadFromString: %s\n", str.c_str());
     if (!config_read_string(&config, str.c_str())) {
         printf("Config::loadFromString: error\n");
         return false;

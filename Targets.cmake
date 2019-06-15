@@ -38,6 +38,7 @@ endif ()
 ###########################
 if (BUILD_SWITCH)
     add_custom_target(${PROJECT_NAME}.nro
+            DEPENDS ${PROJECT_NAME}
             DEPENDS ${PROJECT_NAME}.data
             COMMAND ${DEVKITPRO}/tools/bin/nacptool --create "${PROJECT_NAME}" "${PROJECT_AUTHOR}" "${VERSION_MAJOR}.${VERSION_MINOR}" ${PROJECT_NAME}.nacp
             # copy custom switch "read_only" data to common "read_only" data for romfs creation (merge/overwrite common data)
@@ -62,6 +63,7 @@ endif (BUILD_SWITCH)
 if (BUILD_3DS)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-specs=${DEVKITPRO}/devkitARM/arm-none-eabi/lib/3dsx.specs")
     add_custom_target(${PROJECT_NAME}.3dsx
+            DEPENDS ${PROJECT_NAME}
             DEPENDS ${PROJECT_NAME}.data
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/3ds/read_only ${CMAKE_CURRENT_BINARY_DIR}/data_read_only
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/3ds/read_write ${CMAKE_CURRENT_BINARY_DIR}/data_read_write

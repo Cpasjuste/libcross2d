@@ -14,17 +14,19 @@ namespace c2d {
 
     public:
 
-        CTRTexture(const std::string &path);
+        explicit CTRTexture(const std::string &path);
 
-        CTRTexture(const Vector2f &size = Vector2f(0, 0), Format format = Format::RGBA8);
+        explicit CTRTexture(const unsigned char *buffer, int bufferSize);
 
-        ~CTRTexture();
+        explicit CTRTexture(const Vector2f &size = Vector2f(0, 0), Format format = Format::RGBA8);
 
-        int lock(FloatRect *rect, void **pixels, int *pitch);
+        ~CTRTexture() override;
 
-        void unlock();
+        int lock(FloatRect *rect, void **pixels, int *pitch) override;
 
-        void setFilter(Filter filter);
+        void unlock() override;
+
+        void setFilter(Filter filter) override;
 
         C3D_Tex tex;
     private:

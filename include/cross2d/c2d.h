@@ -90,14 +90,14 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/3ds/ctr_renderer.h"
 #include "platforms/3ds/ctr_texture.h"
 #include "platforms/3ds/ctr_input.h"
-//#include "platforms/sdl2/sdl2_audio.h"
 #include "platforms/3ds/ctr_io.h"
 #include "platforms/3ds/ctr_clock.h"
+#include "platforms/sdl2/sdl2_audio.h"
 
 #define C2DRenderer CTRRenderer
 #define C2DTexture CTRTexture
 #define C2DInput CTRInput
-#define C2DAudio CTRAudio
+#define C2DAudio Audio
 #define C2DIo CTRIo
 #define C2DClock CTRClock
 #define C2DRectangle RectangleShape
