@@ -32,7 +32,7 @@ ListBoxLine::ListBoxLine(
         text->setPosition(iconRect->getSize().x + 8, getSize().y / 2);
         text->setSizeMax(getSize().x - fontSize - iconRect->getSize().x, 0);
     } else {
-        text->setPosition(8, getSize().y / 2);
+        text->setPosition(2, getSize().y / 2);
         text->setSizeMax(getSize().x - (fontSize + 8), 0);
     }
 
@@ -132,7 +132,7 @@ void ListBox::init(Font *font, int fontSize, bool useIcons) {
     if (use_icons) {
         line_height = 34; // 32px + 2px margin
     } else {
-        line_height = fontSize + 10;
+        line_height = fontSize + 2;
     }
     max_lines = (int) (getSize().y / line_height);
     if ((max_lines * line_height) < getSize().y) {
