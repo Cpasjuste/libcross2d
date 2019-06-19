@@ -13,11 +13,11 @@ namespace c2d {
 
     public:
 
-        explicit SDL2Texture(const std::string &path);
+        SDL2Texture(const std::string &path);
 
         SDL2Texture(const unsigned char *buffer, int bufferSize);
 
-        explicit SDL2Texture(const Vector2f &size = Vector2f(0, 0), Format format = Format::RGBA8);
+        SDL2Texture(const Vector2f &size = Vector2f(0, 0), Format format = Format::RGBA8);
 
         ~SDL2Texture() override;
 

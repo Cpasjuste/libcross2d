@@ -44,12 +44,11 @@ SDL2Texture::SDL2Texture(const std::string &path) : Texture(path) {
     }
 
     SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
-
     setSize(w, h);
     setTexture(this, true);
     available = true;
 
-    printf("SDL2Texture(%p)\n", this);
+    printf("SDL2Texture(%s): %p\n", path.c_str(), this);
 }
 
 SDL2Texture::SDL2Texture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
@@ -63,8 +62,7 @@ SDL2Texture::SDL2Texture(const unsigned char *buffer, int bufferSize) : Texture(
         return;
     }
 
-    setTextureRect(IntRect(0, 0, w, h));
-    pitch = getTextureRect().width * bpp;
+    pitch = w * bpp;
 
     SDL_Surface *tmp =
             SDL_CreateRGBSurfaceWithFormatFrom(pixels, w, h, 32, pitch, SDL_PIXELFORMAT_RGBA32);
@@ -83,11 +81,11 @@ SDL2Texture::SDL2Texture(const unsigned char *buffer, int bufferSize) : Texture(
     }
 
     SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
-
+    setSize(w, h);
+    setTexture(this, true);
     available = true;
 
     printf("SDL2Texture(%p)\n", this);
-
 }
 
 SDL2Texture::SDL2Texture(const Vector2f &size, Format format) : Texture(size, format) {
@@ -102,9 +100,9 @@ SDL2Texture::SDL2Texture(const Vector2f &size, Format format) : Texture(size, fo
         return;
     }
 
-    setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
-
+    setSize(size);
+    setTexture(this, true);
     available = true;
 
     printf("SDL2Texture(%p)\n", this);
@@ -134,7 +132,6 @@ int SDL2Texture::lock(FloatRect *rect, void **pix, int *p) {
 }
 
 void SDL2Texture::unlock() {
-
     SDL_UnlockTexture(tex);
 }
 

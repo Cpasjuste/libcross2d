@@ -184,8 +184,8 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         3
 #elif __SDL2__
 #ifdef __LDK__
-#define C2D_SCREEN_WIDTH 240
-#define C2D_SCREEN_HEIGHT 320
+#define C2D_SCREEN_WIDTH 320
+#define C2D_SCREEN_HEIGHT 480
 #else
 #define C2D_SCREEN_WIDTH 1280
 #define C2D_SCREEN_HEIGHT 720
@@ -372,6 +372,23 @@ extern c2d::Renderer *c2d_renderer;
 
 #ifndef NO_KEYBOARD
 #if defined(__SDL2__)
+#ifdef __LDK__
+// SDL key.keysym.scancode
+#define KEY_KB_UP_DEFAULT      82
+#define KEY_KB_DOWN_DEFAULT    81
+#define KEY_KB_LEFT_DEFAULT    80
+#define KEY_KB_RIGHT_DEFAULT   79
+#define KEY_KB_FIRE1_DEFAULT   226  // A
+#define KEY_KB_FIRE2_DEFAULT   224  // Z
+#define KEY_KB_FIRE3_DEFAULT   225  // E
+#define KEY_KB_FIRE4_DEFAULT   44   // Q
+#define KEY_KB_FIRE5_DEFAULT   43   // S
+#define KEY_KB_FIRE6_DEFAULT   42   // D
+#define KEY_KB_COIN1_DEFAULT   41   // SPACE
+#define KEY_KB_START1_DEFAULT  40   // ENTER
+#define KEY_KB_MENU1_DEFAULT   40   // ENTER
+#define KEY_KB_MENU2_DEFAULT   41   // SPACE
+#else
 // SDL key.keysym.scancode
 #define KEY_KB_UP_DEFAULT      82
 #define KEY_KB_DOWN_DEFAULT    81
@@ -387,6 +404,7 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_KB_START1_DEFAULT  40   // ENTER
 #define KEY_KB_MENU1_DEFAULT   40   // ENTER
 #define KEY_KB_MENU2_DEFAULT   44   // SPACE
+#endif
 #elif defined(__SDL1__)
 // SDLKey from :
 #include <SDL/SDL_keysym.h>

@@ -40,7 +40,6 @@ Texture::Texture(const Vector2f &size, Format fmt) : Shape() {
 
     setFillColor(Color::White);
     setSize(size);
-
 }
 
 void Texture::setSize(const Vector2f &size) {
