@@ -79,10 +79,9 @@ void SDL2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
 
     //printf("draw: type=%i | vertex=%i | tex=%p\n", type, (int) count, tex);
 
-    if (type == 4) {
+    if (type == 4 && !tex) {
         // TriangleStrip (outline)
         // TODO: fix this ugly crap
-
         if (vertices[0].color.a < 255) {
             SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
         }
@@ -141,10 +140,8 @@ void SDL2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
         if (vertices[0].color.a < 255) {
             SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
         }
-
-    } else if (type == 3 || type == 5) {
-
-        // TODO: fix new texcoords
+        //} else if (type == 3 || type == 5) {
+    } else {
         // Triangles // TriangleFan
         int p0 = type == 3 ? 0 : 5;
         int p1 = type == 3 ? 5 : 3;

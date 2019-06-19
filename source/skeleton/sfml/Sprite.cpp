@@ -31,10 +31,9 @@
 
 namespace c2d {
 
-    // TODO: TriangleFan or TriangleStrip?
 ////////////////////////////////////////////////////////////
     Sprite::Sprite() :
-            m_vertices(TriangleFan, 4),
+            m_vertices(TriangleStrip, 4),
             m_texture(nullptr),
             m_textureRect() {
         type = Type::Sprite;
@@ -43,7 +42,7 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     Sprite::Sprite(Texture *texture) :
-            m_vertices(TriangleFan, 4),
+            m_vertices(TriangleStrip, 4),
             m_texture(nullptr),
             m_textureRect() {
         type = Type::Sprite;
@@ -53,7 +52,7 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     Sprite::Sprite(Texture *texture, const IntRect &rectangle) :
-            m_vertices(TriangleFan, 4),
+            m_vertices(TriangleStrip, 4),
             m_texture(nullptr),
             m_textureRect() {
         type = Type::Sprite;
