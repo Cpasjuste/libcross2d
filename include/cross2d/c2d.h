@@ -183,9 +183,13 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RX         2
 #define KEY_JOY_AXIS_RY         3
 #elif __SDL2__
+#ifdef __LDK__
+#define C2D_SCREEN_WIDTH 240
+#define C2D_SCREEN_HEIGHT 320
+#else
 #define C2D_SCREEN_WIDTH 1280
 #define C2D_SCREEN_HEIGHT 720
-
+#endif
 #include <SDL2/SDL.h>
 
 #if defined(__SDL2_GL__)
