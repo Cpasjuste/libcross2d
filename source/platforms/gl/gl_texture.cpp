@@ -87,6 +87,7 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
                              GL_RGBA, GL_UNSIGNED_BYTE, pixels);
                 break;
+#ifndef __SDL2_GLES__
             case Format::ARGB8:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
                              GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, pixels);
@@ -99,6 +100,7 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
                              GL_ABGR_EXT, GL_UNSIGNED_INT_8_8_8_8, pixels);
                 break;
+#endif
             default:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, (GLsizei) size.x, (GLsizei) size.y, 0,
                              GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
@@ -231,6 +233,7 @@ void GLTexture::unlock() {
                             (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                             GL_RGBA, GL_UNSIGNED_BYTE, pixels);
             break;
+#ifndef __SDL2_GLES__
         case Format::BGRA8:
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
                             (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
@@ -246,6 +249,7 @@ void GLTexture::unlock() {
                             (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                             GL_ABGR_EXT, GL_UNSIGNED_INT_8_8_8_8, pixels);
             break;
+#endif
         default:
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
                             (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,

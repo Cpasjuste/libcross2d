@@ -28,7 +28,13 @@ void GLRenderer::initGL() {
 #endif
 
     // vao
+#ifdef __SDL2_GLES__
+    glGenBuffers(1, &vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vao);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+#else
     GL_CHECK(glGenVertexArrays(1, &vao));
+#endif
     GL_CHECK(glDisable(GL_DEPTH_TEST));
     GL_CHECK(glDepthMask(GL_FALSE));
 

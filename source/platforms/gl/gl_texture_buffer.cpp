@@ -24,6 +24,7 @@ GLTextureBuffer::GLTextureBuffer(const Vector2f &size, Format format) : Texture(
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
                              GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
                 break;
+#ifndef __SDL2_GLES__
             case Format::ARGB8:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
                              GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, nullptr);
@@ -36,6 +37,7 @@ GLTextureBuffer::GLTextureBuffer(const Vector2f &size, Format format) : Texture(
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
                              GL_ABGR_EXT, GL_UNSIGNED_INT_8_8_8_8, nullptr);
                 break;
+#endif
             default:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, (GLsizei) size.x, (GLsizei) size.y, 0,
                              GL_RGB, GL_UNSIGNED_SHORT_5_6_5, nullptr);
