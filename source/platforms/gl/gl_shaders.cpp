@@ -124,9 +124,9 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
     auto *colorShader = new GLShader(color_v, color_f);
     color = new Shader("color", colorShader);
     get(0)->data = new GLShader(texture_v, texture_f);
-#ifndef __SDL2_GLES__
     add("retro v2", new GLShader(retro_v2_v, retro_v2_f));
     add("lcd3x", new GLShader(lcd3x_v, lcd3x_f));
+#ifndef __SDL2_GLES__
     add("scanlines", new GLShader(scanlines_v, scanlines_f));
     add("crt caligari", new GLShader(crt_caligari_v, crt_caligari_f));
     add("crt easymode", new GLShader(crt_easymode_v, crt_easymode_f));
