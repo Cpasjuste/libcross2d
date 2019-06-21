@@ -1,18 +1,34 @@
 cmake_minimum_required(VERSION 3.0)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
-# delete cmake cache folder before changing this options
-option(BUILD_LINUX "Build with SDL2 support (opengl)" OFF)
-option(BUILD_LINUX_SOFT "Build with SDL2 support (software)" OFF)
-option(BUILD_RPI3_64 "Build with RIP3 (x64) support (software)" ON)
-option(BUILD_WINDOWS "Build with Windows support (msys/mingw64)" OFF)
-option(BUILD_SWITCH "Build with Nintendo Switch support" OFF)
-option(BUILD_3DS "Build with 3DS support" OFF)
-option(BUILD_VITA "Build with Ps Vita support (hardware rendering, fast)" OFF)
-option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
-option(BUILD_MIPS "Build with MIPS support (LDK, RS-97...)" OFF)
+####################
+# TARGET PLATFORM
+####################
+option(PLATFORM_LINUX "Linux platform target" ON)
+option(PLATFORM_WINDOWS "Windows platform target (msys/mingw64)" OFF)
+option(PLATFORM_RPI3_64 "RIP3 (64 bits) platform target" OFF)
+option(PLATFORM_SWITCH "Nintendo Switch platform target" OFF)
+option(PLATFORM_3DS "Nintendo 3DS platform target" OFF)
+option(PLATFORM_VITA "Sony PS Vita platform target" OFF)
+option(PLATFORM_LDK "LDK Handheld platform target (mips, LDK, RS-97...)" OFF)
+#option(PLATFORM_PS3 "PS3 platform target" OFF) // TODO: fix for latest changes
 
-option(BUILD_SDL2_GLES "Build with SDL2 OpenGL ES support" ON)
+####################
+# PLATFORM OPTIONS
+####################
+option(OPTION_SDL2_GL "SDL2 support (OpenGL 3.3)" OFF)
+option(OPTION_SDL2_GLES2 "SDL2 support (OpenGLES 2.0)" OFF)
+option(OPTION_SDL2_SOFT "SDL2 support (software renderer)" OFF)
+
+if (PLATFORM_LINUX OR PLATFORM_WINDOWS OR PLATFORM_SWITCH)
+    if (NOT OPTION_SDL2_GL AND NOT OPTION_SDL2_GLES2 AND NOT OPTION_SDL2_SOFT)
+        set(OPTION_SDL2_GL ON CACHE BOOL "SDL2 support (OpenGL 3.3)")
+    endif ()
+endif ()
+
+if (PLATFORM_RPI3_64)
+    set(OPTION_SDL2_GLES2 ON CACHE BOOL "SDL2 support (OpenGL 3.3)")
+endif ()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
@@ -43,7 +59,7 @@ file(GLOB CROSS2D_SRC
 #####################
 # PLATORM SPECIFIC
 #####################
-if (BUILD_VITA)
+if (PLATFORM_VITA)
     #####################
     # VITA PLATORM
     #####################
@@ -80,7 +96,7 @@ if (BUILD_VITA)
     if (BUILD_DEBUG)
         list(APPEND FLAGS -D__PSP2_DEBUG__)
     endif (BUILD_DEBUG)
-elseif (BUILD_3DS)
+elseif (PLATFORM_3DS)
     #####################
     # 3DS PLATORM
     #####################
@@ -111,7 +127,7 @@ elseif (BUILD_3DS)
     #####################
     # SWITCH PLATORM
     #####################
-elseif (BUILD_SWITCH)
+elseif (PLATFORM_SWITCH)
     set(PLATFORM_DIRS
             source/platforms/gl
             source/platforms/sdl2
@@ -140,7 +156,7 @@ elseif (BUILD_SWITCH)
     ########################
     # LINUX PLATORM (SDL2)
     ########################
-elseif (BUILD_LINUX)
+elseif (PLATFORM_LINUX)
     if (NOT BUILD_LINUX_SOFT AND NOT BUILD_SDL2_GLES)
         set(OpenGL_GL_PREFERENCE GLVND)
         find_package(OpenGL REQUIRED)
@@ -165,24 +181,24 @@ elseif (BUILD_LINUX)
     set(PLATFORM_LIBS ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES} config)
     if (BUILD_LINUX_SOFT)
         list(APPEND FLAGS -D__SDL2__)
-    elseif (BUILD_SDL2_GLES)
+    elseif (OPTION_SDL2_GLES2)
         list(APPEND FLAGS -D__SDL2__ -D__SDL2_GL__ -D__SDL2_GLES__ -D__GL__)
     else ()
         list(APPEND FLAGS -D__SDL2__ -D__SDL2_GL__ -D__GL__)
     endif ()
-    if (BUILD_MIPS)
+    if (PLATFORM_LDK)
         list(APPEND PLATFORM_LIBS SDL2)
     elseif (BUILD_SDL2_GLES)
         list(APPEND PLATFORM_LIBS SDL2 GLESv2 OSMesa)
     endif ()
-    if (BUILD_WINDOWS)
+    if (PLATFORM_WINDOWS)
         find_package(GLEW REQUIRED)
         # hum... static linking, not easy on mingw64 :)
         list(APPEND PLATFORM_LIBS ${GLEW_LIBRARIES} harfbuzz graphite2 rpcrt4 dwrite bz2 png z
                 ole32 oleaut32 imm32 winmm version setupapi gdi32 opengl32 -static)
         list(APPEND FLAGS -D__WINDOWS__ -DGLEW_STATIC=1)
         set(ZIP "/msys64/usr/bin/zip" CACHE STRING "zip executable path" FORCE)
-    endif (BUILD_WINDOWS)
+    endif ()
 endif ()
 
 add_library(${PROJECT_NAME} ${CROSS2D_SRC} ${PLATFORM_SRC})
