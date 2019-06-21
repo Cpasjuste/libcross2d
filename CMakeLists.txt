@@ -1,25 +1,34 @@
 cmake_minimum_required(VERSION 3.0)
-set(CMAKE_VERBOSE_MAKEFILE ON)
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ####################
 # TARGET PLATFORM
 ####################
 option(PLATFORM_LINUX "Linux platform target" OFF)
 option(PLATFORM_WINDOWS "Windows platform target (msys/mingw64)" OFF)
-option(PLATFORM_RPI3_64 "RIP3 (64 bits) platform target" OFF)
+option(PLATFORM_RPI3_64 "RIP3 (64 bits) platform target" ON)
 option(PLATFORM_SWITCH "Nintendo Switch platform target" OFF)
 option(PLATFORM_3DS "Nintendo 3DS platform target" OFF)
 option(PLATFORM_VITA "Sony PS Vita platform target" OFF)
 option(PLATFORM_LDK "LDK Handheld platform target (mips: LDK, RS-97...)" OFF)
+####################
+# TARGET PLATFORM
+####################
 
-##########################
-# CROSS2D BUILD OPTIONS
-##########################
+####################
+# BUILD OPTIONS
+####################
 option(OPTION_SDL2_GL "SDL2 support (OpenGL 3.3)" OFF)
 option(OPTION_SDL2_GLES2 "SDL2 support (OpenGLES 2.0)" OFF)
 option(OPTION_SDL2_SOFT "SDL2 support (software renderer)" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
+####################
+# BUILD OPTIONS
+####################
 
+####################
+# SANITY CHECKS
+####################
 if (PLATFORM_LINUX OR PLATFORM_WINDOWS OR PLATFORM_SWITCH)
     if (NOT OPTION_SDL2_GL OR NOT OPTION_SDL2_GLES2 OR NOT OPTION_SDL2_SOFT)
         message(STATUS "SDL2 OpenGL 3.3 support enabled")
@@ -28,26 +37,32 @@ if (PLATFORM_LINUX OR PLATFORM_WINDOWS OR PLATFORM_SWITCH)
 endif ()
 
 if (PLATFORM_RPI3_64)
+    message(STATUS "SDL2 OpenGLES 2.0 support enabled")
     set(OPTION_SDL2_GLES2 ON CACHE BOOL "SDL2 support (OpenGLES 2.0)" FORCE)
 endif ()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
 endif ()
+####################
+# SANITY CHECKS
+####################
 
-# setup toolchain
-# set(CMAKE_TOOLCHAIN_FILE Toolchain.cmake)
+# setup target toolchain
 include(Toolchain.cmake)
+include(FindPkgConfig)
 
 project(cross2d)
 
-# cross2d common stuff
+####################
+# COMMON STUFF
+####################
 file(GLOB C2D_SOURCES
         source/widgets/*.c*
         source/skeleton/*.c*
         source/skeleton/sfml/*.c*)
-find_package(ZLIB REQUIRED)
-find_package(Freetype REQUIRED)
+pkg_search_module(ZLIB REQUIRED zlib)
+pkg_search_module(FREETYPE REQUIRED freetype2)
 set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
 set(C2D_CFLAGS -Wall -Wno-narrowing -DLIBCONFIG_STATIC)
 set(C2D_LDFLAGS ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
@@ -60,7 +75,7 @@ else ()
 endif ()
 
 if (OPTION_SDL2_GL OR OPTION_SDL2_GLES2 OR OPTION_SDL2_SOFT)
-    find_package(SDL2 REQUIRED)
+    pkg_search_module(SDL2 REQUIRED sdl2)
     list(APPEND C2D_INCLUDES ${SDL2_INCLUDE_DIRS})
     list(APPEND C2D_CFLAGS -D__SDL2__)
     list(APPEND C2D_LDFLAGS ${SDL2_LIBRARIES})
@@ -86,6 +101,9 @@ endif ()
 
 # export tools
 set(ZIP zip CACHE STRING "zip executable path")
+####################
+# COMMON STUFF
+####################
 
 #####################
 # PLATORM SPECIFIC
