@@ -9,7 +9,6 @@
 
 using namespace c2d;
 
-// @fincs: https://github.com/switchbrew/switch-examples/blob/master/graphics/opengl/simple_triangle/source/main.cpp#L197
 static GLuint createAndCompileShader(GLenum type, const char *source) {
 
     GLint success;
@@ -54,6 +53,9 @@ GLShader::GLShader(const char *vertex, const char *fragment, int type) {
     GL_CHECK(program = glCreateProgram());
     GL_CHECK(glAttachShader(program, vsh));
     GL_CHECK(glAttachShader(program, fsh));
+    GL_CHECK(glBindAttribLocation(program, 0, "positionAttribute"));
+    GL_CHECK(glBindAttribLocation(program, 1, "colorAttribute"));
+    GL_CHECK(glBindAttribLocation(program, 2, "texCoordAttribute"));
     GL_CHECK(glLinkProgram(program));
 
     GLint success;
@@ -118,12 +120,11 @@ GLShader::~GLShader() {
 }
 
 GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersPath) {
-
+    // add color shader
     auto *colorShader = new GLShader(color_v, color_f);
     color = new Shader("color", colorShader);
-
     get(0)->data = new GLShader(texture_v, texture_f);
-
+#ifndef __SDL2_GLES__
     add("retro v2", new GLShader(retro_v2_v, retro_v2_f));
     add("lcd3x", new GLShader(lcd3x_v, lcd3x_f));
     add("scanlines", new GLShader(scanlines_v, scanlines_f));
@@ -136,6 +137,7 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
     add("supereagle", new GLShader(supereagle_v, supereagle_f));
     add("sabr v3", new GLShader(sabr_v3_v, sabr_v3_f));
     add("xbrz freescale", new GLShader(xbrz_freescale_v, xbrz_freescale_f, GLShader::SCALE_TYPE_VIEWPORT));
+#endif
 }
 
 GLShaderList::~GLShaderList() {
@@ -143,16 +145,13 @@ GLShaderList::~GLShaderList() {
     if (color) {
         if (color->data != nullptr) {
             delete ((GLShader *) color->data);
-            color->data = nullptr;
         }
         delete (color);
-        color = nullptr;
     }
 
     for (int i = 0; i < getCount(); i++) {
         if (get(i)->data != nullptr) {
             delete ((GLShader *) get(i)->data);
-            get(i)->data = nullptr;
         }
     }
 }

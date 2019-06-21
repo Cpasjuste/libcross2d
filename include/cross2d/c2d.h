@@ -199,15 +199,10 @@ extern c2d::Renderer *c2d_renderer;
 #else
 #ifdef __SDL2_GLES__
 #include <SDL2/SDL_opengles2.h>
-//#define glGenVertexArrays glGenVertexArraysOES
-//#define glBindVertexArray glBindVertexArrayOES
-//#define glIsVertexArray glIsVertexArrayOES
-//#define glDeleteVertexArrays glDeleteVertexArraysOES
 #define GL_RGBA8 GL_RGBA
 #define GL_QUADS 0x0006
 #else
-#include <GL/gl.h>
-#include <GL/glext.h>
+#include <SDL2/SDL_opengl.h>
 #endif
 #endif
 #include "cross2d/platforms/sdl2/sdl2_gl_renderer.h"

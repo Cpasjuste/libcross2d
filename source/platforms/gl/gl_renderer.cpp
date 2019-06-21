@@ -27,14 +27,12 @@ void GLRenderer::initGL() {
     glewInit();
 #endif
 
+#ifndef __SDL2_GLES__
     // vao
-#ifdef __SDL2_GLES__
-    glGenBuffers(1, &vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vao);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
-#else
     GL_CHECK(glGenVertexArrays(1, &vao));
 #endif
+    GL_CHECK(glEnableVertexAttribArray(0));
+    GL_CHECK(glEnableVertexAttribArray(1));
     GL_CHECK(glDisable(GL_DEPTH_TEST));
     GL_CHECK(glDepthMask(GL_FALSE));
 
@@ -65,26 +63,24 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     // set shader
     GL_CHECK(glUseProgram(shader->GetProgram()));
+#ifndef __SDL2_GLES__
     // bind vao
     GL_CHECK(glBindVertexArray(vao));
+#endif
     // bind vbo
     vertexArray->bind();
 
     // set vertex position
-    GL_CHECK(glEnableVertexAttribArray(0));
     GL_CHECK(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                                    (void *) offsetof(Vertex, position)));
 
     // set vertex colors
-    GL_CHECK(glEnableVertexAttribArray(1));
     GL_CHECK(glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex),
                                    (void *) offsetof(Vertex, color)));
 
     if (glTexture && glTexture->available) {
-
         // bind texture
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, glTexture->texID));
-
         // set tex coords
         GL_CHECK(glEnableVertexAttribArray(2));
         GL_CHECK(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
@@ -151,19 +147,18 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     if (glTexture || vertices[0].color.a < 255) {
         GL_CHECK(glDisable(GL_BLEND));
-        if (glTexture) {
+        if (glTexture && glTexture->available) {
             GL_CHECK(glBindTexture(GL_TEXTURE_2D, 0));
+            GL_CHECK(glDisableVertexAttribArray(2));
         }
     }
 
-    GL_CHECK(glDisableVertexAttribArray(0));
-    GL_CHECK(glDisableVertexAttribArray(1));
-    GL_CHECK(glDisableVertexAttribArray(2));
-
     // unbind object vbo
     vertexArray->unbind();
+#ifndef __SDL2_GLES__
     // unbind object vao
     glBindVertexArray(0);
+#endif
 
     GL_CHECK(glUseProgram(0));
 }
@@ -197,9 +192,11 @@ GLRenderer::~GLRenderer() {
         shaderList = nullptr;
     }
 
+#ifndef __SDL2_GLES__
     if (glIsVertexArray(vao)) {
         GL_CHECK(glDeleteVertexArrays(1, &vao));
     }
+#endif
 }
 
 #ifndef NDEBUG

@@ -4,15 +4,28 @@
 
 // vertex color shader
 const char *color_v = R"text(
-    #version 330 core
+#if __VERSION__ >= 130
+#define COMPAT_VARYING out
+#define COMPAT_ATTRIBUTE in
+#define COMPAT_TEXTURE texture
+#else
+#define COMPAT_VARYING varying
+#define COMPAT_ATTRIBUTE attribute
+#define COMPAT_TEXTURE texture2D
+#endif
+#ifdef GL_OES_standard_derivatives
+#define COMPAT_PRECISION mediump
+#else
+#define COMPAT_PRECISION
+#endif
 
-    layout (location = 0) in vec2 positionAttribute;
-    layout (location = 1) in vec4 colorAttribute;
+    COMPAT_ATTRIBUTE vec2 positionAttribute;
+    COMPAT_ATTRIBUTE in vec4 colorAttribute;
 
     uniform mat4 modelViewMatrix;
     uniform mat4 projectionMatrix;
 
-    out vec4 frontColor;
+    COMPAT_VARYING vec4 frontColor;
 
     void main()
     {
@@ -22,10 +35,22 @@ const char *color_v = R"text(
 )text";
 
 const char *color_f = R"text(
-    #version 330 core
+#if __VERSION__ >= 130
+#define COMPAT_VARYING in
+#define COMPAT_TEXTURE texture
+out vec4 fragColor;
+#else
+#define COMPAT_VARYING varying
+#define fragColor gl_FragColor
+#define COMPAT_TEXTURE texture2D
+#endif
+#ifdef GL_OES_standard_derivatives
+#define COMPAT_PRECISION mediump
+#else
+#define COMPAT_PRECISION
+#endif
 
-    in vec4 frontColor;
-    out vec4 fragColor;
+    COMPAT_VARYING COMPAT_PRECISION vec4 frontColor;
 
     void main()
     {
