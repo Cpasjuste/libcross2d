@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.0)
 ####################
 option(PLATFORM_LINUX "Linux platform target" OFF)
 option(PLATFORM_WINDOWS "Windows platform target (msys/mingw64)" OFF)
-option(PLATFORM_RPI3_64 "RIP3 (64 bits) platform target" ON)
+option(PLATFORM_RPI3_64 "RIP3 (64 bits) platform target" OFF)
 option(PLATFORM_SWITCH "Nintendo Switch platform target" OFF)
 option(PLATFORM_3DS "Nintendo 3DS platform target" OFF)
 option(PLATFORM_VITA "Sony PS Vita platform target" OFF)
@@ -22,6 +22,7 @@ option(OPTION_SDL2_GL "SDL2 support (OpenGL 3.3)" OFF)
 option(OPTION_SDL2_GLES2 "SDL2 support (OpenGLES 2.0)" OFF)
 option(OPTION_SDL2_SOFT "SDL2 support (software renderer)" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
+option(OPTION_RECALBOX "Build for recalbox integration" OFF)
 ####################
 # BUILD OPTIONS
 ####################
