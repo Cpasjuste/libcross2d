@@ -22,7 +22,7 @@ option(OPTION_SDL2_GL "SDL2 support (OpenGL 3.3)" OFF)
 option(OPTION_SDL2_GLES2 "SDL2 support (OpenGLES 2.0)" OFF)
 option(OPTION_SDL2_SOFT "SDL2 support (software renderer)" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
-option(OPTION_RECALBOX "Build for recalbox integration" OFF)
+option(OPTION_RECALBOX "Build from recalbox buildroot" OFF)
 ####################
 # BUILD OPTIONS
 ####################
@@ -206,7 +206,7 @@ elseif (PLATFORM_LINUX)
     endif ()
 endif ()
 
-add_library(${PROJECT_NAME} ${C2D_SOURCES} ${LIBCONFIG_SOURCES} ${PLATFORM_SOURCES})
+add_library(${PROJECT_NAME} STATIC ${C2D_SOURCES} ${LIBCONFIG_SOURCES} ${PLATFORM_SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${C2D_INCLUDES} ${LIBCONFIG_INCLUDES} ${PLATFORM_INCLUDES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${C2D_LDFLAGS})
 target_compile_options(${PROJECT_NAME} PUBLIC ${C2D_CFLAGS})
