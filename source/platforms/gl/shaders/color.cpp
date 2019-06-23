@@ -20,7 +20,7 @@ const char *color_v = R"text(
 #endif
 
     COMPAT_ATTRIBUTE vec2 positionAttribute;
-    COMPAT_ATTRIBUTE in vec4 colorAttribute;
+    COMPAT_ATTRIBUTE vec4 colorAttribute;
 
     uniform mat4 modelViewMatrix;
     uniform mat4 projectionMatrix;

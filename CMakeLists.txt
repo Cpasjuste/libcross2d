@@ -31,13 +31,13 @@ option(OPTION_RECALBOX "Build from recalbox buildroot" OFF)
 # SANITY CHECKS
 ####################
 if (PLATFORM_LINUX OR PLATFORM_WINDOWS OR PLATFORM_SWITCH)
-    if (NOT OPTION_SDL2_GL OR NOT OPTION_SDL2_GLES2 OR NOT OPTION_SDL2_SOFT)
+    if (NOT (OPTION_SDL2_GL OR OPTION_SDL2_GLES2 OR OPTION_SDL2_SOFT))
         message(STATUS "SDL2 OpenGL 3.3 support enabled")
         set(OPTION_SDL2_GL ON CACHE BOOL "SDL2 support (OpenGL 3.3)" FORCE)
     endif ()
 endif ()
 
-if (PLATFORM_RPI3_64)
+if (PLATFORM_RPI3_64 OR OPTION_SDL2_GLES2)
     message(STATUS "SDL2 OpenGLES 2.0 support enabled")
     set(OPTION_SDL2_GLES2 ON CACHE BOOL "SDL2 support (OpenGLES 2.0)" FORCE)
 endif ()
