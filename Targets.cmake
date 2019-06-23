@@ -19,7 +19,7 @@ add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}.data)
 ########################
 # Linux/Win64 targets
 ########################
-if (BUILD_LINUX OR BUILD_WINDOWS)
+if (PLATFORM_LINUX OR PLATFORM_WINDOWS)
     add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
             DEPENDS ${PROJECT_NAME}.data
             COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip
@@ -36,7 +36,7 @@ endif ()
 ###########################
 # Nintendo Switch target
 ###########################
-if (BUILD_SWITCH)
+if (PLATFORM_SWITCH)
     add_custom_target(${PROJECT_NAME}.nro
             DEPENDS ${PROJECT_NAME}
             DEPENDS ${PROJECT_NAME}.data
@@ -54,13 +54,13 @@ if (BUILD_SWITCH)
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/data_read_write ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
             COMMAND cd ${CMAKE_BINARY_DIR}/release && ${ZIP} -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip ${PROJECT_NAME}
             )
-endif (BUILD_SWITCH)
+endif (PLATFORM_SWITCH)
 
 #####################
 # 3DS target
 #####################
 # TODO: update target and packaging, see linux/windows/switch
-if (BUILD_3DS)
+if (PLATFORM_3DS)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-specs=${DEVKITPRO}/devkitARM/arm-none-eabi/lib/3dsx.specs")
     add_custom_target(${PROJECT_NAME}.3dsx
             DEPENDS ${PROJECT_NAME}
@@ -78,13 +78,13 @@ if (BUILD_3DS)
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/data_read_write ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
             COMMAND cd ${CMAKE_BINARY_DIR}/release && ${ZIP} -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip ${PROJECT_NAME}
             )
-endif (BUILD_3DS)
+endif (PLATFORM_3DS)
 
 #####################
 # VITA target
 #####################
 # TODO: update target and packaging, see linux/windows/switch
-if (BUILD_VITA)
+if (PLATFORM_VITA)
     vita_create_self(${PROJECT_NAME}.self ${PROJECT_NAME})
     add_custom_target(${PROJECT_NAME}_vita_release
             DEPENDS ${PROJECT_NAME}.self
@@ -98,4 +98,4 @@ if (BUILD_VITA)
             COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data/read_write/. ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
             COMMAND cd ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME} && zip -r ../../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_vita.vpk .
             COMMAND cd ${CMAKE_CURRENT_BINARY_DIR})
-endif (BUILD_VITA)
+endif (PLATFORM_VITA)

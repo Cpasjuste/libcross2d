@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.0)
 ####################
 option(PLATFORM_LINUX "Linux platform target" OFF)
 option(PLATFORM_WINDOWS "Windows platform target (msys/mingw64)" OFF)
-option(PLATFORM_RPI3_64 "RIP3 (64 bits) platform target" OFF)
+option(PLATFORM_RPI3 "RIP3 platform target" OFF)
 option(PLATFORM_SWITCH "Nintendo Switch platform target" OFF)
 option(PLATFORM_3DS "Nintendo 3DS platform target" OFF)
 option(PLATFORM_VITA "Sony PS Vita platform target" OFF)
@@ -32,13 +32,13 @@ option(OPTION_RECALBOX "Build from recalbox buildroot" OFF)
 ####################
 if (PLATFORM_LINUX OR PLATFORM_WINDOWS OR PLATFORM_SWITCH)
     if (NOT (OPTION_SDL2_GL OR OPTION_SDL2_GLES2 OR OPTION_SDL2_SOFT))
-        message(STATUS "SDL2 OpenGL 3.3 support enabled")
+        message(STATUS "C2D: SDL2 OpenGL 3.3 support enabled")
         set(OPTION_SDL2_GL ON CACHE BOOL "SDL2 support (OpenGL 3.3)" FORCE)
     endif ()
 endif ()
 
-if (PLATFORM_RPI3_64 OR OPTION_SDL2_GLES2)
-    message(STATUS "SDL2 OpenGLES 2.0 support enabled")
+if (PLATFORM_RPI3 OR OPTION_SDL2_GLES2)
+    message(STATUS "C2D: SDL2 OpenGLES 2.0 support enabled")
     set(OPTION_SDL2_GLES2 ON CACHE BOOL "SDL2 support (OpenGLES 2.0)" FORCE)
 endif ()
 
@@ -51,7 +51,11 @@ endif ()
 
 # setup target toolchain
 include(Toolchain.cmake)
-include(FindPkgConfig)
+#set(CMAKE_TOOLCHAIN_FILE Toolchain.cmake)
+
+if (PLATFORM_LINUX)
+    #message(FATAL_ERROR "libcross2d cmake: LINUX")
+endif ()
 
 project(cross2d)
 
@@ -62,6 +66,7 @@ file(GLOB C2D_SOURCES
         source/widgets/*.c*
         source/skeleton/*.c*
         source/skeleton/sfml/*.c*)
+include(FindPkgConfig)
 pkg_search_module(ZLIB REQUIRED zlib)
 pkg_search_module(FREETYPE REQUIRED freetype2)
 set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
