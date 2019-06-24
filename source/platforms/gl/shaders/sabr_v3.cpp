@@ -4,7 +4,6 @@
 
 // vertex color shader
 const char *sabr_v3_v = R"text(
-    #version 330 core
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING out
@@ -81,7 +80,6 @@ const char *sabr_v3_v = R"text(
 )text";
 
 const char *sabr_v3_f = R"text(
-    #version 330 core
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING in

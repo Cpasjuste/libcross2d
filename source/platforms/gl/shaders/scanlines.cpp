@@ -3,7 +3,6 @@
 //
 
 const char *scanlines_v = R"text(
-    #version 330 core
 
     #pragma parameter SCANLINE_BASE_BRIGHTNESS "Scanline Base Brightness" 0.95 0.0 1.0 0.01
     #pragma parameter SCANLINE_SINE_COMP_A "Scanline Sine Comp A" 0.0 0.0 0.10 0.01
@@ -65,7 +64,6 @@ const char *scanlines_v = R"text(
 )text";
 
 const char *scanlines_f = R"text(
-    #version 330 core
 
     #pragma parameter SCANLINE_BASE_BRIGHTNESS "Scanline Base Brightness" 0.95 0.0 1.0 0.01
     #pragma parameter SCANLINE_SINE_COMP_A "Scanline Sine Comp A" 0.0 0.0 0.10 0.01

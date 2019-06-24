@@ -3,7 +3,6 @@
 //
 
 const char *crt_caligari_v = R"text(
-    #version 330 core
 
     // Parameter lines go here:
     // 0.5 = the spot stays inside the original pixel
@@ -73,7 +72,6 @@ const char *crt_caligari_v = R"text(
 )text";
 
 const char *crt_caligari_f = R"text(
-    #version 330 core
 
     // Parameter lines go here:
     // 0.5 = the spot stays inside the original pixel

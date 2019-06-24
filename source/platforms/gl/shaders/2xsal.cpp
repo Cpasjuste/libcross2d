@@ -3,7 +3,6 @@
 //
 
 const char *sal2x_v = R"text(
-    #version 330 core
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING out
@@ -61,7 +60,6 @@ const char *sal2x_v = R"text(
 )text";
 
 const char *sal2x_f = R"text(
-    #version 330 core
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING in

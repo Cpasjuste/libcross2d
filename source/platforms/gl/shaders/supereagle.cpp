@@ -4,7 +4,6 @@
 
 // vertex color shader
 const char *supereagle_v = R"text(
-    #version 330 core
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING out
@@ -86,7 +85,6 @@ const char *supereagle_v = R"text(
 )text";
 
 const char *supereagle_f = R"text(
-    #version 330 core
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING in

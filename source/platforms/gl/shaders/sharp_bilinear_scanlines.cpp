@@ -4,7 +4,6 @@
 
 // texture
 const char *sharp_bilinear_scanlines_v = R"text(
-    #version 330 core
 
     #pragma parameter SCANLINE_BASE_BRIGHTNESS "Scanline Base Brightness" 0.60 0.0 1.0 0.01
     #pragma parameter SCANLINE_HORIZONTAL_MODULATION "Scanline Horizontal Modulation" 0.0 0.0 2.00 0.01
@@ -76,7 +75,6 @@ const char *sharp_bilinear_scanlines_v = R"text(
 )text";
 
 const char *sharp_bilinear_scanlines_f = R"text(
-    #version 330
 
     #pragma parameter SCANLINE_BASE_BRIGHTNESS "Scanline Base Brightness" 0.60 0.0 1.0 0.01
     #pragma parameter SCANLINE_HORIZONTAL_MODULATION "Scanline Horizontal Modulation" 0.0 0.0 2.00 0.01

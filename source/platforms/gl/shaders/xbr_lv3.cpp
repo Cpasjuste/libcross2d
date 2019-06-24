@@ -4,7 +4,6 @@
 
 // vertex color shader
 const char *xbr_lv3_v = R"text(
-    #version 330 core
 
     // Parameter lines go here:
     #pragma parameter XBR_Y_WEIGHT "Y Weight" 48.0 0.0 100.0 1.0
@@ -89,7 +88,6 @@ const char *xbr_lv3_v = R"text(
 )text";
 
 const char *xbr_lv3_f = R"text(
-    #version 330 core
 
     // Parameter lines go here:
     #pragma parameter XBR_Y_WEIGHT "Y Weight" 48.0 0.0 100.0 1.0

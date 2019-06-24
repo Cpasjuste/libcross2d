@@ -15,7 +15,6 @@
 using namespace c2d;
 
 GLRenderer::GLRenderer(const Vector2f &size) : Renderer(size) {
-
     printf("GLRenderer\n");
 }
 
@@ -31,8 +30,6 @@ void GLRenderer::initGL() {
     // vao
     GL_CHECK(glGenVertexArrays(1, &vao));
 #endif
-    GL_CHECK(glEnableVertexAttribArray(0));
-    GL_CHECK(glEnableVertexAttribArray(1));
     GL_CHECK(glDisable(GL_DEPTH_TEST));
     GL_CHECK(glDepthMask(GL_FALSE));
 
@@ -71,10 +68,12 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     vertexArray->bind();
 
     // set vertex position
+    GL_CHECK(glEnableVertexAttribArray(0));
     GL_CHECK(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                                    (void *) offsetof(Vertex, position)));
 
     // set vertex colors
+    GL_CHECK(glEnableVertexAttribArray(1));
     GL_CHECK(glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex),
                                    (void *) offsetof(Vertex, color)));
 
@@ -108,14 +107,14 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
         shader->SetUniform("InputSize", inputSize);
         shader->SetUniform("TextureSize", textureSize);
         shader->SetUniform("OutputSize", outputSize);
-        if (glTexture->shader) {
 #if 0
+        if (glTexture->shader) {
             printf("inputSize: %ix%i, textureSize: %ix%i, outputSize: %ix%i\n",
                    (int) inputSize.x, (int) inputSize.y,
                    (int) textureSize.x, (int) textureSize.y,
                    (int) outputSize.x, (int) outputSize.y);
-#endif
         }
+#endif
     }
 
     //auto pMtx = glm::orthoLH(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
@@ -144,6 +143,9 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
                             GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
     GLenum mode = modes[vertexArray->getPrimitiveType()];
     GL_CHECK(glDrawArrays(mode, 0, (GLsizei) vertexCount));
+
+    GL_CHECK(glDisableVertexAttribArray(0));
+    GL_CHECK(glDisableVertexAttribArray(1));
 
     if (glTexture || vertices[0].color.a < 255) {
         GL_CHECK(glDisable(GL_BLEND));

@@ -4,7 +4,7 @@
 
 // vertex color shader
 const char *crt_geom_v = R"text(
-    #version 330 core
+
     #pragma parameter CRTgamma "CRTGeom Target Gamma" 2.4 0.1 5.0 0.1
     #pragma parameter monitorgamma "CRTGeom Monitor Gamma" 2.2 0.1 5.0 0.1
     #pragma parameter d "CRTGeom Distance" 1.6 0.1 3.0 0.1
@@ -210,7 +210,7 @@ const char *crt_geom_v = R"text(
 )text";
 
 const char *crt_geom_f = R"text(
-    #version 330 core
+
     #pragma parameter CRTgamma "CRTGeom Target Gamma" 2.4 0.1 5.0 0.1
     #pragma parameter monitorgamma "CRTGeom Monitor Gamma" 2.2 0.1 5.0 0.1
     #pragma parameter d "CRTGeom Distance" 1.6 0.1 3.0 0.1

@@ -3,20 +3,17 @@
 //
 
 const char *retro_v2_v = R"text(
-
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
 #define COMPAT_ATTRIBUTE in
 #define COMPAT_TEXTURE texture
+#define COMPAT_PRECISION
 #else
+// assume opengl es...
 #define COMPAT_VARYING varying
 #define COMPAT_ATTRIBUTE attribute
 #define COMPAT_TEXTURE texture2D
-#endif
-#ifdef GL_OES_standard_derivatives
 #define COMPAT_PRECISION mediump
-#else
-#define COMPAT_PRECISION
 #endif
 
     // CROSS2D
@@ -56,20 +53,17 @@ const char *retro_v2_v = R"text(
 )text";
 
 const char *retro_v2_f = R"text(
-
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
 #define COMPAT_TEXTURE texture
 out vec4 fragColor;
+#define COMPAT_PRECISION
 #else
+// assume opengl es...
 #define COMPAT_VARYING varying
 #define fragColor gl_FragColor
 #define COMPAT_TEXTURE texture2D
-#endif
-#ifdef GL_OES_standard_derivatives
 #define COMPAT_PRECISION mediump
-#else
-#define COMPAT_PRECISION
 #endif
 
     uniform COMPAT_PRECISION int FrameDirection;

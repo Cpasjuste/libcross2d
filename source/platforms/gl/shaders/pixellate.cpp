@@ -3,7 +3,6 @@
 //
 
 const char *pixellate_v = R"text(
-    #version 330 core
 
     #pragma parameter INTERPOLATE_IN_LINEAR_GAMMA "Linear Gamma Weight" 1.0 0.0 1.0 1.0
 
@@ -63,7 +62,6 @@ const char *pixellate_v = R"text(
 )text";
 
 const char *pixellate_f = R"text(
-    #version 330 core
 
     #pragma parameter INTERPOLATE_IN_LINEAR_GAMMA "Linear Gamma Weight" 1.0 0.0 1.0 1.0
 

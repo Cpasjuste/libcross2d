@@ -7,15 +7,13 @@ const char *texture_v = R"text(
 #define COMPAT_VARYING out
 #define COMPAT_ATTRIBUTE in
 #define COMPAT_TEXTURE texture
+#define COMPAT_PRECISION
 #else
+// assume opengl es...
 #define COMPAT_VARYING varying
 #define COMPAT_ATTRIBUTE attribute
 #define COMPAT_TEXTURE texture2D
-#endif
-#ifdef GL_OES_standard_derivatives
 #define COMPAT_PRECISION mediump
-#else
-#define COMPAT_PRECISION
 #endif
 
     COMPAT_ATTRIBUTE vec2 positionAttribute;
@@ -42,15 +40,13 @@ const char *texture_f = R"text(
 #define COMPAT_VARYING in
 #define COMPAT_TEXTURE texture
 out vec4 fragColor;
+#define COMPAT_PRECISION
 #else
+// assume opengl es...
 #define COMPAT_VARYING varying
 #define fragColor gl_FragColor
 #define COMPAT_TEXTURE texture2D
-#endif
-#ifdef GL_OES_standard_derivatives
 #define COMPAT_PRECISION mediump
-#else
-#define COMPAT_PRECISION
 #endif
 
     COMPAT_VARYING COMPAT_PRECISION vec4 frontColor;

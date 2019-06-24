@@ -56,15 +56,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
         return;
     }
 
-    int major, minor;
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &minor);
-#ifdef __SDL2_GLES__
     printf("OpenGL: %s, GLSL: %s\n", glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
-#else
-    printf("OpenGL: %i.%i\n", major, minor);
-#endif
-
     initGL();
 
     available = true;

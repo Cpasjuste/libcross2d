@@ -140,7 +140,7 @@ if (PLATFORM_VITA)
             jpeg png z m c
             )
     #png
-    list(APPEND C2D_CFLAGS -Wl,-q -D__PSP2__
+    list(APPEND C2D_CFLAGS -Wl,-q -D__PSP2__ -DNO_KEYBOARD
             -Wno-uninitialized
             -ftree-vectorize -mword-relocations
             -fomit-frame-pointer -ffast-math
@@ -191,7 +191,7 @@ elseif (PLATFORM_SWITCH)
             )
     list(APPEND C2D_CFLAGS
             -ffunction-sections -fomit-frame-pointer
-            -D__SDL2_GL__ -D__GL__ -D__SWITCH__
+            -D__SDL2_GL__ -D__GL__ -D__SWITCH__ -DNO_KEYBOARD
             -D_GLIBCXX_USE_C99_MATH_TR1 -D_LDBL_EQ_DBL
             -Wno-int-in-bool-context
             )

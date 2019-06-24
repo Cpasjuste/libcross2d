@@ -38,13 +38,22 @@ static GLuint createAndCompileShader(GLenum type, const char *source) {
 GLShader::GLShader(const char *vertex, const char *fragment, int type) {
 
     GLuint vsh, fsh;
+    std::string v, f;
 
-    GL_CHECK(vsh = createAndCompileShader(GL_VERTEX_SHADER, vertex));
+#ifdef __SDL2_GLES__
+    v = std::string("#version 100\n") + vertex;
+    f = std::string("#version 100\n") + fragment;
+#else
+    v = std::string("#version 330\n") + vertex;
+    f = std::string("#version 330\n") + fragment;
+#endif
+
+    GL_CHECK(vsh = createAndCompileShader(GL_VERTEX_SHADER, v.c_str()));
     if (!vsh) {
         return;
     }
 
-    GL_CHECK(fsh = createAndCompileShader(GL_FRAGMENT_SHADER, fragment));
+    GL_CHECK(fsh = createAndCompileShader(GL_FRAGMENT_SHADER, f.c_str()));
     if (!fsh) {
         glDeleteShader(vsh);
         return;

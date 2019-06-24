@@ -3,7 +3,6 @@
 //
 
 const char *sharp_bilinear_v = R"text(
-    #version 330 core
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING out
@@ -67,7 +66,6 @@ const char *sharp_bilinear_v = R"text(
 )text";
 
 const char *sharp_bilinear_f = R"text(
-    #version 330 core
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING in

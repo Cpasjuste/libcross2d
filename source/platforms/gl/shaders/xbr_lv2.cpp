@@ -3,7 +3,6 @@
 //
 
 const char *xbr_lv2_v = R"text(
-    #version 330 core
 
     //#pragma parameter XBR_SCALE "xBR Scale" 3.0 1.0 5.0 1.0
     #pragma parameter XBR_Y_WEIGHT "Y Weight" 48.0 0.0 100.0 1.0
@@ -109,7 +108,6 @@ const char *xbr_lv2_v = R"text(
 )text";
 
 const char *xbr_lv2_f = R"text(
-    #version 330 core
 
     //#pragma parameter XBR_SCALE "xBR Scale" 3.0 1.0 5.0 1.0
     #pragma parameter XBR_Y_WEIGHT "Y Weight" 48.0 0.0 100.0 1.0

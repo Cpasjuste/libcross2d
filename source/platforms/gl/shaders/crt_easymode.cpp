@@ -4,7 +4,6 @@
 
 // vertex color shader
 const char *crt_easymode_v = R"text(
-    #version 330 core
 
     #if __VERSION__ >= 130
     #define COMPAT_VARYING out
@@ -58,8 +57,6 @@ const char *crt_easymode_v = R"text(
 )text";
 
 const char *crt_easymode_f = R"text(
-
-    #version 330 core
 
     // Parameter lines go here:
     #pragma parameter SHARPNESS_H "Sharpness Horizontal" 0.5 0.0 1.0 0.05

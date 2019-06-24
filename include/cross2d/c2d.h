@@ -190,6 +190,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2D_SCREEN_WIDTH 1280
 #define C2D_SCREEN_HEIGHT 720
 #endif
+
 #include <SDL2/SDL.h>
 
 #if defined(__SDL2_GL__)
@@ -208,6 +209,7 @@ extern c2d::Renderer *c2d_renderer;
 #include <SDL2/SDL_opengl.h>
 #endif
 #endif
+
 #include "cross2d/platforms/sdl2/sdl2_gl_renderer.h"
 #include "cross2d/platforms/gl/gl_shaders.h"
 #include "cross2d/platforms/gl/gl_texture.h"
