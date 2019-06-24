@@ -17,6 +17,16 @@ using namespace c2d;
 
 std::string POSIXIo::getHomePath() const {
 #ifndef __PSP2__
+#ifdef __RECALBOX__
+    std::string home = "/recalbox/share/";
+#ifdef __PFBA__
+    home += "pfba/";
+#elif __PNES__
+    home += "pnes/";
+#else
+    return home;
+#endif
+#endif
     char buf[1024];
     if (getcwd(buf, sizeof(buf))) {
         std::string str = std::string(buf) + "/";

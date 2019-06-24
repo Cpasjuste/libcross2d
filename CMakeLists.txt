@@ -100,6 +100,10 @@ if (OPTION_SDL2_GL OR OPTION_SDL2_GLES2 OR OPTION_SDL2_SOFT)
     endif ()
 endif ()
 
+if (OPTION_RECALBOX_BUILDROOT)
+    list(APPEND C2D_CFLAGS -D__RECALBOX__)
+endif ()
+
 # export tools
 set(ZIP zip CACHE STRING "zip executable path")
 ####################
@@ -211,8 +215,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${C2D_INCLUDES} ${LIBCONFIG_IN
 target_link_libraries(${PROJECT_NAME} PUBLIC ${C2D_LDFLAGS})
 target_compile_options(${PROJECT_NAME} PUBLIC ${C2D_CFLAGS})
 
-install(FILES ${CMAKE_BINARY_DIR}/libcross2d.a DESTINATION lib)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/cross2d DESTINATION include)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libcross2d.a DESTINATION lib)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/cross2d DESTINATION include)
 
 #####################
 # test executable
