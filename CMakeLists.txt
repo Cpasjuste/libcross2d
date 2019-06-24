@@ -22,7 +22,7 @@ option(OPTION_SDL2_GL "SDL2 support (OpenGL 3.3)" OFF)
 option(OPTION_SDL2_GLES2 "SDL2 support (OpenGLES 2.0)" OFF)
 option(OPTION_SDL2_SOFT "SDL2 support (software renderer)" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
-option(OPTION_RECALBOX "Build from recalbox buildroot" OFF)
+option(OPTION_RECALBOX_BUILDROOT "Build from recalbox buildroot" OFF)
 ####################
 # BUILD OPTIONS
 ####################
