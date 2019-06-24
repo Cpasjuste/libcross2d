@@ -51,11 +51,6 @@ endif ()
 
 # setup target toolchain
 include(Toolchain.cmake)
-#set(CMAKE_TOOLCHAIN_FILE Toolchain.cmake)
-
-if (PLATFORM_LINUX)
-    #message(FATAL_ERROR "libcross2d cmake: LINUX")
-endif ()
 
 project(cross2d)
 

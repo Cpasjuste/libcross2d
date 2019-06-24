@@ -200,8 +200,12 @@ extern c2d::Renderer *c2d_renderer;
 #else
 #ifdef __SDL2_GLES__
 #include <SDL2/SDL_opengles2.h>
+// ?!
 #undef GL_RGBA8
 #define GL_RGBA8 GL_RGBA
+#undef GL_RGB565
+#define GL_RGB565 GL_RGB
+// ?!
 #ifndef GL_QUADS
 #define GL_QUADS 0x0006
 #endif

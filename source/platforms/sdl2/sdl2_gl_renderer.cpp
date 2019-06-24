@@ -12,6 +12,8 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
 
     printf("SDL2Renderer(GL)\n");
 
+    SDL_ShowCursor(SDL_DISABLE);
+
     if ((SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't init sdl: %s\n", SDL_GetError());
         return;
