@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ####################
 # TARGET PLATFORM
@@ -64,6 +64,8 @@ file(GLOB C2D_SOURCES
 include(FindPkgConfig)
 pkg_search_module(ZLIB REQUIRED zlib)
 pkg_search_module(FREETYPE REQUIRED freetype2)
+#find_package(ZLIB REQUIRED)
+#find_package(Freetype REQUIRED)
 set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
 set(C2D_CFLAGS -Wall -Wno-narrowing -DLIBCONFIG_STATIC)
 set(C2D_LDFLAGS ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
@@ -77,6 +79,7 @@ endif ()
 
 if (OPTION_SDL2_GL OR OPTION_SDL2_GLES2 OR OPTION_SDL2_SOFT)
     pkg_search_module(SDL2 REQUIRED sdl2)
+    #find_package(SDL2 REQUIRED)
     list(APPEND C2D_INCLUDES ${SDL2_INCLUDE_DIRS})
     list(APPEND C2D_CFLAGS -D__SDL2__)
     list(APPEND C2D_LDFLAGS ${SDL2_LIBRARIES})
@@ -88,7 +91,7 @@ if (OPTION_SDL2_GL OR OPTION_SDL2_GLES2 OR OPTION_SDL2_SOFT)
         list(APPEND C2D_SOURCES ${GL_SRC} ${GL_SHADERS_SRC})
         list(APPEND C2D_CFLAGS -D__SDL2_GL__ -D__GL__)
     endif ()
-    if (OPTION_SDL2_GL)
+    if (OPTION_SDL2_GL AND NOT PLATFORM_SWITCH)
         set(OpenGL_GL_PREFERENCE GLVND)
         find_package(OpenGL REQUIRED)
         list(APPEND C2D_INCLUDES ${OPENGL_INCLUDE_DIRS})
