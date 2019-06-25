@@ -9,7 +9,7 @@ option(PLATFORM_WINDOWS "Windows platform target (msys/mingw64)" OFF)
 option(PLATFORM_RPI3 "RIP3 platform target" OFF)
 option(PLATFORM_SWITCH "Nintendo Switch platform target" OFF)
 option(PLATFORM_3DS "Nintendo 3DS platform target" OFF)
-option(PLATFORM_VITA "Sony PS Vita platform target" ON)
+option(PLATFORM_VITA "Sony PS Vita platform target" OFF)
 option(PLATFORM_LDK "LDK Handheld platform target (mips: LDK, RS-97...)" OFF)
 ####################
 # TARGET PLATFORM
