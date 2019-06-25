@@ -4,7 +4,7 @@
 
 #include <malloc.h>
 #include <SDL/SDL.h>
-#include "platforms/sdl1/sdl1_audio.h"
+#include "cross2d/platforms/sdl1/sdl1_audio.h"
 
 using namespace c2d;
 
@@ -47,7 +47,7 @@ static void read_buffer(void *unused, unsigned char *data, int len) {
     }
 }
 
-SDL1Audio::SDL1Audio(int freq, int fps) : Audio(freq, fps) {
+SDL1Audio::SDL1Audio(int rate, float fps, C2DAudioCallback cb) : Audio(rate, fps, cb) {
 
     if (!available) {
         return;
@@ -68,7 +68,7 @@ SDL1Audio::SDL1Audio(int freq, int fps) : Audio(freq, fps) {
     buf_write_pos = 0;
 
     aspec.format = AUDIO_S16;
-    aspec.freq = freq;
+    aspec.freq = rate;
     aspec.channels = (Uint8) channels;
     aspec.samples = (Uint16) sample_size;
     aspec.callback = read_buffer;
@@ -108,7 +108,7 @@ SDL1Audio::~SDL1Audio() {
     }
 }
 
-void SDL1Audio::play() {
+void SDL1Audio::play(bool sync) {
 
     if (available && !paused) {
         write_buffer((unsigned char *) buffer, buffer_size);

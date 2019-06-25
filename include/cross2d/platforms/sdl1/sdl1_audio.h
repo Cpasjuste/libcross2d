@@ -12,16 +12,17 @@ namespace c2d {
     class SDL1Audio : public Audio {
 
     public:
-        SDL1Audio(int freq, int fps = 60);
+        SDL1Audio(int rate = 48000, float fps = 60, C2DAudioCallback cb = nullptr);
 
-        virtual ~SDL1Audio();
+        ~SDL1Audio() override;
 
-        virtual void play();
+        void play(bool sync = false) override;
 
-        virtual void pause(int pause);
+        //void play(const void *data, int len, bool sync = false) override;
 
-        virtual void reset();
+        void pause(int pause) override;
 
+        void reset() override;
     };
 }
 

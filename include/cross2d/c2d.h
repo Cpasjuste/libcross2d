@@ -263,21 +263,29 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         5
 
 #elif __SDL1__
+
+#include <SDL/SDL.h>
+
+#ifdef __LDK__
+#define C2D_SCREEN_WIDTH 320
+#define C2D_SCREEN_HEIGHT 240
+#else
 #define C2D_SCREEN_WIDTH 1280
 #define C2D_SCREEN_HEIGHT 720
+#endif
 
 #include "platforms/sdl1/sdl1_renderer.h"
-#include "platforms/gl/gl_texture.h"
+#include "platforms/sdl1/sdl1_texture.h"
 #include "platforms/sdl1/sdl1_input.h"
 #include "platforms/sdl1/sdl1_audio.h"
 #include "platforms/posix/posix_io.h"
 #include "platforms/posix/posix_clock.h"
 
 #define C2DRenderer SDL1Renderer
-#define C2DTexture GLTexture
-#define C2DRectangle Rectangle
-#define C2DCircle Circle
-#define C2DLine Line
+#define C2DTexture SDL1Texture
+#define C2DRectangle RectangleShape
+#define C2DRoundedRectangle RoundedRectangleShape
+#define C2DCircle CircleShape
 #define C2DFont Font
 #define C2DText Text
 #define C2DInput SDL1Input

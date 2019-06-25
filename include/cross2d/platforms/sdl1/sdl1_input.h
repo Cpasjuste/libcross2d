@@ -6,21 +6,19 @@
 #define _SDL1_INPUT_H
 
 #include "cross2d/skeleton/input.h"
-#include "cross2d/skeleton/renderer.h"
-#include <SDL/SDL.h>
 
 namespace c2d {
 
     class SDL1Input : public Input {
 
     public:
-        SDL1Input(Renderer *renderer);
+        SDL1Input();
 
-        virtual ~SDL1Input();
+        ~SDL1Input() override;
 
-        virtual Player *update(int rotate = 0);
+        int waitButton(int player = 0) override;
 
-        virtual int getButton(int player = 0);
+        Player *update(int rotate = 0) override;
 
     private:
         virtual void process_axis(Input::Player &player, int rotate);

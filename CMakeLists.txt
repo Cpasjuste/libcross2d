@@ -18,9 +18,10 @@ option(PLATFORM_LDK "LDK Handheld platform target (mips: LDK, RS-97...)" OFF)
 ####################
 # BUILD OPTIONS
 ####################
+option(OPTION_SDL1 "SDL1 support (software, slow, unsupported)" OFF)
 option(OPTION_SDL2_GL "SDL2 support (OpenGL 3.3)" OFF)
 option(OPTION_SDL2_GLES2 "SDL2 support (OpenGLES 2.0)" OFF)
-option(OPTION_SDL2_SOFT "SDL2 support (software renderer)" OFF)
+option(OPTION_SDL2_SOFT "SDL2 support (software, slow)" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
 option(OPTION_RECALBOX_BUILDROOT "Build from recalbox buildroot" OFF)
 ####################
@@ -31,7 +32,7 @@ option(OPTION_RECALBOX_BUILDROOT "Build from recalbox buildroot" OFF)
 # SANITY CHECKS
 ####################
 if (PLATFORM_LINUX OR PLATFORM_WINDOWS OR PLATFORM_SWITCH)
-    if (NOT (OPTION_SDL2_GL OR OPTION_SDL2_GLES2 OR OPTION_SDL2_SOFT))
+    if (NOT (OPTION_SDL1 OR OPTION_SDL2_GL OR OPTION_SDL2_GLES2 OR OPTION_SDL2_SOFT))
         message(STATUS "C2D: SDL2 OpenGL 3.3 support enabled")
         set(OPTION_SDL2_GL ON CACHE BOOL "SDL2 support (OpenGL 3.3)" FORCE)
     endif ()
@@ -64,8 +65,6 @@ file(GLOB C2D_SOURCES
 include(FindPkgConfig)
 pkg_search_module(ZLIB REQUIRED zlib)
 pkg_search_module(FREETYPE REQUIRED freetype2)
-#find_package(ZLIB REQUIRED)
-#find_package(Freetype REQUIRED)
 set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
 set(C2D_CFLAGS -Wall -Wno-narrowing -DLIBCONFIG_STATIC)
 set(C2D_LDFLAGS ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
@@ -79,7 +78,6 @@ endif ()
 
 if (OPTION_SDL2_GL OR OPTION_SDL2_GLES2 OR OPTION_SDL2_SOFT)
     pkg_search_module(SDL2 REQUIRED sdl2)
-    #find_package(SDL2 REQUIRED)
     list(APPEND C2D_INCLUDES ${SDL2_INCLUDE_DIRS})
     list(APPEND C2D_CFLAGS -D__SDL2__)
     list(APPEND C2D_LDFLAGS ${SDL2_LIBRARIES})
@@ -101,6 +99,15 @@ if (OPTION_SDL2_GL OR OPTION_SDL2_GLES2 OR OPTION_SDL2_SOFT)
         list(APPEND C2D_CFLAGS -D__SDL2_GLES__)
         list(APPEND C2D_LDFLAGS GLESv2)
     endif ()
+endif ()
+
+if (OPTION_SDL1)
+    pkg_search_module(SDL REQUIRED sdl)
+    list(APPEND C2D_INCLUDES ${SDL_INCLUDE_DIRS})
+    list(APPEND C2D_LDFLAGS ${SDL_LIBRARIES})
+    list(APPEND C2D_CFLAGS -D__SDL1__)
+    file(GLOB SDL_SRC source/platforms/sdl1/*.c*)
+    list(APPEND C2D_SOURCES ${SDL_SRC})
 endif ()
 
 if (OPTION_RECALBOX_BUILDROOT)
@@ -199,7 +206,7 @@ elseif (PLATFORM_SWITCH)
             )
     list(APPEND C2D_LDFLAGS glad EGL glapi drm_nouveau nx freetype bz2 png z)
     ########################
-    # LINUX PLATORM (SDL2)
+    # LINUX PLATORM
     ########################
 elseif (PLATFORM_LINUX)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)

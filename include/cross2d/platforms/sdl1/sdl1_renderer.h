@@ -5,26 +5,29 @@
 #ifndef SDL1_RENDERER_H
 #define SDL1_RENDERER_H
 
-#include "SDL/SDL.h"
-#include "cross2d/platforms/gl/gl_renderer.h"
+#include "cross2d/skeleton/renderer.h"
 
 namespace c2d {
 
-    class SDL1Renderer : public GLRenderer {
+    class SDL1Renderer : public Renderer {
 
     public:
 
-        SDL1Renderer(const Vector2f &size = Vector2f(0, 0));
+        explicit SDL1Renderer(const Vector2f &size = Vector2f(0, 0));
 
-        ~SDL1Renderer();
+        ~SDL1Renderer() override;
 
-        void flip(bool draw = true);
+        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
 
-        void delay(unsigned int ms);
+        void clear() override;
+
+        void flip(bool draw = true, bool inputs = true) override;
+
+        void delay(unsigned int ms) override;
 
     private:
 
-        SDL_Surface *screen = NULL;
+        SDL_Surface *screen = nullptr;
     };
 }
 
