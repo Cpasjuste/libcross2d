@@ -19,6 +19,8 @@ namespace c2d {
         explicit PSP2Texture(const Vector2f &size = Vector2f(0, 0),
                 Format format = Format::RGBA8);
 
+        PSP2Texture(const unsigned char *buffer, int bufferSize);
+
         ~PSP2Texture() override;
 
         int resize(const Vector2f &size, bool copyPixels = true) override;

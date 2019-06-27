@@ -58,6 +58,25 @@ PSP2Texture::PSP2Texture(const Vector2f &size, Format fmt) : Texture(size, fmt) 
     available = true;
 }
 
+PSP2Texture::PSP2Texture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
+
+
+    tex = vita2d_load_PNG_buffer(buffer);
+    if (!tex) {
+        printf("PSP2Texture: couldn't create texture\n");
+        return;
+    }
+
+    m_vertices.setPrimitiveType(TriangleStrip);
+    setSize(vita2d_texture_get_width(tex), vita2d_texture_get_height(tex));
+    setTexture(this, true);
+    pitch = vita2d_texture_get_stride(tex);
+    setFilter(filter);
+    setShader(0);
+
+    available = true;
+}
+
 int PSP2Texture::resize(const Vector2f &size, bool copyPixels) {
 
     if (size.x == getSize().x && size.y == getSize().y) {
