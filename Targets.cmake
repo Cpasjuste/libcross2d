@@ -26,7 +26,7 @@ if (PLATFORM_LINUX OR PLATFORM_WINDOWS)
             COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
             COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX} ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
-            # on linux and windows, both ro (read only) and rw (read write) data are merged in the same folder (data)
+            # on linux and windows, both ro (read only) and rw (read write) data are merged
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/data_read_only ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/data_read_write ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
             COMMAND cd ${CMAKE_BINARY_DIR}/release && ${ZIP} -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip ${PROJECT_NAME}
@@ -42,9 +42,9 @@ if (PLATFORM_SWITCH)
             DEPENDS ${PROJECT_NAME}.data
             COMMAND ${DEVKITPRO}/tools/bin/nacptool --create "${PROJECT_NAME}" "${PROJECT_AUTHOR}" "${VERSION_MAJOR}.${VERSION_MINOR}" ${PROJECT_NAME}.nacp
             # copy custom switch "read_only" data to common "read_only" data for romfs creation (merge/overwrite common data)
-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/switch/read_only ${CMAKE_CURRENT_BINARY_DIR}/data_read_only
-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/switch/read_write ${CMAKE_CURRENT_BINARY_DIR}/data_read_write
-            COMMAND ${DEVKITPRO}/tools/bin/elf2nro ${PROJECT_NAME} ${PROJECT_NAME}.nro --icon=${CMAKE_CURRENT_SOURCE_DIR}/data/switch/icon.jpg --nacp=${PROJECT_NAME}.nacp --romfsdir=${CMAKE_CURRENT_BINARY_DIR}/data_read_only)
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/${TARGET_PLATFORM}/read_only ${CMAKE_CURRENT_BINARY_DIR}/data_read_only
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/${TARGET_PLATFORM}/read_write ${CMAKE_CURRENT_BINARY_DIR}/data_read_write
+            COMMAND ${DEVKITPRO}/tools/bin/elf2nro ${PROJECT_NAME} ${PROJECT_NAME}.nro --icon=${CMAKE_CURRENT_SOURCE_DIR}/data/${TARGET_PLATFORM}/icon.jpg --nacp=${PROJECT_NAME}.nacp --romfsdir=${CMAKE_CURRENT_BINARY_DIR}/data_read_only)
     add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
             DEPENDS ${PROJECT_NAME}.nro
             COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip
@@ -83,19 +83,28 @@ endif (PLATFORM_3DS)
 #####################
 # VITA target
 #####################
-# TODO: update target and packaging, see linux/windows/switch
 if (PLATFORM_VITA)
     vita_create_self(${PROJECT_NAME}.self ${PROJECT_NAME})
-    add_custom_target(${PROJECT_NAME}_vita_release
+    add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
+            DEPENDS ${PROJECT_NAME}
             DEPENDS ${PROJECT_NAME}.self
-            COMMAND rm -rf ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
-            COMMAND mkdir -p ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data
-            COMMAND mkdir -p ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/sce_sys
-            COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID="${TITLE_ID}" "${PROJECT_NAME}" ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/sce_sys/param.sfo
-            COMMAND cp -f ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.self ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/eboot.bin
-            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data/vita/. ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
-            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data/read_only/. ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data
-            COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/data/read_write/. ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
-            COMMAND cd ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME} && zip -r ../../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_vita.vpk .
-            COMMAND cd ${CMAKE_CURRENT_BINARY_DIR})
+            DEPENDS ${PROJECT_NAME}.data
+            # cleanup
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/vpk
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip
+            # create vpk
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/vpk
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/data_read_only ${CMAKE_BINARY_DIR}/vpk
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/${TARGET_PLATFORM}/read_only ${CMAKE_BINARY_DIR}/vpk
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.self ${CMAKE_BINARY_DIR}/vpk/eboot.bin
+            COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID="${TITLE_ID}" "${PROJECT_NAME}" ${CMAKE_BINARY_DIR}/vpk/sce_sys/param.sfo
+            COMMAND cd ${CMAKE_BINARY_DIR}/vpk && ${ZIP} -r ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.vpk .
+            # create zipped release
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.vpk ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/data_read_write ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/${TARGET_PLATFORM}/read_write ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data/${PROJECT_NAME}
+            COMMAND cd ${CMAKE_BINARY_DIR}/release && ${ZIP} -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip ${PROJECT_NAME}
+            )
 endif (PLATFORM_VITA)
