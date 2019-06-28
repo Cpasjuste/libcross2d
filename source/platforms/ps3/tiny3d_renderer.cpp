@@ -105,6 +105,9 @@ void TINY3DRenderer::draw(const VertexArray &vertices,
 
 void TINY3DRenderer::flip() {
 
+    process_inputs = _process_inputs;
+    Renderer::onUpdate();
+
     // clear
     tiny3d_Clear(getFillColor().toARGB(), TINY3D_CLEAR_ALL);
     // Enable alpha Test

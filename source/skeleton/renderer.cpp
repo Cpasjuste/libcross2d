@@ -27,27 +27,7 @@ Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
     font->loadDefault();
 }
 
-void Renderer::flip(bool draw, bool inputs) {
-
-    // update inputs
-    if (inputs) {
-        input->update();
-        for (auto &player : input->players) {
-            unsigned int keys = player.keys;
-            if (keys > 0 && keys != Input::Key::Delay) {
-                onInput(input->players);
-                break;
-            }
-        }
-    }
-
-    onUpdate();
-
-    // call base class (draw childs)
-    if (draw) {
-        Transform trans = getTransform();
-        onDraw(trans, draw);
-    }
+void Renderer::onUpdate() {
 
     deltaTime = deltaClock->restart();
     elapsedTime = elapsedClock->getElapsedTime();
@@ -58,6 +38,30 @@ void Renderer::flip(bool draw, bool inputs) {
         fps = frames;
         frames = 0;
         time_last = time_now;
+    }
+
+    if (process_inputs) {
+        input->update();
+        for (auto &player : input->players) {
+            unsigned int keys = player.keys;
+            if (keys > 0 && keys != Input::Key::Delay) {
+                onInput(input->players);
+                break;
+            }
+        }
+    }
+
+    Rectangle::onUpdate();
+}
+
+void Renderer::flip(bool draw, bool _process_inputs) {
+
+    process_inputs = _process_inputs;
+
+    // call base class (draw childs)
+    if (draw) {
+        Transform trans = getTransform();
+        onDraw(trans, draw);
     }
 }
 

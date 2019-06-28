@@ -221,6 +221,9 @@ void SDL2Renderer::clear() {
 
 void SDL2Renderer::flip(bool draw, bool inputs) {
 
+    process_inputs = _process_inputs;
+    Renderer::onUpdate();
+
     if (draw) {
         SDL_SetRenderDrawColor(renderer,
                                m_clearColor.r,

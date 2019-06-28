@@ -177,6 +177,9 @@ void GLRenderer::clear() {
 
 void GLRenderer::flip(bool draw, bool inputs) {
 
+    process_inputs = _process_inputs;
+    Renderer::onUpdate();
+
     if (draw) {
         clear();
     }

@@ -191,6 +191,9 @@ void CTRRenderer::clear() {
 
 void CTRRenderer::flip(bool draw, bool inputs) {
 
+    process_inputs = _process_inputs;
+    Renderer::onUpdate();
+
     if (draw) {
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
         clear();

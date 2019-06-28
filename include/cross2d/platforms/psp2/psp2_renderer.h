@@ -19,7 +19,7 @@ namespace c2d {
 
         void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
 
-        void flip(bool draw = true, bool inputs = true) override;
+        void flip(bool draw = true, bool process_inputs = true) override;
 
         void delay(unsigned int ms) override;
     };

@@ -158,6 +158,9 @@ void SDL1Renderer::clear() {
 
 void SDL1Renderer::flip(bool draw, bool inputs) {
 
+    process_inputs = _process_inputs;
+    Renderer::onUpdate();
+
     if (draw) {
         clear();
     }

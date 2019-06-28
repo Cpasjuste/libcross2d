@@ -55,6 +55,7 @@ bool C2DObject::onInput(Input::Player *players) {
 }
 
 void C2DObject::onUpdate() {
+
     for (auto &child : childs) {
         if (child) {
             child->onUpdate();

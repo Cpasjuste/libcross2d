@@ -134,8 +134,9 @@ namespace c2d {
             m_string = string;
             m_geometryNeedUpdate = true;
             // PSP2 fix: update now as we can't delete vita2d_texture when drawing
-
-            // ensureGeometryUpdate();
+#ifdef __PSP2__
+            ensureGeometryUpdate();
+#endif
         }
     }
 
@@ -145,6 +146,9 @@ namespace c2d {
         if (m_font != font) {
             m_font = font;
             m_geometryNeedUpdate = true;
+#ifdef __PSP2__
+            ensureGeometryUpdate();
+#endif
         }
     }
 
@@ -413,7 +417,7 @@ namespace c2d {
             return;
         }
 
-        ensureGeometryUpdate();
+        //ensureGeometryUpdate();
         setOrigin(m_text_origin);
 
         if (draw) {

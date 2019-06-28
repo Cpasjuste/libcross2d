@@ -164,7 +164,10 @@ void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
     }
 }
 
-void PSP2Renderer::flip(bool draw, bool inputs) {
+void PSP2Renderer::flip(bool draw, bool _process_inputs) {
+
+    process_inputs = _process_inputs;
+    Renderer::onUpdate();
 
     if (draw) {
         vita2d_start_drawing();
@@ -178,7 +181,7 @@ void PSP2Renderer::flip(bool draw, bool inputs) {
     }
 
     // call base class (draw childs)
-    Renderer::flip(draw, inputs);
+    Renderer::flip(draw);
 
     if (draw) {
         // flip

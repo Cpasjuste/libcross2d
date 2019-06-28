@@ -36,7 +36,7 @@ namespace c2d {
 
         virtual void clear() {};
 
-        virtual void flip(bool draw = true, bool inputs = true);
+        virtual void flip(bool draw = true, bool process_inputs = true);
 
         virtual void delay(unsigned int ms) {};
 
@@ -77,7 +77,10 @@ namespace c2d {
 
     protected:
 
+        void onUpdate() override;
+
         Color m_clearColor = Color::Black;
+        bool process_inputs = true;
         Input *input = nullptr;
         Io *io = nullptr;
         Font *font = nullptr;

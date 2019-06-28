@@ -74,10 +74,10 @@ namespace c2d {
 
     protected:
 
-        virtual bool onInput(Input::Player *players);
-
         // always called, even if the object is hidden
         virtual void onUpdate();
+
+        virtual bool onInput(Input::Player *players);
 
         virtual void onDraw(Transform &transform, bool draw = true);
 
