@@ -124,7 +124,6 @@ namespace c2d {
         if (!m_font) {
             m_font = c2d_renderer->getFont();
         }
-        ensureGeometryUpdate();
     }
 
 
@@ -133,10 +132,6 @@ namespace c2d {
         if (m_string != string) {
             m_string = string;
             m_geometryNeedUpdate = true;
-            // PSP2 fix: update now as we can't delete vita2d_texture when drawing
-#ifdef __PSP2__
-            ensureGeometryUpdate();
-#endif
         }
     }
 
@@ -146,9 +141,6 @@ namespace c2d {
         if (m_font != font) {
             m_font = font;
             m_geometryNeedUpdate = true;
-#ifdef __PSP2__
-            ensureGeometryUpdate();
-#endif
         }
     }
 
@@ -411,14 +403,16 @@ namespace c2d {
         m_line_spacing = size;
     }
 
+    void Text::onUpdate() {
+        setOrigin(m_text_origin);
+        ensureGeometryUpdate();
+    }
+
     void Text::onDraw(Transform &transform, bool draw) {
 
         if (m_string.empty()) {
             return;
         }
-
-        //ensureGeometryUpdate();
-        setOrigin(m_text_origin);
 
         if (draw) {
             Transform combined = transform * getTransform();

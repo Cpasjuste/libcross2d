@@ -362,6 +362,8 @@ namespace c2d {
         /// \brief Draw the shape to the main renderer
         ///
         ////////////////////////////////////////////////////////////
+        virtual void onUpdate() override;
+
         virtual void onDraw(Transform &transform, bool draw = true) override;
 
         ////////////////////////////////////////////////////////////
