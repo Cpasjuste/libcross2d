@@ -221,7 +221,7 @@ void SDL2Renderer::clear() {
 
 void SDL2Renderer::flip(bool draw, bool inputs) {
 
-    process_inputs = _process_inputs;
+    process_inputs = inputs;
     Renderer::onUpdate();
 
     if (draw) {

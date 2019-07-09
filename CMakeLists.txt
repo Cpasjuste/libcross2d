@@ -39,8 +39,10 @@ if (PLATFORM_LINUX OR PLATFORM_WINDOWS OR PLATFORM_SWITCH)
 endif ()
 
 if (PLATFORM_RPI3 OR OPTION_SDL2_GLES2)
-    message(STATUS "C2D: SDL2 OpenGLES 2.0 support enabled")
-    set(OPTION_SDL2_GLES2 ON CACHE BOOL "SDL2 support (OpenGLES 2.0)" FORCE)
+    if (NOT OPTION_SDL2_SOFT)
+        message(STATUS "C2D: SDL2 OpenGLES 2.0 support enabled")
+        set(OPTION_SDL2_GLES2 ON CACHE BOOL "SDL2 support (OpenGLES 2.0)" FORCE)
+    endif ()
 endif ()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -209,6 +211,9 @@ elseif (PLATFORM_SWITCH)
     ########################
 elseif (PLATFORM_LINUX)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
+    if (PLATFORM_RPI3)
+        list(APPEND C2D_LDFLAGS bcm_host vchostif pthread dl)
+    endif ()
     if (PLATFORM_WINDOWS)
         find_package(GLEW REQUIRED)
         # hum... static linking, not easy on mingw64 :)
@@ -223,9 +228,6 @@ add_library(${PROJECT_NAME} STATIC ${C2D_SOURCES} ${LIBCONFIG_SOURCES} ${PLATFOR
 target_include_directories(${PROJECT_NAME} PUBLIC ${C2D_INCLUDES} ${LIBCONFIG_INCLUDES} ${PLATFORM_INCLUDES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${C2D_LDFLAGS})
 target_compile_options(${PROJECT_NAME} PUBLIC ${C2D_CFLAGS})
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libcross2d.a DESTINATION lib)
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/cross2d DESTINATION include)
 
 #####################
 # test executable
@@ -243,3 +245,10 @@ target_link_libraries(${PROJECT_NAME} cross2d)
 # targets
 #############
 include(Targets.cmake)
+
+#############
+# install
+#############
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cross2d_test DESTINATION bin)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libcross2d.a DESTINATION lib)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/cross2d DESTINATION include)
