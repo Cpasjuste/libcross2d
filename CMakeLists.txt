@@ -24,6 +24,8 @@ option(OPTION_SDL2_GLES2 "SDL2 support (OpenGLES 2.0)" OFF)
 option(OPTION_SDL2_SOFT "SDL2 support (software, slow)" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
 option(OPTION_RECALBOX_BUILDROOT "Build from recalbox buildroot" OFF)
+set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width")
+set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
 ####################
 # BUILD OPTIONS
 ####################
@@ -129,6 +131,8 @@ if (PLATFORM_VITA)
     #####################
     # VITA PLATORM
     #####################
+    set(OPTION_SCREEN_WIDTH 960 CACHE STRING "" FORCE)
+    set(OPTION_SCREEN_HEIGHT 544 CACHE STRING "" FORCE)
     set(TITLE_ID CROSS0001)
     set(PLATFORM_INCLUDES
             source/platforms/posix
@@ -163,6 +167,8 @@ elseif (PLATFORM_3DS)
     #####################
     # 3DS PLATORM
     #####################
+    set(OPTION_SCREEN_WIDTH 400 CACHE STRING "" FORCE)
+    set(OPTION_SCREEN_HEIGHT 240 CACHE STRING "" FORCE)
     # shader
     #set(SHADER_AS picasso)
     #add_shbin_library(shaders.3ds src/3ds/vshader.v.pica)
@@ -223,6 +229,8 @@ elseif (PLATFORM_LINUX)
         set(ZIP "/msys64/usr/bin/zip" CACHE STRING "zip executable path" FORCE)
     endif ()
 endif ()
+
+list(APPEND C2D_CFLAGS -DC2D_SCREEN_WIDTH=${OPTION_SCREEN_WIDTH} -DC2D_SCREEN_HEIGHT=${OPTION_SCREEN_HEIGHT})
 
 add_library(${PROJECT_NAME} STATIC ${C2D_SOURCES} ${LIBCONFIG_SOURCES} ${PLATFORM_SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${C2D_INCLUDES} ${LIBCONFIG_INCLUDES} ${PLATFORM_INCLUDES})
