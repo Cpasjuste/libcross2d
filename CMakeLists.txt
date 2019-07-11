@@ -74,6 +74,12 @@ set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
 set(C2D_CFLAGS -Wall -Wno-narrowing -DLIBCONFIG_STATIC)
 set(C2D_LDFLAGS ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
 
+if (BUILD_DEBUG)
+    list(APPEND C2D_CFLAGS -g -O0)
+else ()
+    list(APPEND C2D_CFLAGS -g -O3)
+endif ()
+
 if (OPTION_BUILTIN_LIBCONFIG)
     list(APPEND LIBCONFIG_INCLUDES source/skeleton/libconfig)
     file(GLOB LIBCONFIG_SOURCES source/skeleton/libconfig/*.c)
@@ -262,6 +268,10 @@ include(Targets.cmake)
 #############
 # install
 #############
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cross2d_test DESTINATION bin)
+install(
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
+        PERMISSIONS OWNER_EXECUTE OWNER_READ
+        DESTINATION bin
+)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libcross2d.a DESTINATION lib)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/cross2d DESTINATION include)
