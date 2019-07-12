@@ -61,11 +61,12 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
     printf("OpenGL: %s, GLSL: %s\n", glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
     initGL();
 
-    available = true;
+#ifdef __FREEPLAY__
+    setSize(301, 203);
+    setPosition(9, 4);
+#endif
 
-    // TODO: what?
-    // set shape size after GL initialization, for gl buffer generation
-    // setSize(size.x, size.y);
+    available = true;
 
     printf("SDL2Renderer(GL)(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
 }
