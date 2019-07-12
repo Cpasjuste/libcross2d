@@ -337,6 +337,7 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     FloatRect Text::getGlobalBounds() const {
+        ensureGeometryUpdate();
         Transform t = transformation * getTransform();
         return t.transformRect(getLocalBounds());
         //return getTransform().transformRect(getLocalBounds());
@@ -345,6 +346,9 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Text::setOrigin(const Origin &origin) {
+
+        m_geometryNeedUpdate = true;
+        ensureGeometryUpdate();
 
         m_text_origin = origin;
         float height = m_bounds.height > m_characterSize ? m_bounds.height : m_characterSize;
@@ -404,7 +408,6 @@ namespace c2d {
     }
 
     void Text::onUpdate() {
-        setOrigin(m_text_origin);
         ensureGeometryUpdate();
     }
 
