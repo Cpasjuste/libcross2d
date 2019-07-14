@@ -133,8 +133,10 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
     auto *colorShader = new GLShader(color_v, color_f);
     color = new Shader("color", colorShader);
     get(0)->data = new GLShader(texture_v, texture_f);
-    add("retro v2", new GLShader(retro_v2_v, retro_v2_f));
-    add("lcd3x", new GLShader(lcd3x_v, lcd3x_f));
+    if (C2D_SCREEN_HEIGHT > 240) {
+        add("retro v2", new GLShader(retro_v2_v, retro_v2_f));
+        add("lcd3x", new GLShader(lcd3x_v, lcd3x_f));
+    }
 #ifndef __SDL2_GLES__
     add("scanlines", new GLShader(scanlines_v, scanlines_f));
     add("crt caligari", new GLShader(crt_caligari_v, crt_caligari_f));
@@ -146,6 +148,8 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
     add("supereagle", new GLShader(supereagle_v, supereagle_f));
     add("sabr v3", new GLShader(sabr_v3_v, sabr_v3_f));
     add("xbrz freescale", new GLShader(xbrz_freescale_v, xbrz_freescale_f, GLShader::SCALE_TYPE_VIEWPORT));
+#else
+    add("sharp bilinear", new GLShader(sharp_bilinear_v, sharp_bilinear_f));
 #endif
 }
 

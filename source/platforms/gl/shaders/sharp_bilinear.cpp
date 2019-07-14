@@ -4,29 +4,26 @@
 
 const char *sharp_bilinear_v = R"text(
 
-    #if __VERSION__ >= 130
-    #define COMPAT_VARYING out
-    #define COMPAT_ATTRIBUTE in
-    #define COMPAT_TEXTURE texture
-    #else
-    #define COMPAT_VARYING varying
-    #define COMPAT_ATTRIBUTE attribute
-    #define COMPAT_TEXTURE texture2D
-    #endif
-
-    #ifdef GL_ES
-    #define COMPAT_PRECISION mediump
-    #else
-    #define COMPAT_PRECISION
-    #endif
+#if __VERSION__ >= 130
+#define COMPAT_VARYING out
+#define COMPAT_ATTRIBUTE in
+#define COMPAT_TEXTURE texture
+#define COMPAT_PRECISION
+#else
+// assume opengl es...
+#define COMPAT_VARYING varying
+#define COMPAT_ATTRIBUTE attribute
+#define COMPAT_TEXTURE texture2D
+#define COMPAT_PRECISION mediump
+#endif
 
     // CROSS2D
-    //COMPAT_ATTRIBUTE vec4 VertexCoord;
-    //COMPAT_ATTRIBUTE vec4 COLOR;
-    //COMPAT_ATTRIBUTE vec4 TexCoord;
-    layout (location = 0) in vec4 VertexCoord;
-    layout (location = 1) in vec4 COLOR;
-    layout (location = 2) in vec4 TexCoord;
+    COMPAT_ATTRIBUTE vec4 VertexCoord;
+    COMPAT_ATTRIBUTE vec4 COLOR;
+    COMPAT_ATTRIBUTE vec4 TexCoord;
+    //layout (location = 0) in vec4 VertexCoord;
+    //layout (location = 1) in vec4 COLOR;
+    //layout (location = 2) in vec4 TexCoord;
     uniform mat4 modelViewMatrix;
     uniform mat4 projectionMatrix;
     uniform mat4 textureMatrix;
@@ -67,26 +64,18 @@ const char *sharp_bilinear_v = R"text(
 
 const char *sharp_bilinear_f = R"text(
 
-    #if __VERSION__ >= 130
-    #define COMPAT_VARYING in
-    #define COMPAT_TEXTURE texture
-    out vec4 FragColor;
-    #else
-    #define COMPAT_VARYING varying
-    #define FragColor gl_FragColor
-    #define COMPAT_TEXTURE texture2D
-    #endif
-
-    #ifdef GL_ES
-    #ifdef GL_FRAGMENT_PRECISION_HIGH
-    precision highp float;
-    #else
-    precision mediump float;
-    #endif
-    #define COMPAT_PRECISION mediump
-    #else
-    #define COMPAT_PRECISION
-    #endif
+#if __VERSION__ >= 130
+#define COMPAT_VARYING in
+#define COMPAT_TEXTURE texture
+out vec4 fragColor;
+#define COMPAT_PRECISION
+#else
+// assume opengl es...
+#define COMPAT_VARYING varying
+#define fragColor gl_FragColor
+#define COMPAT_TEXTURE texture2D
+#define COMPAT_PRECISION mediump
+#endif
 
     uniform COMPAT_PRECISION int FrameDirection;
     uniform COMPAT_PRECISION int FrameCount;
@@ -94,7 +83,7 @@ const char *sharp_bilinear_f = R"text(
     uniform COMPAT_PRECISION vec2 TextureSize;
     uniform COMPAT_PRECISION vec2 InputSize;
     uniform sampler2D Texture;
-    COMPAT_VARYING vec4 TEX0;
+    COMPAT_VARYING COMPAT_PRECISION vec4 TEX0;
 
     // fragment compatibility #defines
     #define Source Texture
@@ -103,27 +92,26 @@ const char *sharp_bilinear_f = R"text(
     #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
     #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
-    COMPAT_VARYING vec2 precalc_texel;
-    COMPAT_VARYING vec2 precalc_scale;
+    COMPAT_VARYING COMPAT_PRECISION vec2 precalc_texel;
+    COMPAT_VARYING COMPAT_PRECISION vec2 precalc_scale;
 
     void main()
     {
-       vec2 texel = precalc_texel;
-       vec2 scale = precalc_scale;
+       COMPAT_PRECISION vec2 texel = precalc_texel;
+       COMPAT_PRECISION vec2 scale = precalc_scale;
 
-       vec2 texel_floored = floor(texel);
-       vec2 s = fract(texel);
-       vec2 region_range = 0.5 - 0.5 / scale;
+       COMPAT_PRECISION vec2 texel_floored = floor(texel);
+       COMPAT_PRECISION vec2 s = fract(texel);
+       COMPAT_PRECISION vec2 region_range = 0.5 - 0.5 / scale;
 
        // Figure out where in the texel to sample to get correct pre-scaled bilinear.
        // Uses the hardware bilinear interpolator to avoid having to sample 4 times manually.
 
-       vec2 center_dist = s - 0.5;
-       vec2 f = (center_dist - clamp(center_dist, -region_range, region_range)) * scale + 0.5;
+       COMPAT_PRECISION vec2 center_dist = s - 0.5;
+       COMPAT_PRECISION vec2 f = (center_dist - clamp(center_dist, -region_range, region_range)) * scale + 0.5;
 
-       vec2 mod_texel = texel_floored + f;
+       COMPAT_PRECISION vec2 mod_texel = texel_floored + f;
 
-       FragColor = vec4(COMPAT_TEXTURE(Source, mod_texel / SourceSize.xy).rgb, 1.0);
+       fragColor = vec4(COMPAT_TEXTURE(Source, mod_texel / SourceSize.xy).rgb, 1.0);
     }
-
 )text";
