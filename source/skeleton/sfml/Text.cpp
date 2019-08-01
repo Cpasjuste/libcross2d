@@ -347,11 +347,8 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void Text::setOrigin(const Origin &origin) {
 
-        m_geometryNeedUpdate = true;
-        ensureGeometryUpdate();
-
         m_text_origin = origin;
-        float height = m_bounds.height > m_characterSize ? m_bounds.height : m_characterSize;
+        float height = m_bounds.height > (float) m_characterSize ? m_bounds.height : (float) m_characterSize;
 
         switch (origin) {
             case Origin::Left:
@@ -409,6 +406,7 @@ namespace c2d {
 
     void Text::onUpdate() {
         ensureGeometryUpdate();
+        setOrigin(m_text_origin);
     }
 
     void Text::onDraw(Transform &transform, bool draw) {

@@ -18,7 +18,7 @@ namespace c2d {
         ListBoxLine(const FloatRect &rect, const std::string &str, Font *font,
                     unsigned int fontSize, Texture *icon = nullptr, bool use_icons = false);
 
-        ~ListBoxLine();
+        ~ListBoxLine() override;
 
         void setSize(const Vector2f &size) override;
 
@@ -50,7 +50,7 @@ namespace c2d {
         ListBox(Font *font, int fontSize, const FloatRect &rect,
                 const std::vector<Io::File *> &fileList, bool useIcons = false);
 
-        ~ListBox();
+        ~ListBox() override;
 
         void setFiles(const std::vector<Io::File> &fileList);
 
@@ -58,9 +58,13 @@ namespace c2d {
 
         void setSelection(int index);
 
-        void setSize(const Vector2f &size);
+        void up();
 
-        void setSize(float width, float height);
+        void down();
+
+        void setSize(const Vector2f &size) override;
+
+        void setSize(float width, float height) override;
 
         void setTextOutlineColor(const Color &color);
 
@@ -86,12 +90,16 @@ namespace c2d {
 
         void init(Font *font, int fontSize, bool useIcons);
 
+        void updateLines();
+
         std::vector<Io::File *> files;
         std::vector<ListBoxLine *> lines;
         RectangleShape *highlight;
         float line_height;
         int max_lines;
-        int index = 0;
+        int file_index = 0;
+        int start_index = 0;
+        int highlight_index = 0;
         bool use_icons = false;
         bool use_highlight = true;
         bool highlight_use_files_color = false;

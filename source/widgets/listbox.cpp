@@ -132,10 +132,10 @@ void ListBox::init(Font *font, int fontSize, bool useIcons) {
     if (use_icons) {
         line_height = 34; // 32px + 2px margin
     } else {
-        line_height = fontSize + 2;
+        line_height = (float) fontSize + 2;
     }
     max_lines = (int) (getSize().y / line_height);
-    if ((max_lines * line_height) < getSize().y) {
+    if ((float) max_lines * line_height < getSize().y) {
         line_height = getSize().y / (float) max_lines;
     }
 
@@ -150,32 +150,28 @@ void ListBox::init(Font *font, int fontSize, bool useIcons) {
         if (use_icons) {
             icon = files.size() > i ? files[i]->icon : nullptr;
         }
-        ListBoxLine *line = new ListBoxLine(r, "", font, (unsigned int) fontSize, icon, use_icons);
+        auto line = new ListBoxLine(r, "", font, (unsigned int) fontSize, icon, use_icons);
         lines.push_back(line);
         add(line);
     }
 }
 
-void ListBox::setSelection(int idx) {
-
-    index = idx;
-    int page = index / max_lines;
-    unsigned int index_start = (unsigned int) page * max_lines;
+void ListBox::updateLines() {
 
     for (unsigned int i = 0; i < (unsigned int) max_lines; i++) {
 
-        if (index_start + i >= files.size()) {
+        if (start_index + i >= files.size()) {
             lines[i]->setVisibility(Visibility::Hidden);
         } else {
             // set file
-            Io::File *file = files[index_start + i];
+            Io::File *file = files[start_index + i];
             lines[i]->setVisibility(Visibility::Visible);
             lines[i]->setString(file->name);
             // set text color based on file color
             lines[i]->setIcon(file->icon);
             lines[i]->setColor(file->color);
             // set highlight position and color
-            if (index_start + i == (unsigned int) index) {
+            if (i == highlight_index) {
                 highlight->setPosition(lines[i]->getPosition());
                 Color color = highlight_use_files_color ?
                               file->color : highlight->getFillColor();
@@ -196,6 +192,49 @@ void ListBox::setSelection(int idx) {
             highlight->setVisibility(Visibility::Visible, false);
         }
     }
+}
+
+void ListBox::up() {
+
+    file_index--;
+    if (file_index < 0) {
+        file_index = (int) files.size() - 1;
+        start_index = (int) files.size() - max_lines;
+        highlight_index = max_lines - 1;
+    } else {
+        if (highlight_index <= 0) {
+            start_index--;
+        } else {
+            highlight_index--;
+        }
+    }
+    updateLines();
+}
+
+void ListBox::down() {
+
+    file_index++;
+    if (file_index >= (int) files.size()) {
+        file_index = 0;
+        start_index = 0;
+        highlight_index = 0;
+    } else {
+
+        if (highlight_index >= max_lines - 1) {
+            start_index++;
+        } else {
+            highlight_index++;
+        }
+    }
+    updateLines();
+}
+
+void ListBox::setSelection(int new_index) {
+
+    file_index = new_index;
+    int page = file_index / max_lines;
+    start_index = page * max_lines;
+    updateLines();
 }
 
 void ListBox::setSize(const Vector2f &size) {
@@ -253,8 +292,8 @@ std::vector<c2d::Io::File *> ListBox::getFiles() {
 }
 
 Io::File *ListBox::getSelection() {
-    if (!files.empty() && files.size() > (unsigned int) index) {
-        return files[index];
+    if (!files.empty() && files.size() > (unsigned int) file_index) {
+        return files[file_index];
     }
     return nullptr;
 }
@@ -283,11 +322,11 @@ void ListBox::setHighlightEnabled(bool enable) {
 
 void ListBox::setHighlightUseFileColor(bool enable) {
     highlight_use_files_color = enable;
-    setSelection(index);
+    setSelection(file_index);
 }
 
 int ListBox::getIndex() {
-    return index;
+    return file_index;
 }
 
 int ListBox::getMaxLines() {
@@ -299,8 +338,6 @@ RectangleShape *ListBox::getHighlight() {
 }
 
 ListBox::~ListBox() {
-    // no need to delete lines widgets (ptr),
-    // will be delete by parent (widget)
     //printf("~ListBox(%p)\n", this);
     if (files_are_mine) {
         for (auto &file : files) {
