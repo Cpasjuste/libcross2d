@@ -56,7 +56,7 @@ endif ()
 ####################
 
 # setup target toolchain
-include(Toolchain.cmake)
+include(cmake/toolchain.cmake)
 
 project(cross2d)
 
@@ -264,7 +264,7 @@ target_link_libraries(${PROJECT_NAME} cross2d)
 #############
 # targets
 #############
-include(Targets.cmake)
+include(cmake/targets.cmake)
 
 #############
 # install

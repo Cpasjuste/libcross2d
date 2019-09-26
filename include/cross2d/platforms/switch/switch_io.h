@@ -14,7 +14,7 @@ namespace c2d {
 
     public:
 
-        std::string getDataReadPath() const override {
+        std::string getRomFsPath() const override {
             return "romfs:/";
         }
     };

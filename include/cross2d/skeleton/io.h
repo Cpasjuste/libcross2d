@@ -57,13 +57,13 @@ namespace c2d {
 
         ///
         /// \return read only data path
-        virtual std::string getDataReadPath() const {
+        virtual std::string getRomFsPath() const {
             return getHomePath();
         }
 
         ///
         /// \return read write data path
-        virtual std::string getDataWritePath() const {
+        virtual std::string getDataPath() const {
             return getHomePath();
         }
 

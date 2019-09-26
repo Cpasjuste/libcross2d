@@ -27,7 +27,8 @@ int main(int argc, char **argv) {
     rect->setOutlineThickness(8 * scaling);
 
     // create a texture and add it to the rect
-    auto *tex = new C2DTexture(renderer->getIo()->getDataReadPath() + "gbatemp.png");
+    // on any other platform than switch, vita, and 3ds, getRomFsPath returns getDataPath
+    auto *tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "gbatemp.png");
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
         tex->setScale(0.5f * scaling, 0.5f * scaling);
