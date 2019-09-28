@@ -8,17 +8,18 @@
 using namespace c2d;
 using namespace tweeny;
 
-Tween::Tween(float from, float to, float duration, TweenLoop loop) {
+Tween::Tween(float from, float to, float duration, TweenLoop loop, TweenState state) {
 
     this->tween = tweeny::from(from, 0.0f, 0.0f, 0.0f).to(to, 0.0f, 0.0f, 0.0f)
             .during(duration * 1000);
     this->from[0] = from;
     this->to[0] = to;
     this->loop = loop;
+    this->state = state;
     this->deltaClock = new C2DClock();
 }
 
-Tween::Tween(const Vector2f &from, const Vector2f &to, float duration, TweenLoop loop) {
+Tween::Tween(const Vector2f &from, const Vector2f &to, float duration, TweenLoop loop, TweenState state) {
 
     this->tween = tweeny::from(from.x, from.y, 0.0f, 0.0f).to(to.x, to.y, 0.0f, 0.0f)
             .during(duration * 1000);
@@ -27,10 +28,11 @@ Tween::Tween(const Vector2f &from, const Vector2f &to, float duration, TweenLoop
     this->to[0] = to.x;
     this->to[1] = to.y;
     this->loop = loop;
+    this->state = state;
     this->deltaClock = new C2DClock();
 }
 
-Tween::Tween(const Color &from, const Color &to, float duration, TweenLoop loop) {
+Tween::Tween(const Color &from, const Color &to, float duration, TweenLoop loop, TweenState state) {
 
     this->tween = tweeny::from(
             (float) from.r / 255.0f, (float) from.g / 255.0f, (float) from.b / 255.0f, (float) from.a / 255.0f)
@@ -46,6 +48,7 @@ Tween::Tween(const Color &from, const Color &to, float duration, TweenLoop loop)
     this->to[2] = to.b;
     this->to[3] = to.a;
     this->loop = loop;
+    this->state = state;
     this->deltaClock = new C2DClock();
 }
 

@@ -171,7 +171,7 @@ void ListBox::updateLines() {
             lines[i]->setIcon(file->icon);
             lines[i]->setColor(file->color);
             // set highlight position and color
-            if (i == highlight_index) {
+            if ((int) i == highlight_index) {
                 highlight->setPosition(lines[i]->getPosition());
                 Color color = highlight_use_files_color ?
                               file->color : highlight->getFillColor();
@@ -219,7 +219,6 @@ void ListBox::down() {
         start_index = 0;
         highlight_index = 0;
     } else {
-
         if (highlight_index >= max_lines - 1) {
             start_index++;
         } else {
@@ -234,6 +233,7 @@ void ListBox::setSelection(int new_index) {
     file_index = new_index;
     int page = file_index / max_lines;
     start_index = page * max_lines;
+    highlight_index = file_index - start_index;
     updateLines();
 }
 

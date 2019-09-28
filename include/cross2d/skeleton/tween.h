@@ -37,14 +37,14 @@ namespace c2d {
 
     public:
 
-        Tween(float from, float to,
-              float duration, TweenLoop loop = TweenLoop::None);
+        Tween(float from, float to, float duration,
+              TweenLoop loop = TweenLoop::None, TweenState state = TweenState::Stopped);
 
-        Tween(const Vector2f &from, const Vector2f &to,
-              float duration, TweenLoop loop = TweenLoop::None);
+        Tween(const Vector2f &from, const Vector2f &to, float duration,
+              TweenLoop loop = TweenLoop::None, TweenState state = TweenState::Stopped);
 
-        Tween(const Color &from, const Color &to,
-              float duration, TweenLoop loop = TweenLoop::None);
+        Tween(const Color &from, const Color &to, float duration,
+              TweenLoop loop = TweenLoop::None, TweenState state = TweenState::Stopped);
 
         virtual ~Tween();
 
@@ -89,18 +89,19 @@ namespace c2d {
     public:
 
         TweenPosition(
-                const Vector2f &from, const Vector2f &to,
-                float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
+                const Vector2f &from, const Vector2f &to, float duration,
+                TweenLoop loop = TweenLoop::None, TweenState state = TweenState::Stopped)
+                : Tween(from, to, duration, loop, state) {
             this->type = TweenType::Position;
         };
 
         void setFromTo(const Vector2f &from, const Vector2f &to, float duration = 0);
 
-        const Vector2f getFrom() {
+        Vector2f getFrom() {
             return {from[0], from[1]};
         }
 
-        const Vector2f getTo() {
+        Vector2f getTo() {
             return {to[0], to[1]};
         }
     };
@@ -113,8 +114,9 @@ namespace c2d {
     public:
 
         TweenRotation(
-                float from, float to,
-                float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
+                float from, float to, float duration,
+                TweenLoop loop = TweenLoop::None, TweenState state = TweenState::Stopped)
+                : Tween(from, to, duration, loop, state) {
             this->type = TweenType::Rotation;
         }
 
@@ -137,18 +139,19 @@ namespace c2d {
     public:
 
         TweenScale(
-                const Vector2f &from, const Vector2f &to,
-                float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
+                const Vector2f &from, const Vector2f &to, float duration,
+                TweenLoop loop = TweenLoop::None, TweenState state = TweenState::Stopped)
+                : Tween(from, to, duration, loop, state) {
             this->type = TweenType::Scale;
         }
 
         void setFromTo(const Vector2f &from, const Vector2f &to, float duration = 0);
 
-        const Vector2f getFrom() {
+        Vector2f getFrom() {
             return {from[0], from[1]};
         }
 
-        const Vector2f getTo() {
+        Vector2f getTo() {
             return {to[0], to[1]};
         }
     };
@@ -161,18 +164,19 @@ namespace c2d {
     public:
 
         TweenSize(
-                const Vector2f &from, const Vector2f &to,
-                float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
+                const Vector2f &from, const Vector2f &to, float duration,
+                TweenLoop loop = TweenLoop::None, TweenState state = TweenState::Stopped)
+                : Tween(from, to, duration, loop, state) {
             this->type = TweenType::Size;
         }
 
         void setFromTo(const Vector2f &from, const Vector2f &to, float duration = 0);
 
-        const Vector2f getFrom() {
+        Vector2f getFrom() {
             return {from[0], from[1]};
         }
 
-        const Vector2f getTo() {
+        Vector2f getTo() {
             return {to[0], to[1]};
         }
     };
@@ -185,18 +189,19 @@ namespace c2d {
     public:
 
         TweenColor(
-                const Color &from, const Color &to,
-                float duration, TweenLoop loop = TweenLoop::None) : Tween(from, to, duration, loop) {
+                const Color &from, const Color &to, float duration,
+                TweenLoop loop = TweenLoop::None, TweenState state = TweenState::Stopped)
+                : Tween(from, to, duration, loop, state) {
             this->type = TweenType::Color;
         }
 
         void setFromTo(const Color &from, const Color &to, float duration = 0);
 
-        const Color getFrom() {
+        Color getFrom() {
             return {(uint8_t) from[0], (uint8_t) from[1], (uint8_t) from[2], (uint8_t) from[3]};
         }
 
-        const Color getTo() {
+        Color getTo() {
             return {(uint8_t) to[0], (uint8_t) to[1], (uint8_t) to[2], (uint8_t) to[3]};
         }
     };
@@ -209,8 +214,9 @@ namespace c2d {
     public:
 
         TweenAlpha(
-                float from, float to,
-                float duration, TweenLoop loop = TweenLoop::None) : Tween(from / 255, to / 255, duration, loop) {
+                float from, float to, float duration,
+                TweenLoop loop = TweenLoop::None, TweenState state = TweenState::Stopped)
+                : Tween(from / 255, to / 255, duration, loop, state) {
             this->type = TweenType::Alpha;
         }
 
