@@ -84,3 +84,21 @@ std::string Utility::removeExt(const std::string &str) {
         return str;
     }
 }
+
+int Utility::parseInt(const std::string &str) {
+    char *end = nullptr;
+    long i = strtol(str.c_str(), &end, 10);
+    if (end) {
+        return (int) i;
+    }
+    return 0;
+}
+
+float Utility::parseFloat(const std::string &str) {
+    char *end = nullptr;
+    double d = strtod(str.c_str(), &end);
+    if (end) {
+        return (float) d;
+    }
+    return 0;
+}

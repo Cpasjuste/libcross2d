@@ -14,6 +14,10 @@ namespace c2d {
 
     public:
 
+        static int parseInt(const std::string &str);
+
+        static float parseFloat(const std::string &str);
+
         static std::string toLower(const std::string &str);
 
         static std::string toUpper(const std::string &str);
