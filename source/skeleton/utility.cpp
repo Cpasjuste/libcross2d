@@ -2,8 +2,7 @@
 // Created by cpasjuste on 22/06/18.
 //
 
-#include <cross2d/skeleton/utility.h>
-
+#include <algorithm>
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -63,6 +62,19 @@ bool Utility::endsWith(const std::string &value, const std::string &ending, bool
         std::string end_low = toLower(ending);
         return std::equal(end_low.rbegin(), end_low.rend(), val_low.rbegin());
     }
+}
+
+std::string Utility::remove(const std::string &str, const std::string &sub) {
+    std::string ret = str;
+    size_t pos = std::string::npos;
+    while ((pos = ret.find(sub)) != std::string::npos) {
+        ret.erase(pos, sub.length());
+    }
+    return ret;
+}
+
+bool Utility::contains(const std::string &str, const std::string &sub) {
+    return str.find(sub) != std::string::npos;
 }
 
 std::string Utility::removeLastSlash(const std::string &string) {

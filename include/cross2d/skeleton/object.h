@@ -27,7 +27,7 @@ namespace c2d {
     };
 
     enum class Type : int {
-        Shape, Texture, Text, Sprite
+        Shape, Texture, Text, Sprite, Other
     };
 
     class C2DObject {
@@ -81,7 +81,7 @@ namespace c2d {
 
         virtual void onDraw(Transform &transform, bool draw = true);
 
-        Type type;
+        Type type = Type::Other;
         Transform transformation;
 
     private:

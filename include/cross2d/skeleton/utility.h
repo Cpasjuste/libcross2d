@@ -24,6 +24,10 @@ namespace c2d {
 
         static std::vector<std::string> split(const std::string &str, const std::string &token);
 
+        static std::string remove(const std::string &str, const std::string &sub);
+
+        static bool contains(const std::string &str, const std::string &sub);
+
         static bool startWith(const std::string &str, const std::string &value, bool sensitive = true);
 
         static bool endsWith(const std::string &value, const std::string &ending, bool sensitive = true);
