@@ -241,7 +241,7 @@ namespace c2d {
         /// \return Local bounding rectangle of the entity
         ///
         ////////////////////////////////////////////////////////////
-        FloatRect getLocalBounds() const;
+        virtual FloatRect getLocalBounds() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the global (non-minimal) bounding rectangle of the entity
@@ -262,13 +262,13 @@ namespace c2d {
         /// \return Global bounding rectangle of the entity
         ///
         ////////////////////////////////////////////////////////////
-        FloatRect getGlobalBounds() const;
+        virtual FloatRect getGlobalBounds() const;
 
-        void setOrigin(const Origin &origin);
+        virtual void setOrigin(const Origin &origin);
 
-        Origin getOrigin() const;
+        virtual Origin getOrigin() const;
 
-        VertexArray *getVertexArray();
+        virtual VertexArray *getVertexArray();
 
     protected:
 
