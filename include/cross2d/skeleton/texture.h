@@ -67,7 +67,6 @@ namespace c2d {
     private:
 
         c2d::Vector2f m_size;
-        //c2d::Vector2f m_shape_size;
     };
 }
 
