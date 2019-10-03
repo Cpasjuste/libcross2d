@@ -36,7 +36,7 @@ Texture::Texture(const Vector2f &size, Format fmt) : Shape() {
     type = Type::Texture;
     format = fmt;
     bpp = fmt == Format::RGB565 ? 2 : 4;
-    pitch = (int) (size.x * bpp);
+    pitch = (int) ((int) size.x * bpp);
 
     setFillColor(Color::White);
     setSize(size);

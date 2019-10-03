@@ -47,11 +47,11 @@ namespace c2d {
         virtual void applyShader() {};
         // END - to implement, device specific code
 
-        void setSize(const c2d::Vector2f &size);
+        virtual void setSize(const c2d::Vector2f &size);
 
-        void setSize(float width, float height);
+        virtual void setSize(float width, float height);
 
-        const c2d::Vector2f &getSize() const;
+        virtual const c2d::Vector2f &getSize() const;
 
         std::size_t getPointCount() const;
 
@@ -67,6 +67,7 @@ namespace c2d {
     private:
 
         c2d::Vector2f m_size;
+        //c2d::Vector2f m_shape_size;
     };
 }
 

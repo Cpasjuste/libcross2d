@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
     auto *renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
     renderer->setClearColor(Color::Black);
 
+    /*
     // scale font and texture for different resolution (devices),
     // based on 720p resolution
     float scaling = renderer->getSize().y / 720.0f;
@@ -66,6 +67,14 @@ int main(int argc, char **argv) {
     auto *tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     tweenAlpha->play();
     rect->add(tweenAlpha);
+    */
+
+    auto tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "gbatemp.png");
+    renderer->add(tex);
+
+    printf("tex: getSize: %f %f\n", tex->getSize().x, tex->getSize().y);
+    tex->setSize(64, 64);
+    printf("obj: getSize: %f %f\n", ((C2DObject* )tex)->getSize().x, ((C2DObject* )tex)->getSize().y);
 
     while (true) {
 

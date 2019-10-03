@@ -90,8 +90,8 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
                               0.f, 1.f, 0.f, 0.f,
                               0.f, 0.f, 1.f, 0.f,
                               0.f, 0.f, 0.f, 1.f};
-        texMtx[0] = 1.f / texture->getSize().x;
-        texMtx[5] = 1.f / texture->getSize().y;
+        texMtx[0] = 1.f / texture->getTextureRect().width;
+        texMtx[5] = 1.f / texture->getTextureRect().height;
         shader->SetUniformMatrix("textureMatrix", texMtx);
 
         // set retroarch shader params

@@ -33,7 +33,8 @@ GLTexture::GLTexture(const std::string &p) : Texture(p) {
 
     if (texID) {
         pitch = w * bpp;
-        setSize(w, h);
+        setSize((float) w, (float) h);
+        setTextureRect(IntRect(0, 0, w, h));
         setTexture(this, true);
         available = true;
     } else {
@@ -62,7 +63,8 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
 
     if (texID) {
         pitch = w * bpp;
-        setSize(w, h);
+        setSize((float) w, (float) h);
+        setTextureRect(IntRect(0, 0, w, h));
         setTexture(this, true);
         available = true;
     } else {
@@ -107,6 +109,7 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        setSize(size);
         setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
         setTexture(this, true);
         glBindTexture(GL_TEXTURE_2D, 0);

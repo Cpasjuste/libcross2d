@@ -72,6 +72,12 @@ namespace c2d {
 
         bool available = false;
 
+        // common funcs
+        virtual const c2d::Vector2f &getSize() const {
+            printf("C2DObject: getSize()\n");
+            return {};
+        };
+
     protected:
 
         // always called, even if the object is hidden
