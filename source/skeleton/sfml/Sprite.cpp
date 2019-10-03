@@ -55,11 +55,10 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     Sprite::Sprite(Texture *texture, const IntRect &rectangle) :
             m_vertices(TriangleStrip, 4),
-            m_texture(nullptr),
-            m_textureRect() {
+            m_texture(nullptr) {
         type = Type::Sprite;
+        m_textureRect = rectangle;
         setTexture(texture);
-        setTextureRect(rectangle);
     }
 
 
@@ -67,15 +66,19 @@ namespace c2d {
     void Sprite::setTexture(Texture *texture, bool resetRect) {
 
         m_texture = texture;
-
         if (!texture) {
+            m_size = {0, 0};
             setTextureRect({0, 0, 0, 0});
         } else {
-            m_size = {(int) texture->getTextureRect().width, (int) texture->getTextureRect().height};
             // Recompute the texture area if requested, or if there was no valid texture & rect before
-            if (resetRect || (!m_texture && (m_textureRect == IntRect()))) {
+            if (resetRect || m_textureRect == IntRect()) {
+                m_size = {(int) texture->getTextureRect().width, (int) texture->getTextureRect().height};
                 setTextureRect(IntRect(0, 0,
                                        (int) texture->getTextureRect().width, (int) texture->getTextureRect().height));
+            } else if (m_textureRect != IntRect()) {
+                m_size = {(float) m_textureRect.width, (float) m_textureRect.height};
+                updatePositions();
+                updateTexCoords();
             }
         }
     }
@@ -85,9 +88,6 @@ namespace c2d {
     void Sprite::setTextureRect(const IntRect &rectangle) {
         if (rectangle != m_textureRect) {
             m_textureRect = rectangle;
-            //if (m_texture) {
-            //    m_texture->setTextureRect(rectangle);
-            //}
             updatePositions();
             updateTexCoords();
         }
