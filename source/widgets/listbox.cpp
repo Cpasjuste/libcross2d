@@ -30,10 +30,10 @@ ListBoxLine::ListBoxLine(
         // icon added in ListBox::setSelection (setIcon)
         // set text
         text->setPosition(iconRect->getSize().x + 8, getSize().y / 2);
-        text->setSizeMax(getSize().x - fontSize - iconRect->getSize().x, 0);
+        text->setSize(getSize().x - fontSize - iconRect->getSize().x, 0);
     } else {
         text->setPosition(2, getSize().y / 2);
-        text->setSizeMax(getSize().x - (fontSize + 8), 0);
+        text->setSize(getSize().x - (fontSize + 8), 0);
     }
 
     add(text);
@@ -45,7 +45,7 @@ void ListBoxLine::setSize(const Vector2f &size) {
 
 void ListBoxLine::setSize(float width, float height) {
     RectangleShape::setSize(width, height);
-    text->setSizeMax(getSize().x - 8, 0);
+    text->setSize(getSize().x - 8, 0);
 }
 
 void ListBoxLine::setString(const std::string &string) {

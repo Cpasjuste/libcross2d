@@ -26,6 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cmath>
+#include <cross2d/skeleton/sfml/Text.hpp>
+
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -124,6 +126,7 @@ namespace c2d {
         if (!m_font) {
             m_font = c2d_renderer->getFont();
         }
+        setSize(4096, (float) characterSize);
     }
 
 
@@ -389,14 +392,28 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
 
-    void Text::setSizeMax(const Vector2f &size) {
-        maxSize = size;
+    Vector2f &Text::getSize() const {
+        return m_max_size;
+    }
+
+    void Text::setSize(const Vector2f &size) {
+        setSize(size.x, size.y);
+    }
+
+    void Text::setSize(float width, float height) {
+        m_max_size.x = width;
+        m_max_size.y = height;
+        setCharacterSize((unsigned int) height);
         m_geometryNeedUpdate = true;
     }
 
+    void Text::setSizeMax(const Vector2f &size) {
+        setSize(size.x, size.y);
+    }
+
     void Text::setSizeMax(float width, float height) {
-        maxSize.x = width;
-        maxSize.y = height;
+        m_max_size.x = width;
+        m_max_size.y = height;
         m_geometryNeedUpdate = true;
     }
 
@@ -482,14 +499,14 @@ namespace c2d {
         for (size_t i = 0; i < words.size(); i++) {
 
             // handle maxSize.x in NewLine mode
-            if (m_overflow == NewLine && maxSize.x > 0) {
+            if (m_overflow == NewLine && m_max_size.x > 0) {
                 // calculate word width
                 float width = 0;
                 for (auto &c : words[i]) {
                     const Glyph &g = m_font->getGlyph(c, m_characterSize, bold, m_outlineThickness);
                     width += g.bounds.width;
                 }
-                if ((x + width) * getScale().x > maxSize.x) {
+                if ((x + width) * getScale().x > m_max_size.x) {
                     y += vspace;
                     x = 0;
                 }
@@ -510,13 +527,13 @@ namespace c2d {
 
                 // handle maxSize.x in Clamp mode
                 if (m_overflow == Clamp) {
-                    if (maxSize.x > 0 && x * getScale().x > maxSize.x) {
+                    if (m_max_size.x > 0 && x * getScale().x > m_max_size.x) {
                         break;
                     }
                 }
 
                 // handle maxSize.y
-                if (maxSize.y > 0 && y * getScale().y > maxSize.y + 1) {
+                if (m_max_size.y > 0 && y * getScale().y > m_max_size.y + 1) {
                     break;
                 }
 

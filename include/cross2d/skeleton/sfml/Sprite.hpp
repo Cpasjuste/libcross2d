@@ -121,9 +121,7 @@ namespace c2d {
         /// \see getColor
         ///
         ////////////////////////////////////////////////////////////
-        void setColor(const Color &color);
-
-        void setScale(float factorX, float factorY) override;
+        void setFillColor(const Color &color) override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the source texture of the sprite
@@ -157,7 +155,7 @@ namespace c2d {
         /// \see setColor
         ///
         ////////////////////////////////////////////////////////////
-        const Color &getColor() const;
+        const Color &getFillColor() const override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the local bounding rectangle of the entity
@@ -171,7 +169,7 @@ namespace c2d {
         /// \return Local bounding rectangle of the entity
         ///
         ////////////////////////////////////////////////////////////
-        FloatRect getLocalBounds() const;
+        FloatRect getLocalBounds() const override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the global bounding rectangle of the entity
@@ -189,17 +187,23 @@ namespace c2d {
 
         VertexArray *getVertexArray();
 
-        void setOrigin(const Origin &origin);
+        const c2d::Vector2f &getSize() const override;
 
-        Origin getOrigin() const;
+        void setSize(const c2d::Vector2f &size) override;
+
+        void setSize(float width, float height) override;
+
+        void setOrigin(const Origin &origin) override;
+
+        Origin getOrigin() const override;
 
         void setAlpha(uint8_t alpha, bool recursive = false) override;
 
-        virtual uint8_t getAlpha();
+        uint8_t getAlpha() override;
 
     protected:
 
-        virtual void onDraw(Transform &transform, bool draw = true) override;
+        void onDraw(Transform &transform, bool draw = true) override;
 
     private:
 
@@ -222,6 +226,7 @@ namespace c2d {
         VertexArray m_vertices;
         Texture *m_texture;     ///< Texture of the sprite
         IntRect m_textureRect; ///< Rectangle defining the area of the source texture to display
+        c2d::Vector2f m_size; ///< Size of the rectangle
         Origin m_sprite_origin = Origin::TopLeft;
     };
 

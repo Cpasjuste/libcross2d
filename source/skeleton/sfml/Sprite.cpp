@@ -26,6 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstdlib>
+#include <cross2d/skeleton/sfml/Sprite.hpp>
+
 
 #include "cross2d/c2d.h"
 
@@ -46,7 +48,7 @@ namespace c2d {
             m_texture(nullptr),
             m_textureRect() {
         type = Type::Sprite;
-        setTexture(texture);
+        setTexture(texture, true);
     }
 
 
@@ -69,9 +71,11 @@ namespace c2d {
         if (!texture) {
             setTextureRect({0, 0, 0, 0});
         } else {
+            m_size = {(int) texture->getTextureRect().width, (int) texture->getTextureRect().height};
             // Recompute the texture area if requested, or if there was no valid texture & rect before
             if (resetRect || (!m_texture && (m_textureRect == IntRect()))) {
-                setTextureRect(IntRect(0, 0, (int) texture->getSize().x, (int) texture->getSize().y));
+                setTextureRect(IntRect(0, 0,
+                                       (int) texture->getTextureRect().width, (int) texture->getTextureRect().height));
             }
         }
     }
@@ -86,13 +90,12 @@ namespace c2d {
             //}
             updatePositions();
             updateTexCoords();
-            m_vertices.update();
         }
     }
 
 
 ////////////////////////////////////////////////////////////
-    void Sprite::setColor(const Color &color) {
+    void Sprite::setFillColor(const Color &color) {
         // Update the vertices' color
         m_vertices[0].color = color;
         m_vertices[1].color = color;
@@ -115,20 +118,34 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    const Color &Sprite::getColor() const {
+    const Color &Sprite::getFillColor() const {
         return m_vertices[0].color;
     }
 
 
 ////////////////////////////////////////////////////////////
     FloatRect Sprite::getLocalBounds() const {
-        auto width = (float) std::abs(m_textureRect.width);
-        auto height = (float) std::abs(m_textureRect.height);
-        return {0.f, 0.f, width, height};
+        return {0.f, 0.f, m_size.x, m_size.y};
     }
 
 
 ////////////////////////////////////////////////////////////
+
+    const c2d::Vector2f &Sprite::getSize() const {
+        return m_size;
+    }
+
+    void Sprite::setSize(const c2d::Vector2f &size) {
+        m_size = size;
+        updatePositions();
+    }
+
+    void Sprite::setSize(float width, float height) {
+        m_size.x = width;
+        m_size.y = height;
+        updatePositions();
+    }
+
     FloatRect Sprite::getGlobalBounds() const {
         Transform t = transformation * getTransform();
         return t.transformRect(getLocalBounds());
@@ -200,21 +217,15 @@ namespace c2d {
         return m_vertices[0].color.a;
     }
 
-    void Sprite::setScale(float factorX, float factorY) {
-        if (m_texture) {
-            m_texture->setScale(factorX, factorY);
-        }
-        Transformable::setScale(factorX, factorY);
-    }
-
     ////////////////////////////////////////////////////////////
     void Sprite::onDraw(Transform &transform, bool draw) {
-        if (draw) {
+        if (draw && m_texture) {
             Transform combined = transform * getTransform();
             c2d_renderer->draw(&m_vertices, combined, m_texture);
         }
         C2DObject::onDraw(transform, draw);
     }
+
 
 ////////////////////////////////////////////////////////////
     void Sprite::updatePositions() {
@@ -227,6 +238,7 @@ namespace c2d {
         m_vertices[1].position = Vector2f(0, bounds.height);
         m_vertices[2].position = Vector2f(bounds.width, 0);
         m_vertices[3].position = Vector2f(bounds.width, bounds.height);
+        m_vertices.update();
     }
 
 
@@ -244,6 +256,7 @@ namespace c2d {
         m_vertices[1].texCoords = Vector2f(left, bottom);
         m_vertices[2].texCoords = Vector2f(right, top);
         m_vertices[3].texCoords = Vector2f(right, bottom);
+        m_vertices.update();
     }
 
 } // namespace c2d

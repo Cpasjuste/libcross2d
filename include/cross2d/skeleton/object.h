@@ -64,19 +64,68 @@ namespace c2d {
 
         virtual void setLayer(int layer);
 
-        virtual void setAlpha(uint8_t alpha, bool recursive = false);
-
         virtual std::vector<C2DObject *> getChilds();
 
         Type getType() const;
 
         bool available = false;
 
-        // common funcs
-        virtual const c2d::Vector2f &getSize() const {
-            printf("C2DObject: getSize()\n");
-            return {};
+        // common to all objects (Rectangle, Texture, Text..)
+        virtual FloatRect getLocalBounds() const {
+            return {v2_dummy.x, v2_dummy.x, v2_dummy.x, v2_dummy.x};
         };
+
+        virtual const c2d::Vector2f &getSize() const { return v2_dummy; };
+
+        virtual void setSize(const c2d::Vector2f &size) {};
+
+        virtual void setSize(float width, float height) {};
+
+        virtual const Vector2f &getPosition() const { return v2_dummy; };
+
+        virtual void setPosition(float x, float y) {};
+
+        virtual void setPosition(const Vector2f &position) {};
+
+        virtual float getRotation() const { return v2_dummy.x; };
+
+        virtual void setRotation(float angle) {};
+
+        virtual const Vector2f &getScale() const { return v2_dummy; };
+
+        virtual void setScale(float factorX, float factorY) {};
+
+        virtual void setScale(const Vector2f &factors) {};
+
+        virtual void move(float offsetX, float offsetY) {};
+
+        virtual void move(const Vector2f &offset) {};
+
+        virtual void rotate(float angle) {};
+
+        virtual void scale(float factorX, float factorY) {};
+
+        virtual void scale(const Vector2f &factor) {};
+
+        virtual void setOrigin(const Origin &origin) {};
+
+        virtual Origin getOrigin() const { return Origin::TopLeft; };
+
+        virtual const Color &getFillColor() const { return col_dummy; };
+
+        virtual void setFillColor(const Color &color) {};
+
+        virtual const Color &getOutlineColor() const { return col_dummy; };
+
+        virtual void setOutlineColor(const Color &color) {};
+
+        virtual float getOutlineThickness() const { return v2_dummy.x; };
+
+        virtual void setOutlineThickness(float thickness) {};
+
+        virtual uint8_t getAlpha() { return 0; };
+
+        virtual void setAlpha(uint8_t alpha, bool recursive = false);
 
     protected:
 
@@ -99,6 +148,9 @@ namespace c2d {
         DeleteMode deleteMode = DeleteMode::Auto;
         Visibility visibility_current = Visibility::Visible;
         Visibility visibility_wanted = Visibility::Visible;
+
+        Vector2f v2_dummy;
+        Color col_dummy;
     };
 }
 

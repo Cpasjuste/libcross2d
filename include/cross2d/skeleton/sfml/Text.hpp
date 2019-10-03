@@ -94,7 +94,8 @@ namespace c2d {
         /// \param characterSize  Base size of characters, in pixels
         ///
         ////////////////////////////////////////////////////////////
-        Text(const std::string &string, unsigned int characterSize = C2D_DEFAULT_CHAR_SIZE, Font *font = nullptr);
+        explicit Text(const std::string &string,
+                      unsigned int characterSize = C2D_DEFAULT_CHAR_SIZE, Font *font = nullptr);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the text's string
@@ -181,7 +182,7 @@ namespace c2d {
         /// \see getFillColor
         ///
         ////////////////////////////////////////////////////////////
-        void setFillColor(const c2d::Color &color);
+        void setFillColor(const c2d::Color &color) override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the outline color of the text
@@ -193,7 +194,7 @@ namespace c2d {
         /// \see getOutlineColor
         ///
         ////////////////////////////////////////////////////////////
-        void setOutlineColor(const c2d::Color &color);
+        void setOutlineColor(const c2d::Color &color) override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the thickness of the text's outline
@@ -208,11 +209,11 @@ namespace c2d {
         /// \see getOutlineThickness
         ///
         ////////////////////////////////////////////////////////////
-        void setOutlineThickness(float thickness);
+        void setOutlineThickness(float thickness) override;
 
-        void setAlpha(uint8_t alpha, bool recursive = false);
+        void setAlpha(uint8_t alpha, bool recursive = false) override;
 
-        uint8_t getAlpha();
+        uint8_t getAlpha() override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the text's string
@@ -277,7 +278,7 @@ namespace c2d {
         /// \see setFillColor
         ///
         ////////////////////////////////////////////////////////////
-        const c2d::Color &getFillColor() const;
+        const c2d::Color &getFillColor() const override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the outline color of the text
@@ -287,7 +288,7 @@ namespace c2d {
         /// \see setOutlineColor
         ///
         ////////////////////////////////////////////////////////////
-        const c2d::Color &getOutlineColor() const;
+        const c2d::Color &getOutlineColor() const override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the outline thickness of the text
@@ -297,7 +298,7 @@ namespace c2d {
         /// \see setOutlineThickness
         ///
         ////////////////////////////////////////////////////////////
-        float getOutlineThickness() const;
+        float getOutlineThickness() const override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Return the position of the \a index-th character
@@ -328,7 +329,7 @@ namespace c2d {
         /// \return Local bounding rectangle of the entity
         ///
         ////////////////////////////////////////////////////////////
-        c2d::FloatRect getLocalBounds() const;
+        c2d::FloatRect getLocalBounds() const override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the global bounding rectangle of the entity
@@ -344,9 +345,15 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         c2d::FloatRect getGlobalBounds() const;
 
-        void setOrigin(const Origin &origin);
+        void setOrigin(const Origin &origin) override;
 
-        Origin getOrigin() const;
+        Origin getOrigin() const override;
+
+        c2d::Vector2f &getSize() const override;
+
+        void setSize(float width, float height) override;
+
+        void setSize(const Vector2f &size) override;
 
         void setSizeMax(float width, float height);
 
@@ -362,9 +369,9 @@ namespace c2d {
         /// \brief Draw the shape to the main renderer
         ///
         ////////////////////////////////////////////////////////////
-        virtual void onUpdate() override;
+        void onUpdate() override;
 
-        virtual void onDraw(Transform &transform, bool draw = true) override;
+        void onDraw(Transform &transform, bool draw = true) override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Make sure the text's geometry is updated
@@ -390,7 +397,7 @@ namespace c2d {
         mutable c2d::VertexArray m_outlineVertices;    ///< Vertex array containing the outline geometry
         mutable c2d::FloatRect m_bounds;             ///< Bounding rectangle of the text (in local coordinates)
         mutable bool m_geometryNeedUpdate; ///< Does the geometry need to be recomputed?
-        c2d::Vector2f maxSize = c2d::Vector2f(0, 0);
+        mutable c2d::Vector2f m_max_size;
         int m_line_spacing = 0;
         Origin m_text_origin = Origin::TopLeft;
     };

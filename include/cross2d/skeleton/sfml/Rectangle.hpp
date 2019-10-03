@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "Shape.hpp"
+#include "Transformable.hpp"
 
 namespace c2d {
 ////////////////////////////////////////////////////////////
@@ -56,9 +56,9 @@ namespace c2d {
         /// \see getSize
         ///
         ////////////////////////////////////////////////////////////
-        virtual void setSize(const c2d::Vector2f &size);
+        void setSize(const c2d::Vector2f &size) override;
 
-        virtual void setSize(float width, float height);
+        void setSize(float width, float height) override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the size of the rectangle
@@ -68,15 +68,15 @@ namespace c2d {
         /// \see setSize
         ///
         ////////////////////////////////////////////////////////////
-        const c2d::Vector2f &getSize() const;
+        const c2d::Vector2f &getSize() const override;
 
-        FloatRect getLocalBounds() const;
+        FloatRect getLocalBounds() const override;
 
         FloatRect getGlobalBounds() const;
 
-        Origin getOrigin() const;
+        Origin getOrigin() const override;
 
-        void setOrigin(const Origin &origin);
+        void setOrigin(const Origin &origin) override;
 
     private:
 

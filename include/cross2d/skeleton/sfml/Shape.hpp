@@ -100,7 +100,7 @@ namespace c2d {
         /// \see getFillColor, setOutlineColor
         ///
         ////////////////////////////////////////////////////////////
-        virtual void setFillColor(const Color &color);
+        void setFillColor(const Color &color) override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the alpha color of the shape
@@ -117,9 +117,9 @@ namespace c2d {
         /// \see getFillColor, setOutlineColor
         ///
         ////////////////////////////////////////////////////////////
-        virtual void setAlpha(uint8_t alpha, bool recursive = false);
+        void setAlpha(uint8_t alpha, bool recursive = false) override;
 
-        virtual uint8_t getAlpha();
+        uint8_t getAlpha() override;;
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the outline color of the shape
@@ -131,7 +131,7 @@ namespace c2d {
         /// \see getOutlineColor, setFillColor
         ///
         ////////////////////////////////////////////////////////////
-        virtual void setOutlineColor(const Color &color);
+        void setOutlineColor(const Color &color) override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the thickness of the shape's outline
@@ -146,7 +146,7 @@ namespace c2d {
         /// \see getOutlineThickness
         ///
         ////////////////////////////////////////////////////////////
-        virtual void setOutlineThickness(float thickness);
+        void setOutlineThickness(float thickness) override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the source texture of the shape
@@ -180,7 +180,7 @@ namespace c2d {
         /// \see setFillColor
         ///
         ////////////////////////////////////////////////////////////
-        const Color &getFillColor() const;
+        const Color &getFillColor() const override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the outline color of the shape
@@ -190,7 +190,7 @@ namespace c2d {
         /// \see setOutlineColor
         ///
         ////////////////////////////////////////////////////////////
-        const Color &getOutlineColor() const;
+        const Color &getOutlineColor() const override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the outline thickness of the shape
@@ -200,7 +200,7 @@ namespace c2d {
         /// \see setOutlineThickness
         ///
         ////////////////////////////////////////////////////////////
-        float getOutlineThickness() const;
+        float getOutlineThickness() const override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the total number of points of the shape
@@ -241,7 +241,7 @@ namespace c2d {
         /// \return Local bounding rectangle of the entity
         ///
         ////////////////////////////////////////////////////////////
-        virtual FloatRect getLocalBounds() const;
+        FloatRect getLocalBounds() const override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the global (non-minimal) bounding rectangle of the entity
@@ -264,9 +264,9 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         virtual FloatRect getGlobalBounds() const;
 
-        virtual void setOrigin(const Origin &origin);
+        void setOrigin(const Origin &origin) override;
 
-        virtual Origin getOrigin() const;
+        Origin getOrigin() const override;
 
         virtual VertexArray *getVertexArray();
 
@@ -292,7 +292,7 @@ namespace c2d {
         /// \brief Draw the shape to the main renderer
         ///
         ////////////////////////////////////////////////////////////
-        virtual void onDraw(Transform &transform, bool draw = true) override;
+        void onDraw(Transform &transform, bool draw = true) override;
 
     private:
 

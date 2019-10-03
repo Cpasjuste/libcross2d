@@ -56,9 +56,9 @@ namespace c2d {
         /// \see getSize
         ///
         ////////////////////////////////////////////////////////////
-        virtual void setSize(const c2d::Vector2f &size);
+        void setSize(const c2d::Vector2f &size) override;
 
-        virtual void setSize(float width, float height);
+        void setSize(float width, float height) override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the size of the rectangle
@@ -68,7 +68,7 @@ namespace c2d {
         /// \see setSize
         ///
         ////////////////////////////////////////////////////////////
-        virtual const c2d::Vector2f &getSize() const;
+        const c2d::Vector2f &getSize() const override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the number of points defining the shape
@@ -77,7 +77,7 @@ namespace c2d {
         ///         shapes, this number is always 4.
         ///
         ////////////////////////////////////////////////////////////
-        virtual std::size_t getPointCount() const;
+        std::size_t getPointCount() const override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get a point of the rectangle
@@ -92,7 +92,7 @@ namespace c2d {
         /// \return index-th point of the shape
         ///
         ////////////////////////////////////////////////////////////
-        virtual c2d::Vector2f getPoint(std::size_t index) const;
+        c2d::Vector2f getPoint(std::size_t index) const override;
 
     private:
 

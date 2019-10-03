@@ -219,7 +219,7 @@ void Tween::step() {
         if (object->getType() == Type::Text) {
             ((Text *) transform)->setFillColor(color);
         } else if (object->getType() == Type::Sprite) {
-            ((Sprite *) transform)->setColor(color);
+            ((Sprite *) transform)->setFillColor(color);
         } else {
             ((Shape *) transform)->setFillColor(color);
         }
