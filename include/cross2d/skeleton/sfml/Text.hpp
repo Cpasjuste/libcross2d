@@ -363,8 +363,6 @@ namespace c2d {
 
     protected:
 
-    private:
-
         ////////////////////////////////////////////////////////////
         /// \brief Draw the shape to the main renderer
         ///
@@ -372,6 +370,8 @@ namespace c2d {
         void onUpdate() override;
 
         void onDraw(Transform &transform, bool draw = true) override;
+
+    private:
 
         ////////////////////////////////////////////////////////////
         /// \brief Make sure the text's geometry is updated
