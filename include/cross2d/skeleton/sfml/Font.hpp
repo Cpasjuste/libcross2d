@@ -238,6 +238,8 @@ namespace c2d {
 
         Vector2f getOffset() const;
 
+        const std::string &getPath() const;
+
         ////////////////////////////////////////////////////////////
         /// \brief Overload of assignment operator
         ///
@@ -341,6 +343,7 @@ namespace c2d {
         mutable std::vector<uint8_t> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
         Texture::Filter m_filtering = Texture::Filter::Linear;
         Vector2f offset;
+        std::string m_font_path;
 
 #ifdef SFML_SYSTEM_ANDROID
         void*                      m_stream; ///< Asset file streamer (if loaded from file)

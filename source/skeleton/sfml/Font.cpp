@@ -123,6 +123,7 @@ namespace c2d {
 
         // Store the font information
         m_info.family = face->family_name ? face->family_name : std::string();
+        m_font_path = filename;
 
         return true;
     }
@@ -682,6 +683,10 @@ namespace c2d {
         } else {
             return true;
         }
+    }
+
+    const std::string &Font::getPath() const {
+        return m_font_path;
     }
 
 
