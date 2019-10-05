@@ -66,7 +66,7 @@ bool Utility::endsWith(const std::string &value, const std::string &ending, bool
 
 std::string Utility::remove(const std::string &str, const std::string &sub) {
     std::string ret = str;
-    size_t pos = std::string::npos;
+    size_t pos;
     while ((pos = ret.find(sub)) != std::string::npos) {
         ret.erase(pos, sub.length());
     }
