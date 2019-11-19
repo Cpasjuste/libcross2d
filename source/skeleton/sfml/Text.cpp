@@ -123,7 +123,7 @@ namespace c2d {
             m_bounds(),
             m_geometryNeedUpdate(true) {
         type = Type::Text;
-        if (!m_font) {
+        if (m_font == nullptr) {
             m_font = c2d_renderer->getFont();
         }
         setSize(4096, (float) characterSize);
@@ -282,8 +282,8 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     Vector2f Text::findCharacterPos(std::size_t index) const {
         // Make sure that we have a valid font
-        if (!m_font)
-            return Vector2f();
+        if (m_font == nullptr)
+            return {};
 
         // Adjust the index if it's out of range
         //if (index > m_string.getSize())
@@ -294,7 +294,7 @@ namespace c2d {
         // Precompute the variables needed by the algorithm
         bool bold = (m_style & Bold) != 0;
         float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
-        float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + m_line_spacing;
+        float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + (float) m_line_spacing;
 
         // Compute the position
         Vector2f position;
@@ -317,6 +317,8 @@ namespace c2d {
                 case '\n':
                     position.y += vspace;
                     position.x = 0;
+                    continue;
+                default:
                     continue;
             }
 
@@ -458,14 +460,14 @@ namespace c2d {
         m_bounds = FloatRect();
 
         // No font or text: nothing to draw
-        if (!m_font || m_string.empty())
+        if ((m_font == nullptr) || m_string.empty())
             return;
 
         // Compute values related to the text style
         bool bold = (m_style & Bold) != 0;
         bool underlined = (m_style & Underlined) != 0;
         bool strikeThrough = (m_style & StrikeThrough) != 0;
-        float italic = (m_style & Italic) ? 0.208f : 0.f; // 12 degrees
+        float italic = (m_style & Italic) != 0u ? 0.208f : 0.f; // 12 degrees
         float underlineOffset = m_font->getUnderlinePosition(m_characterSize);
         float underlineThickness = m_font->getUnderlineThickness(m_characterSize);
 
@@ -477,7 +479,7 @@ namespace c2d {
 
         // Precompute the variables needed by the algorithm
         float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
-        float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + m_line_spacing;
+        float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + (float) m_line_spacing;
 
         float x = 0.f;
         float y = static_cast<float>(m_characterSize);

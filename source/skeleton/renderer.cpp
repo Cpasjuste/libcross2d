@@ -35,7 +35,7 @@ void Renderer::onUpdate() {
     frames++;
     time_now = elapsedTime.asSeconds();
     if (time_now - time_last >= 1.0f) {
-        fps = frames;
+        fps = (float) frames;
         frames = 0;
         time_last = time_now;
     }

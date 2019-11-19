@@ -8,7 +8,7 @@ using namespace c2d;
 
 void C2DObject::add(C2DObject *object) {
 
-    if (object) {
+    if (object != nullptr) {
         //printf("C2DObject(%p): add(%p)\n", this, C2DObject);
         object->parent = this;
         object->setLayer(object->getLayer());
@@ -27,7 +27,7 @@ void C2DObject::remove(C2DObject *object) {
 
 void C2DObject::add(Tween *tween) {
 
-    if (tween) {
+    if (tween != nullptr) {
         tween->setTransform((Transformable *) this);
         tweens.push_back(tween);
     }
@@ -35,7 +35,7 @@ void C2DObject::add(Tween *tween) {
 
 void C2DObject::remove(Tween *tween) {
 
-    if (tween && !tweens.empty()) {
+    if (tween != nullptr && !tweens.empty()) {
         tweens.erase(std::remove(
                 tweens.begin(), tweens.end(), tween), tweens.end());
     }
@@ -44,7 +44,7 @@ void C2DObject::remove(Tween *tween) {
 bool C2DObject::onInput(Input::Player *players) {
 
     for (auto &child : childs) {
-        if (child && child->isVisible()) {
+        if (child != nullptr && child->isVisible()) {
             if (child->onInput(players)) {
                 return true;
             }
@@ -57,7 +57,7 @@ bool C2DObject::onInput(Input::Player *players) {
 void C2DObject::onUpdate() {
 
     for (auto &child : childs) {
-        if (child) {
+        if (child != nullptr) {
             child->onUpdate();
         }
     }
@@ -73,7 +73,7 @@ void C2DObject::onDraw(Transform &transform, bool draw) {
 
     // handle tweeners
     for (auto &tween : tweens) {
-        if (tween) {
+        if (tween != nullptr) {
             tween->step();
             // hide object if needed
             if (tween->getState() == TweenState::Stopped
@@ -87,7 +87,7 @@ void C2DObject::onDraw(Transform &transform, bool draw) {
     combinedTransform *= ((Transformable *) this)->getTransform();
 
     for (auto &child : childs) {
-        if (child) {
+        if (child != nullptr) {
             if (child->visibility_current == Visibility::Visible) {
                 child->onDraw(combinedTransform, draw);
             }
@@ -114,7 +114,7 @@ void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
             visibility_wanted = Visibility::Hidden;
         }
         for (auto &tween : tweens) {
-            if (tween) {
+            if (tween != nullptr) {
                 tween->play(visibility_wanted == Visibility::Visible ?
                             TweenDirection::Forward : TweenDirection::Backward);
                 // reset transform/color to initial values
@@ -133,7 +133,7 @@ void C2DObject::setAlpha(uint8_t alpha, bool recursive) {
 
     if (recursive) {
         for (auto &child : childs) {
-            if (child) {
+            if (child != nullptr) {
                 child->setAlpha(alpha, recursive);
             }
         }
@@ -156,10 +156,10 @@ static bool sortByLayer(C2DObject *o1, C2DObject *o2) {
     return o1->getLayer() < o2->getLayer();
 }
 
-void C2DObject::setLayer(int layer) {
+void C2DObject::setLayer(int l) {
 
-    this->layer = layer;
-    if (parent) {
+    this->layer = l;
+    if (parent != nullptr) {
         std::stable_sort(parent->childs.begin(),
                          parent->childs.end(),
                          sortByLayer);
@@ -180,7 +180,7 @@ C2DObject::~C2DObject() {
 
     // delete tweeners
     for (auto tween = tweens.begin(); tween != tweens.end();) {
-        if (*tween) {
+        if (*tween != nullptr) {
             delete (*tween);
             remove(*tween);
         }
@@ -189,7 +189,7 @@ C2DObject::~C2DObject() {
 
     // delete childs
     for (auto widget = childs.begin(); widget != childs.end();) {
-        if (*widget) {
+        if (*widget != nullptr) {
             if ((*widget)->deleteMode == DeleteMode::Auto) {
                 //printf("\t~C2DObject(%p): delete child(%p)\n", this, *widget);
                 delete (*widget);
@@ -201,7 +201,7 @@ C2DObject::~C2DObject() {
     childs.clear();
 
     // remove from parent
-    if (parent) {
+    if (parent != nullptr) {
         //printf("~C2DObject(%p): remove from parent(%p)\n", this, parent);
         parent->remove(this);
     }
