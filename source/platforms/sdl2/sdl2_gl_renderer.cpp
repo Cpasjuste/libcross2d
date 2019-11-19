@@ -58,8 +58,8 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
         return;
     }
 
-    printf("OpenGL: %s, GLSL: %s\n", glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
     initGL();
+    printf("OpenGL: %s, GLSL: %s\n", glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     available = true;
 
