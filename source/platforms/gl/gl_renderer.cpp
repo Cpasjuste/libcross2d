@@ -44,17 +44,17 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     GLTexture *glTexture;
     GLShader *shader;
 
-    if (!vertexArray || vertexArray->getVertexCount() < 1) {
+    if (vertexArray == nullptr || vertexArray->getVertexCount() < 1) {
         //printf("gl_render::draw: no vertices\n");
         return;
     }
 
     vertices = vertexArray->getVertices()->data();
     vertexCount = vertexArray->getVertexCount();
-    glTexture = texture ? ((GLTexture *) texture) : nullptr;
-    shader = glTexture && glTexture->available ? (GLShader *) shaderList->get(0)->data :
+    glTexture = texture != nullptr ? ((GLTexture *) texture) : nullptr;
+    shader = glTexture != nullptr && glTexture->available ? (GLShader *) shaderList->get(0)->data :
              (GLShader *) ((GLShaderList *) shaderList)->color->data;
-    if (glTexture && glTexture->shader) {
+    if (glTexture != nullptr && glTexture->shader != nullptr) {
         shader = (GLShader *) glTexture->shader->data;
     }
 
@@ -77,7 +77,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     GL_CHECK(glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex),
                                    (void *) offsetof(Vertex, color)));
 
-    if (glTexture && glTexture->available) {
+    if (glTexture != nullptr && glTexture->available) {
         // bind texture
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, glTexture->texID));
         // set tex coords
@@ -133,7 +133,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     shader->SetUniformMatrix("modelViewMatrix", transform.getMatrix());
 
     // enable blending if needed
-    if (glTexture || vertices[0].color.a < 255) {
+    if (glTexture != nullptr || vertices[0].color.a < 255) {
         GL_CHECK(glEnable(GL_BLEND));
         GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     }
@@ -147,9 +147,9 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     GL_CHECK(glDisableVertexAttribArray(0));
     GL_CHECK(glDisableVertexAttribArray(1));
 
-    if (glTexture || vertices[0].color.a < 255) {
+    if (glTexture != nullptr || vertices[0].color.a < 255) {
         GL_CHECK(glDisable(GL_BLEND));
-        if (glTexture && glTexture->available) {
+        if (glTexture != nullptr && glTexture->available) {
             GL_CHECK(glBindTexture(GL_TEXTURE_2D, 0));
             GL_CHECK(glDisableVertexAttribArray(2));
         }
@@ -192,7 +192,7 @@ GLRenderer::~GLRenderer() {
 
     printf("~GLRenderer\n");
 
-    if (shaderList) {
+    if (shaderList != nullptr) {
         delete (shaderList);
         shaderList = nullptr;
     }
