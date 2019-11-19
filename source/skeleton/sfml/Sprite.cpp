@@ -25,9 +25,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cstdlib>
-#include <cross2d/skeleton/sfml/Sprite.hpp>
-
 
 #include "cross2d/c2d.h"
 
@@ -66,7 +63,7 @@ namespace c2d {
     void Sprite::setTexture(Texture *texture, bool resetRect) {
 
         m_texture = texture;
-        if (!texture) {
+        if (texture == nullptr) {
             m_size = {0, 0};
             setTextureRect({0, 0, 0, 0});
         } else {
@@ -219,7 +216,7 @@ namespace c2d {
 
     ////////////////////////////////////////////////////////////
     void Sprite::onDraw(Transform &transform, bool draw) {
-        if (draw && m_texture) {
+        if (draw) {
             Transform combined = transform * getTransform();
             c2d_renderer->draw(&m_vertices, combined, m_texture);
         }
