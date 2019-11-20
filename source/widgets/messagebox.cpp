@@ -7,8 +7,7 @@
 using namespace c2d;
 
 MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
-                       c2d::Font *font, int fontSize)
-        : RectangleShape(rect) {
+                       c2d::Font *font, int fontSize) : RectangleShape(rect) {
 
     this->input = input;
     float line_height = font->getLineSpacing((unsigned int) fontSize) + 16;
@@ -16,7 +15,7 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
     this->title = new Text("TITLE", (unsigned int) ((float) fontSize * 1.5f), font);
     this->title->setOutlineColor(Color::Black);
     this->title->setOutlineThickness(1);
-    this->title->setSize(getSize().x - 16, 0);
+    this->title->setSize(getSize().x - 16, (float) fontSize * 1.5f);
     this->title->setPosition(getSize().x / 2, line_height);
     this->title->setOrigin(Origin::Center);
     add(this->title);
@@ -24,7 +23,7 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
     this->message = new Text("MESSAGE", (unsigned int) fontSize, font);
     this->message->setOutlineColor(Color::Black);
     this->message->setOutlineThickness(1);
-    this->message->setSize(getSize().x - 16, 0);
+    this->message->setSize(getSize().x - 16, (float) fontSize);
     this->message->setPosition(getSize().x / 2, getSize().y * 0.45f);
     this->message->setOrigin(Origin::Center);
     this->message->setLineSpacingModifier(4);
@@ -68,19 +67,19 @@ void MessageBox::setOutlineColor(const Color &color) {
     buttons[1]->setOutlineColor(color);
 }
 
-int MessageBox::show(const std::string &title, const std::string &message,
+int MessageBox::show(const std::string &txt, const std::string &msg,
                      const std::string &buttonLeftText, const std::string &buttonRightText,
-                     int *pressed, int timeout) { // if "pressed" is supplied, pressed is set to the pressed key..
+                     int *pressed, int t) { // if "pressed" is supplied, pressed is set to the pressed key..
 
     int ret = 0, index = 0, choices = 0;
     int key = 0;
     C2DClock clock;
 
-    this->title->setString(title);
+    this->title->setString(txt);
     this->title->setOrigin(Origin::Center);
-    this->message->setString(message);
+    this->message->setString(msg);
     this->message->setOrigin(Origin::Center);
-    this->timeout->setVisibility(timeout > 0 ? Visibility::Visible : Visibility::Hidden);
+    this->timeout->setVisibility(t > 0 ? Visibility::Visible : Visibility::Hidden);
 
     // buttons
     if (!buttonLeftText.empty() || !buttonRightText.empty()) {
@@ -114,21 +113,21 @@ int MessageBox::show(const std::string &title, const std::string &message,
     setVisibility(Visibility::Visible);
     setLayer(10000);
 
-    if (choices > 0 || timeout > 0) {
+    if (choices > 0 || t > 0) {
 
         input->clear(0);
         clock.restart();
 
         while (true) {
 
-            if (timeout > 0) {
+            if (t > 0) {
                 int elapsed = (int) clock.getElapsedTime().asSeconds();
-                if (elapsed >= timeout) {
+                if (elapsed >= t) {
                     setVisibility(Visibility::Hidden);
                     ret = TIMEOUT;
                     break;
                 }
-                snprintf(timeout_str, 16, "%i", timeout - elapsed);
+                snprintf(timeout_str, 16, "%i", t - elapsed);
                 this->timeout->setString(timeout_str);
                 this->timeout->setOrigin(Origin::Center);
             }

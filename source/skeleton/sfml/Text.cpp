@@ -176,14 +176,8 @@ namespace c2d {
     void Text::setFillColor(const Color &color) {
         if (color != m_fillColor) {
             m_fillColor = color;
-
-            // Change vertex colors directly, no need to update whole geometry
-            // (if geometry is updated anyway, we can skip this step)
-            if (!m_geometryNeedUpdate) {
-                for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
-                    m_vertices[i].color = m_fillColor;
-                m_vertices.update();
-            }
+            // update geometry in onUpdate to be thread safe
+            m_geometryNeedUpdate = true;
         }
     }
 
@@ -191,14 +185,8 @@ namespace c2d {
     void Text::setOutlineColor(const Color &color) {
         if (color != m_outlineColor) {
             m_outlineColor = color;
-
-            // Change vertex colors directly, no need to update whole geometry
-            // (if geometry is updated anyway, we can skip this step)
-            if (!m_geometryNeedUpdate) {
-                for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
-                    m_outlineVertices[i].color = m_outlineColor;
-                m_outlineVertices.update();
-            }
+            // update geometry in onUpdate to be thread safe
+            m_geometryNeedUpdate = true;
         }
     }
 
