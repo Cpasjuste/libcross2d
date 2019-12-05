@@ -8,7 +8,7 @@
 
 using namespace c2d;
 
-SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
+SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
     printf("SDL2Renderer(GL)\n");
 
@@ -20,8 +20,8 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
     }
 
     Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
-    if (getSize().x <= 0 || getSize().y <= 0) { // force fullscreen if window size == 0
-        flags |= SDL_WINDOW_FULLSCREEN;
+    if (s.x <= 0 || s.y <= 0) { // force fullscreen if window size == 0
+        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
 
 #ifdef __SDL2_GLES__
@@ -43,16 +43,21 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
     printf("SDL_CreateWindow\n");
     window = SDL_CreateWindow(
             "CROSS2D_SDL2_GL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            (int) getSize().x, (int) getSize().y, flags);
-    if (!window) {
+            (int) s.x, (int) s.y, flags);
+    if (window == nullptr) {
         printf("Couldn't SDL_CreateWindow: %s\n", SDL_GetError());
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
         return;
     }
 
+    int x, y;
+    SDL_GetWindowSize(window, &x, &y);
+    m_size.x = x;
+    m_size.y = y;
+
     printf("SDL_GL_CreateContext\n");
     context = SDL_GL_CreateContext(window);
-    if (!context) {
+    if (context == nullptr) {
         printf("Couldn't SDL_GL_CreateContext: %s\n", SDL_GetError());
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't SDL_GL_CreateContext: %s\n", SDL_GetError());
         return;
@@ -63,7 +68,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &size) : GLRenderer(size) {
 
     available = true;
 
-    printf("SDL2Renderer(GL)(%p): %ix%i\n", this, (int) getSize().x, (int) getSize().y);
+    printf("SDL2Renderer(GL)(%p): %ix%i\n", this, (int) m_size.x, (int) m_size.y);
 }
 
 void SDL2Renderer::flip(bool draw, bool inputs) {

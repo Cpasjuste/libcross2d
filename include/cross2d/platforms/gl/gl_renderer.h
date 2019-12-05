@@ -17,7 +17,7 @@ namespace c2d {
 
         ~GLRenderer() override;
 
-        virtual void initGL();
+        void initGL();
 
         void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
 

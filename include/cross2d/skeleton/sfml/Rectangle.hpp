@@ -78,12 +78,14 @@ namespace c2d {
 
         void setOrigin(const Origin &origin) override;
 
+    protected:
+        Vector2f m_size; ///< Size of the rectangle
+
     private:
 
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        Vector2f m_size; ///< Size of the rectangle
         Origin m_rect_origin = Origin::TopLeft;
     };
 
