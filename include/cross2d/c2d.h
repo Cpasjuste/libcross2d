@@ -25,8 +25,11 @@
 #include "cross2d/widgets/textbox.h"
 #include "cross2d/widgets/listbox.h"
 #include "cross2d/widgets/configbox.h"
-#include "cross2d/widgets/messagebox.h"
 #include "cross2d/widgets/progress.h"
+#ifdef __WINDOWS__
+#undef MessageBox
+#endif
+#include "cross2d/widgets/messagebox.h"
 
 // for internal usage
 extern c2d::Renderer *c2d_renderer;
