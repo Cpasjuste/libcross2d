@@ -234,10 +234,10 @@ elseif (PLATFORM_LINUX)
     if (PLATFORM_WINDOWS)
         find_package(GLEW REQUIRED)
         # hum... static linking, not easy on mingw64 :)
-        list(APPEND C2D_LDFLAGS ${GLEW_LIBRARIES} harfbuzz graphite2 rpcrt4 dwrite bz2 png z
+        list(APPEND C2D_LDFLAGS glew32 freetype harfbuzz graphite2 rpcrt4 dwrite bz2 png z
                 ole32 oleaut32 imm32 winmm version setupapi gdi32 opengl32 -static)
-        list(APPEND C2D_CFLAGS -D__WINDOWS__ -DGLEW_STATIC=1)
-        set(ZIP "/msys64/usr/bin/zip" CACHE STRING "zip executable path" FORCE)
+        list(APPEND C2D_CFLAGS -DGLEW_STATIC=1)
+        set(ZIP "/usr/bin/zip" CACHE STRING "zip executable path" FORCE)
     endif ()
 endif ()
 
