@@ -44,6 +44,7 @@ endif ()
 # Nintendo Switch target
 ###########################
 if (PLATFORM_SWITCH)
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
     add_custom_target(${PROJECT_NAME}.nro
             DEPENDS ${PROJECT_NAME}
             DEPENDS ${PROJECT_NAME}.data
