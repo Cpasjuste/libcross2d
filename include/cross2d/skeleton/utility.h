@@ -14,7 +14,7 @@ namespace c2d {
 
     public:
 
-        static int parseInt(const std::string &str);
+        static int parseInt(const std::string &str, int defValue = 0);
 
         static float parseFloat(const std::string &str);
 

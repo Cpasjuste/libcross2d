@@ -97,13 +97,13 @@ std::string Utility::removeExt(const std::string &str) {
     }
 }
 
-int Utility::parseInt(const std::string &str) {
+int Utility::parseInt(const std::string &str, int defValue) {
     char *end = nullptr;
     long i = strtol(str.c_str(), &end, 10);
-    if (end) {
+    if (end != nullptr) {
         return (int) i;
     }
-    return 0;
+    return defValue;
 }
 
 float Utility::parseFloat(const std::string &str) {
