@@ -20,7 +20,9 @@ GLRenderer::GLRenderer(const Vector2f &size) : Renderer(size) {
 
 void GLRenderer::initGL() {
 
-#ifdef __SWITCH__
+#if defined(__PLATFORM_LINUX__) || defined(__SWITCH__)
+    // amdgpu proprietary driver 19.30 and SDL2 getproc bug
+    // it's seems safer to also use glad on linux
     gladLoadGL();
 #elif __WINDOWS__
     glewInit();

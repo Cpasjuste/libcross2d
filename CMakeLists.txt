@@ -222,7 +222,13 @@ elseif (PLATFORM_SWITCH)
     # LINUX PLATORM
     ########################
 elseif (PLATFORM_LINUX)
+    list(APPEND C2D_CFLAGS -D__PLATFORM_LINUX__)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
+    # glad loader
+    add_subdirectory(source/platforms/gl/glad)
+    list(APPEND PLATFORM_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/source/platforms/gl/glad/include)
+    list(APPEND C2D_LDFLAGS glad)
+    # glad loader
     if (PLATFORM_RPI3)
         if (OPTION_FREEPLAY)
             list(APPEND C2D_CFLAGS -D__FREEPLAY__)

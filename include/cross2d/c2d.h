@@ -199,6 +199,9 @@ extern c2d::Renderer *c2d_renderer;
 #ifndef GL_QUADS
 #define GL_QUADS 0x0006
 #endif
+#elif __PLATFORM_LINUX__
+#include "glad/glad.h"
+#define GL_ABGR_EXT 0x8000
 #else
 #include <SDL2/SDL_opengl.h>
 #endif
