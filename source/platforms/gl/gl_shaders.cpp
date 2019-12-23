@@ -142,6 +142,7 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
     add("crt caligari", new GLShader(crt_caligari_v, crt_caligari_f));
     add("crt easymode", new GLShader(crt_easymode_v, crt_easymode_f));
     add("crt geom", new GLShader(crt_geom_v, crt_geom_f));
+    add("crt lottes", new GLShader(crt_lottes_v, crt_lottes_f));
     add("sharp bilinear", new GLShader(sharp_bilinear_v, sharp_bilinear_f));
     add("sharp bilinear scanlines", new GLShader(sharp_bilinear_scanlines_v, sharp_bilinear_scanlines_f));
     add("sal2x", new GLShader(sal2x_v, sal2x_f));
@@ -151,6 +152,7 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
 #else
     add("sharp bilinear", new GLShader(sharp_bilinear_v, sharp_bilinear_f));
 #endif
+
 }
 
 GLShaderList::~GLShaderList() {

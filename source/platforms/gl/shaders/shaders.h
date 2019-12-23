@@ -26,6 +26,9 @@ extern const char *crt_easymode_f;
 extern const char *crt_geom_v;
 extern const char *crt_geom_f;
 
+extern const char *crt_lottes_v;
+extern const char *crt_lottes_f;
+
 extern const char *pixellate_v;
 extern const char *pixellate_f;
 
