@@ -67,5 +67,4 @@ elseif (PLATFORM_3DS)
     set(TARGET_PLATFORM 3ds CACHE STRING "")
 endif ()
 
-message(STATUS "C2D: cmake version: ${CMAKE_VERSION}")
-message(STATUS "C2D: Target platform: ${TARGET_PLATFORM}")
+message(STATUS "C2D: target platform: ${TARGET_PLATFORM}, cmake version: ${CMAKE_VERSION}")
