@@ -211,13 +211,13 @@ int GLTexture::save(const std::string &path) {
 
 int GLTexture::lock(FloatRect *rect, void **pix, int *p) {
 
-    if (!rect) {
+    if (rect == nullptr) {
         *pix = pixels;
     } else {
         *pix = (void *) (pixels + (int) rect->top * pitch + (int) rect->left * bpp);
     }
 
-    if (p) {
+    if (p != nullptr) {
         *p = pitch;
     }
 

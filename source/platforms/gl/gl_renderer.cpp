@@ -39,12 +39,13 @@ void GLRenderer::initGL() {
     shaderList = (ShaderList *) new GLShaderList();
 }
 
-void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {
+void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture, Sprite *sprite) {
 
     Vertex *vertices;
     size_t vertexCount;
     GLTexture *glTexture;
     GLShader *shader;
+    Vector2f inputSize, textureSize, outputSize;
 
     if (vertexArray == nullptr || vertexArray->getVertexCount() < 1) {
         //printf("gl_render::draw: no vertices\n");
@@ -53,7 +54,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     vertices = vertexArray->getVertices()->data();
     vertexCount = vertexArray->getVertexCount();
-    glTexture = texture != nullptr ? ((GLTexture *) texture) : nullptr;
+    glTexture = sprite != nullptr ? (GLTexture *) sprite->getTexture() : (GLTexture *) texture;
     shader = glTexture != nullptr && glTexture->available ? (GLShader *) shaderList->get(0)->data :
              (GLShader *) ((GLShaderList *) shaderList)->color->data;
     if (glTexture != nullptr && glTexture->shader != nullptr) {
@@ -92,25 +93,25 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
                               0.f, 1.f, 0.f, 0.f,
                               0.f, 0.f, 1.f, 0.f,
                               0.f, 0.f, 0.f, 1.f};
-        texMtx[0] = 1.f / texture->getTextureRect().width;
-        texMtx[5] = 1.f / texture->getTextureRect().height;
+        texMtx[0] = 1.f / glTexture->getSize().x;
+        texMtx[5] = 1.f / glTexture->getSize().y;
         shader->SetUniformMatrix("textureMatrix", texMtx);
 
         // set retroarch shader params
-        Vector2f inputSize = {texture->getTextureRect().width, texture->getTextureRect().height};
-        Vector2f textureSize = {texture->getSize().x, texture->getSize().y};
-        Vector2f outputSize = getSize(); // SCALE_TYPE_SCREEN
-        if (shader->getScaleType() == GLShader::SCALE_TYPE_VIEWPORT) {
-            outputSize = Vector2f{texture->getGlobalBounds().width, texture->getGlobalBounds().height};
-        } else if (shader->getScaleType() == GLShader::SCALE_TYPE_SOURCE) {
-            outputSize = Vector2f{(float) texture->getTextureRect().width * texture->getScale().x,
-                                  (float) texture->getTextureRect().height * texture->getScale().y};
+        if (sprite != nullptr) {
+            inputSize = {sprite->getTextureRect().width, sprite->getTextureRect().height};
+            textureSize = {sprite->getTexture()->getSize().x, sprite->getTexture()->getSize().y};
+            outputSize = {inputSize.x * sprite->getScale().x, inputSize.y * sprite->getScale().y};
+        } else {
+            inputSize = {texture->getTextureRect().width, texture->getTextureRect().height};
+            textureSize = {texture->getSize().x, texture->getSize().y};
+            outputSize = {inputSize.x * texture->getScale().x, inputSize.y * texture->getScale().y};
         }
         shader->SetUniform("InputSize", inputSize);
         shader->SetUniform("TextureSize", textureSize);
         shader->SetUniform("OutputSize", outputSize);
 #if 0
-        if (glTexture->shader) {
+        if (glTexture->shader != nullptr) {
             printf("inputSize: %ix%i, textureSize: %ix%i, outputSize: %ix%i\n",
                    (int) inputSize.x, (int) inputSize.y,
                    (int) textureSize.x, (int) textureSize.y,

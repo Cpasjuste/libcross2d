@@ -84,7 +84,9 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void Sprite::setTextureRect(const IntRect &rectangle) {
         if (rectangle != m_textureRect) {
+            m_size = {rectangle.width, rectangle.height};
             m_textureRect = rectangle;
+            m_texture->setTextureRect(rectangle);
             updatePositions();
             updateTexCoords();
         }
@@ -218,7 +220,7 @@ namespace c2d {
     void Sprite::onDraw(Transform &transform, bool draw) {
         if (draw) {
             Transform combined = transform * getTransform();
-            c2d_renderer->draw(&m_vertices, combined, m_texture);
+            c2d_renderer->draw(&m_vertices, combined, nullptr, this);
         }
         C2DObject::onDraw(transform, draw);
     }

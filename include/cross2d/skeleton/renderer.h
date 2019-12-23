@@ -32,7 +32,8 @@ namespace c2d {
 
         ~Renderer() override;
 
-        virtual void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {};
+        virtual void draw(VertexArray *vertexArray, const Transform &transform,
+                          Texture *texture, Sprite *sprite = nullptr) {};
 
         virtual void clear() {};
 
