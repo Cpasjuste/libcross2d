@@ -105,6 +105,7 @@ void Option::setUserData(void *data) {
 }
 
 std::string Option::getString() const {
+#ifndef __DREAMCAST__ // TODO
     if (type == Type::Integer) {
         return std::to_string(integer);
     } else if (type == Type::Float) {
@@ -120,6 +121,7 @@ std::string Option::getString() const {
     } else if (type == Type::Choice) {
         return choices[choices_index];
     }
+#endif
     return string;
 }
 

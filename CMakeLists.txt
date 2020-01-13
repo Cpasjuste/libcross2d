@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ####################
 # TARGET PLATFORM
@@ -72,9 +72,11 @@ file(GLOB C2D_SOURCES
         source/widgets/*.c*
         source/skeleton/*.c*
         source/skeleton/sfml/*.c*)
-include(FindPkgConfig)
-pkg_search_module(ZLIB REQUIRED zlib)
-pkg_search_module(FREETYPE REQUIRED freetype2)
+if (NOT PLATFORM_DREAMCAST)
+    include(FindPkgConfig)
+    pkg_search_module(ZLIB REQUIRED zlib)
+    pkg_search_module(FREETYPE REQUIRED freetype2)
+endif ()
 set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
 set(C2D_CFLAGS -Wall -Wno-narrowing -DLIBCONFIG_STATIC)
 set(C2D_LDFLAGS ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
@@ -100,10 +102,10 @@ if (OPTION_SDL2_GL OR OPTION_SDL2_GLES2 OR OPTION_SDL2_SOFT)
     file(GLOB SDL2_SRC source/platforms/sdl2/*.c*)
     list(APPEND C2D_SOURCES ${SDL2_SRC})
     if (OPTION_SDL2_GL OR OPTION_SDL2_GLES2)
-        file(GLOB GL_SRC source/platforms/gl/*.c*)
-        file(GLOB GL_SHADERS_SRC source/platforms/gl/shaders/*.c*)
+        file(GLOB GL_SRC source/platforms/gl2/*.c*)
+        file(GLOB GL_SHADERS_SRC source/platforms/gl2/shaders/*.c*)
         list(APPEND C2D_SOURCES ${GL_SRC} ${GL_SHADERS_SRC})
-        list(APPEND C2D_CFLAGS -D__SDL2_GL__ -D__GL__)
+        list(APPEND C2D_CFLAGS -D__SDL2_GL__ -D__GL2__)
     endif ()
     if (OPTION_SDL2_GL AND NOT PLATFORM_SWITCH)
         set(OpenGL_GL_PREFERENCE GLVND)
@@ -125,10 +127,10 @@ if (OPTION_SDL1)
     file(GLOB SDL_SRC source/platforms/sdl1/*.c*)
     list(APPEND C2D_SOURCES ${SDL_SRC})
     if (OPTION_SDL1_GL)
-        file(GLOB GL_SRC source/platforms/gl/*.c*)
-        file(GLOB GL_SHADERS_SRC source/platforms/gl/shaders/*.c*)
+        file(GLOB GL_SRC source/platforms/gl1/*.c*)
+        file(GLOB GL_SHADERS_SRC source/platforms/gl1/shaders/*.c*)
         list(APPEND C2D_SOURCES ${GL_SRC} ${GL_SHADERS_SRC})
-        list(APPEND C2D_CFLAGS -D__SDL1_GL__ -D__GL__)
+        list(APPEND C2D_CFLAGS -D__SDL1_GL__ -D__GL1__)
     endif ()
 endif ()
 
@@ -225,22 +227,30 @@ elseif (PLATFORM_SWITCH)
             )
     list(APPEND C2D_CFLAGS
             -ffunction-sections -fomit-frame-pointer
-            -D__SDL2_GL__ -D__GL__ -D__SWITCH__ -DNO_KEYBOARD
+            -D__SDL2_GL__ -D__GL2__ -D__SWITCH__ -DNO_KEYBOARD
             -D_GLIBCXX_USE_C99_MATH_TR1 -D_LDBL_EQ_DBL
             -Wno-int-in-bool-context
             )
     list(APPEND C2D_LDFLAGS glad EGL glapi drm_nouveau nx freetype bz2 png z)
+    ########################
+    # DREAMCAST PLATORM
+    ########################
+elseif (PLATFORM_DREAMCAST)
+    file(GLOB PLATFORM_SOURCES source/platforms/dreamcast/*.c*)
+    set(PLATFORM_INCLUDES
+            source/platforms/dreamcast
+            $ENV{KOS_BASE}/../kos-ports/include/freetype)
+    list(APPEND C2D_CFLAGS -D__DREAMCAST__ -DNO_KEYBOARD)
+    list(APPEND C2D_LDFLAGS GL freetype z m)
     ########################
     # LINUX PLATORM
     ########################
 elseif (PLATFORM_LINUX)
     list(APPEND C2D_CFLAGS -D__PLATFORM_LINUX__)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
-    # glad loader
-    add_subdirectory(source/platforms/gl/glad)
+    add_subdirectory(source/platforms/gl2/glad)
     list(APPEND PLATFORM_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/source/platforms/gl/glad/include)
     list(APPEND C2D_LDFLAGS glad dl)
-    # glad loader
     if (PLATFORM_RPI3)
         if (OPTION_FREEPLAY)
             list(APPEND C2D_CFLAGS -D__FREEPLAY__)

@@ -6,7 +6,7 @@
 #define SDL2_GL_RENDERER_H
 
 #include <SDL2/SDL.h>
-#include "cross2d/platforms/gl/gl_renderer.h"
+#include "cross2d/platforms/gl2/gl_renderer.h"
 
 namespace c2d {
 

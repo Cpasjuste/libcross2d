@@ -2,7 +2,7 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#ifdef __GL__
+#ifdef __GL2__
 
 #define GLM_FORCE_PURE
 
@@ -224,4 +224,4 @@ namespace c2d {
 }
 #endif
 
-#endif // __GL__
+#endif // __GL2__

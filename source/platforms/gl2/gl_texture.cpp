@@ -2,7 +2,7 @@
 // Created by cpasjuste on 01/12/16.
 //
 
-#ifdef __GL__
+#ifdef __GL2__
 
 #include "cross2d/c2d.h"
 
@@ -297,4 +297,4 @@ GLTexture::~GLTexture() {
     }
 }
 
-#endif // __GL__
+#endif // __GL2__

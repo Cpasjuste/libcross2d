@@ -76,7 +76,7 @@ void ListBoxLine::setIcon(Texture *i) {
                 icon->setOrigin(iconRect->getOrigin());
                 icon->setPosition(iconRect->getPosition());
                 if (icon->getLocalBounds().width != 32 || icon->getLocalBounds().height != 32) {
-                    printf("ListBoxLine: icon size != 32, scaling icon...\n");
+                    //printf("ListBoxLine: icon size != 32, scaling icon...\n");
                     float scaling = std::min(
                             iconRect->getSize().y / icon->getLocalBounds().width,
                             iconRect->getSize().y / icon->getLocalBounds().height);

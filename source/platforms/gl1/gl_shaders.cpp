@@ -2,15 +2,16 @@
 // Created by cpasjuste on 27/01/17.
 //
 
-#ifdef __GL__
+#ifdef __GL1__
 
 #include "cross2d/c2d.h"
-#include "shaders/shaders.h"
+//#include "shaders/shaders.h"
 
 using namespace c2d;
 
 static GLuint createAndCompileShader(GLenum type, const char *source) {
 
+    /*
     GLint success;
     GLchar msg[512];
     GLuint handle;
@@ -33,10 +34,13 @@ static GLuint createAndCompileShader(GLenum type, const char *source) {
     }
 
     return handle;
+    */
+    return 0;
 }
 
 GLShader::GLShader(const char *vertex, const char *fragment, int type) {
 
+    /*
     GLuint vsh, fsh;
     std::string v, f;
 
@@ -80,38 +84,47 @@ GLShader::GLShader(const char *vertex, const char *fragment, int type) {
 
     scale_type = type;
     available = true;
+    */
 }
 
 void GLShader::SetUniformMatrix(const GLchar *n, const GLfloat *v) {
+    /*
     GLint loc;
     GL_CHECK(loc = glGetUniformLocation(program, n));
     if (loc > -1) {
         GL_CHECK(glUniformMatrix4fv(loc, 1, GL_FALSE, v));
     }
+    */
 }
 
 void GLShader::SetUniform(const GLchar *n, const Vector2f &v) {
+    /*
     GLint loc;
     GL_CHECK(loc = glGetUniformLocation(program, n));
     if (loc > -1) {
         GL_CHECK(glUniform2f(loc, v.x, v.y));
     }
+    */
 }
 
 void GLShader::SetUniform(const GLchar *n, const float v0, const float v1) {
+    /*
     GLint loc;
     GL_CHECK(loc = glGetUniformLocation(program, n));
     if (loc > -1) {
         GL_CHECK(glUniform2f(loc, v0, v1));
     }
+    */
 }
 
 void GLShader::SetUniform(const GLchar *n, int v) {
+    /*
     GLint loc;
     GL_CHECK(loc = glGetUniformLocation(program, n));
     if (loc > -1) {
         GL_CHECK(glUniform1i(loc, v));
     }
+    */
 }
 
 GLuint GLShader::GetProgram() {
@@ -123,12 +136,15 @@ int GLShader::getScaleType() {
 }
 
 GLShader::~GLShader() {
+    /*
     if (program) {
         GL_CHECK(glDeleteProgram(program));
     }
+    */
 }
 
 GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersPath) {
+    /*
     // add color shader
     auto *colorShader = new GLShader(color_v, color_f);
     color = new Shader("color", colorShader);
@@ -152,7 +168,7 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
 #else
     add("sharp bilinear", new GLShader(sharp_bilinear_v, sharp_bilinear_f));
 #endif
-
+    */
 }
 
 GLShaderList::~GLShaderList() {
@@ -171,4 +187,4 @@ GLShaderList::~GLShaderList() {
     }
 }
 
-#endif // __GL__
+#endif // __GL1__

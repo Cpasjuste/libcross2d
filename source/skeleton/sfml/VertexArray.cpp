@@ -133,7 +133,7 @@ namespace c2d {
     }
 
     void VertexArray::update() {
-#ifdef __GL__
+#ifdef __GL2__
         if (!c2d_renderer || !c2d_renderer->available) {
             return;
         }
@@ -149,7 +149,7 @@ namespace c2d {
     }
 
     void VertexArray::bind() const {
-#ifdef __GL__
+#ifdef __GL2__
         if (!c2d_renderer || !c2d_renderer->available) {
             return;
         }
@@ -158,7 +158,7 @@ namespace c2d {
     }
 
     void VertexArray::unbind() const {
-#ifdef __GL__
+#ifdef __GL2__
         if (!c2d_renderer || !c2d_renderer->available) {
             return;
         }
@@ -167,7 +167,7 @@ namespace c2d {
     }
 
     VertexArray::~VertexArray() {
-#ifdef __GL__
+#ifdef __GL2__
         if (!c2d_renderer || !c2d_renderer->available) {
             return;
         }
