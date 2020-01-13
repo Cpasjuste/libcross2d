@@ -126,9 +126,13 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     //shader->SetUniformMatrix("MVPMatrix", glm::value_ptr(pmMtx));
 
     // set projection matrix
+#ifdef __SDL1_GL__
+    int w = getSize().x, h = getSize().y;
+#else
     int w, h;
     SDL_Window *window = ((SDL2Renderer *) this)->getWindow();
     SDL_GL_GetDrawableSize(window, &w, &h);
+#endif
     auto mtx = glm::orthoLH(0.0f, (float) w, (float) h, 0.0f, 0.0f, 1.0f);
 
     shader->SetUniformMatrix("projectionMatrix", glm::value_ptr(mtx));

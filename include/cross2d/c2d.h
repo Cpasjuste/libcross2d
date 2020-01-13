@@ -26,9 +26,11 @@
 #include "cross2d/widgets/listbox.h"
 #include "cross2d/widgets/configbox.h"
 #include "cross2d/widgets/progress.h"
+
 #ifdef __WINDOWS__
 #undef MessageBox
 #endif
+
 #include "cross2d/widgets/messagebox.h"
 
 // for internal usage
@@ -259,15 +261,34 @@ extern c2d::Renderer *c2d_renderer;
 
 #include <SDL/SDL.h>
 
+#if defined(__SDL1_GL__)
+#if __PLATFORM_LINUX__
+
+#include "glad/glad.h"
+
+#define GL_ABGR_EXT 0x8000
+#else
+#include <SDL/SDL_opengl.h>
+#endif
+
+#include "cross2d/platforms/sdl1/sdl1_gl_renderer.h"
+#include "cross2d/platforms/gl/gl_shaders.h"
+#include "cross2d/platforms/gl/gl_texture.h"
+#include "cross2d/platforms/gl/gl_texture_buffer.h"
+
+#define C2DTexture GLTexture
+#else
 #include "platforms/sdl1/sdl1_renderer.h"
 #include "platforms/sdl1/sdl1_texture.h"
+#define C2DTexture SDL1Texture
+#endif
+
 #include "platforms/sdl1/sdl1_input.h"
 #include "platforms/sdl1/sdl1_audio.h"
 #include "platforms/posix/posix_io.h"
 #include "platforms/posix/posix_clock.h"
 
 #define C2DRenderer SDL1Renderer
-#define C2DTexture SDL1Texture
 #define C2DRectangle RectangleShape
 #define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape

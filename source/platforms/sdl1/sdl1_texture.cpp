@@ -2,6 +2,8 @@
 // Created by cpasjuste on 01/12/16.
 //
 
+#ifndef __SDL1_GL__
+
 #include "cross2d/c2d.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -154,3 +156,5 @@ SDL1Texture::~SDL1Texture() {
         SDL_FreeSurface(surface);
     }
 }
+
+#endif // __SDL1_GL__
