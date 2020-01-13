@@ -227,7 +227,7 @@ elseif (PLATFORM_LINUX)
     # glad loader
     add_subdirectory(source/platforms/gl/glad)
     list(APPEND PLATFORM_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/source/platforms/gl/glad/include)
-    list(APPEND C2D_LDFLAGS glad)
+    list(APPEND C2D_LDFLAGS glad dl)
     # glad loader
     if (PLATFORM_RPI3)
         if (OPTION_FREEPLAY)
