@@ -288,19 +288,10 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DText Text
 #define C2DInput SDL1Input
 #define C2DAudio SDL1Audio
-#ifdef __DREAMCAST__
-
-#include "platforms/dreamcast/dreamcast_io.h"
-#include "platforms/dreamcast/dreamcast_clock.h"
-
-#define C2DIo DreamCastIo
-#define C2DClock DCClock
-#else
 #include "platforms/posix/posix_io.h"
 #include "platforms/posix/posix_clock.h"
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
-#endif
 
 #define KEY_JOY_UP_DEFAULT      -1  // use hat
 #define KEY_JOY_DOWN_DEFAULT    -1  // use hat
@@ -333,16 +324,16 @@ extern c2d::Renderer *c2d_renderer;
 
 #include "platforms/dreamcast/dreamcast_renderer.h"
 #include "cross2d/platforms/gl1/gl_texture.h"
-#include "platforms/dreamcast/dreamcast_io.h"
+#include "cross2d/platforms/posix/posix_io.h"
 #include "platforms/dreamcast/dreamcast_clock.h"
-//#include "platforms/dreamcast/dreamcast_input.h"
+#include "platforms/dreamcast/dreamcast_input.h"
 //#include "platforms/dreamcast/dreamcast_audio.h"
 
 #define C2DRenderer DCRenderer
-#define C2DIo DCIo
+#define C2DIo POSIXIo
 #define C2DClock DCClock
 #define C2DTexture GLTexture
-#define C2DInput Input
+#define C2DInput DCInput
 #define C2DAudio Audio
 #define C2DRectangle RectangleShape
 #define C2DRoundedRectangle RoundedRectangleShape
@@ -350,18 +341,18 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DFont Font
 #define C2DText Text
 
-#define KEY_JOY_UP_DEFAULT      -1  // use hat
-#define KEY_JOY_DOWN_DEFAULT    -1  // use hat
-#define KEY_JOY_LEFT_DEFAULT    -1  // use hat
-#define KEY_JOY_RIGHT_DEFAULT   -1  // use hat
-#define KEY_JOY_FIRE1_DEFAULT   0
-#define KEY_JOY_FIRE2_DEFAULT   1
-#define KEY_JOY_FIRE3_DEFAULT   2
-#define KEY_JOY_FIRE4_DEFAULT   3
-#define KEY_JOY_FIRE5_DEFAULT   4
-#define KEY_JOY_FIRE6_DEFAULT   5
+#define KEY_JOY_UP_DEFAULT      CONT_DPAD_UP
+#define KEY_JOY_DOWN_DEFAULT    CONT_DPAD_DOWN
+#define KEY_JOY_LEFT_DEFAULT    CONT_DPAD_LEFT
+#define KEY_JOY_RIGHT_DEFAULT   CONT_DPAD_RIGHT
+#define KEY_JOY_FIRE1_DEFAULT   CONT_A
+#define KEY_JOY_FIRE2_DEFAULT   CONT_B
+#define KEY_JOY_FIRE3_DEFAULT   CONT_X
+#define KEY_JOY_FIRE4_DEFAULT   CONT_Y
+#define KEY_JOY_FIRE5_DEFAULT   CONT_C
+#define KEY_JOY_FIRE6_DEFAULT   CONT_D
 #define KEY_JOY_COIN1_DEFAULT   6
-#define KEY_JOY_START1_DEFAULT  7
+#define KEY_JOY_START1_DEFAULT  CONT_START
 #define KEY_JOY_MENU1_DEFAULT   7
 #define KEY_JOY_MENU2_DEFAULT   6
 #define KEY_JOY_AXIS_LX         0

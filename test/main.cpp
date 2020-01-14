@@ -8,6 +8,7 @@ using namespace c2d;
 
 int main(int argc, char **argv) {
 
+
     // create main renderer
     auto *renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
     renderer->setClearColor(Color::Black);
@@ -26,7 +27,6 @@ int main(int argc, char **argv) {
     rect->setOutlineColor(Color::Orange);
     rect->setOutlineThickness(8 * scaling);
 
-    /*
     // create a texture and add it to the rect
     auto *tex = new C2DTexture(renderer->getIo()->getDataPath() + "gbatemp.png");
     if (tex->available) {
@@ -35,12 +35,11 @@ int main(int argc, char **argv) {
         tex->setOrigin(Origin::Center);
         rect->add(tex);
     }
-    */
 
     // create a font
     auto *text = new C2DText("libcross2d @ Cpasjuste");
     text->setOutlineThickness(2);
-    text->setOutlineColor(Color::Black);
+    text->setOutlineColor(Color::Blue);
     text->setPosition(rect->getSize().x - 16 * scaling, rect->getSize().y - 16 * scaling);
     text->setOrigin(Origin::BottomRight);
     text->setScale(scaling, scaling);
@@ -66,14 +65,44 @@ int main(int argc, char **argv) {
     tweenColor->play();
     rect->add(tweenColor);
 
+    /*
     auto *tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     tweenAlpha->play();
     rect->add(tweenAlpha);
+    */
+
+    std::vector<Io::File> files = renderer->getIo()->getDirList("/");
+    for (const auto &file : files) {
+        printf("file: %s\n", file.name.c_str());
+    }
+
+    malloc_stats();
 
     while (true) {
 
         // stop if any key is pressed
-        if (renderer->getInput()->getKeys()) {
+        unsigned int keys = renderer->getInput()->getKeys();
+        if (keys & Input::Key::Left) {
+            text->setString("Left");
+        } else if (keys & Input::Key::Right) {
+            text->setString("Right");
+        } else if (keys & Input::Key::Up) {
+            text->setString("Up");
+        } else if (keys & Input::Key::Down) {
+            text->setString("Down");
+        } else if (keys & Input::Key::Fire1) {
+            text->setString("Fire1");
+        } else if (keys & Input::Key::Fire2) {
+            text->setString("Fire2");
+        } else if (keys & Input::Key::Fire3) {
+            text->setString("Fire3");
+        } else if (keys & Input::Key::Fire4) {
+            text->setString("Fire4");
+        } else if (keys & Input::Key::Fire5) {
+            text->setString("Fire5");
+        } else if (keys & Input::Key::Fire6) {
+            text->setString("Fire6");
+        } else if (keys & Input::Key::Start) {
             break;
         }
 

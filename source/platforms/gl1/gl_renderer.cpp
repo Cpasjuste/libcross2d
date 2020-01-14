@@ -30,8 +30,6 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
 
     Vertex *vertices;
     size_t vertexCount;
-    GLTexture *glTexture;
-    //GLShader *shader;
 
     if (vertexArray == nullptr || vertexArray->getVertexCount() < 1) {
         //printf("GL1Renderer::draw: no vertices\n");

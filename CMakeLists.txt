@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-set(CMAKE_VERBOSE_MAKEFILE ON)
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ####################
 # TARGET PLATFORM
@@ -51,6 +51,9 @@ endif ()
 
 if (PLATFORM_DREAMCAST)
     set(OPTION_RENDER_GL1 ON CACHE BOOL "SDL2 support (OpenGLES 2.0)" FORCE)
+    set(OPTION_BUILTIN_LIBCONFIG ON CACHE BOOL "Build libconfig from sources" FORCE)
+    set(OPTION_SCREEN_WIDTH 640 CACHE STRING "Custom screen width" FORCE)
+    set(OPTION_SCREEN_HEIGHT 480 CACHE STRING "Custom screen height" FORCE)
 endif ()
 
 if (OPTION_RENDER_GL1)
@@ -241,11 +244,12 @@ elseif (PLATFORM_SWITCH)
     ########################
 elseif (PLATFORM_DREAMCAST)
     file(GLOB PLATFORM_SOURCES source/platforms/dreamcast/*.c*)
+    list(APPEND PLATFORM_SOURCES source/platforms/posix/posix_io.cpp)
     set(PLATFORM_INCLUDES
             source/platforms/dreamcast
             $ENV{KOS_BASE}/../kos-ports/include/freetype)
     list(APPEND C2D_CFLAGS -D__DREAMCAST__ -DNO_KEYBOARD)
-    list(APPEND C2D_LDFLAGS stdc++ GL freetype z m)
+    list(APPEND C2D_LDFLAGS c kallisti stdc++ GL freetype z m)
     ########################
     # LINUX PLATORM
     ########################
