@@ -10,6 +10,7 @@ option(PLATFORM_RPI3 "RIP3 platform target" OFF)
 option(PLATFORM_SWITCH "Nintendo Switch platform target" OFF)
 option(PLATFORM_3DS "Nintendo 3DS platform target" OFF)
 option(PLATFORM_VITA "Sony PS Vita platform target" OFF)
+option(PLATFORM_DREAMCAST "Sega Dreamcast platform target" OFF)
 ####################
 # TARGET PLATFORM
 ####################
@@ -18,10 +19,10 @@ option(PLATFORM_VITA "Sony PS Vita platform target" OFF)
 # BUILD OPTIONS
 ####################
 option(OPTION_SDL1 "SDL1 support (software, slow, unsupported)" OFF)
-option(OPTION_SDL1_GL "SDL2 support (OpenGL 1.2)" OFF)
 option(OPTION_SDL2_GL "SDL2 support (OpenGL 3.3)" OFF)
 option(OPTION_SDL2_GLES2 "SDL2 support (OpenGLES 2.0)" OFF)
 option(OPTION_SDL2_SOFT "SDL2 support (software, slow)" OFF)
+option(OPTION_RENDER_GL1 "SDL2 support (OpenGL 1.2)" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
 option(OPTION_FREEPLAY "Build with FreePlay (CM3/ZERO) support" OFF)
 option(OPTION_RECALBOX_BUILDROOT "Build from recalbox buildroot" OFF)
@@ -35,7 +36,7 @@ set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
 # SANITY CHECKS
 ####################
 if (PLATFORM_LINUX OR PLATFORM_WINDOWS OR PLATFORM_SWITCH)
-    if (NOT (OPTION_SDL1 OR OPTION_SDL1_GL OR OPTION_SDL2_GL OR OPTION_SDL2_GLES2 OR OPTION_SDL2_SOFT))
+    if (NOT (OPTION_SDL1 OR OPTION_RENDER_GL1 OR OPTION_SDL2_GL OR OPTION_SDL2_GLES2 OR OPTION_SDL2_SOFT))
         message(STATUS "C2D: SDL2 OpenGL 3.3 support enabled")
         set(OPTION_SDL2_GL ON CACHE BOOL "SDL2 support (OpenGL 3.3)" FORCE)
     endif ()
@@ -48,9 +49,12 @@ if (PLATFORM_RPI3 OR OPTION_SDL2_GLES2)
     endif ()
 endif ()
 
-if (OPTION_SDL1_GL)
-    message(STATUS "C2D: SDL1 OpenGL 1.2 support enabled")
-    set(OPTION_SDL1 ON CACHE BOOL "SDL1 support (OpenGL 1.2)" FORCE)
+if (PLATFORM_DREAMCAST)
+    set(OPTION_RENDER_GL1 ON CACHE BOOL "SDL2 support (OpenGLES 2.0)" FORCE)
+endif ()
+
+if (OPTION_RENDER_GL1)
+    message(STATUS "C2D: OpenGL 1.2 support enabled")
 endif ()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -126,12 +130,12 @@ if (OPTION_SDL1)
     list(APPEND C2D_CFLAGS -D__SDL1__)
     file(GLOB SDL_SRC source/platforms/sdl1/*.c*)
     list(APPEND C2D_SOURCES ${SDL_SRC})
-    if (OPTION_SDL1_GL)
-        file(GLOB GL_SRC source/platforms/gl1/*.c*)
-        file(GLOB GL_SHADERS_SRC source/platforms/gl1/shaders/*.c*)
-        list(APPEND C2D_SOURCES ${GL_SRC} ${GL_SHADERS_SRC})
-        list(APPEND C2D_CFLAGS -D__SDL1_GL__ -D__GL1__)
-    endif ()
+endif ()
+
+if (OPTION_RENDER_GL1)
+    file(GLOB GL_SRC source/platforms/gl1/*.c*)
+    list(APPEND C2D_SOURCES ${GL_SRC})
+    list(APPEND C2D_CFLAGS -D__GL1__)
 endif ()
 
 if (OPTION_RECALBOX_BUILDROOT)
@@ -241,7 +245,7 @@ elseif (PLATFORM_DREAMCAST)
             source/platforms/dreamcast
             $ENV{KOS_BASE}/../kos-ports/include/freetype)
     list(APPEND C2D_CFLAGS -D__DREAMCAST__ -DNO_KEYBOARD)
-    list(APPEND C2D_LDFLAGS GL freetype z m)
+    list(APPEND C2D_LDFLAGS stdc++ GL freetype z m)
     ########################
     # LINUX PLATORM
     ########################

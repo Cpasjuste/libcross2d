@@ -5,11 +5,11 @@
 #ifndef DREAMCAST_RENDERER_H
 #define DREAMCAST_RENDERER_H
 
-#include "cross2d/platforms/dreamcast/dreamcast_renderer.h"
+#include "cross2d/platforms/gl1/gl_renderer.h"
 
 namespace c2d {
 
-    class DCRenderer : public Renderer {
+    class DCRenderer : public GL1Renderer {
 
     public:
 
@@ -17,11 +17,9 @@ namespace c2d {
 
         ~DCRenderer() override;
 
-        virtual void flip(bool draw = true, bool inputs = true);
+        void flip(bool draw = true, bool inputs = true);
 
-        virtual void delay(unsigned int ms);
-
-    private:
+        void delay(unsigned int ms);
 
     };
 }

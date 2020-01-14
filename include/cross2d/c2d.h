@@ -294,7 +294,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/dreamcast/dreamcast_clock.h"
 
 #define C2DIo DreamCastIo
-#define C2DClock DreamCastClock
+#define C2DClock DCClock
 #else
 #include "platforms/posix/posix_io.h"
 #include "platforms/posix/posix_clock.h"
@@ -324,40 +324,31 @@ extern c2d::Renderer *c2d_renderer;
 #elif __DREAMCAST__
 
 #include <kos.h>
-
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
 
+#define GL_RGB565 GL_RGB
+#define GL_RGBA8 GL_RGBA
+
 #include "platforms/dreamcast/dreamcast_renderer.h"
-//#include "platforms/dreamcast/dreamcast_texture.h"
+#include "cross2d/platforms/gl1/gl_texture.h"
+#include "platforms/dreamcast/dreamcast_io.h"
+#include "platforms/dreamcast/dreamcast_clock.h"
 //#include "platforms/dreamcast/dreamcast_input.h"
 //#include "platforms/dreamcast/dreamcast_audio.h"
 
 #define C2DRenderer DCRenderer
-
-#define C2DTexture Texture
+#define C2DIo DCIo
+#define C2DClock DCClock
+#define C2DTexture GLTexture
 #define C2DInput Input
 #define C2DAudio Audio
-
 #define C2DRectangle RectangleShape
 #define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape
 #define C2DFont Font
 #define C2DText Text
-#ifdef __DREAMCAST__
-
-#include "platforms/dreamcast/dreamcast_io.h"
-#include "platforms/dreamcast/dreamcast_clock.h"
-
-#define C2DIo DreamCastIo
-#define C2DClock DreamCastClock
-#else
-#include "platforms/posix/posix_io.h"
-#include "platforms/posix/posix_clock.h"
-#define C2DIo POSIXIo
-#define C2DClock POSIXClock
-#endif
 
 #define KEY_JOY_UP_DEFAULT      -1  // use hat
 #define KEY_JOY_DOWN_DEFAULT    -1  // use hat

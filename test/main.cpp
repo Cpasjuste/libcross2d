@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
 
     // create a font
     auto *text = new C2DText("libcross2d @ Cpasjuste");
-    text->setOutlineThickness(2);
+    text->setOutlineThickness(1);
     text->setPosition(rect->getSize().x - 16 * scaling, rect->getSize().y - 16 * scaling);
     text->setOrigin(Origin::BottomRight);
     text->setScale(scaling, scaling);
@@ -46,6 +46,7 @@ int main(int argc, char **argv) {
     // add all this crap to the renderer
     renderer->add(rect);
 
+    /*
     // add some tweening :)
     auto *tweenPos = new TweenPosition(
             {renderer->getSize().x / 2 - (256 * scaling), rect->getPosition().y},
@@ -62,9 +63,12 @@ int main(int argc, char **argv) {
     auto *tweenColor = new TweenColor(rect->getFillColor(), Color(0x9bc4e2ff), 3.0f, TweenLoop::PingPong);
     tweenColor->play();
     rect->add(tweenColor);
+    */
+    /*
     auto *tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     tweenAlpha->play();
     rect->add(tweenAlpha);
+    */
 
     while (true) {
 

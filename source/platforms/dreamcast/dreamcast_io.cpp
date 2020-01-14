@@ -10,27 +10,27 @@
 
 using namespace c2d;
 
-std::string DreamCastIo::getHomePath() const {
+std::string DCIo::getHomePath() const {
     return Io::getHomePath();
 }
 
-bool DreamCastIo::exist(const std::string &path) {
+bool DCIo::exist(const std::string &path) {
     return  false;
 }
 
-bool DreamCastIo::create(const std::string &path) {
+bool DCIo::create(const std::string &path) {
     return false;
 }
 
-size_t DreamCastIo::getSize(const std::string &file) {
+size_t DCIo::getSize(const std::string &file) {
     return 0;
 }
 
-Io::Type DreamCastIo::getType(const std::string &file) {
+Io::Type DCIo::getType(const std::string &file) {
     return Type::Unknown;
 }
 
-std::vector<Io::File> DreamCastIo::getDirList(const std::string &path, bool sort, bool showHidden) {
+std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool showHidden) {
 
     std::vector<Io::File> files;
     return files;

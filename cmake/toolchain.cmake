@@ -10,28 +10,15 @@ if (PLATFORM_RPI3)
 endif ()
 if (PLATFORM_DREAMCAST)
     set(TARGET_PLATFORM dreamcast CACHE STRING "" FORCE)
+
     set(CMAKE_SYSTEM_NAME "Generic")
     set(CMAKE_SYSTEM_PROCESSOR "sh")
 
-    set(SH_ELF_PREFIX /opt/toolchains/dc/sh-elf)
-
+    set(KOS_BASE $ENV{KOS_BASE})
     set(KOS_ARCH "dreamcast")
     set(KOS_SUBARCH "pristine")
-    set(KOS_LIB_PATHS "-L$ENV{KOS_BASE}/lib/${KOS_ARCH} -L$ENV{KOS_BASE}/addons/lib/${KOS_ARCH} -L$ENV{KOS_BASE}/../kos-ports/lib")
-    set(KOS_LIBS "-Wl,--start-group -lkallisti -lc -lgcc -Wl,--end-group")
-    set(KOS_LD_SCRIPT)
 
-    set(CMAKE_C_FLAGS "-D__DREAMCAST__ -O2 -fomit-frame-pointer -ml -m4-single-only -ffunction-sections -fdata-sections ${KOS_INC_PATHS} -D_arch_${KOS_ARCH} -D_arch_sub_${KOS_SUBARCH} -Wall -g -fno-builtin -fno-strict-aliasing")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I$ENV{KOS_BASE}/include -I$ENV{KOS_BASE}/kernel/arch/${KOS_ARCH}/include -I$ENV{KOS_BASE}/addons/include -I$ENV{KOS_BASE}/../kos-ports/include" CACHE STRING "C flags" FORCE)
-
-    set(CMAKE_CXX_FLAGS "-std=gnu++11 -D__DREAMCAST__ -O2 -fomit-frame-pointer -ml -m4-single-only -ffunction-sections -fdata-sections -fno-operator-names ${KOS_INC_PATHS_CPP} -D_arch_${KOS_ARCH} -D_arch_sub_${KOS_SUBARCH} -fno-operator-names -fno-rtti -fno-exceptions")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I$ENV{KOS_BASE}/include -I$ENV{KOS_BASE}/kernel/arch/${KOS_ARCH}/include -I$ENV{KOS_BASE}/addons/include -I$ENV{KOS_BASE}/../kos-ports/include" CACHE STRING "C++ flags" FORCE)
-
-    #-nodefaultlibs
-    set(CMAKE_C_LINK_FLAGS "${KOS_LD_SCRIPT} ${KOS_LIB_PATHS} -ml -m4-single-only -Wl,-Ttext=0x8c010000 -Wl,--gc-sections ${KOS_LIBS}" CACHE STRING "" FORCE)
-    set(CMAKE_CXX_LINK_FLAGS "${KOS_LD_SCRIPT} ${KOS_LIB_PATHS} -ml -m4-single-only -Wl,-Ttext=0x8c010000 -Wl,--gc-sections ${KOS_LIBS} " CACHE STRING "" FORCE)
-    #-T$ENV{KOS_BASE}/utils/ldscripts/shlelf.xc
-
+    set(SH_ELF_PREFIX /opt/toolchains/dc/sh-elf)
     set(CMAKE_OBJCOPY ${SH_ELF_PREFIX}/bin/sh-elf-objcopy CACHE FILEPATH "")
     set(CMAKE_C_COMPILER ${SH_ELF_PREFIX}/bin/sh-elf-gcc CACHE FILEPATH "")
     set(CMAKE_CXX_COMPILER ${SH_ELF_PREFIX}/bin/sh-elf-g++ CACHE FILEPATH "")
@@ -39,16 +26,29 @@ if (PLATFORM_DREAMCAST)
     set(CMAKE_ASM_COMPILER ${SH_ELF_PREFIX}/bin/sh-elf-as CACHE FILEPATH "")
     set(CMAKE_ASM-ATT_COMPILER ${SH_ELF_PREFIX}/bin/sh-elf-as CACHE FILEPATH "")
     set(CMAKE_LINKER ${SH_ELF_PREFIX}/bin/sh-elf-ld CACHE FILEPATH "")
+
+    set(KOS_INC_PATHS "-I${KOS_BASE}/include -I${KOS_BASE}/kernel/arch/dreamcast/include -I${KOS_BASE}/addons/include -I${KOS_BASE}/../kos-ports/include")
+    set(KOS_LIB_PATHS "-L${KOS_BASE}/lib/${KOS_ARCH} -L${KOS_BASE}/addons/lib/${KOS_ARCH} -L${KOS_BASE}/../kos-ports/lib")
+    set(KOS_LIBS "-Wl,--start-group -lkallisti -lc -lgcc -Wl,--end-group")
+    set(KOS_CFLAGS "-D__DREAMCAST__ -O2 -ml -m4-single-only -ffunction-sections -fdata-sections -D_arch_dreamcast -D_arch_sub_pristine -Wall -g -fno-builtin")
+
+    set(CMAKE_C_FLAGS "${KOS_CFLAGS} ${KOS_INC_PATHS}" CACHE STRING "C flags" FORCE)
+    set(CMAKE_CXX_FLAGS "${KOS_CFLAGS} ${KOS_INC_PATHS} -std=c++11 -fno-operator-names -fno-rtti -fno-exceptions" CACHE STRING "C++ flags" FORCE)
+
+    set(CMAKE_C_LINK_FLAGS "${KOS_LIB_PATHS} ${KOS_LIBS} -T${KOS_BASE}/utils/ldscripts/shlelf.xc ${KOS_LIBS}" CACHE STRING "" FORCE)
+    set(CMAKE_CXX_LINK_FLAGS "${KOS_LIB_PATHS} ${KOS_LIBS} -T${KOS_BASE}/utils/ldscripts/shlelf.xc ${KOS_LIBS}" CACHE STRING "" FORCE)
+
     set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_C_COMPILER} <OBJECTS> ${CMAKE_C_FLAGS} <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> <LINK_LIBRARIES> -o <TARGET>")
-    set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_COMPILER} <OBJECTS> ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_LINK_FLAGS} <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <LINK_LIBRARIES> -o <TARGET>")
+    #set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_COMPILER} <OBJECTS> ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_LINK_FLAGS} <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <LINK_LIBRARIES> -o <TARGET>")
 
     set_property(DIRECTORY PROPERTY TARGET_SUPPORTS_SHARED_LIBS FALSE)
     set(CMAKE_FIND_ROOT_PATH ${SH_ELF_PREFIX} $ENV{KOS_BASE}/ $ENV{KOS_BASE}/addons $ENV{KOS_BASE}/../kos-ports)
     set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
     set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
     set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-    set(KOS_GENROMFS $ENV{KOS_GENROMFS})
-    set(KOS_BIN2O $ENV{KOS_BASE}/utils/bin2o/bin2o)
+
+    set(CMAKE_EXECUTABLE_SUFFIX_C ".elf" CACHE STRING "" FORCE)
+    set(CMAKE_EXECUTABLE_SUFFIX_CXX ".elf" CACHE STRING "" FORCE)
 endif ()
 if (PLATFORM_WINDOWS)
     set(PLATFORM_LINUX ON CACHE BOOL "" FORCE)

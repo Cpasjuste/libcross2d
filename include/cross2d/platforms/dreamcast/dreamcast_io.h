@@ -9,7 +9,7 @@
 
 namespace c2d {
 
-    class DreamCastIo : public Io {
+    class DCIo : public Io {
 
     public:
 

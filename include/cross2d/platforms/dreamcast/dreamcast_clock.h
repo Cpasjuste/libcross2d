@@ -9,11 +9,11 @@
 
 namespace c2d {
 
-    class DreamCastClock : public Clock {
+    class DCClock : public Clock {
 
     public:
 
-        DreamCastClock();
+        DCClock();
 
         Time getCurrentTime() const;
     };
