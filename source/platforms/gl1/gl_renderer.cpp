@@ -16,6 +16,7 @@ void GL1Renderer::glInit() {
 
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
     glDepthMask(GL_FALSE);
 
     glMatrixMode(GL_PROJECTION);
@@ -56,7 +57,11 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
 
     if (tex != nullptr || vertices[0].color.a < 255) {
         glEnable(GL_BLEND);
+#ifdef __DREAMCAST__
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+#else
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
     }
 
     const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
