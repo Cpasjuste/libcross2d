@@ -134,11 +134,11 @@ namespace c2d {
 
     void VertexArray::update() {
 #ifdef __GL2__
-        if (!c2d_renderer || !c2d_renderer->available) {
+        if (c2d_renderer == nullptr || !c2d_renderer->available) {
             return;
         }
 
-        if (!vbo) {
+        if (vbo < 1) {
             GL_CHECK(glGenBuffers(1, &vbo));
         }
 
@@ -150,7 +150,7 @@ namespace c2d {
 
     void VertexArray::bind() const {
 #ifdef __GL2__
-        if (!c2d_renderer || !c2d_renderer->available) {
+        if (c2d_renderer == nullptr || !c2d_renderer->available) {
             return;
         }
         GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
@@ -159,7 +159,7 @@ namespace c2d {
 
     void VertexArray::unbind() const {
 #ifdef __GL2__
-        if (!c2d_renderer || !c2d_renderer->available) {
+        if (c2d_renderer == nullptr || !c2d_renderer->available) {
             return;
         }
         GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
@@ -168,10 +168,10 @@ namespace c2d {
 
     VertexArray::~VertexArray() {
 #ifdef __GL2__
-        if (!c2d_renderer || !c2d_renderer->available) {
+        if (c2d_renderer == nullptr || !c2d_renderer->available) {
             return;
         }
-        if (vbo) {
+        if (vbo > 0) {
             GL_CHECK(glDeleteBuffers(1, &vbo));
         }
 #endif

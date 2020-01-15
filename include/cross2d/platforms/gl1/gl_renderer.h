@@ -19,12 +19,12 @@ namespace c2d {
 
         virtual void glInit();
 
-        virtual void draw(VertexArray *vertexArray, const Transform &transform,
-                          Texture *texture, Sprite *sprite = nullptr) override;
+        void draw(VertexArray *vertexArray, const Transform &transform,
+                  Texture *texture, Sprite *sprite = nullptr) override;
 
-        virtual void clear() override;
+        void clear() override;
 
-        virtual void flip(bool draw = true, bool inputs = true) override;
+        void flip(bool draw = true, bool inputs = true) override;
     };
 }
 

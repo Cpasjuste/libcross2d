@@ -8,7 +8,7 @@ using namespace c2d;
 
 Renderer *c2d_renderer;
 
-Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
+Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 
     printf("Renderer(%p)\n", this);
 
@@ -51,17 +51,19 @@ void Renderer::onUpdate() {
         }
     }
 
-    RectangleShape::onUpdate();
+    Rectangle::onUpdate();
 }
 
 void Renderer::flip(bool draw, bool _process_inputs) {
 
     process_inputs = _process_inputs;
+    onUpdate();
 
     // call base class (draw childs)
     if (draw) {
+        clear();
         Transform trans = getTransform();
-        onDraw(trans, draw);
+        Rectangle::onDraw(trans, draw);
     }
 }
 
@@ -69,7 +71,7 @@ void Renderer::setClearColor(const Color &color) {
     m_clearColor = color;
 }
 
-const Color Renderer::getClearColor() {
+Color Renderer::getClearColor() const {
     return m_clearColor;
 }
 
@@ -105,7 +107,7 @@ Renderer::~Renderer() {
     delete (input);
     delete (deltaClock);
     delete (elapsedClock);
-    if (shaderList) {
+    if (shaderList != nullptr) {
         delete (shaderList);
     }
 }

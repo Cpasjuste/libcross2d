@@ -263,15 +263,13 @@ extern c2d::Renderer *c2d_renderer;
 
 #include <SDL/SDL.h>
 
-#if defined(__SDL1_GL__)
+#if defined(__GL1__)
 
 #include "glad/glad.h"
 #define GL_ABGR_EXT 0x8000
 
 #include "cross2d/platforms/sdl1/sdl1_gl_renderer.h"
-#include "cross2d/platforms/gl1/gl_shaders.h"
 #include "cross2d/platforms/gl1/gl_texture.h"
-
 #define C2DTexture GLTexture
 #else
 #include "platforms/sdl1/sdl1_renderer.h"
@@ -281,6 +279,8 @@ extern c2d::Renderer *c2d_renderer;
 
 #include "platforms/sdl1/sdl1_input.h"
 #include "platforms/sdl1/sdl1_audio.h"
+#include "platforms/posix/posix_io.h"
+#include "platforms/posix/posix_clock.h"
 
 #define C2DRenderer SDL1Renderer
 #define C2DRectangle RectangleShape
@@ -290,8 +290,6 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DText Text
 #define C2DInput SDL1Input
 #define C2DAudio SDL1Audio
-#include "platforms/posix/posix_io.h"
-#include "platforms/posix/posix_clock.h"
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
 

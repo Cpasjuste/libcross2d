@@ -14,11 +14,11 @@ namespace c2d {
     public:
         SDL2Input();
 
-        virtual ~SDL2Input();
+        ~SDL2Input() override;
 
-        virtual int waitButton(int player = 0);
+        int waitButton(int player = 0) override;
 
-        virtual Player *update(int rotate = 0);
+        Player *update(int rotate = 0) override;
 
     private:
 

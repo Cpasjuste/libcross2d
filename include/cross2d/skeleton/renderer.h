@@ -24,7 +24,7 @@
 
 namespace c2d {
 
-    class Renderer : public RectangleShape {
+    class Renderer : public Rectangle {
 
     public:
 
@@ -47,7 +47,7 @@ namespace c2d {
 
         void setClearColor(const Color &color);
 
-        const Color getClearColor();
+        Color getClearColor() const;
 
         Time getDeltaTime() const;
 

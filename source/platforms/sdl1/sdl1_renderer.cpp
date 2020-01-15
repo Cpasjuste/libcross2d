@@ -6,7 +6,7 @@
 // SDL1 software renderer
 //
 
-#if defined(__SDL1__) && !defined(__SDL1_GL__)
+#ifndef __GL1__
 
 #include "cross2d/c2d.h"
 

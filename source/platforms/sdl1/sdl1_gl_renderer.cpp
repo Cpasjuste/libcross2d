@@ -2,13 +2,13 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#if defined(__SDL1__) && defined(__SDL1_GL__)
+#if defined(__SDL1__) && defined(__GL1__)
 
 #include "cross2d/c2d.h"
 
 using namespace c2d;
 
-SDL1Renderer::SDL1Renderer(const Vector2f &s) : GLRenderer(s) {
+SDL1Renderer::SDL1Renderer(const Vector2f &s) : GL1Renderer(s) {
 
     printf("SDL1Renderer(GL)\n");
 
@@ -23,14 +23,12 @@ SDL1Renderer::SDL1Renderer(const Vector2f &s) : GLRenderer(s) {
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
 
     m_size = s;
-    SDL_SetVideoMode(m_size.x, m_size.y, 16, SDL_DOUBLEBUF | SDL_SWSURFACE | SDL_OPENGL);
+    SDL_SetVideoMode(m_size.x, m_size.y, 16, SDL_DOUBLEBUF | SDL_OPENGL);
 
-    initGL();
-
+    glInit();
     printf("GL vendor   : %s\n", glGetString(GL_VENDOR));
     printf("GL renderer : %s\n", glGetString(GL_RENDERER));
     printf("GL version  : %s\n", glGetString(GL_VERSION));
-    //printf("GL glsl     : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     available = true;
 
@@ -40,7 +38,7 @@ SDL1Renderer::SDL1Renderer(const Vector2f &s) : GLRenderer(s) {
 void SDL1Renderer::flip(bool draw, bool inputs) {
 
     // call base class (draw childs)
-    GLRenderer::flip(draw, inputs);
+    GL1Renderer::flip(draw, inputs);
 
     // flip
     glFlush();

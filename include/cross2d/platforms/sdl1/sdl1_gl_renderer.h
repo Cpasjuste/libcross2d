@@ -10,7 +10,7 @@
 
 namespace c2d {
 
-    class SDL1Renderer : public GLRenderer {
+    class SDL1Renderer : public GL1Renderer {
 
     public:
 
@@ -18,9 +18,9 @@ namespace c2d {
 
         ~SDL1Renderer() override;
 
-        virtual void flip(bool draw = true, bool inputs = true);
+        void flip(bool draw = true, bool inputs = true) override;
 
-        virtual void delay(unsigned int ms);
+        void delay(unsigned int ms) override;
 
     };
 }

@@ -30,8 +30,6 @@ namespace c2d {
 
         void setFilter(Filter filter);
 
-        void setShader(int shaderIndex);
-
         GLuint texID = 0;
 
         unsigned char *pixels = nullptr;

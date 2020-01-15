@@ -113,7 +113,7 @@ int GLTexture::save(const std::string &path) {
     int width = getTextureRect().width;
     int height = getTextureRect().height;
 
-    if (!pixels) {
+    if (pixels == nullptr) {
         return -1;
     }
 
@@ -182,6 +182,8 @@ void GLTexture::unlock() {
             break;
 #endif
     }
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void GLTexture::setFilter(Filter f) {
@@ -193,30 +195,21 @@ void GLTexture::setFilter(Filter f) {
                     filter == Filter::Linear ? GL_LINEAR : GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
                     filter == Filter::Linear ? GL_LINEAR : GL_NEAREST);
-}
-
-void GLTexture::setShader(int shaderIndex) {
-
-    ShaderList *shaderList = c2d_renderer->getShaderList();
-    if (shaderIndex >= shaderList->getCount()) {
-        shader = shaderList->get(0);
-        return;
-    }
-
-    shader = shaderList->get(shaderIndex);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 GLTexture::~GLTexture() {
 
-    //printf("~GLTexture(%p)\n", this);
+    printf("~GLTexture(%p)\n", this);
 
-    if (pixels) {
+    if (pixels != nullptr) {
         stbi_image_free(pixels);
         pixels = nullptr;
     }
 
     if (texID > 0) {
         //printf("glDeleteTextures(%i)\n", texID);
+        glBindTexture(GL_TEXTURE_2D, 0);
         glDeleteTextures(1, &texID);
         texID = 0;
     }

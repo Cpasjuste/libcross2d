@@ -100,11 +100,11 @@ SDL2Renderer::~SDL2Renderer() {
 
     printf("~SDL2Renderer(GL)\n");
 
-    if (context) {
+    if (context != nullptr) {
         SDL_GL_DeleteContext(context);
     }
 
-    if (window) {
+    if (window != nullptr) {
         SDL_DestroyWindow(window);
     }
 

@@ -14,6 +14,14 @@ GL1Renderer::GL1Renderer(const Vector2f &size) : Renderer(size) {
 
 void GL1Renderer::glInit() {
 
+#if defined(__PLATFORM_LINUX__) || defined(__SWITCH__)
+    // amdgpu proprietary driver 19.30 and SDL2 getproc bug
+    // it's seems safer to also use glad on linux
+    gladLoadGL();
+#elif __WINDOWS__
+    glewInit();
+#endif
+
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
@@ -61,14 +69,12 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
     const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
                             GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
     GLenum mode = modes[vertexArray->getPrimitiveType()];
-    /*
 #ifdef __DREAMCAST__
     if (mode == GL_TRIANGLE_FAN) {
         // TODO: fix
         mode = GL_TRIANGLE_STRIP;
     }
 #endif
-    */
 
     glBegin(mode);
 
@@ -107,13 +113,6 @@ void GL1Renderer::clear() {
 }
 
 void GL1Renderer::flip(bool draw, bool inputs) {
-
-    process_inputs = inputs;
-    Renderer::onUpdate();
-
-    if (draw) {
-        clear();
-    }
 
     // call base class (draw childs)
     Renderer::flip(draw, inputs);

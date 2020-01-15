@@ -126,15 +126,10 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     //shader->SetUniformMatrix("MVPMatrix", glm::value_ptr(pmMtx));
 
     // set projection matrix
-#ifdef __SDL1_GL__
-    int w = getSize().x, h = getSize().y;
-#else
     int w, h;
     SDL_Window *window = ((SDL2Renderer *) this)->getWindow();
     SDL_GL_GetDrawableSize(window, &w, &h);
-#endif
     auto mtx = glm::orthoLH(0.0f, (float) w, (float) h, 0.0f, 0.0f, 1.0f);
-
     shader->SetUniformMatrix("projectionMatrix", glm::value_ptr(mtx));
     // set model view matrix
     shader->SetUniformMatrix("modelViewMatrix", transform.getMatrix());
@@ -184,13 +179,6 @@ void GLRenderer::clear() {
 
 void GLRenderer::flip(bool draw, bool inputs) {
 
-    process_inputs = inputs;
-    Renderer::onUpdate();
-
-    if (draw) {
-        clear();
-    }
-
     // call base class (draw childs)
     Renderer::flip(draw, inputs);
 }
@@ -198,11 +186,6 @@ void GLRenderer::flip(bool draw, bool inputs) {
 GLRenderer::~GLRenderer() {
 
     printf("~GLRenderer\n");
-
-    if (shaderList != nullptr) {
-        delete (shaderList);
-        shaderList = nullptr;
-    }
 
 #ifndef __GLES2__
     if (glIsVertexArray(vao)) {
