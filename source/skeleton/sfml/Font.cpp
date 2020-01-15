@@ -37,7 +37,7 @@
 #include <cstdlib>
 #include <cstring>
 
-extern char c2d_font_default[];
+extern unsigned char c2d_font_default[];
 extern int c2d_font_default_length;
 
 namespace c2d {
