@@ -55,20 +55,20 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
 
     if (tex != nullptr || vertices[0].color.a < 255) {
         glEnable(GL_BLEND);
-#ifdef __DREAMCAST__
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-#else
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#endif
     }
 
     const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
                             GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
     GLenum mode = modes[vertexArray->getPrimitiveType()];
+    /*
+#ifdef __DREAMCAST__
     if (mode == GL_TRIANGLE_FAN) {
         // TODO: fix
         mode = GL_TRIANGLE_STRIP;
     }
+#endif
+    */
 
     glBegin(mode);
 

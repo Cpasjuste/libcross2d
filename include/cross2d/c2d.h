@@ -185,12 +185,12 @@ extern c2d::Renderer *c2d_renderer;
 
 #include <SDL2/SDL.h>
 
-#if defined(__SDL2_GL__)
+#if defined(__GL2__)
 #define GL_GLEXT_PROTOTYPES 1
 #ifdef __WINDOWS__
 #include <GL/glew.h>
 #else
-#ifdef __SDL2_GLES__
+#ifdef __GLES2__
 #include <SDL2/SDL_opengles2.h>
 // ?!
 #undef GL_RGBA8
@@ -202,7 +202,9 @@ extern c2d::Renderer *c2d_renderer;
 #define GL_QUADS 0x0006
 #endif
 #elif __PLATFORM_LINUX__
+
 #include "glad/glad.h"
+
 #define GL_ABGR_EXT 0x8000
 #else
 #include <SDL2/SDL_opengl.h>

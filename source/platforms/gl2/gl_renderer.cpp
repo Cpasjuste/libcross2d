@@ -28,7 +28,7 @@ void GLRenderer::initGL() {
     glewInit();
 #endif
 
-#ifndef __SDL2_GLES__
+#ifndef __GLES2__
     // vao
     GL_CHECK(glGenVertexArrays(1, &vao));
 #endif
@@ -63,7 +63,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     // set shader
     GL_CHECK(glUseProgram(shader->GetProgram()));
-#ifndef __SDL2_GLES__
+#ifndef __GLES2__
     // bind vao
     GL_CHECK(glBindVertexArray(vao));
 #endif
@@ -164,7 +164,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     // unbind object vbo
     vertexArray->unbind();
-#ifndef __SDL2_GLES__
+#ifndef __GLES2__
     // unbind object vao
     glBindVertexArray(0);
 #endif
@@ -204,7 +204,7 @@ GLRenderer::~GLRenderer() {
         shaderList = nullptr;
     }
 
-#ifndef __SDL2_GLES__
+#ifndef __GLES2__
     if (glIsVertexArray(vao)) {
         GL_CHECK(glDeleteVertexArrays(1, &vao));
     }

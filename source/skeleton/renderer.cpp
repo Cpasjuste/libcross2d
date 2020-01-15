@@ -8,7 +8,7 @@ using namespace c2d;
 
 Renderer *c2d_renderer;
 
-Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
+Renderer::Renderer(const Vector2f &size) : RectangleShape(size) {
 
     printf("Renderer(%p)\n", this);
 
@@ -51,7 +51,7 @@ void Renderer::onUpdate() {
         }
     }
 
-    Rectangle::onUpdate();
+    RectangleShape::onUpdate();
 }
 
 void Renderer::flip(bool draw, bool _process_inputs) {

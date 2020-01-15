@@ -2,7 +2,7 @@
 // Created by cpasjuste on 01/12/16.
 //
 
-#ifndef __SDL2_GL__
+#if !defined(__GL1__) && !defined(__GL2__)
 
 #include "cross2d/c2d.h"
 

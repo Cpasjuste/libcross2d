@@ -40,7 +40,7 @@ GLShader::GLShader(const char *vertex, const char *fragment, int type) {
     GLuint vsh, fsh;
     std::string v, f;
 
-#ifdef __SDL2_GLES__
+#ifdef __GLES2__
     v = std::string("#version 100\n") + vertex;
     f = std::string("#version 100\n") + fragment;
 #else
@@ -137,7 +137,7 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
         add("retro v2", new GLShader(retro_v2_v, retro_v2_f));
         add("lcd3x", new GLShader(lcd3x_v, lcd3x_f));
     }
-#ifndef __SDL2_GLES__
+#ifndef __GLES2__
     add("scanlines", new GLShader(scanlines_v, scanlines_f));
     add("crt caligari", new GLShader(crt_caligari_v, crt_caligari_f));
     add("crt easymode", new GLShader(crt_easymode_v, crt_easymode_f));

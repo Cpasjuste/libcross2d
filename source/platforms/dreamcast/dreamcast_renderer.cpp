@@ -17,7 +17,7 @@ DCRenderer::DCRenderer(const Vector2f &s) : GL1Renderer(s) {
 
     available = true;
 
-    printf("DCRenderer(GL)(%p): %ix%i\n", this, (int) m_size.x, (int) m_size.y);
+    printf("DCRenderer(GL)(%p): %ix%i\n", this, (int) s.x, (int) s.y);
 }
 
 void DCRenderer::flip(bool draw, bool inputs) {

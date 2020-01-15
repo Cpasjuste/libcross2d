@@ -6,7 +6,7 @@
 // SDL2 with software surfaces for rendering
 //
 
-#ifndef __SDL2_GL__
+#if !defined(__GL1__) && !defined(__GL2__)
 
 #include "cross2d/c2d.h"
 

@@ -24,7 +24,7 @@
 
 namespace c2d {
 
-    class Renderer : public Rectangle {
+    class Renderer : public RectangleShape {
 
     public:
 

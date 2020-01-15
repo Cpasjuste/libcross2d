@@ -2,7 +2,7 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#ifdef __SDL2_GL__
+#ifdef __GL2__
 
 #include "cross2d/c2d.h"
 
@@ -24,7 +24,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
         flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
 
-#ifdef __SDL2_GLES__
+#ifdef __GLES2__
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
@@ -52,8 +52,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
     int x, y;
     SDL_GetWindowSize(window, &x, &y);
-    m_size.x = x;
-    m_size.y = y;
+    setSize(x, y);
 
     printf("SDL_GL_CreateContext\n");
     context = SDL_GL_CreateContext(window);
@@ -72,7 +71,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
     available = true;
 
-    printf("SDL2Renderer(GL)(%p): %ix%i\n", this, (int) m_size.x, (int) m_size.y);
+    printf("SDL2Renderer(GL)(%p): %ix%i\n", this, (int) x, (int) y);
 }
 
 void SDL2Renderer::flip(bool draw, bool inputs) {
