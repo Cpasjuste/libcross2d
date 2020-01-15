@@ -1,4 +1,4 @@
-#ifndef __DREAMCAST__
+#ifdef __DREAMCAST__
 int c2d_font_default_length = 14832;
 unsigned char c2d_font_default[14832] = {
 	0x00, 0x01, 0x00, 0x00, 0x00, 0x0e, 0x00, 0x80, 

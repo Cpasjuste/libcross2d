@@ -322,15 +322,15 @@ extern c2d::Renderer *c2d_renderer;
 #define GL_RGB565 GL_RGB
 #define GL_RGBA8 GL_RGBA
 
+#include "platforms/gl1/gl_texture.h"
 #include "platforms/dreamcast/dreamcast_renderer.h"
-#include "cross2d/platforms/gl1/gl_texture.h"
-#include "cross2d/platforms/posix/posix_io.h"
 #include "platforms/dreamcast/dreamcast_clock.h"
 #include "platforms/dreamcast/dreamcast_input.h"
-//#include "platforms/dreamcast/dreamcast_audio.h"
+#include "platforms/dreamcast/dreamcast_io.h"
+//#include "platforms/dreamcast/dreamcast_audio.h" // TODO
 
 #define C2DRenderer DCRenderer
-#define C2DIo POSIXIo
+#define C2DIo DCIo
 #define C2DClock DCClock
 #define C2DTexture GLTexture
 #define C2DInput DCInput

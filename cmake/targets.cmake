@@ -63,6 +63,22 @@ if (PLATFORM_SWITCH)
             )
 endif (PLATFORM_SWITCH)
 
+###########################
+# Nintendo Switch target
+###########################
+if (PLATFORM_DREAMCAST)
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
+    add_custom_target(${PROJECT_NAME}.bin
+            DEPENDS ${PROJECT_NAME}
+            DEPENDS ${PROJECT_NAME}.data
+            COMMAND ${CMAKE_OBJCOPY} -R .stack -O binary ${PROJECT_NAME}.elf ${PROJECT_NAME}.bin
+            #COMMAND ${DEVKITPRO}/tools/bin/nacptool --create "${PROJECT_NAME}" "${PROJECT_AUTHOR}" "${VERSION_MAJOR}.${VERSION_MINOR}" ${PROJECT_NAME}.nacp
+            # copy custom switch "romfs" data to common "romfs" data for romfs creation (merge/overwrite common data)
+            #COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/data_romfs
+            #COMMAND ${DEVKITPRO}/tools/bin/elf2nro ${PROJECT_NAME} ${PROJECT_NAME}.nro --icon=${CMAKE_CURRENT_SOURCE_DIR}/data/${TARGET_PLATFORM}/icon.jpg --nacp=${PROJECT_NAME}.nacp --romfsdir=${CMAKE_CURRENT_BINARY_DIR}/data_romfs)
+            )
+endif (PLATFORM_DREAMCAST)
+
 #####################
 # 3DS target
 #####################

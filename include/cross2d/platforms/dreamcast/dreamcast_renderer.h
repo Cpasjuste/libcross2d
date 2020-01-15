@@ -13,6 +13,30 @@ namespace c2d {
 
     public:
 
+        class Device {
+        public:
+            enum class Type {
+                Sd = 0,
+                Hdd = 1
+            };
+
+            enum class Format {
+                Ext2,
+                Fat
+            };
+
+            enum class Flag {
+                ReadOnly,
+                ReadWrite
+            };
+            std::string path;
+            Type type;
+            Format format;
+            Flag flag;
+            bool inited = false;
+            bool mounted = false;
+        };
+
         explicit DCRenderer(const Vector2f &size = Vector2f(0, 0));
 
         ~DCRenderer() override;
@@ -21,6 +45,11 @@ namespace c2d {
 
         void delay(unsigned int ms);
 
+        bool mount(Device::Type type, Device::Flag flag);
+
+        void unmount(Device::Type device);
+
+        Device devices[2];
     };
 }
 
