@@ -244,13 +244,8 @@ elseif (PLATFORM_SWITCH)
 elseif (PLATFORM_DREAMCAST)
     enable_language(ASM)
     file(GLOB_RECURSE PLATFORM_SOURCES source/platforms/dreamcast/*.c*)
-    list(APPEND PLATFORM_SOURCES source/platforms/dreamcast/ds-fs/src/memcpy.S)
-    list(APPEND PLATFORM_SOURCES source/platforms/dreamcast/ds-fs/src/memmove.S)
-    list(APPEND PLATFORM_SOURCES source/platforms/dreamcast/ds-fs/src/memset.S)
     set(PLATFORM_INCLUDES
             source/platforms/dreamcast
-            source/platforms/dreamcast/ds-fs/include
-            source/platforms/dreamcast/ds-fs/include/fatfs
             $ENV{KOS_BASE}/../kos-ports/include/freetype)
     list(APPEND C2D_CFLAGS -D__DREAMCAST__ -DNO_KEYBOARD)
     list(APPEND C2D_LDFLAGS c kallisti kosext2fs stdc++ GLdc freetype z m) # kosfat

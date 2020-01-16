@@ -4,7 +4,7 @@
 
 #include "cross2d/c2d.h"
 
-#include "ds.h"
+//#include "ds.h"
 //#include <kos/blockdev.h>
 //#include <ext2/fs_ext2.h>
 //#include <fat/fs_fat.h>
