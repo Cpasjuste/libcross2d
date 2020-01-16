@@ -11,19 +11,31 @@
 
 using namespace c2d;
 
+/*
+enum { fsaa = 0 };
+pvr_init_params_t params = {
+        // Enable opaque and translucent polygons with size 16
+        { PVR_BINSIZE_32, PVR_BINSIZE_0, PVR_BINSIZE_16, PVR_BINSIZE_0, PVR_BINSIZE_8 },
+
+        // Vertex buffer size 512K
+        1024 * 1024 * 1.5,
+
+        0, fsaa
+};
+*/
+
 DCRenderer::DCRenderer(const Vector2f &s) : GL1Renderer(s) {
 
     printf("DCRenderer\n");
 
     dbglog_set_level(DBG_WARNING);
 
-    InitSDCard();
-    InitIDE();
+    //InitSDCard();
+    //InitIDE();
 
     /*
     fs_ext2_init();
     fs_fat_init();
-
     devices[0].inited = sd_init() == 0;
     mount(Device::Type::Sd, Device::Flag::ReadOnly);
     //devices[1].inited = g1_ata_init() == 0;
@@ -44,7 +56,7 @@ void DCRenderer::flip(bool draw, bool inputs) {
     GL1Renderer::flip(draw, inputs);
 
     if (draw) {
-        glutSwapBuffers();
+        glKosSwapBuffers();
     }
 }
 

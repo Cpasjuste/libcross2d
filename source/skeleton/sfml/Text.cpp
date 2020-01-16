@@ -126,7 +126,6 @@ namespace c2d {
         if (m_font == nullptr) {
             m_font = c2d_renderer->getFont();
         }
-        setSize(4096, (float) characterSize);
     }
 
 
@@ -398,7 +397,7 @@ namespace c2d {
     }
 
     void Text::setSizeMax(const Vector2f &size) {
-        setSize(size.x, size.y);
+        setSizeMax(size.x, size.y);
     }
 
     void Text::setSizeMax(float width, float height) {
