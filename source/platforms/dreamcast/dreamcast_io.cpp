@@ -84,6 +84,13 @@ std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool 
         if (strlen(ent->name) == 1 && ent->name[0] == '.') {
             continue;
         }
+
+        // skip ".." file in romdisk (?!)
+        if (ent->attr != O_DIR && strlen(ent->name) == 2
+            && ent->name[0] == '.' && ent->name[1] == '.') {
+            continue;
+        }
+
         // skip "hidden" files
         if (!showHidden && ent->name[0] == '.') {
             if (strlen(ent->name) != 2 && ent->name[1] != '.') {
