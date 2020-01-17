@@ -4,25 +4,17 @@
 
 #include "cross2d/c2d.h"
 
-//#include "ds.h"
-//#include <kos/blockdev.h>
-//#include <ext2/fs_ext2.h>
-//#include <fat/fs_fat.h>
+#if 0
+#include "ds.h"
+#include <kos/blockdev.h>
+#include <ext2/fs_ext2.h>
+#include <fat/fs_fat.h>
+#endif
 
 using namespace c2d;
 
-/*
-enum { fsaa = 0 };
-pvr_init_params_t params = {
-        // Enable opaque and translucent polygons with size 16
-        { PVR_BINSIZE_32, PVR_BINSIZE_0, PVR_BINSIZE_16, PVR_BINSIZE_0, PVR_BINSIZE_8 },
-
-        // Vertex buffer size 512K
-        1024 * 1024 * 1.5,
-
-        0, fsaa
-};
-*/
+extern uint8 romdisk[];
+KOS_INIT_ROMDISK(romdisk);
 
 DCRenderer::DCRenderer(const Vector2f &s) : GL1Renderer(s) {
 
@@ -30,17 +22,14 @@ DCRenderer::DCRenderer(const Vector2f &s) : GL1Renderer(s) {
 
     dbglog_set_level(DBG_WARNING);
 
-    //InitSDCard();
-    //InitIDE();
-
-    /*
+#if 0
     fs_ext2_init();
     fs_fat_init();
     devices[0].inited = sd_init() == 0;
     mount(Device::Type::Sd, Device::Flag::ReadOnly);
     //devices[1].inited = g1_ata_init() == 0;
     //mount(Device::Type::Hdd, Device::Flag::ReadOnly);
-    */
+#endif
 
     glKosInit();
     glInit();
@@ -66,7 +55,7 @@ void DCRenderer::delay(unsigned int ms) {
 
 bool DCRenderer::mount(Device::Type type, Device::Flag flag) {
 
-    /*
+#if 0
     kos_blockdev_t deviceBlock;
     uint8 deviceType;
     Device *device = type == Device::Type::Sd ? &devices[0] : &devices[1];
@@ -108,14 +97,14 @@ bool DCRenderer::mount(Device::Type type, Device::Flag flag) {
     }
 
     device->mounted = true;
-    */
+#endif
 
     return true;
 }
 
 void DCRenderer::unmount(Device::Type type) {
 
-    /*
+#if 0
     Device *device = type == Device::Type::Sd ? &devices[0] : &devices[1];
     if (device->inited && device->mounted) {
         if (device->format == Device::Format::Ext2) {
@@ -127,14 +116,14 @@ void DCRenderer::unmount(Device::Type type) {
         }
         device->mounted = false;
     }
-    */
+#endif
 }
 
 DCRenderer::~DCRenderer() {
 
     printf("~DCRenderer()\n");
 
-    /*
+#if 0
     if (devices[1].inited) {
         unmount(Device::Type::Hdd);
         g1_ata_shutdown();
@@ -147,7 +136,7 @@ DCRenderer::~DCRenderer() {
 
     fs_fat_shutdown();
     fs_ext2_shutdown();
-    */
+#endif
 }
 
 /// crap

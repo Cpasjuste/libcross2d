@@ -2,8 +2,8 @@
 // Created by cpasjuste on 17/11/17.
 //
 
-#ifndef C2D_POSIX_IO_H
-#define C2D_POSIX_IO_H
+#ifndef C2D_DREAMCAST_IO_H
+#define C2D_DREAMCAST_IO_H
 
 #include "cross2d/skeleton/io.h"
 
@@ -24,7 +24,11 @@ namespace c2d {
         std::vector<Io::File> getDirList(const std::string &path, bool sort, bool showHidden) override;
 
         std::string getHomePath() const override;
+
+        std::string getRomFsPath() const override {
+            return "/rd/";
+        }
     };
 }
 
-#endif //C2D_POSIX_IO_H
+#endif //C2D_DREAMCAST_IO_H

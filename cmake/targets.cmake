@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ###########################################################
@@ -64,18 +64,27 @@ if (PLATFORM_SWITCH)
 endif (PLATFORM_SWITCH)
 
 ###########################
-# Nintendo Switch target
+# Dreamcast target
 ###########################
 if (PLATFORM_DREAMCAST)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
+    # romdisk handling (tricky..)
+    add_custom_target(
+            ${PROJECT_NAME}.romdisk ALL
+            DEPENDS dummy_romdisk
+    )
+    add_custom_command(OUTPUT
+            dummy_romdisk ${CMAKE_BINARY_DIR}/romdisk.o
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/data_romfs
+            COMMAND ${KOS_BASE}/utils/genromfs/genromfs -f ${CMAKE_BINARY_DIR}/romdisk.img -d ${CMAKE_CURRENT_BINARY_DIR}/data_romfs -v
+            COMMAND KOS_ARCH=${KOS_ARCH} KOS_AS=${KOS_AS} KOS_AFLAGS=${KOS_AFLAGS} KOS_LD=${KOS_LD} KOS_OBJCOPY=${KOS_OBJCOPY}
+            /bin/bash ${KOS_BASE}/utils/bin2o/bin2o ${CMAKE_BINARY_DIR}/romdisk.img romdisk ${CMAKE_BINARY_DIR}/romdisk.o
+            )
+    target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/romdisk.o)
     add_custom_target(${PROJECT_NAME}.bin
-            DEPENDS ${PROJECT_NAME}
+            DEPENDS ${PROJECT_NAME}.elf
             DEPENDS ${PROJECT_NAME}.data
             COMMAND ${CMAKE_OBJCOPY} -R .stack -O binary ${PROJECT_NAME}.elf ${PROJECT_NAME}.bin
-            #COMMAND ${DEVKITPRO}/tools/bin/nacptool --create "${PROJECT_NAME}" "${PROJECT_AUTHOR}" "${VERSION_MAJOR}.${VERSION_MINOR}" ${PROJECT_NAME}.nacp
-            # copy custom switch "romfs" data to common "romfs" data for romfs creation (merge/overwrite common data)
-            #COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/data_romfs
-            #COMMAND ${DEVKITPRO}/tools/bin/elf2nro ${PROJECT_NAME} ${PROJECT_NAME}.nro --icon=${CMAKE_CURRENT_SOURCE_DIR}/data/${TARGET_PLATFORM}/icon.jpg --nacp=${PROJECT_NAME}.nacp --romfsdir=${CMAKE_CURRENT_BINARY_DIR}/data_romfs)
             )
     add_custom_target(${PROJECT_NAME}.cdi
             DEPENDS ${PROJECT_NAME}.bin
