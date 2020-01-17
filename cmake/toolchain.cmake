@@ -14,7 +14,7 @@ if (PLATFORM_DREAMCAST)
     set(CMAKE_SYSTEM_NAME "Generic")
     set(CMAKE_SYSTEM_PROCESSOR "sh")
 
-    set(KOS_BASE $ENV{KOS_BASE})
+    set(KOS_BASE $ENV{KOS_BASE} CACHE STRING "" FORCE)
     set(KOS_ARCH "dreamcast")
     set(KOS_SUBARCH "pristine")
 
