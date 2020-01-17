@@ -82,7 +82,7 @@ if (PLATFORM_DREAMCAST)
             )
     target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/romdisk.o)
     add_custom_target(${PROJECT_NAME}.bin
-            DEPENDS ${PROJECT_NAME}.elf
+            DEPENDS ${PROJECT_NAME}
             DEPENDS ${PROJECT_NAME}.data
             COMMAND ${CMAKE_OBJCOPY} -R .stack -O binary ${PROJECT_NAME}.elf ${PROJECT_NAME}.bin
             )
