@@ -47,7 +47,7 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
     vertices = vertexArray->getVertices()->data();
     vertexCount = vertexArray->getVertexCount();
 
-    glPushMatrix();
+    //glPushMatrix();
 
     if (transform == Transform::Identity) {
         glLoadIdentity();
@@ -94,7 +94,7 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
         glDisable(GL_BLEND);
     }
 
-    glPopMatrix();
+    //glPopMatrix();
 }
 
 void GL1Renderer::clear() {
