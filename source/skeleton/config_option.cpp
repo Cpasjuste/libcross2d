@@ -2,6 +2,12 @@
 // Created by cpasjuste on 17/10/18.
 //
 
+#ifdef __DREAMCAST__
+
+#include <cstdio>
+
+#endif
+
 #include "cross2d/skeleton/config_option.h"
 
 using namespace c2d;
@@ -105,7 +111,29 @@ void Option::setUserData(void *data) {
 }
 
 std::string Option::getString() const {
-#ifndef __DREAMCAST__ // TODO
+#ifdef __DREAMCAST__
+    char str[128];
+    if (type == Type::Integer) {
+        snprintf(str, 127, "%i", integer);
+        return std::string(str);
+    } else if (type == Type::Float) {
+        snprintf(str, 127, "%f", floatRect.left);
+        return std::string(str);
+    } else if (type == Type::Vector2f) {
+        snprintf(str, 127, "%f, %f", floatRect.left, floatRect.top);
+        return std::string(str);
+    } else if (type == Type::FloatRect) {
+        snprintf(str, 127, "%f, %f, %f, %f",
+                 floatRect.left, floatRect.top, floatRect.width, floatRect.height);
+        return std::string(str);
+    } else if (type == Type::Color) {
+        snprintf(str, 127, "%i, %i, %i, %i",
+                 (int) floatRect.left, (int) floatRect.top, (int) floatRect.width, (int) floatRect.height);
+        return std::string(str);
+    } else if (type == Type::Choice) {
+        return choices[choices_index];
+    }
+#else
     if (type == Type::Integer) {
         return std::to_string(integer);
     } else if (type == Type::Float) {
@@ -122,6 +150,7 @@ std::string Option::getString() const {
         return choices[choices_index];
     }
 #endif
+
     return string;
 }
 

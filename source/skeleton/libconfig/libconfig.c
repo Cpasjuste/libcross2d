@@ -692,6 +692,7 @@ int config_write_file(config_t *config, const char *filename)
 
   config_write(config, stream);
 
+#ifndef __DREAMCAST__
   if(config_get_option(config, CONFIG_OPTION_FSYNC))
   {
     int fd = fileno(stream);
@@ -707,6 +708,7 @@ int config_write_file(config_t *config, const char *filename)
       }
     }
   }
+#endif
 
   fclose(stream);
   config->error_type = CONFIG_ERR_NONE;

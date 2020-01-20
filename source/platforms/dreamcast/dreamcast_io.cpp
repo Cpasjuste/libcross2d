@@ -13,7 +13,11 @@ std::string DCIo::getHomePath() const {
 
     char buf[1024];
     if (getcwd(buf, sizeof(buf)) != nullptr) {
-        return std::string(buf) + "/";
+        std::string home(buf);
+        if (!Utility::endsWith(home, "/")) {
+            home += "/";
+        }
+        return home;
     }
 
     return Io::getHomePath();
