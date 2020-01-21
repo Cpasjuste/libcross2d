@@ -14,13 +14,15 @@
 using namespace c2d;
 
 extern uint8 romdisk[];
-KOS_INIT_ROMDISK(romdisk);
 
 DCRenderer::DCRenderer(const Vector2f &s) : GL1Renderer(s) {
 
     printf("DCRenderer\n");
 
     dbglog_set_level(DBG_WARNING);
+
+    __kos_romdisk = romdisk;
+    fs_romdisk_mount("/rd", (const uint8 *) __kos_romdisk, 0);
 
 #if 0
     fs_ext2_init();

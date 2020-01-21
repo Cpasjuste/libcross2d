@@ -9,7 +9,7 @@
 
 using namespace c2d;
 
-std::string DCIo::getHomePath() const {
+std::string DCIo::getHomePath() {
 
     char buf[1024];
     if (getcwd(buf, sizeof(buf)) != nullptr) {

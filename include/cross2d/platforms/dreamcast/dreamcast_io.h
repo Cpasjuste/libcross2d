@@ -23,9 +23,9 @@ namespace c2d {
 
         std::vector<Io::File> getDirList(const std::string &path, bool sort, bool showHidden) override;
 
-        std::string getHomePath() const override;
+        std::string getHomePath() override;
 
-        std::string getRomFsPath() const override {
+        std::string getRomFsPath() override {
             return "/rd/";
         }
     };
