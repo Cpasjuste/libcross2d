@@ -26,13 +26,18 @@ std::string DCIo::getHomePath() {
 bool DCIo::exist(const std::string &path) {
 
     file_t f = fs_open(path.c_str(), O_RDONLY);
-    if (f == FILEHND_INVALID) {
-        return false;
+    if (f != FILEHND_INVALID) {
+        fs_close(f);
+        return true;
     }
 
-    fs_close(f);
+    f = fs_open(path.c_str(), O_DIR | O_RDONLY);
+    if (f != FILEHND_INVALID) {
+        fs_close(f);
+        return true;
+    }
 
-    return true;
+    return false;
 }
 
 bool DCIo::create(const std::string &path) {
