@@ -58,21 +58,21 @@ namespace c2d {
         virtual Io *getIo() { return io; };
 
         virtual void setIo(Io *_io) {
-            if (io) { delete (io); }
+            if (io != nullptr) { delete (io); }
             io = _io;
         };
 
         virtual Font *getFont() { return font; };
 
         virtual void setFont(Font *_font) {
-            if (font) { delete (font); }
+            if (font != nullptr) { delete (font); }
             font = _font;
         };
 
         virtual Input *getInput() { return input; };
 
         virtual void setInput(Input *_input) {
-            if (input) { delete (input); }
+            if (input != nullptr) { delete (input); }
             input = _input;
         };
 

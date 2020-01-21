@@ -51,19 +51,19 @@ namespace c2d {
 
         ///
         /// \return home path
-        virtual std::string getHomePath() const {
+        virtual std::string getHomePath() {
             return "./";
         }
 
         ///
         /// \return read only data path
-        virtual std::string getRomFsPath() const {
+        virtual std::string getRomFsPath() {
             return getHomePath();
         }
 
         ///
         /// \return read write data path
-        virtual std::string getDataPath() const {
+        virtual std::string getDataPath() {
             return getHomePath();
         }
 

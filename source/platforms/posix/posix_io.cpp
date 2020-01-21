@@ -15,7 +15,7 @@
 
 using namespace c2d;
 
-std::string POSIXIo::getHomePath() const {
+std::string POSIXIo::getHomePath() {
 #if defined(__PSP2__) || defined(__RECALBOX__)
     return getDataWritePath();
 #else
