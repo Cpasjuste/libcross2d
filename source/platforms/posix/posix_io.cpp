@@ -96,6 +96,21 @@ char *POSIXIo::read(const std::string &file) {
     return buffer;
 }
 
+bool POSIXIo::write(const std::string &file, const char *data) {
+
+    FILE *fp;
+
+    fp = fopen(file.c_str(), "w");
+    if (fp == nullptr) {
+        return false;
+    }
+
+    fwrite(data, 1, strlen(data), fp);
+    fclose(fp);
+
+    return true;
+}
+
 std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bool showHidden) {
 
     std::vector<Io::File> files;

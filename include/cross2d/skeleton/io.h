@@ -91,6 +91,10 @@ namespace c2d {
             return nullptr;
         }
 
+        virtual bool write(const std::string &file, const char *data) {
+            return false;
+        }
+
         static bool compare(const Io::File &a, const Io::File &b) {
             if (a.type == Type::Directory && b.type != Type::Directory) {
                 return true;

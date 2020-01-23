@@ -25,6 +25,8 @@ namespace c2d {
 
         char *read(const std::string &file) override;
 
+        bool write(const std::string &file, const char *data) override;
+
         std::string getHomePath() override;
     };
 }

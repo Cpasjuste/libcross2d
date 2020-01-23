@@ -4,7 +4,6 @@
 
 #include <unistd.h>
 #include <cstring>
-
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -95,6 +94,21 @@ char *DCIo::read(const std::string &file) {
     fs_close(fd);
 
     return buffer;
+}
+
+bool DCIo::write(const std::string &file, const char *data) {
+
+    file_t fd;
+
+    fd = fs_open(file.c_str(), O_CREAT | O_TRUNC | O_WRONLY);
+    if (fd == FILEHND_INVALID) {
+        return false;
+    }
+
+    fs_write(fd, data, strlen(data));
+    fs_close(fd);
+
+    return true;
 }
 
 std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool showHidden) {
