@@ -26,6 +26,8 @@ namespace c2d {
 
         static std::string remove(const std::string &str, const std::string &sub);
 
+        static std::string trim(const std::string &str);
+
         static bool contains(const std::string &str, const std::string &sub);
 
         static bool startWith(const std::string &str, const std::string &value, bool sensitive = true);

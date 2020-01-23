@@ -67,6 +67,35 @@ Io::Type POSIXIo::getType(const std::string &file) {
     return S_ISDIR(st.st_mode) ? Type::Directory : Type::File;
 }
 
+char *POSIXIo::read(const std::string &file) {
+
+    size_t size;
+    FILE *fp = nullptr;
+    char *buffer = nullptr;
+
+    fp = fopen(file.c_str(), "rb");
+    if (fp == nullptr) {
+        printf("POSIXIo::read: can't open %s\n", file.c_str());
+        return nullptr;
+    }
+
+    fseek(fp, 0L, SEEK_END);
+    size = ftell(fp);
+    fseek(fp, 0L, SEEK_SET);
+    buffer = (char *) malloc(size);
+
+    if (fread(buffer, 1, size, fp) != size) {
+        fclose(fp);
+        free(buffer);
+        printf("POSIXIo::read: can't read %s\n", file.c_str());
+        return nullptr;
+    }
+
+    fclose(fp);
+
+    return buffer;
+}
+
 std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bool showHidden) {
 
     std::vector<Io::File> files;

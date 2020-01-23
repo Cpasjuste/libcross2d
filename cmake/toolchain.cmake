@@ -36,7 +36,7 @@ if (PLATFORM_DREAMCAST)
     set(KOS_CFLAGS "-D__DREAMCAST__ -O2 -ml -m4-single-only -ffunction-sections -fdata-sections -D_arch_dreamcast -D_arch_sub_pristine -Wall -g -fno-builtin")
 
     set(CMAKE_C_FLAGS "${KOS_CFLAGS} ${KOS_INC_PATHS}" CACHE STRING "C flags" FORCE)
-    set(CMAKE_CXX_FLAGS "${KOS_CFLAGS} ${KOS_INC_PATHS} -std=c++11 -fno-operator-names -fno-rtti -fno-exceptions" CACHE STRING "C++ flags" FORCE)
+    set(CMAKE_CXX_FLAGS "${KOS_CFLAGS} ${KOS_INC_PATHS} -std=gnu++11 -fno-operator-names -fno-rtti -fno-exceptions" CACHE STRING "C++ flags" FORCE)
 
     set(CMAKE_C_LINK_FLAGS "${KOS_LIB_PATHS} ${KOS_LIBS} -T${KOS_BASE}/utils/ldscripts/shlelf.xc ${KOS_LIBS}" CACHE STRING "" FORCE)
     set(CMAKE_CXX_LINK_FLAGS "${KOS_LIB_PATHS} ${KOS_LIBS} -T${KOS_BASE}/utils/ldscripts/shlelf.xc ${KOS_LIBS}" CACHE STRING "" FORCE)

@@ -70,6 +70,33 @@ Io::Type DCIo::getType(const std::string &file) {
     return Type::Directory;
 }
 
+char *DCIo::read(const std::string &file) {
+
+    file_t fd;
+    ssize_t size;
+    char *buffer = nullptr;
+
+    fd = fs_open(file.c_str(), O_RDONLY);
+    if (fd == FILEHND_INVALID) {
+        printf("DCIo::read: can't open %s\n", file.c_str());
+        return nullptr;
+    }
+
+    size = fs_total(fd);
+    buffer = (char *) malloc(size);
+
+    if (fs_read(fd, buffer, size) != size) {
+        fs_close(fd);
+        free(buffer);
+        printf("DCIo::read: can't read %s\n", file.c_str());
+        return nullptr;
+    }
+
+    fs_close(fd);
+
+    return buffer;
+}
+
 std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool showHidden) {
 
     std::vector<Io::File> files;

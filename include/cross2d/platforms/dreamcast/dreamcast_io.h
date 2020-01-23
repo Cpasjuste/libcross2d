@@ -23,6 +23,8 @@ namespace c2d {
 
         std::vector<Io::File> getDirList(const std::string &path, bool sort, bool showHidden) override;
 
+        char *read(const std::string &file) override;
+
         std::string getHomePath() override;
 
         std::string getRomFsPath() override {

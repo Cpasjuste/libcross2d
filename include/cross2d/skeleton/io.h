@@ -87,6 +87,10 @@ namespace c2d {
             return std::vector<Io::File>();
         };
 
+        virtual char *read(const std::string &file) {
+            return nullptr;
+        }
+
         static bool compare(const Io::File &a, const Io::File &b) {
             if (a.type == Type::Directory && b.type != Type::Directory) {
                 return true;
