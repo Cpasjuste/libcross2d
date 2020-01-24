@@ -164,3 +164,33 @@ std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool 
 
     return files;
 }
+
+Io::File DCIo::findFile(const std::string &path,
+                        const std::vector<std::string> &whitelist, const std::string blacklist) {
+
+    File file;
+    dirent_t *ent;
+    file_t fd;
+
+    if (path.empty()) {
+        return file;
+    }
+
+    if ((fd = fs_open(path.c_str(), O_RDONLY | O_DIR)) != FILEHND_INVALID) {
+        while ((ent = fs_readdir(fd)) != nullptr) {
+            for (const auto &search : whitelist) {
+                if (Utility::contains(ent->name, search)
+                    && !Utility::contains(ent->name, blacklist)) {
+                    file.name = ent->name;
+                    file.path = Utility::removeLastSlash(path) + "/" + file.name;
+                    file.type = ent->attr == O_DIR ? Type::Directory : Type::File;
+                    file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
+                    break;
+                }
+            }
+        }
+        fs_close(fd);
+    }
+
+    return file;
+}

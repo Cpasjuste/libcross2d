@@ -6,7 +6,6 @@
 #include <cstring>
 #include <dirent.h>
 #include <sys/stat.h>
-
 #include "cross2d/c2d.h"
 
 #ifdef __WINDOWS__
@@ -160,4 +159,45 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bo
     }
 
     return files;
+}
+
+Io::File POSIXIo::findFile(const std::string &path,
+                           const std::vector<std::string> &whitelist, const std::string blacklist) {
+
+    struct dirent *ent;
+    DIR *dir;
+    File file{};
+
+    if (path.empty()) {
+        return file;
+    }
+
+    if ((dir = opendir(path.c_str())) != nullptr) {
+        while ((ent = readdir(dir)) != nullptr) {
+            for (const auto &search : whitelist) {
+                if (Utility::contains(ent->d_name, search)
+                    && !Utility::contains(ent->d_name, blacklist)) {
+                    file.name = ent->d_name;
+                    file.path = Utility::removeLastSlash(path) + "/" + file.name;
+#ifdef __SWITCH__
+                    auto *dirSt = (fsdev_dir_t *) dir->dirData->dirStruct;
+                    FsDirectoryEntry *entry = &dirSt->entry_data[dirSt->index];
+                    file.type = entry->type == ENTRYTYPE_DIR ? Type::Directory : Type::File;
+                    file.size = entry->fileSize;
+#else
+                    struct stat st{};
+                    if (stat(file.path.c_str(), &st) == 0) {
+                        file.size = (size_t) st.st_size;
+                        file.type = S_ISDIR(st.st_mode) ? Type::Directory : Type::File;
+                    }
+#endif
+                    file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
+                    break;
+                }
+            }
+        }
+        closedir(dir);
+    }
+
+    return file;
 }

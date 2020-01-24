@@ -87,6 +87,11 @@ namespace c2d {
             return std::vector<Io::File>();
         };
 
+        virtual File findFile(const std::string &path,
+                              const std::vector<std::string> &whitelist, const std::string blacklist) {
+            return File();
+        }
+
         virtual char *read(const std::string &file) {
             return nullptr;
         }
