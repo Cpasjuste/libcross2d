@@ -148,6 +148,15 @@ std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool 
             }
         }
 
+        // skip crap
+        if (std::string(ent->name) == "ram" || std::string(ent->name) == "pty"
+            || std::string(ent->name) == "rd"
+            || Utility::toLower(ent->name) == "recycler"
+            || Utility::toLower(ent->name) == "$recycle.bin"
+            || (Utility::toLower(ent->name) == "system volume information")) {
+            continue;
+        }
+
         File file;
         file.name = ent->name;
         file.path = Utility::removeLastSlash(path) + "/" + file.name;

@@ -424,9 +424,9 @@ namespace c2d {
         if (draw) {
             Transform combined = transform * getTransform();
             if (getOutlineThickness() > 0) {
-                c2d_renderer->draw(&m_outlineVertices, combined, getFont()->getTexture(getCharacterSize()));
+                c2d_renderer->draw(&m_outlineVertices, combined, m_font->getTexture(m_characterSize));
             }
-            c2d_renderer->draw(&m_vertices, combined, getFont()->getTexture(getCharacterSize()));
+            c2d_renderer->draw(&m_vertices, combined, m_font->getTexture(m_characterSize));
         }
         C2DObject::onDraw(transform, draw);
     }

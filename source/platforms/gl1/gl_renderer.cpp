@@ -27,6 +27,10 @@ void GL1Renderer::glInit() {
     glDisable(GL_CULL_FACE);
     glDepthMask(GL_FALSE);
 
+    // GLdc doesn't like mixing blend and non blend textures
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
@@ -47,8 +51,6 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
     vertices = vertexArray->getVertices()->data();
     vertexCount = vertexArray->getVertexCount();
 
-    //glPushMatrix();
-
     if (transform == Transform::Identity) {
         glLoadIdentity();
     } else {
@@ -59,11 +61,6 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
     if (tex != nullptr && tex->available) {
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex->texID);
-    }
-
-    if (tex != nullptr || vertices[0].color.a < 255) {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
     const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
@@ -89,12 +86,6 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
     if (tex != nullptr && tex->available) {
         glDisable(GL_TEXTURE_2D);
     }
-
-    if (tex != nullptr || vertices[0].color.a < 255) {
-        glDisable(GL_BLEND);
-    }
-
-    //glPopMatrix();
 }
 
 void GL1Renderer::clear() {
