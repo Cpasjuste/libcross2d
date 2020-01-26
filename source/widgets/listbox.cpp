@@ -170,7 +170,9 @@ void ListBox::updateLines() {
             lines[i]->setString(file->name);
             // set text color based on file color
             lines[i]->setIcon(file->icon);
-            lines[i]->setColor(file->color);
+            if (use_files_color) {
+                lines[i]->setColor(file->color);
+            }
             // set highlight position and color
             if ((int) i == highlight_index) {
                 highlight->setPosition(lines[i]->getPosition());

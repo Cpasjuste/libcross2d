@@ -14,6 +14,7 @@ ConfigBox::ConfigBox(Font *font, int fontSize, const c2d::FloatRect &rect)
     FloatRect rightRect = {rect.width / 2, 0, rect.width / 2, rect.height};
 
     listBoxLeft = new ListBox(font, fontSize, leftRect, std::vector<Io::File>());
+    listBoxLeft->setHighlightEnabled(false);
     add(listBoxLeft);
 
     listBoxRight = new ListBox(font, fontSize, rightRect, std::vector<Io::File>());
@@ -89,15 +90,35 @@ config::Option *ConfigBox::navigate(const ConfigBox::Navigation &navigation) {
         listBoxLeft->setSelection(index);
         listBoxRight->setSelection(index);
     } else if (navigation == Navigation::Left) {
-
+        selection = getSelection();
+        if (selection != nullptr && selection->getType() == Option::Type::Choice) {
+            int count = selection->getChoices().size();
+            int idx = selection->getChoiceIndex();
+            idx--;
+            if (idx < 0) {
+                idx = count - 1;
+            }
+            selection->setChoicesIndex(idx);
+            listBoxRight->getFiles().at(index)->name = selection->getString();
+        }
     } else if (navigation == Navigation::Right) {
-
+        selection = getSelection();
+        if (selection != nullptr && selection->getType() == Option::Type::Choice) {
+            int count = selection->getChoices().size();
+            int idx = selection->getChoiceIndex();
+            idx++;
+            if (idx >= count) {
+                idx = 0;
+            }
+            selection->setChoicesIndex(idx);
+            listBoxRight->getFiles().at(index)->name = selection->getString();
+        }
     } else if (navigation == Navigation::Enter) {
-        if (getSelection()) {
+        if (getSelection() != nullptr) {
             selection = getSelection();
         } else {
             Group *g = group->getGroup(listBoxLeft->getSelection()->name);
-            if (g) {
+            if (g != nullptr) {
                 history.push_back(group);
                 load(g);
                 index = 0;
@@ -106,7 +127,7 @@ config::Option *ConfigBox::navigate(const ConfigBox::Navigation &navigation) {
     } else if (navigation == Navigation::Exit) {
         if (!history.empty()) {
             Group *g = history.at(history.size() - 1);
-            if (g) {
+            if (g != nullptr) {
                 history.pop_back();
                 load(g);
                 index = 0;
