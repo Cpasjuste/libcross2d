@@ -18,6 +18,8 @@ namespace c2d {
 
         static float parseFloat(const std::string &str);
 
+        static std::string toString(int value);
+
         static std::string toLower(const std::string &str);
 
         static std::string toUpper(const std::string &str);

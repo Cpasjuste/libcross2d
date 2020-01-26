@@ -24,18 +24,13 @@ ConfigBox::ConfigBox(Font *font, int fontSize, const c2d::Vector2f &size)
         : ConfigBox(font, fontSize, {0, 0, size.x, size.y}) {
 }
 
-ConfigBox::~ConfigBox() {
-    delete (listBoxLeft);
-    delete (listBoxRight);
-}
+void ConfigBox::load(config::Group *grp) {
 
-void ConfigBox::load(config::Group *group) {
-
-    if (!group) {
+    if (grp == nullptr) {
         return;
     }
 
-    this->group = group;
+    group = grp;
     index = 0;
 
     std::vector<Io::File> leftItems;
@@ -46,9 +41,9 @@ void ConfigBox::load(config::Group *group) {
         rightItems.emplace_back("ENTER", "");
     }
 
-    for (Option &option : *group->getOptions()) {
-        leftItems.emplace_back(option.getName(), "");
-        rightItems.emplace_back(option.getString(), "");
+    for (Option &o : *group->getOptions()) {
+        leftItems.emplace_back(o.getName(), "");
+        rightItems.emplace_back(o.getString(), "");
     }
 
     listBoxLeft->setFiles(leftItems);

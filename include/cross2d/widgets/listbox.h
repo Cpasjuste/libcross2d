@@ -66,6 +66,8 @@ namespace c2d {
 
         void setSize(float width, float height) override;
 
+        void setTextColor(const Color &color);
+
         void setTextOutlineColor(const Color &color);
 
         void setTextOutlineThickness(float thickness);

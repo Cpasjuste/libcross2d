@@ -30,10 +30,10 @@ ListBoxLine::ListBoxLine(
         // icon added in ListBox::setSelection (setIcon)
         // set text
         text->setPosition(iconRect->getSize().x + 8, getSize().y / 2);
-        text->setSize(getSize().x - fontSize - iconRect->getSize().x, 0);
+        text->setSizeMax(getSize().x - fontSize - iconRect->getSize().x, fontSize + 4);
     } else {
         text->setPosition(2, getSize().y / 2);
-        text->setSize(getSize().x - (fontSize + 8), 0);
+        text->setSizeMax(getSize().x - (fontSize + 8), fontSize + 4);
     }
 
     add(text);
@@ -150,7 +150,8 @@ void ListBox::init(Font *font, int fontSize, bool useIcons) {
         if (use_icons) {
             icon = files.size() > i ? files[i]->icon : nullptr;
         }
-        auto line = new ListBoxLine(r, "", font, (unsigned int) fontSize, icon, use_icons);
+        auto line = new ListBoxLine(r, "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789-.",
+                                    font, (unsigned int) fontSize, icon, use_icons);
         lines.push_back(line);
         add(line);
     }
@@ -305,6 +306,12 @@ std::vector<ListBoxLine *> ListBox::getLines() {
 void ListBox::setTextOutlineColor(const Color &color) {
     for (auto &line : lines) {
         line->getText()->setOutlineColor(color);
+    }
+}
+
+void ListBox::setTextColor(const Color &color) {
+    for (auto &line : lines) {
+        line->getText()->setFillColor(color);
     }
 }
 

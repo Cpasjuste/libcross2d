@@ -197,7 +197,7 @@ namespace c2d {
     Font::getGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const {
         // Get the page corresponding to the character size
         GlyphTable &glyphs = m_pages[characterSize].glyphs;
-        if (m_pages[characterSize].texture) {
+        if (m_pages[characterSize].texture != nullptr) {
             m_pages[characterSize].texture->setFilter(m_filtering);
         }
         // Build the key by combining the code point, bold flag, and outline thickness
@@ -615,6 +615,7 @@ namespace c2d {
                     Texture *texture = new C2DTexture(
                             Vector2f(textureWidth * 2, textureHeight * 2), Texture::Format::RGBA8);
                     texture->setFilter(m_filtering);
+                    //printf("Font:: created new tex to fit chars (%p)\n", texture);
 
                     uint8_t *src;
                     int src_pitch;
@@ -630,6 +631,7 @@ namespace c2d {
                     }
                     texture->unlock();
 
+                    //printf("Font:: deleting old tex (%p)\n", page.texture);
                     delete (page.texture);
                     page.texture = texture;
 
@@ -694,12 +696,13 @@ namespace c2d {
 
     Font::Page::Page() : nextRow(3) {
 
-        if (texture) {
+        if (texture != nullptr) {
             delete (texture);
             texture = nullptr;
         }
 
-        texture = new C2DTexture(Vector2f(128, 128), Texture::Format::RGBA8);
+        //printf("Font:: create new tex\n");
+        texture = new C2DTexture(Vector2f(256, 256), Texture::Format::RGBA8);
 
         // Reserve a 2x2 white square for texturing underlines
         uint8_t *buffer;
@@ -718,7 +721,7 @@ namespace c2d {
 
     Font::Page::~Page() {
         //printf("~Page\n");
-        if (texture) {
+        if (texture != nullptr) {
             //printf("~Page Texture\n");
             delete (texture);
             texture = nullptr;

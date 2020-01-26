@@ -3,6 +3,8 @@
 //
 
 #include <algorithm>
+#include <cross2d/skeleton/utility.h>
+
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -132,4 +134,11 @@ float Utility::parseFloat(const std::string &str) {
         return (float) d;
     }
     return 0;
+}
+
+std::string Utility::toString(int value) {
+    // dreamcast doesn't have std::to_string
+    char str[16];
+    snprintf(str, 16, "%i", value);
+    return str;
 }

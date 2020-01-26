@@ -88,6 +88,8 @@ namespace c2d {
 
             void setChoicesIndex(int index);
 
+            void setChoicesIndex(const std::string &choice);
+
             std::vector<std::string> getChoices();
 
             void setChoices(const std::vector<std::string> &values, int index);

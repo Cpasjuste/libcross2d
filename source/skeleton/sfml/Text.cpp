@@ -107,7 +107,6 @@ namespace c2d {
         type = Type::Text;
     }
 
-
 ////////////////////////////////////////////////////////////
     Text::Text(const std::string &string, unsigned int characterSize, Font *font) :
             m_string(string),
@@ -126,6 +125,7 @@ namespace c2d {
         if (m_font == nullptr) {
             m_font = c2d_renderer->getFont();
         }
+        ensureGeometryUpdate();
     }
 
 

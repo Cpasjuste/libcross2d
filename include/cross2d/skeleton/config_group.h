@@ -19,7 +19,7 @@ namespace c2d {
 
         public:
 
-            Group(const std::string &name, int id = 0);
+            Group(const std::string &name = "none", int id = 0);
 
             std::string getName() const;
 

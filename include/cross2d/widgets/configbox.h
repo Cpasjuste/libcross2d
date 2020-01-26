@@ -30,8 +30,6 @@ namespace c2d {
         explicit ConfigBox(Font *font, int fontSize,
                            const c2d::FloatRect &rect = c2d::FloatRect(0, 0, 0, 0));
 
-        ~ConfigBox();
-
         virtual void load(config::Group *group);
 
         virtual void setLeftWidth(float width);

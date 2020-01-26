@@ -211,6 +211,15 @@ void Option::setChoicesIndex(int index) {
     choices_index = index;
 }
 
+void Option::setChoicesIndex(const std::string &selection) {
+    for (int i = 0; i < choices.size(); i++) {
+        if (choices.at(i) == selection) {
+            choices_index = i;
+            break;
+        }
+    }
+}
+
 std::vector<std::string> Option::getChoices() {
     return choices;
 }
@@ -219,3 +228,4 @@ void Option::setChoices(const std::vector<std::string> &values, int index) {
     choices = values;
     choices_index = index;
 }
+
