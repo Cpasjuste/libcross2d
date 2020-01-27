@@ -19,7 +19,7 @@ GLTexture::GLTexture(const std::string &p) : Texture(p) {
     int w, h, n = 0;
 
     pixels = stbi_load(path.c_str(), &w, &h, &n, 4);
-    if (!pixels) {
+    if (pixels == nullptr) {
         printf("GLTexture(%p): couldn't create texture (%s)\n", this, path.c_str());
         return;
     }
@@ -31,7 +31,7 @@ GLTexture::GLTexture(const std::string &p) : Texture(p) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    if (texID) {
+    if (texID != 0u) {
         pitch = w * bpp;
         setSize((float) w, (float) h);
         setTextureRect(IntRect(0, 0, w, h));
@@ -49,7 +49,7 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
     int w, h, n = 0;
 
     pixels = stbi_load_from_memory(buffer, bufferSize, &w, &h, &n, 4);
-    if (!pixels) {
+    if (pixels == nullptr) {
         printf("GLTexture(%p): couldn't create texture from buffer\n", this);
         return;
     }
@@ -61,7 +61,7 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    if (texID) {
+    if (texID != 0u) {
         pitch = w * bpp;
         setSize((float) w, (float) h);
         setTextureRect(IntRect(0, 0, w, h));
@@ -78,7 +78,7 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
 
     glGenTextures(1, &texID);
 
-    if (texID) {
+    if (texID != 0u) {
         pixels = (unsigned char *) malloc((size_t) (size.x * size.y * bpp));
         glBindTexture(GL_TEXTURE_2D, texID);
 

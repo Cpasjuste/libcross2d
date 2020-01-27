@@ -25,10 +25,11 @@ namespace c2d {
         };
 
         explicit ConfigBox(Font *font, int fontSize,
-                           const c2d::Vector2f &size = c2d::Vector2f(0, 0));
+                           const c2d::Vector2f &size = c2d::Vector2f(0, 0), float lineHeight = 0);
 
         explicit ConfigBox(Font *font, int fontSize,
-                           const c2d::FloatRect &rect = c2d::FloatRect(0, 0, 0, 0));
+                           const c2d::FloatRect &rect = c2d::FloatRect(0, 0, 0, 0),
+                           float lineHeight = 0);
 
         virtual void load(config::Group *group);
 

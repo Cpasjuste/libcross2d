@@ -45,10 +45,10 @@ namespace c2d {
     public:
 
         ListBox(Font *font, int fontSize, const FloatRect &rect,
-                const std::vector<Io::File> &fileList, bool useIcons = false);
+                const std::vector<Io::File> &fileList, bool useIcons = false, float lineHeight = 0);
 
         ListBox(Font *font, int fontSize, const FloatRect &rect,
-                const std::vector<Io::File *> &fileList, bool useIcons = false);
+                const std::vector<Io::File *> &fileList, bool useIcons = false, float lineHeight = 0);
 
         ~ListBox() override;
 
@@ -90,7 +90,7 @@ namespace c2d {
 
     private:
 
-        void init(Font *font, int fontSize, bool useIcons);
+        void init(Font *font, int fontSize, bool useIcons, float lineHeight);
 
         void updateLines();
 

@@ -7,22 +7,22 @@
 using namespace c2d;
 using namespace c2d::config;
 
-ConfigBox::ConfigBox(Font *font, int fontSize, const c2d::FloatRect &rect)
+ConfigBox::ConfigBox(Font *font, int fontSize, const c2d::Vector2f &size, float lineHeight)
+        : ConfigBox(font, fontSize, {0, 0, size.x, size.y}, lineHeight) {
+}
+
+ConfigBox::ConfigBox(Font *font, int fontSize, const c2d::FloatRect &rect, float lineHeight)
         : RectangleShape(rect) {
 
     FloatRect leftRect = {0, 0, rect.width / 2, rect.height};
     FloatRect rightRect = {rect.width / 2, 0, rect.width / 2, rect.height};
 
-    listBoxLeft = new ListBox(font, fontSize, leftRect, std::vector<Io::File>());
+    listBoxLeft = new ListBox(font, fontSize, leftRect, std::vector<Io::File>(), false, lineHeight);
     listBoxLeft->setHighlightEnabled(false);
     add(listBoxLeft);
 
-    listBoxRight = new ListBox(font, fontSize, rightRect, std::vector<Io::File>());
+    listBoxRight = new ListBox(font, fontSize, rightRect, std::vector<Io::File>(), false, lineHeight);
     add(listBoxRight);
-}
-
-ConfigBox::ConfigBox(Font *font, int fontSize, const c2d::Vector2f &size)
-        : ConfigBox(font, fontSize, {0, 0, size.x, size.y}) {
 }
 
 void ConfigBox::load(config::Group *grp) {

@@ -101,38 +101,42 @@ ListBoxLine::~ListBoxLine() {
 }
 
 ListBox::ListBox(Font *font, int fontSize, const FloatRect &rect,
-                 const std::vector<Io::File> &fileList, bool useIcons)
+                 const std::vector<Io::File> &fileList, bool useIcons, float lineHeight)
         : RectangleShape(rect) {
 
     //printf("ListBox(%p)\n", this);
 
     setFiles(fileList);
-    init(font, fontSize, useIcons);
+    init(font, fontSize, useIcons, lineHeight);
     setSelection(0);
 };
 
 ListBox::ListBox(Font *font, int fontSize, const FloatRect &rect,
-                 const std::vector<Io::File *> &fileList, bool useIcons)
+                 const std::vector<Io::File *> &fileList, bool useIcons, float lineHeight)
         : RectangleShape(rect) {
 
     //printf("ListBox(%p)\n", this);
 
     setFiles(fileList);
-    init(font, fontSize, useIcons);
+    init(font, fontSize, useIcons, lineHeight);
     setSelection(0);
 };
 
-void ListBox::init(Font *font, int fontSize, bool useIcons) {
+void ListBox::init(Font *font, int fontSize, bool useIcons, float lineHeight) {
 
     use_icons = useIcons;
     // set default bg colors
     setFillColor(Color::GrayLight);
 
     // calculate number of lines shown
-    if (use_icons) {
-        line_height = 34; // 32px + 2px margin
+    if (lineHeight <= 0) {
+        if (use_icons) {
+            line_height = 34; // 32px + 2px margin
+        } else {
+            line_height = (float) fontSize + 2;
+        }
     } else {
-        line_height = (float) fontSize + 2;
+        line_height = lineHeight;
     }
     max_lines = (int) (getSize().y / line_height);
     if ((float) max_lines * line_height < getSize().y) {
@@ -140,12 +144,12 @@ void ListBox::init(Font *font, int fontSize, bool useIcons) {
     }
 
     // add selection rectangle (highlight)
-    highlight = new RectangleShape(Vector2f(getSize().x - 2, line_height - 2));
+    highlight = new RectangleShape(Vector2f(getSize().x - 2, line_height));
     add(highlight);
 
     // add lines of text
     for (unsigned int i = 0; i < (unsigned int) max_lines; i++) {
-        FloatRect r = {1, (line_height * i) + 1, getSize().x - 2, line_height - 2};
+        FloatRect r = {1, (line_height * i) + 1, getSize().x - 2, line_height};
         Texture *icon = nullptr;
         if (use_icons) {
             icon = files.size() > i ? files[i]->icon : nullptr;
