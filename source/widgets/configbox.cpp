@@ -74,14 +74,19 @@ config::Option *ConfigBox::getSelection() {
     return group->getOption(listBoxLeft->getSelection()->name);
 }
 
+void ConfigBox::setLoopEnable(bool enableLoop) {
+    loop_choices = enableLoop;
+}
+
 config::Option *ConfigBox::navigate(const ConfigBox::Navigation &navigation) {
 
     Option *selection = nullptr;
 
     if (navigation == Navigation::Up) {
         index--;
-        if (index < 0)
+        if (index < 0) {
             index = (int) (listBoxLeft->getFiles().size() - 1);
+        }
     } else if (navigation == Navigation::Down) {
         index++;
         if (index >= (int) listBoxLeft->getFiles().size()) {
@@ -94,24 +99,28 @@ config::Option *ConfigBox::navigate(const ConfigBox::Navigation &navigation) {
         if (selection != nullptr && selection->getType() == Option::Type::Choice) {
             int count = selection->getChoices().size();
             int idx = selection->getChoiceIndex();
-            idx--;
-            if (idx < 0) {
-                idx = count - 1;
+            if (loop_choices || idx > 0) {
+                idx--;
+                if (idx < 0) {
+                    idx = count - 1;
+                }
+                selection->setChoicesIndex(idx);
+                listBoxRight->getFiles().at(index)->name = selection->getString();
             }
-            selection->setChoicesIndex(idx);
-            listBoxRight->getFiles().at(index)->name = selection->getString();
         }
     } else if (navigation == Navigation::Right) {
         selection = getSelection();
         if (selection != nullptr && selection->getType() == Option::Type::Choice) {
             int count = selection->getChoices().size();
             int idx = selection->getChoiceIndex();
-            idx++;
-            if (idx >= count) {
-                idx = 0;
+            if (loop_choices || idx < count - 1) {
+                idx++;
+                if (idx >= count) {
+                    idx = 0;
+                }
+                selection->setChoicesIndex(idx);
+                listBoxRight->getFiles().at(index)->name = selection->getString();
             }
-            selection->setChoicesIndex(idx);
-            listBoxRight->getFiles().at(index)->name = selection->getString();
         }
     } else if (navigation == Navigation::Enter) {
         if (getSelection() != nullptr) {

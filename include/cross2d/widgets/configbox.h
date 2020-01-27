@@ -42,6 +42,8 @@ namespace c2d {
 
         virtual config::Option *getSelection();
 
+        virtual void setLoopEnable(bool enableLoop);
+
         ///
         /// \param navigation
         /// \return the selected option (only on "Navigation::Enter")
@@ -54,6 +56,7 @@ namespace c2d {
         config::Group *group;
         std::vector<config::Group *> history;
         int index = 0;
+        bool loop_choices = false;
     };
 }
 
