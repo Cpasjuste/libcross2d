@@ -88,7 +88,7 @@ namespace c2d {
         };
 
         virtual File findFile(const std::string &path,
-                              const std::vector<std::string> &whitelist, const std::string blacklist) {
+                              const std::vector<std::string> &whitelist, const std::string &blacklist = "") {
             return File();
         }
 

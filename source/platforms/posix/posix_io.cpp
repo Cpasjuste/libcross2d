@@ -162,7 +162,7 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bo
 }
 
 Io::File POSIXIo::findFile(const std::string &path,
-                           const std::vector<std::string> &whitelist, const std::string blacklist) {
+                           const std::vector<std::string> &whitelist, const std::string &blacklist) {
 
     struct dirent *ent;
     DIR *dir;
@@ -175,8 +175,10 @@ Io::File POSIXIo::findFile(const std::string &path,
     if ((dir = opendir(path.c_str())) != nullptr) {
         while ((ent = readdir(dir)) != nullptr) {
             for (const auto &search : whitelist) {
-                if (Utility::contains(ent->d_name, search)
-                    && !Utility::contains(ent->d_name, blacklist)) {
+                if (Utility::contains(ent->d_name, search)) {
+                    if (!blacklist.empty() && Utility::contains(ent->d_name, blacklist)) {
+                        continue;
+                    }
                     file.name = ent->d_name;
                     file.path = Utility::removeLastSlash(path) + "/" + file.name;
 #ifdef __SWITCH__

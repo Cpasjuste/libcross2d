@@ -24,7 +24,7 @@ namespace c2d {
         std::vector<Io::File> getDirList(const std::string &path, bool sort, bool showHidden) override;
 
         File findFile(const std::string &path,
-                      const std::vector<std::string> &whitelist, const std::string blacklist) override;
+                      const std::vector<std::string> &whitelist, const std::string &blacklist) override;
 
         char *read(const std::string &file) override;
 
