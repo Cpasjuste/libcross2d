@@ -37,6 +37,7 @@
 #include <cstdlib>
 #include <cstring>
 
+c2d::Vector2f c2d_default_font_texture_size = {128, 128};
 extern unsigned char c2d_font_default[];
 extern int c2d_font_default_length;
 
@@ -702,7 +703,7 @@ namespace c2d {
         }
 
         //printf("Font:: create new tex\n");
-        texture = new C2DTexture(Vector2f(256, 256), Texture::Format::RGBA8);
+        texture = new C2DTexture(c2d_default_font_texture_size, Texture::Format::RGBA8);
 
         // Reserve a 2x2 white square for texturing underlines
         uint8_t *buffer;

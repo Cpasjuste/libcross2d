@@ -35,6 +35,7 @@
 
 // for internal usage
 extern c2d::Renderer *c2d_renderer;
+extern c2d::Vector2f c2d_default_font_texture_size;
 
 #ifdef __PSP2__
 #define NO_KEYBOARD 1
