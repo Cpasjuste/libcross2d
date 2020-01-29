@@ -154,8 +154,7 @@ void ListBox::init(Font *font, int fontSize, bool useIcons, float lineHeight) {
         if (use_icons) {
             icon = files.size() > i ? files[i]->icon : nullptr;
         }
-        auto line = new ListBoxLine(r, "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789-.",
-                                    font, (unsigned int) fontSize, icon, use_icons);
+        auto line = new ListBoxLine(r, "", font, (unsigned int) fontSize, icon, use_icons);
         lines.push_back(line);
         add(line);
     }

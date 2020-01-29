@@ -319,15 +319,7 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glkos.h>
-
 #define GL_RGB565 GL_RGB
-
-//#include "/usr/local/dc/kos/kos-ports/minigl/GL/gl.h"
-//#include "/usr/local/dc/kos/kos-ports/minigl/GL/glu.h"
-//#include "minigl_override.h"
-//#define GL_RGBA8 GL_RGBA
-//#define GL_UNSIGNED_SHORT_5_6_5 GL_UNSIGNED_SHORT
-//#define glLoadMatrixf glLoadMatrix
 
 #include "platforms/gl1/gl_texture.h"
 #include "platforms/dreamcast/dreamcast_renderer.h"
