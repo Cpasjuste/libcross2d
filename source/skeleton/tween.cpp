@@ -172,7 +172,7 @@ void Tween::step() {
 
     delta = deltaClock->restart();
 
-    if (!transform || state == TweenState::Stopped) {
+    if (transform == nullptr || state == TweenState::Stopped) {
         state = TweenState::Stopped;
         return;
     }

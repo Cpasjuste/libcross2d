@@ -3,7 +3,6 @@
 //
 
 #include <algorithm>
-
 #include "cross2d/skeleton/config_group.h"
 
 using namespace c2d::config;
@@ -14,7 +13,6 @@ Group::Group(const std::string &name, int id) {
     this->id = id;
 }
 
-
 std::string Group::getName() const {
 
     return name;
@@ -24,8 +22,8 @@ int Group::getId() const {
     return id;
 }
 
-void Group::setId(int id) {
-    this->id = id;
+void Group::setId(int i) {
+    id = i;
 }
 
 /// childs options
@@ -34,10 +32,10 @@ void Group::addOption(const Option &option) {
     options.push_back(option);
 }
 
-bool Group::removeOption(const std::string &name) {
+bool Group::removeOption(const std::string &n) {
 
-    auto found = std::find_if(options.begin(), options.end(), [&name](Option const &option) {
-        return name == option.getName();
+    auto found = std::find_if(options.begin(), options.end(), [&n](Option const &option) {
+        return n == option.getName();
     });
 
     if (found != options.end()) {
@@ -48,10 +46,10 @@ bool Group::removeOption(const std::string &name) {
     return false;
 }
 
-bool Group::removeOption(int id) {
+bool Group::removeOption(int i) {
 
-    auto found = std::find_if(options.begin(), options.end(), [&id](Option const &option) {
-        return id == option.getId();
+    auto found = std::find_if(options.begin(), options.end(), [&i](Option const &option) {
+        return i == option.getId();
     });
 
     if (found != options.end()) {
@@ -62,10 +60,10 @@ bool Group::removeOption(int id) {
     return false;
 }
 
-Option *Group::getOption(const std::string &name) {
+Option *Group::getOption(const std::string &n) {
 
     for (Option &option : options) {
-        if (option.getName() == name) {
+        if (option.getName() == n) {
             return &option;
         }
     }
@@ -73,10 +71,10 @@ Option *Group::getOption(const std::string &name) {
     return nullptr;
 }
 
-Option *Group::getOption(int id) {
+Option *Group::getOption(int i) {
 
     for (Option &option : options) {
-        if (option.getId() == id) {
+        if (option.getId() == i) {
             return &option;
         }
     }
@@ -86,7 +84,7 @@ Option *Group::getOption(int id) {
 
 Option *Group::getOption(const std::string &groupName, const std::string &optionName) {
     Group *group = getGroup(groupName);
-    if (group) {
+    if (group != nullptr) {
         return group->getOption(optionName);
     }
     return nullptr;
@@ -94,7 +92,7 @@ Option *Group::getOption(const std::string &groupName, const std::string &option
 
 Option *Group::getOption(int groupId, int optionId) {
     Group *group = getGroup(groupId);
-    if (group) {
+    if (group != nullptr) {
         return group->getOption(optionId);
     }
     return nullptr;
@@ -111,10 +109,10 @@ void Group::addGroup(const Group &group) {
     groups.push_back(group);
 }
 
-bool Group::removeGroup(const std::string &name) {
+bool Group::removeGroup(const std::string &n) {
 
-    auto found = std::find_if(groups.begin(), groups.end(), [&name](Group const &group) {
-        return name == group.getName();
+    auto found = std::find_if(groups.begin(), groups.end(), [&n](Group const &group) {
+        return n == group.getName();
     });
 
     if (found != groups.end()) {
@@ -125,10 +123,10 @@ bool Group::removeGroup(const std::string &name) {
     return false;
 }
 
-bool Group::removeGroup(int id) {
+bool Group::removeGroup(int i) {
 
-    auto found = std::find_if(groups.begin(), groups.end(), [&id](Group const &group) {
-        return id == group.getId();
+    auto found = std::find_if(groups.begin(), groups.end(), [&i](Group const &group) {
+        return i == group.getId();
     });
 
     if (found != groups.end()) {
@@ -148,7 +146,7 @@ Group *Group::getGroup(const std::string &name) {
 
     for (Group &group : groups) {
         Group *s = group.getGroup(name);
-        if (s) {
+        if (s != nullptr) {
             return s;
         }
     }
@@ -165,7 +163,7 @@ Group *Group::getGroup(int id) {
 
     for (Group &group : groups) {
         Group *s = group.getGroup(id);
-        if (s) {
+        if (s != nullptr) {
             return s;
         }
     }
@@ -187,13 +185,13 @@ bool Group::load(config_setting_t *parent) {
         return true;
     }
 
-    if (!parent) {
+    if (parent == nullptr) {
         printf("Config::Group::load: could not find root config: %s\n", name.c_str());
         return false;
     }
 
     config_setting_t *settings = config_setting_lookup(parent, name.c_str());
-    if (!settings) {
+    if (settings == nullptr) {
         printf("Config::Group::load: group not found, skipping: %s\n", name.c_str());
         return false;
     }
@@ -204,21 +202,21 @@ bool Group::load(config_setting_t *parent) {
         }
         if (option.getType() == Option::Type::String) {
             const char *value;
-            if (!config_setting_lookup_string(settings, option.getName().c_str(), &value)) {
+            if (config_setting_lookup_string(settings, option.getName().c_str(), &value) == CONFIG_FALSE) {
                 printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
                 continue;
             }
             option.setString(value);
         } else if (option.getType() == Option::Type::Integer) {
             int value = 0;
-            if (!config_setting_lookup_int(settings, option.getName().c_str(), &value)) {
+            if (config_setting_lookup_int(settings, option.getName().c_str(), &value) == CONFIG_FALSE) {
                 printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
                 continue;
             }
             option.setInteger(value);
         } else if (option.getType() == Option::Type::Float) {
             double value = 0;
-            if (!config_setting_lookup_float(settings, option.getName().c_str(), &value)) {
+            if (config_setting_lookup_float(settings, option.getName().c_str(), &value) == CONFIG_FALSE) {
                 printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
                 continue;
             }
@@ -226,9 +224,9 @@ bool Group::load(config_setting_t *parent) {
         } else if (option.getType() == Option::Type::Vector2f) {
             std::vector<float> values = {option.getVector2f().x, option.getVector2f().y};
             config_setting_t *sub = config_setting_lookup(settings, option.getName().c_str());
-            if (sub) {
+            if (sub != nullptr) {
                 for (int i = 0; i < 2; i++) {
-                    values[i] = (float) config_setting_get_float_elem(sub, (unsigned int) i);
+                    values[i] = (float) config_setting_get_float_elem(sub, i);
                 }
             }
             option.setVector2f({values[0], values[1]});
@@ -236,9 +234,9 @@ bool Group::load(config_setting_t *parent) {
             FloatRect r = option.getFloatRect();
             std::vector<float> values = {r.left, r.top, r.width, r.height};
             config_setting_t *sub = config_setting_lookup(settings, option.getName().c_str());
-            if (sub) {
+            if (sub != nullptr) {
                 for (int i = 0; i < 4; i++) {
-                    values[i] = (float) config_setting_get_float_elem(sub, (unsigned int) i);
+                    values[i] = (float) config_setting_get_float_elem(sub, i);
                 }
             }
             option.setFloatRect({values[0], values[1], values[2], values[3]});
@@ -246,15 +244,15 @@ bool Group::load(config_setting_t *parent) {
             FloatRect r = option.getFloatRect();
             std::vector<uint8_t> values = {(uint8_t) r.left, (uint8_t) r.top, (uint8_t) r.width, (uint8_t) r.height};
             config_setting_t *sub = config_setting_lookup(settings, option.getName().c_str());
-            if (sub) {
+            if (sub != nullptr) {
                 for (int i = 0; i < 4; i++) {
-                    values[i] = (uint8_t) config_setting_get_int_elem(sub, (unsigned int) i);
+                    values[i] = (uint8_t) config_setting_get_int_elem(sub, i);
                 }
             }
             option.setColor({values[0], values[1], values[2], values[3]});
         } else if (option.getType() == Option::Type::Choice) {
             int value = 0;
-            if (!config_setting_lookup_int(settings, option.getName().c_str(), &value)) {
+            if (config_setting_lookup_int(settings, option.getName().c_str(), &value) == CONFIG_FALSE) {
                 printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
                 continue;
             }
@@ -276,7 +274,7 @@ bool Group::save(config_setting_t *parent) {
         return true;
     }
 
-    if (!parent) {
+    if (parent == nullptr) {
         printf("Config::Group::save: could not save group (%s), no parent\n", name.c_str());
         return false;
     }
@@ -337,6 +335,6 @@ bool Group::isSavable() const {
     return savable;
 }
 
-void Group::setSavable(bool savable) {
-    this->savable = savable;
+void Group::setSavable(bool s) {
+    savable = s;
 }
