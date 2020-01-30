@@ -57,7 +57,7 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
         glLoadMatrixf(transform.getMatrix());
     }
 
-    GLTexture *tex = ((GLTexture *) texture);
+    GLTexture *tex = sprite != nullptr ? (GLTexture *) sprite->getTexture() : (GLTexture *) texture;
     if (tex != nullptr && tex->available) {
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex->texID);
@@ -71,8 +71,8 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
 
     for (unsigned int i = 0; i < vertexCount; i++) {
         if (tex != nullptr && tex->available) {
-            glTexCoord2f(vertices[i].texCoords.x / texture->getSize().x,
-                         vertices[i].texCoords.y / texture->getSize().y);
+            glTexCoord2f(vertices[i].texCoords.x / tex->getSize().x,
+                         vertices[i].texCoords.y / tex->getSize().y);
         }
         glColor4f((float) vertices[i].color.r / 255.0f,
                   (float) vertices[i].color.g / 255.0f,
