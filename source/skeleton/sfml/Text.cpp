@@ -392,7 +392,9 @@ namespace c2d {
     void Text::setSize(float width, float height) {
         m_max_size.x = width;
         m_max_size.y = height;
-        setCharacterSize((unsigned int) height);
+        if (height > 0) {
+            setCharacterSize((unsigned int) height);
+        }
         m_geometryNeedUpdate = true;
     }
 
