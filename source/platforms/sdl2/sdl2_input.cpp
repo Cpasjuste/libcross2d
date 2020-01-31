@@ -253,7 +253,7 @@ void SDL2Input::process_hat(Input::Player &player, int rotate) {
 
 void SDL2Input::process_buttons(Input::Player &player, int rotate) {
 
-    if (!player.enabled || !player.data) {
+    if (!player.enabled || player.data == nullptr) {
         return;
     }
 

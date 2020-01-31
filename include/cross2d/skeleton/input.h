@@ -74,21 +74,21 @@ namespace c2d {
 
         virtual int waitButton(int player = 0) { return -1; }; // to implement
 
-        unsigned int getKeys(int player = 0);
+        virtual unsigned int getKeys(int player = 0);
 
-        Player *getPlayer(int player = 0);
+        virtual Player *getPlayer(int player = 0);
 
-        Player *getPlayers();
+        virtual Player *getPlayers();
 
-        int clear(int player = 0);
+        virtual int clear(int player = 0);
 
-        void setRepeatDelay(int ms);
+        virtual void setRepeatDelay(int ms);
 
-        int getRepeatDelay();
+        virtual int getRepeatDelay();
 
-        void setJoystickMapping(int player, const int *mapping, int deadzone = 8000);
+        virtual void setJoystickMapping(int player, const int *mapping, int deadzone = 8000);
 
-        void setKeyboardMapping(const int *mapping);
+        virtual void setKeyboardMapping(const int *mapping);
 
         Player players[PLAYER_MAX];
         Keyboard keyboard;

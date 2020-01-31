@@ -14,11 +14,13 @@ namespace c2d {
     public:
         DCInput();
 
-        virtual ~DCInput();
+        ~DCInput() override;
 
-        virtual int waitButton(int player = 0);
+        int waitButton(int player = 0) override;
 
-        virtual Player *update(int rotate = 0);
+        Player *update(int rotate = 0) override;
+
+        void setJoystickMapping(int player, const int *mapping, int deadzone = 8000) override;
 
     private:
 

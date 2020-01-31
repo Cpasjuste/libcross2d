@@ -13,7 +13,7 @@ Input::Input() : keyboard() {
 
 Input::Player *Input::update(int rotate) {
 
-    float elapsed = repeatClock->getElapsedTime().asMilliseconds();
+    int elapsed = repeatClock->getElapsedTime().asMilliseconds();
 
     if (!repeat || players[0].keys & EV_QUIT) {
         stateOld = players[0].keys;
