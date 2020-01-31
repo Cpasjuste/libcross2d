@@ -123,7 +123,7 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bo
                 //printf("getDirList: %s\n", ent->d_name);
 
                 // skip "."
-                if (strlen(ent->d_name) == 1 && ent->d_name[0] == '.') {
+                if ((path == "/" || strlen(ent->d_name) == 1) && ent->d_name[0] == '.') {
                     continue;
                 }
                 // skip "hidden" files

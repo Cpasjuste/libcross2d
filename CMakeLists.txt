@@ -58,6 +58,11 @@ if (PLATFORM_DREAMCAST)
     set(OPTION_SCREEN_HEIGHT 480 CACHE STRING "Custom screen height" FORCE)
 endif ()
 
+if (OPTION_RENDER_GL1 AND NOT PLATFORM_DREAMCAST)
+    message(STATUS "C2D: SDL1 with OpenGL 1.2 support enabled")
+    set(OPTION_SDL1 ON CACHE BOOL "OpenGL 1.2 rendering" FORCE)
+endif ()
+
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_DEBUG true CACHE BOOL "Debug build")
 endif ()
