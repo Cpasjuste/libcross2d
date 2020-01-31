@@ -319,6 +319,7 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glkos.h>
+
 #define GL_RGB565 GL_RGB
 
 #include "platforms/gl1/gl_texture.h"
@@ -350,14 +351,14 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define KEY_JOY_FIRE4_DEFAULT   CONT_Y
 #define KEY_JOY_FIRE5_DEFAULT   CONT_C
 #define KEY_JOY_FIRE6_DEFAULT   CONT_D
-#define KEY_JOY_COIN1_DEFAULT   6
+#define KEY_JOY_COIN1_DEFAULT   -1
 #define KEY_JOY_START1_DEFAULT  CONT_START
-#define KEY_JOY_MENU1_DEFAULT   7
-#define KEY_JOY_MENU2_DEFAULT   6
+#define KEY_JOY_MENU1_DEFAULT   -1
+#define KEY_JOY_MENU2_DEFAULT   -1
 #define KEY_JOY_AXIS_LX         0
 #define KEY_JOY_AXIS_LY         1
-#define KEY_JOY_AXIS_RX         4
-#define KEY_JOY_AXIS_RY         5
+#define KEY_JOY_AXIS_RX         2
+#define KEY_JOY_AXIS_RY         3
 
 #elif __PS3__
 

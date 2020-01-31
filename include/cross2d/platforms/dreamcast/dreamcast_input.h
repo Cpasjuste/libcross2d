@@ -24,11 +24,7 @@ namespace c2d {
 
         virtual void process_axis(Input::Player &player, int rotate);
 
-        virtual void process_hat(Input::Player &player, int rotate);
-
         virtual void process_buttons(Input::Player &player, int rotate);
-
-        virtual void process_keyboard(Input::Player &player, int rotate);
 
         struct InputData {
             maple_device_t *cont;

@@ -83,18 +83,13 @@ Input::Player *DCInput::update(int rotate) {
         InputData *data = (InputData *) player.data;
         data->state = (cont_state_t *) maple_dev_status(data->cont);
 
-        // hat
-        process_hat(player, rotate);
-
         // sticks
-        process_axis(player, rotate);
+        // TODO:
+        //process_axis(player, rotate);
 
         // buttons
         process_buttons(player, rotate);
     }
-
-    // keyboard
-    process_keyboard(players[0], rotate);
 
     // mandatory to handle repeat delay if needed
     return Input::update(rotate);
@@ -102,7 +97,6 @@ Input::Player *DCInput::update(int rotate) {
 
 void DCInput::process_axis(Input::Player &player, int rotate) {
 
-    /*
     if (!player.enabled || (player.data == nullptr)) {
         return;
     }
@@ -126,8 +120,14 @@ void DCInput::process_axis(Input::Player &player, int rotate) {
             currentStickXAxis = &(player.rx);
             currentStickYAxis = &(player.ry);
         }
-        analogX = (float) (SDL_JoystickGetAxis((SDL_Joystick *) player.data, currentStickXAxis->id));
-        analogY = (float) (SDL_JoystickGetAxis((SDL_Joystick *) player.data, currentStickYAxis->id));
+
+        InputData *data = (InputData *) player.data;
+        analogX = (float) (i == 0 ? data->state->joyx : data->state->joy2x);
+        analogY = (float) (i == 0 ? data->state->joyy : data->state->joy2y);
+        if (i == 0) {
+            printf("analogX: %f\n", analogX);
+            printf("analogY: %f\n", analogY);
+        }
 
         //radial and scaled deadzone
         //http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
@@ -184,47 +184,6 @@ void DCInput::process_axis(Input::Player &player, int rotate) {
             currentStickYAxis->value = 0;
         } // end if (magnitude >= deadZone)
     } // end for
-    */
-}
-
-void DCInput::process_hat(Input::Player &player, int rotate) {
-
-    /*
-    if (!player.enabled || !player.data) {
-        return;
-    }
-
-    int value = SDL_JoystickGetHat((SDL_Joystick *) player.data, 0);
-
-    if (value == SDL_HAT_UP
-        || value == SDL_HAT_LEFTUP
-        || value == SDL_HAT_RIGHTUP) {
-        player.keys |= (rotate == 1) ?
-                       Input::Key::Right : (rotate == 3) ? Input::Key::Left
-                                                         : Input::Key::Up;
-    }
-    if (value == SDL_HAT_DOWN
-        || value == SDL_HAT_LEFTDOWN
-        || value == SDL_HAT_RIGHTDOWN) {
-        player.keys |= (rotate == 1) ?
-                       Input::Key::Left : (rotate == 3) ? Input::Key::Right
-                                                        : Input::Key::Down;
-    }
-    if (value == SDL_HAT_LEFT
-        || value == SDL_HAT_LEFTDOWN
-        || value == SDL_HAT_LEFTUP) {
-        player.keys |= (rotate == 1) ?
-                       Input::Key::Up : (rotate == 3) ? Input::Key::Down
-                                                      : Input::Key::Left;
-    }
-    if (value == SDL_HAT_RIGHT
-        || value == SDL_HAT_RIGHTDOWN
-        || value == SDL_HAT_RIGHTUP) {
-        player.keys |= (rotate == 1) ?
-                       Input::Key::Down : (rotate == 3) ? Input::Key::Up
-                                                        : Input::Key::Right;
-    }
-    */
 }
 
 void DCInput::process_buttons(Input::Player &player, int rotate) {
@@ -265,44 +224,10 @@ void DCInput::process_buttons(Input::Player &player, int rotate) {
             } else {
                 player.keys |= key_id[i];
             }
+        } else if (data->state->ltrig) {
+            player.keys |= Input::Key::Fire5;
+        } else if (data->state->rtrig) {
+            player.keys |= Input::Key::Fire6;
         }
     }
-}
-
-void DCInput::process_keyboard(Input::Player &player, int rotate) {
-#ifndef NO_KEYBOARD
-    const Uint8 *keys = SDL_GetKeyboardState(nullptr);
-
-    for (int i = 0; i < KEY_COUNT; i++) {
-        if (keys[keyboard.mapping[i]]) {
-            if (rotate && key_id[i] == Input::Key::Up) {
-                if (rotate == 1) {
-                    player.keys |= Input::Key::Right;
-                } else if (rotate == 3) {
-                    player.keys |= Input::Key::Left;
-                }
-            } else if (rotate && key_id[i] == Input::Key::Down) {
-                if (rotate == 1) {
-                    player.keys |= Input::Key::Left;
-                } else if (rotate == 3) {
-                    player.keys |= Input::Key::Right;
-                }
-            } else if (rotate && key_id[i] == Input::Key::Left) {
-                if (rotate == 1) {
-                    player.keys |= Input::Key::Up;
-                } else if (rotate == 3) {
-                    player.keys |= Input::Key::Down;
-                }
-            } else if (rotate && key_id[i] == Input::Key::Right) {
-                if (rotate == 1) {
-                    player.keys |= Input::Key::Down;
-                } else if (rotate == 3) {
-                    player.keys |= Input::Key::Up;
-                }
-            } else {
-                player.keys |= key_id[i];
-            }
-        }
-    }
-#endif
 }
