@@ -40,8 +40,11 @@ bool DCIo::exist(const std::string &path) {
 }
 
 bool DCIo::create(const std::string &path) {
-
     return fs_mkdir(path.c_str()) == 0;
+}
+
+bool DCIo::remove(const std::string &path) {
+    return fs_unlink(path.c_str()) == 0;
 }
 
 size_t DCIo::getSize(const std::string &file) {

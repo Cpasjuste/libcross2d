@@ -50,6 +50,10 @@ bool POSIXIo::create(const std::string &path) {
 #endif
 }
 
+bool POSIXIo::remove(const std::string &path) {
+    return unlink(path.c_str()) == 0;
+}
+
 size_t POSIXIo::getSize(const std::string &file) {
     struct stat st{};
     if (stat(file.c_str(), &st) != 0) {
