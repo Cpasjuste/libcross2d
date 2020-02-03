@@ -118,7 +118,8 @@ void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
                 tween->play(visibility_wanted == Visibility::Visible ?
                             TweenDirection::Forward : TweenDirection::Backward);
                 // reset transform/color to initial values
-                tween->step();
+                // TODO: is this really needed ?
+                //tween->step();
             }
         }
     } else {

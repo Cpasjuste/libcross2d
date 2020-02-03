@@ -180,10 +180,10 @@ void Tween::step() {
     progress = tween.progress();
     duration = tween.duration();
 
-    if ((duration > 0 && (progress == 0.0f || progress == 1.0f))) {
+    if ((duration > 0 && (progress <= 0.0f || progress >= 1.0f))) {
         if (loop == TweenLoop::None) {
-            if ((progress == 1.0f && direction == TweenDirection::Forward)
-                || (progress == 0.0f && direction == TweenDirection::Backward)) {
+            if ((progress >= 1.0f && direction == TweenDirection::Forward)
+                || (progress <= 0.0f && direction == TweenDirection::Backward)) {
                 state = TweenState::Stopped;
                 return;
             }
