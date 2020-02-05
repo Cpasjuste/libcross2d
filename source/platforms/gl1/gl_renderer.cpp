@@ -84,7 +84,7 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
     glEnd();
 
     if (tex != nullptr && tex->available) {
-        glDisable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 }
 
