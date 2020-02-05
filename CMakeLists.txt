@@ -53,7 +53,6 @@ endif ()
 if (PLATFORM_DREAMCAST)
     message(STATUS "C2D: DREAMCAST OpenGL 1.2 support enabled")
     set(OPTION_RENDER_GL1 ON CACHE BOOL "OpenGL 1.2 rendering" FORCE)
-    set(OPTION_BUILTIN_LIBCONFIG ON CACHE BOOL "Build libconfig from sources" FORCE)
     set(OPTION_SCREEN_WIDTH 640 CACHE STRING "Custom screen width" FORCE)
     set(OPTION_SCREEN_HEIGHT 480 CACHE STRING "Custom screen height" FORCE)
 endif ()
@@ -253,7 +252,8 @@ elseif (PLATFORM_DREAMCAST)
     file(GLOB_RECURSE PLATFORM_SOURCES source/platforms/dreamcast/*.c*)
     set(PLATFORM_INCLUDES
             source/platforms/dreamcast
-            $ENV{KOS_BASE}/../kos-ports/include/freetype)
+            $ENV{KOS_BASE}/../kos-ports/include/freetype
+            $ENV{KOS_BASE}/../kos-ports/include/libconfig)
     list(APPEND C2D_CFLAGS -D__DREAMCAST__ -DNO_KEYBOARD)
     list(APPEND C2D_LDFLAGS c kallisti stdc++ GLdc freetype z m) # kosfat
     ########################
