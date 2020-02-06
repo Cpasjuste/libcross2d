@@ -212,7 +212,7 @@ void Option::setChoicesIndex(int index) {
 }
 
 void Option::setChoicesIndex(const std::string &selection) {
-    for (int i = 0; i < choices.size(); i++) {
+    for (size_t i = 0; i < choices.size(); i++) {
         if (choices.at(i) == selection) {
             choices_index = i;
             break;

@@ -13,6 +13,8 @@ namespace c2d {
 
     public:
 
+        File getFile(const std::string &path) override;
+
         bool exist(const std::string &path) override;
 
         size_t getSize(const std::string &file) override;
@@ -22,6 +24,9 @@ namespace c2d {
         bool create(const std::string &path) override;
 
         bool remove(const std::string &path) override;
+
+        bool copy(const std::string &src, const std::string &dst,
+                  const std::function<void(File, File, int)> &callback = nullptr) override;
 
         std::vector<Io::File> getDirList(const std::string &path, bool sort, bool showHidden) override;
 
@@ -33,6 +38,11 @@ namespace c2d {
         bool write(const std::string &file, const char *data) override;
 
         std::string getHomePath() override;
+
+    private:
+
+        bool copyFile(const File &src, const File &dst,
+                      const std::function<void(File, File, int)> &callback = nullptr);
     };
 }
 

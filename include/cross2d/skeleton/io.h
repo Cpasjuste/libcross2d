@@ -67,6 +67,21 @@ namespace c2d {
             return getHomePath();
         }
 
+        virtual std::string baseName(const std::string &path) {
+            std::string name = path;
+            if (path.size() > 1) {
+                const size_t idx = path.find_last_of('/');
+                if (idx != std::string::npos) {
+                    name.erase(0, idx + 1);
+                }
+            }
+            return name;
+        }
+
+        virtual File getFile(const std::string &path) {
+            return {};
+        }
+
         virtual bool exist(const std::string &path) {
             return false;
         };
@@ -86,6 +101,11 @@ namespace c2d {
         virtual bool remove(const std::string &path) {
             return false;
         };
+
+        virtual bool copy(const std::string &src, const std::string &dst,
+                          const std::function<void(File, File, int)> &callback = nullptr) {
+            return false;
+        }
 
         virtual std::vector<Io::File> getDirList(const std::string &path, bool sort = false, bool showHidden = false) {
             return std::vector<Io::File>();
