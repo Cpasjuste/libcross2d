@@ -23,6 +23,9 @@ namespace c2d {
 
         bool remove(const std::string &path) override;
 
+        bool copy(const std::string &src, const std::string &dst,
+                  const std::function<void(File, File, int)> &callback = nullptr) override;
+
         std::vector<Io::File> getDirList(const std::string &path, bool sort, bool showHidden) override;
 
         File findFile(const std::string &path,
@@ -37,6 +40,10 @@ namespace c2d {
         std::string getRomFsPath() override {
             return "/rd/";
         }
+
+    private:
+        bool copyFile(const File &src, const File &dst,
+                      const std::function<void(File, File, int)> &callback = nullptr);
     };
 }
 

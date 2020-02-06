@@ -4,6 +4,7 @@
 
 #include <unistd.h>
 #include <cstring>
+#include <dirent.h>
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -151,7 +152,7 @@ std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool 
             }
         }
 
-        // skip crap
+        // skip some stuff
         if (std::string(ent->name) == "cd" || std::string(ent->name) == "ram" || std::string(ent->name) == "pty"
             || std::string(ent->name) == "rd" || std::string(ent->name) == "pc"
             || Utility::toLower(ent->name) == "recycler"
@@ -207,4 +208,126 @@ Io::File DCIo::findFile(const std::string &path,
     }
 
     return file;
+}
+
+bool DCIo::copyFile(const File &src, const File &dst,
+                    const std::function<void(File, File, int)> &callback) {
+
+    if (src.path == dst.path) {
+        return false;
+    }
+
+    // The destination is a sub-folder of the source folder
+    size_t len = src.path.size();
+    if (src.path.compare(0, len, dst.path) == 0
+        && (dst.path[len] == '/' || dst.path[len - 1] == '/')) {
+        return false;
+    }
+
+    FILE *srcFd = fopen(src.path.c_str(), "r");
+    if (srcFd == nullptr) {
+        return false;
+    }
+
+    FILE *dstFd = fopen(dst.path.c_str(), "w");
+    if (dstFd == nullptr) {
+        fclose(srcFd);
+        return false;
+    }
+
+    auto buf = (unsigned char *) malloc(32 * 1024);
+    if (buf == nullptr) {
+        fclose(srcFd);
+        fclose(dstFd);
+        return false;
+    }
+
+    if (callback != nullptr) {
+        callback(src, dst, 0);
+    }
+
+    size_t readBytes, writeBytes, totalBytes = 0;
+    while ((readBytes = fread(buf, 1, 32 * 1024, srcFd)) > 0) {
+        writeBytes = fwrite(buf, 1, readBytes, dstFd);
+        if (writeBytes < 0) {
+            free(buf);
+            fclose(srcFd);
+            fclose(dstFd);
+            return false;
+        }
+
+        if (callback != nullptr) {
+            totalBytes += writeBytes;
+            float progress = ((float) totalBytes / (float) src.size) * 100;
+            callback(src, dst, (int) progress);
+        }
+    }
+
+    free(buf);
+    fclose(srcFd);
+    fclose(dstFd);
+
+    return true;
+}
+
+bool DCIo::copy(const std::string &src, const std::string &dst,
+                const std::function<void(File, File, int)> &callback) {
+
+    File srcFile;
+    File dstFile;
+    struct dirent *ent;
+    DIR *dir;
+
+    if (src == dst) {
+        return false;
+    }
+
+    // The destination is a sub-folder of the source folder
+    size_t size = src.size();
+    if (src.compare(0, size, dst) == 0
+        && (dst[size] == '/' || dst[size - 1] == '/')) {
+        return false;
+    }
+
+    srcFile = getFile(src);
+    dstFile = srcFile;
+    dstFile.name = baseName(dst);
+    dstFile.path = dst;
+
+    if (srcFile.type == Type::File) {
+        return copyFile(srcFile, dstFile, callback);
+    }
+
+    create(dstFile.path);
+
+    if ((dir = opendir(srcFile.path.c_str())) != nullptr) {
+        while ((ent = readdir(dir)) != nullptr) {
+
+            if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
+                continue;
+
+            size_t len = srcFile.path.size() + strlen(ent->d_name) + 2;
+            char new_src_path[len];
+            memset(new_src_path, 0, len);
+            snprintf(new_src_path, MAX_PATH, "%s%s%s",
+                     srcFile.path.c_str(), Utility::endsWith(srcFile.path, "/") ? "" : "/", ent->d_name);
+
+            len = dstFile.path.size() + strlen(ent->d_name) + 2;
+            char new_dst_path[len];
+            memset(new_dst_path, 0, len);
+            snprintf(new_dst_path, MAX_PATH, "%s%s%s",
+                     dstFile.path.c_str(), Utility::endsWith(dstFile.path, "/") ? "" : "/", ent->d_name);
+
+            File newSrcFile = getFile(new_src_path);
+            File newDstFile = newSrcFile;
+            newDstFile.path = new_dst_path;
+            if (newSrcFile.type == Type::File) {
+                copyFile(newSrcFile, newDstFile, callback);
+            } else {
+                copy(new_src_path, new_dst_path, callback);
+            }
+        }
+    }
+
+    return true;
 }
