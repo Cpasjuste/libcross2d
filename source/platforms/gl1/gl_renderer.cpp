@@ -4,6 +4,8 @@
 
 #ifdef __GL1__
 
+//#define BLEND_TEST
+
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -27,9 +29,11 @@ void GL1Renderer::glInit() {
     glDisable(GL_CULL_FACE);
     glDepthMask(GL_FALSE);
 
+#ifndef BLEND_TEST
     // GLdc doesn't like mixing blend and non blend textures
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -61,7 +65,17 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
     if (tex != nullptr && tex->available) {
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex->texID);
+#if BLEND_TEST
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
     }
+#if BLEND_TEST
+    else if (vertices[0].color.a < 255) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+#endif
 
     const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
                             GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
@@ -85,7 +99,15 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
 
     if (tex != nullptr && tex->available) {
         glBindTexture(GL_TEXTURE_2D, 0);
+#if BLEND_TEST
+        glDisable(GL_BLEND);
+#endif
     }
+#if BLEND_TEST
+    else if (vertices[0].color.a < 255) {
+        glDisable(GL_BLEND);
+    }
+#endif
 }
 
 void GL1Renderer::clear() {
