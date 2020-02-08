@@ -125,7 +125,6 @@ namespace c2d {
         if (m_font == nullptr) {
             m_font = c2d_renderer->getFont();
         }
-        ensureGeometryUpdate();
     }
 
 
@@ -486,6 +485,7 @@ namespace c2d {
         float maxY = 0.f;
         uint32_t prevChar = 0;
 
+        //printf("Text::ensureGeometryUpdate: %s\n", m_string.c_str());
         std::vector<std::string> words = Utility::split(m_string, " ");
         for (size_t i = 0; i < words.size(); i++) {
 
@@ -642,6 +642,11 @@ namespace c2d {
 
             m_vertices.update();
             m_outlineVertices.update();
+
+            if (m_font->isDirtyTex()) {
+                m_font->getTexture(m_characterSize)->unlock();
+                m_font->setDirtyTex(false);
+            }
         }
     }
 

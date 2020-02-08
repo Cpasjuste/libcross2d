@@ -240,6 +240,14 @@ namespace c2d {
 
         const std::string &getPath() const;
 
+        bool isDirtyTex() {
+            return m_dirty_tex;
+        }
+
+        void setDirtyTex(bool dirty) {
+            m_dirty_tex = dirty;
+        }
+
         ////////////////////////////////////////////////////////////
         /// \brief Overload of assignment operator
         ///
@@ -344,6 +352,7 @@ namespace c2d {
         Texture::Filter m_filtering = Texture::Filter::Linear;
         Vector2f offset;
         std::string m_font_path;
+        mutable bool m_dirty_tex = false;
 
 #ifdef SFML_SYSTEM_ANDROID
         void*                      m_stream; ///< Asset file streamer (if loaded from file)

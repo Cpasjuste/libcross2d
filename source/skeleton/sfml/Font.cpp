@@ -213,6 +213,7 @@ namespace c2d {
             return it->second;
         } else {
             // Not found: we have to load it
+            //printf("GLYPH: %c - %i - %f\n", (char) codePoint, characterSize, outlineThickness);
             Glyph glyph = loadGlyph(codePoint, characterSize, bold, outlineThickness);
             return glyphs.insert(std::make_pair(key, glyph)).first->second;
         }
@@ -561,7 +562,7 @@ namespace c2d {
                 dstPixels += pitch;
             }
 
-            page.texture->unlock();
+            m_dirty_tex = true;
         }
 
         // Delete the FT glyph
@@ -630,7 +631,8 @@ namespace c2d {
                         src += src_pitch;
                         dst += dst_pitch;
                     }
-                    texture->unlock();
+
+                    m_dirty_tex = true;
 
                     //printf("Font:: deleting old tex (%p)\n", page.texture);
                     delete (page.texture);
@@ -717,7 +719,6 @@ namespace c2d {
                 *pixel++ = 255;
             }
         }
-        texture->unlock();
     }
 
     Font::Page::~Page() {

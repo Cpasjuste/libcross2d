@@ -13,22 +13,22 @@ namespace c2d {
 
     public:
 
-        GLTexture(const std::string &path);
+        explicit GLTexture(const std::string &path);
 
         GLTexture(const unsigned char *buffer, int bufferSize);
 
-        GLTexture(const Vector2f &size = Vector2f(0, 0),
-                  Format format = Format::RGBA8);
+        explicit GLTexture(const Vector2f &size = Vector2f(0, 0),
+                           Format format = Format::RGBA8);
 
-        ~GLTexture();
+        ~GLTexture() override;
 
-        int save(const std::string &path);
+        int save(const std::string &path) override;
 
-        int lock(FloatRect *rect, void **pixels, int *pitch);
+        int lock(FloatRect *rect, void **pixels, int *pitch) override;
 
-        void unlock();
+        void unlock() override;
 
-        void setFilter(Filter filter);
+        void setFilter(Filter filter) override;
 
         GLuint texID = 0;
 
