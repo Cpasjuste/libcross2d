@@ -25,22 +25,28 @@ namespace c2d {
 
         void hide();
 
-        void setFillColor(const Color &color) override;
+        void setSelectedColor(const c2d::Color &fillColor, const c2d::Color &outlineColor);
 
-        void setOutlineColor(const Color &color) override;
+        void setNotSelectedColor(const c2d::Color &fillColor, const c2d::Color &outlineColor);
 
         c2d::Text *getTitleText();
 
         c2d::Text *getMessageText();
 
+        c2d::Button *getButton(int index);
+
     private:
 
+        c2d::Input *input = nullptr;
         c2d::Text *title = nullptr;
         c2d::Text *message = nullptr;
         c2d::Text *timeout = nullptr;
         char timeout_str[16];
         c2d::Button *buttons[2];
-        c2d::Input *input = nullptr;
+        c2d::Color selectedFillColor = Color::White;
+        c2d::Color selectedOutlineColor = Color::Red;
+        c2d::Color notSelectedFillColor = Color::White;
+        c2d::Color notSelectedOutlineColor = Color::White;
     };
 }
 

@@ -6,65 +6,48 @@
 
 using namespace c2d;
 
-MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *input,
+MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *ipt,
                        c2d::Font *font, int fontSize) : RectangleShape(rect) {
 
-    this->input = input;
-    float line_height = font->getLineSpacing((unsigned int) fontSize) + 16;
+    input = ipt;
 
-    this->title = new Text("TITLE", (unsigned int) ((float) fontSize * 1.5f), font);
-    this->title->setOutlineColor(Color::Black);
-    this->title->setOutlineThickness(1);
-    this->title->setSize(getSize().x - 16, (float) fontSize * 1.5f);
-    this->title->setPosition(getSize().x / 2, line_height);
-    this->title->setOrigin(Origin::Center);
-    add(this->title);
+    title = new Text("TITLE", fontSize, font);
+    title->setPosition(16, 16);
+    title->setSizeMax(rect.width - 64, (float) fontSize + 4);
+    title->setOutlineColor(Color::Black);
+    title->setOutlineThickness(2);
+    add(title);
 
-    this->message = new Text("MESSAGE", (unsigned int) fontSize, font);
-    this->message->setOutlineColor(Color::Black);
-    this->message->setOutlineThickness(1);
-    this->message->setSize(getSize().x - 16, (float) fontSize);
-    this->message->setPosition(getSize().x / 2, getSize().y * 0.45f);
-    this->message->setOrigin(Origin::Center);
-    this->message->setLineSpacingModifier(4);
-    add(this->message);
+    message = new Text("MESSAGE", fontSize, font);
+    message->setPosition(16, (float) fontSize + 64);
+    message->setSizeMax(rect.width - 32, rect.height * 0.6f);
+    message->setLineSpacingModifier(6);
+    message->setOverflow(Text::Overflow::NewLine);
+    message->setOutlineColor(Color::Black);
+    message->setOutlineThickness(2);
+    add(message);
 
     for (int i = 0; i < 2; i++) {
         buttons[i] = new Button(
-                FloatRect(0, 0, getSize().x / 4, getSize().y / 6),
+                FloatRect(0, 0, rect.width / 4, rect.height / 6),
                 font, fontSize, "BUTTON");
-        buttons[i]->setOutlineThickness(1);
+        buttons[i]->setOutlineThickness(2);
         buttons[i]->setOrigin(Origin::Top);
+        buttons[i]->setFillColor(getOutlineColor());
+        buttons[i]->setOutlineColor(Color::White);
         add(buttons[i]);
     }
 
-    this->timeout = new Text("9", (unsigned int) fontSize, font);
-    this->timeout->setOutlineColor(Color::Black);
-    this->timeout->setOutlineThickness(1);
-    this->timeout->setSize(getSize().x - 16, 0);
-    this->timeout->setPosition(getSize().x / 2, getSize().y - buttons[0]->getSize().y - 16);
-    this->timeout->setOrigin(Origin::Center);
-    this->timeout->setLineSpacingModifier(4);
-    add(this->timeout);
+    timeout = new Text("9", fontSize, font);
+    timeout->setOutlineColor(Color::Black);
+    timeout->setOutlineThickness(1);
+    timeout->setSize(rect.width - 16, 0);
+    timeout->setPosition(rect.width / 2, rect.height - buttons[0]->getSize().y - 16);
+    timeout->setOrigin(Origin::Center);
+    timeout->setLineSpacingModifier(4);
+    add(timeout);
 
-    this->setVisibility(Visibility::Hidden);
-}
-
-void MessageBox::setFillColor(const Color &color) {
-    Shape::setFillColor(color);
-    Color c = {(uint8_t) (color.r * 0.7f),
-               (uint8_t) (color.b * 0.7f),
-               (uint8_t) (color.b * 0.7f),
-               (uint8_t) (color.a)};
-    buttons[0]->setFillColor(c);
-    buttons[1]->setFillColor(c);
-}
-
-void MessageBox::setOutlineColor(const Color &color) {
-    Shape::setOutlineColor(color);
-    title->setFillColor(color);
-    buttons[0]->setOutlineColor(color);
-    buttons[1]->setOutlineColor(color);
+    setVisibility(Visibility::Hidden);
 }
 
 int MessageBox::show(const std::string &txt, const std::string &msg,
@@ -75,17 +58,21 @@ int MessageBox::show(const std::string &txt, const std::string &msg,
     int key = 0;
     C2DClock clock;
 
-    this->title->setString(txt);
-    this->title->setOrigin(Origin::Center);
-    this->message->setString(msg);
-    this->message->setOrigin(Origin::Center);
-    this->timeout->setVisibility(t > 0 ? Visibility::Visible : Visibility::Hidden);
+    title->setString(txt);
+    message->setString(msg);
+    timeout->setVisibility(t > 0 ? Visibility::Visible : Visibility::Hidden);
+
+    buttons[0]->getText()->setFillColor(selectedOutlineColor);
+    buttons[0]->setFillColor(selectedFillColor);
+    buttons[0]->setOutlineColor(selectedOutlineColor);
+    buttons[0]->setVisibility(Visibility::Hidden);
+    buttons[1]->getText()->setFillColor(notSelectedOutlineColor);
+    buttons[1]->setFillColor(notSelectedFillColor);
+    buttons[1]->setOutlineColor(notSelectedOutlineColor);
+    buttons[1]->setVisibility(Visibility::Hidden);
 
     // buttons
     if (!buttonLeftText.empty() || !buttonRightText.empty()) {
-
-        buttons[0]->setFillColor(getOutlineColor());
-        buttons[0]->setOutlineColor(Color::White);
 
         if (buttonRightText.empty()) {
             buttons[0]->setText(buttonLeftText);
@@ -97,11 +84,12 @@ int MessageBox::show(const std::string &txt, const std::string &msg,
             buttons[0]->setText(buttonLeftText);
             buttons[0]->setPosition((getSize().x / 3) - 8,
                                     getSize().y - buttons[0]->getSize().y - 16);
+            buttons[0]->getText()->setFillColor(Color::Red);
             buttons[0]->setVisibility(Visibility::Visible);
+
             buttons[1]->setText(buttonRightText);
             buttons[1]->setPosition(((getSize().x / 3) * 2) + 8,
                                     getSize().y - buttons[1]->getSize().y - 16);
-            buttons[1]->setFillColor(getFillColor());
             buttons[1]->setVisibility(Visibility::Visible);
             choices = 2;
         }
@@ -128,8 +116,8 @@ int MessageBox::show(const std::string &txt, const std::string &msg,
                     break;
                 }
                 snprintf(timeout_str, 16, "%i", t - elapsed);
-                this->timeout->setString(timeout_str);
-                this->timeout->setOrigin(Origin::Center);
+                timeout->setString(timeout_str);
+                timeout->setOrigin(Origin::Center);
             }
 
             if (pressed) {
@@ -159,10 +147,21 @@ int MessageBox::show(const std::string &txt, const std::string &msg,
                         break;
                     }
 
-                    setFillColor(getFillColor());
-                    setOutlineColor(getOutlineColor());
-                    buttons[index]->setFillColor(getOutlineColor());
-                    buttons[index]->setOutlineColor(Color::White);
+                    if (index == 0) {
+                        buttons[0]->getText()->setFillColor(selectedOutlineColor);
+                        buttons[0]->setFillColor(selectedFillColor);
+                        buttons[0]->setOutlineColor(selectedOutlineColor);
+                        buttons[1]->getText()->setFillColor(notSelectedOutlineColor);
+                        buttons[1]->setFillColor(notSelectedFillColor);
+                        buttons[1]->setOutlineColor(notSelectedOutlineColor);
+                    } else {
+                        buttons[0]->getText()->setFillColor(notSelectedOutlineColor);
+                        buttons[0]->setFillColor(notSelectedFillColor);
+                        buttons[0]->setOutlineColor(notSelectedOutlineColor);
+                        buttons[1]->getText()->setFillColor(selectedOutlineColor);
+                        buttons[1]->setFillColor(selectedFillColor);
+                        buttons[1]->setOutlineColor(selectedOutlineColor);
+                    }
                 }
             }
 
@@ -186,10 +185,24 @@ void MessageBox::hide() {
     setVisibility(Visibility::Hidden);
 }
 
+void MessageBox::setSelectedColor(const c2d::Color &fillColor, const c2d::Color &outlineColor) {
+    selectedFillColor = fillColor;
+    selectedOutlineColor = outlineColor;
+}
+
+void MessageBox::setNotSelectedColor(const c2d::Color &fillColor, const c2d::Color &outlineColor) {
+    notSelectedFillColor = fillColor;
+    notSelectedOutlineColor = outlineColor;
+}
+
 c2d::Text *MessageBox::getTitleText() {
     return title;
 }
 
 c2d::Text *MessageBox::getMessageText() {
     return message;
+}
+
+c2d::Button *MessageBox::getButton(int index) {
+    return buttons[index];
 }
