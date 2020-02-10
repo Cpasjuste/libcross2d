@@ -43,6 +43,8 @@ namespace c2d {
 
         virtual config::Option *getSelection();
 
+        virtual void reset();
+
         virtual void setLoopEnable(bool enableLoop);
 
         ///

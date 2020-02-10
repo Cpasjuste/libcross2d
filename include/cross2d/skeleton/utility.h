@@ -39,6 +39,8 @@ namespace c2d {
         static std::string removeLastSlash(const std::string &string);
 
         static std::string removeExt(const std::string &str);
+
+        static std::string baseName(const std::string &path);
     };
 
 }

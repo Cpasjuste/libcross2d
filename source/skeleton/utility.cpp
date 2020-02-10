@@ -3,6 +3,7 @@
 //
 
 #include <algorithm>
+
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -139,4 +140,15 @@ std::string Utility::toString(int value) {
     char str[16];
     snprintf(str, 16, "%i", value);
     return str;
+}
+
+std::string Utility::baseName(const std::string &path) {
+    std::string name = path;
+    if (path.size() > 1) {
+        const size_t idx = path.find_last_of('/');
+        if (idx != std::string::npos) {
+            name.erase(0, idx + 1);
+        }
+    }
+    return name;
 }

@@ -149,3 +149,9 @@ config::Option *ConfigBox::navigate(const ConfigBox::Navigation &navigation) {
 
     return selection;
 }
+
+void ConfigBox::reset() {
+    index = 0;
+    listBoxLeft->setSelection(index);
+    listBoxRight->setSelection(index);
+}

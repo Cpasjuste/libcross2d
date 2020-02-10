@@ -11,6 +11,8 @@
 #include "texture.h"
 #include "utility.h"
 
+#define C2D_IO_COPY_BUFFER_SIZE (256 * 1024)
+
 namespace c2d {
 
     class Io {
@@ -67,17 +69,6 @@ namespace c2d {
             return getHomePath();
         }
 
-        virtual std::string baseName(const std::string &path) {
-            std::string name = path;
-            if (path.size() > 1) {
-                const size_t idx = path.find_last_of('/');
-                if (idx != std::string::npos) {
-                    name.erase(0, idx + 1);
-                }
-            }
-            return name;
-        }
-
         virtual File getFile(const std::string &path) {
             return {};
         }
@@ -98,12 +89,16 @@ namespace c2d {
             return false;
         };
 
-        virtual bool remove(const std::string &path) {
+        virtual bool removeFile(const std::string &path) {
+            return false;
+        };
+
+        virtual bool removeDir(const std::string &path) {
             return false;
         };
 
         virtual bool copy(const std::string &src, const std::string &dst,
-                          const std::function<void(File, File, int)> &callback = nullptr) {
+                          const std::function<void(File, File, float)> &callback = nullptr) {
             return false;
         }
 

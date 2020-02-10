@@ -13,14 +13,14 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *ipt,
 
     title = new Text("TITLE", fontSize, font);
     title->setPosition(16, 16);
-    title->setSizeMax(rect.width - 64, (float) fontSize + 4);
+    title->setSizeMax(rect.width - (float) fontSize * 2, (float) fontSize + 4);
     title->setOutlineColor(Color::Black);
     title->setOutlineThickness(2);
     add(title);
 
     message = new Text("MESSAGE", fontSize, font);
     message->setPosition(16, (float) fontSize + 64);
-    message->setSizeMax(rect.width - 32, rect.height * 0.6f);
+    message->setSizeMax(rect.width - (float) fontSize * 2, rect.height * 0.6f);
     message->setLineSpacingModifier(6);
     message->setOverflow(Text::Overflow::NewLine);
     message->setOutlineColor(Color::Black);

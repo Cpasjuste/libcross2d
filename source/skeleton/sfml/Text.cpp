@@ -491,12 +491,16 @@ namespace c2d {
 
             // handle maxSize.x in NewLine mode
             if (m_overflow == NewLine && m_max_size.x > 0) {
-                // calculate word width
+                // calculate word width (approximated width for speed)
+#if 1
+                auto width = (float) (words[i].size() * m_characterSize);
+#else
                 float width = 0;
                 for (auto &c : words[i]) {
                     const Glyph &g = m_font->getGlyph(c, m_characterSize, bold, m_outlineThickness);
                     width += g.bounds.width;
                 }
+#endif
                 if ((x + width) * getScale().x > m_max_size.x) {
                     y += vspace;
                     x = 0;
@@ -516,11 +520,9 @@ namespace c2d {
                 x += m_font->getKerning(prevChar, curChar, m_characterSize);
                 prevChar = curChar;
 
-                // handle maxSize.x in Clamp mode
-                if (m_overflow == Clamp) {
-                    if (m_max_size.x > 0 && x * getScale().x > m_max_size.x) {
-                        break;
-                    }
+                // handle maxSize.x
+                if (m_max_size.x > 0 && x * getScale().x > m_max_size.x) {
+                    break;
                 }
 
                 // handle maxSize.y

@@ -44,8 +44,45 @@ bool DCIo::create(const std::string &path) {
     return fs_mkdir(path.c_str()) == 0;
 }
 
-bool DCIo::remove(const std::string &path) {
-    return fs_unlink(path.c_str()) == 0;
+bool DCIo::removeFile(const std::string &path) {
+    return unlink(path.c_str()) == 0;
+}
+
+bool DCIo::removeDir(const std::string &path) {
+
+    struct dirent *ent;
+    DIR *dir;
+
+    File file = getFile(path);
+    if (file.type != Type::Directory) {
+        return false;
+    }
+
+    if ((dir = opendir(file.path.c_str())) != nullptr) {
+        while ((ent = readdir(dir)) != nullptr) {
+
+            if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
+                continue;
+
+            std::string newPath =
+                    file.path + (Utility::endsWith(file.path, "/") ? "" : "/") + std::string(ent->d_name);
+
+            if (getType(newPath) == Type::Directory) {
+                if (!removeDir(newPath)) {
+                    closedir(dir);
+                    return false;
+                }
+            } else {
+                if (!removeFile(newPath)) {
+                    closedir(dir);
+                    return false;
+                }
+            }
+        }
+        closedir(dir);
+    }
+
+    return rmdir(path.c_str()) == 0;
 }
 
 size_t DCIo::getSize(const std::string &file) {
@@ -210,10 +247,112 @@ Io::File DCIo::findFile(const std::string &path,
     return file;
 }
 
-bool DCIo::copyFile(const File &src, const File &dst,
-                    const std::function<void(File, File, int)> &callback) {
+bool DCIo::copy(const std::string &src, const std::string &dst,
+                const std::function<void(File, File, float)> &callback) {
+
+    bool res = _copy(src, dst, callback);
+
+    if (callback != nullptr) {
+        callback(File{}, File{}, res ? 2 : -1);
+    }
+
+    return res;
+}
+
+bool DCIo::_copy(const std::string &src, const std::string &dst,
+                 const std::function<void(File, File, float)> &callback) {
+
+    File srcFile;
+    File dstFile;
+    struct dirent *ent;
+    DIR *dir;
+
+    if (src == dst) {
+        if (callback != nullptr) {
+            callback(srcFile, dstFile, -1);
+        }
+        return false;
+    }
+
+    // The destination is a sub-folder of the source folder
+    size_t size = src.size();
+    if (src.compare(0, size, dst) == 0
+        && (dst[size] == '/' || dst[size - 1] == '/')) {
+        if (callback != nullptr) {
+            callback(srcFile, dstFile, -1);
+        }
+        return false;
+    }
+
+    srcFile = getFile(src);
+    dstFile = srcFile;
+    dstFile.name = Utility::baseName(src);
+    dstFile.path = dst;
+    if (!Utility::endsWith(dstFile.path, "/")) {
+        dstFile.path += "/";
+    }
+    dstFile.path += dstFile.name;
+
+    if (srcFile.type == Type::File) {
+        bool res = _copyFile(srcFile, dstFile, callback);
+        if (callback != nullptr) {
+            callback(srcFile, dstFile, 2);
+        }
+        return res;
+    }
+
+    if (!create(dstFile.path)) {
+        if (callback != nullptr) {
+            callback(srcFile, dstFile, -1);
+        }
+        return false;
+    }
+
+    if ((dir = opendir(srcFile.path.c_str())) != nullptr) {
+        while ((ent = readdir(dir)) != nullptr) {
+
+            if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
+                continue;
+
+            std::string newSrcPath =
+                    srcFile.path + (Utility::endsWith(dstFile.path, "/") ? "" : "/") + std::string(ent->d_name);
+            File newSrcFile = getFile(newSrcPath);
+            File newDstFile = newSrcFile;
+            newDstFile.path = dstFile.path;
+
+            if (newSrcFile.type == Type::File) {
+                newDstFile.path += (Utility::endsWith(dstFile.path, "/") ? "" : "/") + std::string(ent->d_name);
+                bool success = _copyFile(newSrcFile, newDstFile, callback);
+                if (!success) {
+                    if (callback != nullptr) {
+                        callback(srcFile, dstFile, -1);
+                    }
+                    closedir(dir);
+                    return false;
+                }
+            } else {
+                bool success = _copy(newSrcFile.path, newDstFile.path, callback);
+                if (!success) {
+                    if (callback != nullptr) {
+                        callback(srcFile, dstFile, -1);
+                    }
+                    closedir(dir);
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+bool DCIo::_copyFile(const File &src, const File &dst,
+                     const std::function<void(File, File, float)> &callback) {
 
     if (src.path == dst.path) {
+        if (callback != nullptr) {
+            callback(src, dst, -1);
+        }
         return false;
     }
 
@@ -221,24 +360,36 @@ bool DCIo::copyFile(const File &src, const File &dst,
     size_t len = src.path.size();
     if (src.path.compare(0, len, dst.path) == 0
         && (dst.path[len] == '/' || dst.path[len - 1] == '/')) {
+        if (callback != nullptr) {
+            callback(src, dst, -1);
+        }
         return false;
     }
 
     FILE *srcFd = fopen(src.path.c_str(), "r");
     if (srcFd == nullptr) {
+        if (callback != nullptr) {
+            callback(src, dst, -1);
+        }
         return false;
     }
 
     FILE *dstFd = fopen(dst.path.c_str(), "w");
     if (dstFd == nullptr) {
         fclose(srcFd);
+        if (callback != nullptr) {
+            callback(src, dst, -1);
+        }
         return false;
     }
 
-    auto buf = (unsigned char *) malloc(32 * 1024);
+    auto buf = (unsigned char *) malloc(C2D_IO_COPY_BUFFER_SIZE);
     if (buf == nullptr) {
         fclose(srcFd);
         fclose(dstFd);
+        if (callback != nullptr) {
+            callback(src, dst, -1);
+        }
         return false;
     }
 
@@ -247,87 +398,28 @@ bool DCIo::copyFile(const File &src, const File &dst,
     }
 
     size_t readBytes, writeBytes, totalBytes = 0;
-    while ((readBytes = fread(buf, 1, 32 * 1024, srcFd)) > 0) {
+    while ((readBytes = fread(buf, 1, C2D_IO_COPY_BUFFER_SIZE, srcFd)) > 0) {
         writeBytes = fwrite(buf, 1, readBytes, dstFd);
         if (writeBytes < 0) {
             free(buf);
             fclose(srcFd);
             fclose(dstFd);
+            if (callback != nullptr) {
+                callback(src, dst, -1);
+            }
             return false;
         }
 
         if (callback != nullptr) {
             totalBytes += writeBytes;
-            float progress = ((float) totalBytes / (float) src.size) * 100;
-            callback(src, dst, (int) progress);
+            float progress = (float) totalBytes / (float) src.size;
+            callback(src, dst, progress);
         }
     }
 
     free(buf);
     fclose(srcFd);
     fclose(dstFd);
-
-    return true;
-}
-
-bool DCIo::copy(const std::string &src, const std::string &dst,
-                const std::function<void(File, File, int)> &callback) {
-
-    File srcFile;
-    File dstFile;
-    struct dirent *ent;
-    DIR *dir;
-
-    if (src == dst) {
-        return false;
-    }
-
-    // The destination is a sub-folder of the source folder
-    size_t size = src.size();
-    if (src.compare(0, size, dst) == 0
-        && (dst[size] == '/' || dst[size - 1] == '/')) {
-        return false;
-    }
-
-    srcFile = getFile(src);
-    dstFile = srcFile;
-    dstFile.name = baseName(dst);
-    dstFile.path = dst;
-
-    if (srcFile.type == Type::File) {
-        return copyFile(srcFile, dstFile, callback);
-    }
-
-    create(dstFile.path);
-
-    if ((dir = opendir(srcFile.path.c_str())) != nullptr) {
-        while ((ent = readdir(dir)) != nullptr) {
-
-            if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
-                continue;
-
-            size_t len = srcFile.path.size() + strlen(ent->d_name) + 2;
-            char new_src_path[len];
-            memset(new_src_path, 0, len);
-            snprintf(new_src_path, MAX_PATH, "%s%s%s",
-                     srcFile.path.c_str(), Utility::endsWith(srcFile.path, "/") ? "" : "/", ent->d_name);
-
-            len = dstFile.path.size() + strlen(ent->d_name) + 2;
-            char new_dst_path[len];
-            memset(new_dst_path, 0, len);
-            snprintf(new_dst_path, MAX_PATH, "%s%s%s",
-                     dstFile.path.c_str(), Utility::endsWith(dstFile.path, "/") ? "" : "/", ent->d_name);
-
-            File newSrcFile = getFile(new_src_path);
-            File newDstFile = newSrcFile;
-            newDstFile.path = new_dst_path;
-            if (newSrcFile.type == Type::File) {
-                copyFile(newSrcFile, newDstFile, callback);
-            } else {
-                copy(new_src_path, new_dst_path, callback);
-            }
-        }
-    }
 
     return true;
 }
