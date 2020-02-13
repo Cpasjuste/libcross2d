@@ -13,6 +13,8 @@ namespace c2d {
 
     public:
 
+        Io::File getFile(const std::string &path) override;
+
         bool exist(const std::string &path) override;
 
         size_t getSize(const std::string &file) override;
@@ -46,7 +48,7 @@ namespace c2d {
     private:
 
         bool _copy(const std::string &src, const std::string &dst,
-                          const std::function<void(File, File, float)> &callback = nullptr);
+                   const std::function<void(File, File, float)> &callback = nullptr);
 
         static bool _copyFile(const File &src, const File &dst,
                               const std::function<void(File, File, float)> &callback = nullptr);

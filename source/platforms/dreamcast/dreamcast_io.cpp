@@ -23,6 +23,62 @@ std::string DCIo::getHomePath() {
     return Io::getHomePath();
 }
 
+Io::File DCIo::getFile(const std::string &path) {
+
+    File file{};
+
+    file_t f = fs_open(path.c_str(), O_DIR | O_RDONLY);
+    if (f == FILEHND_INVALID) {
+        f = fs_open(path.c_str(), O_RDONLY);
+        if (f == FILEHND_INVALID) {
+            return file;
+        }
+        file.type = Type::File;
+    } else {
+        file.type = Type::Directory;
+    }
+
+    file.name = Utility::baseName(path);
+    file.path = path;
+    file.size = fs_total(f);
+    fs_close(f);
+
+    return file;
+}
+
+size_t DCIo::getSize(const std::string &file) {
+
+    file_t f = fs_open(file.c_str(), O_RDONLY);
+    if (f == FILEHND_INVALID) {
+        return -1;
+    }
+
+    size_t size = fs_total(f);
+    fs_close(f);
+
+    return size;
+}
+
+Io::Type DCIo::getType(const std::string &file) {
+
+    Io::Type type;
+
+    file_t f = fs_open(file.c_str(), O_DIR | O_RDONLY);
+    if (f == FILEHND_INVALID) {
+        f = fs_open(file.c_str(), O_RDONLY);
+        if (f == FILEHND_INVALID) {
+            return Type::Unknown;
+        }
+        type = Type::File;
+    } else {
+        type = Type::Directory;
+    }
+
+    fs_close(f);
+
+    return type;
+}
+
 bool DCIo::exist(const std::string &path) {
 
     file_t f = fs_open(path.c_str(), O_RDONLY);
@@ -45,69 +101,46 @@ bool DCIo::create(const std::string &path) {
 }
 
 bool DCIo::removeFile(const std::string &path) {
-    return unlink(path.c_str()) == 0;
+    return fs_unlink(path.c_str()) == 0;
 }
 
 bool DCIo::removeDir(const std::string &path) {
 
-    struct dirent *ent;
-    DIR *dir;
+    dirent_t *ent;
+    file_t fd;
 
     File file = getFile(path);
     if (file.type != Type::Directory) {
         return false;
     }
 
-    if ((dir = opendir(file.path.c_str())) != nullptr) {
-        while ((ent = readdir(dir)) != nullptr) {
+    if ((fd = fs_open(file.path.c_str(), O_RDONLY | O_DIR)) != FILEHND_INVALID) {
+        while ((ent = fs_readdir(fd)) != nullptr) {
 
-            if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
+            if (strcmp(ent->name, ".") == 0 || strcmp(ent->name, "..") == 0)
                 continue;
 
             std::string newPath =
-                    file.path + (Utility::endsWith(file.path, "/") ? "" : "/") + std::string(ent->d_name);
+                    file.path + (Utility::endsWith(file.path, "/") ? "" : "/") + std::string(ent->name);
 
             if (getType(newPath) == Type::Directory) {
                 if (!removeDir(newPath)) {
-                    closedir(dir);
+                    fs_close(fd);
                     return false;
                 }
             } else {
                 if (!removeFile(newPath)) {
-                    closedir(dir);
+                    fs_close(fd);
                     return false;
                 }
             }
         }
-        closedir(dir);
+        fs_close(fd);
+    } else {
+        return false;
     }
 
-    return rmdir(path.c_str()) == 0;
-}
-
-size_t DCIo::getSize(const std::string &file) {
-
-    file_t f = fs_open(file.c_str(), O_RDONLY);
-    if (f == FILEHND_INVALID) {
-        return -1;
-    }
-
-    size_t size = fs_total(f);
-    fs_close(f);
-
-    return size;
-}
-
-Io::Type DCIo::getType(const std::string &file) {
-
-    file_t f = fs_open(file.c_str(), O_DIR | O_RDONLY);
-    if (f == FILEHND_INVALID) {
-        return Type::File;
-    }
-
-    fs_close(f);
-
-    return Type::Directory;
+    return fs_rmdir(path.c_str()) == 0;
 }
 
 char *DCIo::read(const std::string &file) {
@@ -264,8 +297,8 @@ bool DCIo::_copy(const std::string &src, const std::string &dst,
 
     File srcFile;
     File dstFile;
-    struct dirent *ent;
-    DIR *dir;
+    dirent_t *ent;
+    file_t fd;
 
     if (src == dst) {
         if (callback != nullptr) {
@@ -308,26 +341,26 @@ bool DCIo::_copy(const std::string &src, const std::string &dst,
         return false;
     }
 
-    if ((dir = opendir(srcFile.path.c_str())) != nullptr) {
-        while ((ent = readdir(dir)) != nullptr) {
+    if ((fd = fs_open(srcFile.path.c_str(), O_RDONLY | O_DIR)) != FILEHND_INVALID) {
+        while ((ent = fs_readdir(fd)) != nullptr) {
 
-            if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
+            if (strcmp(ent->name, ".") == 0 || strcmp(ent->name, "..") == 0)
                 continue;
 
             std::string newSrcPath =
-                    srcFile.path + (Utility::endsWith(dstFile.path, "/") ? "" : "/") + std::string(ent->d_name);
+                    srcFile.path + (Utility::endsWith(dstFile.path, "/") ? "" : "/") + std::string(ent->name);
             File newSrcFile = getFile(newSrcPath);
             File newDstFile = newSrcFile;
             newDstFile.path = dstFile.path;
 
             if (newSrcFile.type == Type::File) {
-                newDstFile.path += (Utility::endsWith(dstFile.path, "/") ? "" : "/") + std::string(ent->d_name);
+                newDstFile.path += (Utility::endsWith(dstFile.path, "/") ? "" : "/") + std::string(ent->name);
                 bool success = _copyFile(newSrcFile, newDstFile, callback);
                 if (!success) {
                     if (callback != nullptr) {
                         callback(srcFile, dstFile, -1);
                     }
-                    closedir(dir);
+                    fs_close(fd);
                     return false;
                 }
             } else {
@@ -336,11 +369,14 @@ bool DCIo::_copy(const std::string &src, const std::string &dst,
                     if (callback != nullptr) {
                         callback(srcFile, dstFile, -1);
                     }
-                    closedir(dir);
+                    fs_close(fd);
                     return false;
                 }
             }
         }
+        fs_close(fd);
+    } else {
+        return false;
     }
 
     return true;
@@ -366,17 +402,17 @@ bool DCIo::_copyFile(const File &src, const File &dst,
         return false;
     }
 
-    FILE *srcFd = fopen(src.path.c_str(), "r");
-    if (srcFd == nullptr) {
+    file_t srcFd = fs_open(src.path.c_str(), O_RDONLY);
+    if (srcFd == FILEHND_INVALID) {
         if (callback != nullptr) {
             callback(src, dst, -1);
         }
         return false;
     }
 
-    FILE *dstFd = fopen(dst.path.c_str(), "w");
-    if (dstFd == nullptr) {
-        fclose(srcFd);
+    file_t dstFd = fs_open(dst.path.c_str(), O_WRONLY);
+    if (dstFd == FILEHND_INVALID) {
+        fs_close(srcFd);
         if (callback != nullptr) {
             callback(src, dst, -1);
         }
@@ -385,8 +421,8 @@ bool DCIo::_copyFile(const File &src, const File &dst,
 
     auto buf = (unsigned char *) malloc(C2D_IO_COPY_BUFFER_SIZE);
     if (buf == nullptr) {
-        fclose(srcFd);
-        fclose(dstFd);
+        fs_close(srcFd);
+        fs_close(dstFd);
         if (callback != nullptr) {
             callback(src, dst, -1);
         }
@@ -398,12 +434,12 @@ bool DCIo::_copyFile(const File &src, const File &dst,
     }
 
     size_t readBytes, writeBytes, totalBytes = 0;
-    while ((readBytes = fread(buf, 1, C2D_IO_COPY_BUFFER_SIZE, srcFd)) > 0) {
-        writeBytes = fwrite(buf, 1, readBytes, dstFd);
+    while ((readBytes = fs_read(srcFd, buf, C2D_IO_COPY_BUFFER_SIZE)) > 0) {
+        writeBytes = fs_write(dstFd, buf, readBytes);
         if (writeBytes < 0) {
             free(buf);
-            fclose(srcFd);
-            fclose(dstFd);
+            fs_close(srcFd);
+            fs_close(dstFd);
             if (callback != nullptr) {
                 callback(src, dst, -1);
             }
@@ -418,8 +454,8 @@ bool DCIo::_copyFile(const File &src, const File &dst,
     }
 
     free(buf);
-    fclose(srcFd);
-    fclose(dstFd);
+    fs_close(srcFd);
+    fs_close(dstFd);
 
     return true;
 }

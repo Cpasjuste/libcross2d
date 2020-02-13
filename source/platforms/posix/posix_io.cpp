@@ -104,6 +104,8 @@ bool POSIXIo::removeDir(const std::string &path) {
             }
         }
         closedir(dir);
+    } else {
+        return false;
     }
 
     return rmdir(path.c_str()) == 0;
@@ -357,6 +359,9 @@ bool POSIXIo::_copy(const std::string &src, const std::string &dst,
                 }
             }
         }
+        closedir(dir);
+    } else {
+        return false;
     }
 
     return true;
