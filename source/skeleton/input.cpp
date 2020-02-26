@@ -49,7 +49,7 @@ int Input::getRepeatDelay() {
 int Input::clear(int player) {
     while (true) {
         Player p = update(0)[player];
-        if (!p.enabled || !p.keys || p.keys & EV_QUIT) {
+        if (!p.enabled || p.keys == 0 || p.keys & EV_QUIT) {
             break;
         }
     }

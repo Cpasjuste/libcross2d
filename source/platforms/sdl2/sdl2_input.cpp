@@ -75,7 +75,7 @@ SDL2Input::~SDL2Input() {
 int SDL2Input::waitButton(int player) {
 
     SDL_Event event = {};
-    while (SDL_PollEvent(&event)) {
+    while (SDL_PollEvent(&event) != 0) {
         if (event.type == SDL_JOYBUTTONDOWN) {
             return event.jbutton.button;
         } else if (event.type == SDL_KEYDOWN) {
@@ -83,7 +83,7 @@ int SDL2Input::waitButton(int player) {
         }
     }
 
-    return -1;
+    return 0;
 }
 
 Input::Player *SDL2Input::update(int rotate) {

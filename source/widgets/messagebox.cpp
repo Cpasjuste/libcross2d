@@ -55,7 +55,7 @@ int MessageBox::show(const std::string &txt, const std::string &msg,
                      int *pressed, int t) { // if "pressed" is supplied, pressed is set to the pressed key..
 
     int ret = 0, index = 0, choices = 0;
-    int key = 0;
+    unsigned int key = 0;
     C2DClock clock;
 
     title->setString(txt);
@@ -120,9 +120,9 @@ int MessageBox::show(const std::string &txt, const std::string &msg,
                 timeout->setOrigin(Origin::Center);
             }
 
-            if (pressed) {
+            if (pressed != nullptr) {
                 key = input->waitButton();
-                if (key > -1) {
+                if (key != 0) {
                     setVisibility(Visibility::Hidden);
                     break;
                 }
@@ -168,8 +168,8 @@ int MessageBox::show(const std::string &txt, const std::string &msg,
             c2d_renderer->flip(true, false);
         }
 
-        if (pressed) {
-            *pressed = key;
+        if (pressed != nullptr) {
+            *pressed = (int) key;
         }
 
         input->clear();
