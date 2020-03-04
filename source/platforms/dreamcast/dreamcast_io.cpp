@@ -143,10 +143,10 @@ bool DCIo::removeDir(const std::string &path) {
     return fs_rmdir(path.c_str()) == 0;
 }
 
-char *DCIo::read(const std::string &file) {
+char *DCIo::read(const std::string &file, size_t offset, size_t size) {
 
     file_t fd;
-    ssize_t size;
+    size_t file_size;
     char *buffer = nullptr;
 
     fd = fs_open(file.c_str(), O_RDONLY);
@@ -155,10 +155,22 @@ char *DCIo::read(const std::string &file) {
         return nullptr;
     }
 
-    size = fs_total(fd);
-    buffer = (char *) malloc(size);
+    file_size = fs_total(fd);
 
-    if (fs_read(fd, buffer, size) != size) {
+    if (size <= 0) {
+        size = file_size;
+    }
+
+    if (offset + size > file_size) {
+        size = file_size - offset;
+    }
+
+    if (offset > 0) {
+        fs_seek(fd, offset, SEEK_SET);
+    }
+
+    buffer = (char *) malloc(size);
+    if (fs_read(fd, buffer, size) != (ssize_t) size) {
         fs_close(fd);
         free(buffer);
         printf("DCIo::read: can't read %s\n", file.c_str());
@@ -224,7 +236,7 @@ std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool 
 
         // skip some stuff
         if (std::string(ent->name) == "cd" || std::string(ent->name) == "ram" || std::string(ent->name) == "pty"
-            || std::string(ent->name) == "rd" || std::string(ent->name) == "pc"
+            /*|| std::string(ent->name) == "rd"*/ || std::string(ent->name) == "pc"
             || Utility::toLower(ent->name) == "recycler"
             || Utility::toLower(ent->name) == "$recycle.bin"
             || (Utility::toLower(ent->name) == "system volume information")) {

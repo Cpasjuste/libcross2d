@@ -111,7 +111,7 @@ namespace c2d {
             return File();
         }
 
-        virtual char *read(const std::string &file) {
+        virtual char *read(const std::string &file, size_t offset = 0, size_t size = 0) {
             return nullptr;
         }
 
