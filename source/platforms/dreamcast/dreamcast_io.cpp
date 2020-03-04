@@ -235,6 +235,7 @@ std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool 
         file.name = ent->name;
         file.path = Utility::removeLastSlash(path) + "/" + file.name;
         file.type = ent->attr == O_DIR ? Type::Directory : Type::File;
+        file.size = ent->size;
         file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
         files.push_back(file);
     }
