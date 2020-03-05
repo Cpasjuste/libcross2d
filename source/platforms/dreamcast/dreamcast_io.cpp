@@ -182,7 +182,7 @@ char *DCIo::read(const std::string &file, size_t offset, size_t size) {
     return buffer;
 }
 
-bool DCIo::write(const std::string &file, const char *data) {
+bool DCIo::write(const std::string &file, const char *data, size_t size) {
 
     file_t fd;
 
@@ -191,7 +191,7 @@ bool DCIo::write(const std::string &file, const char *data) {
         return false;
     }
 
-    fs_write(fd, data, strlen(data));
+    fs_write(fd, data, size);
     fs_close(fd);
 
     return true;
@@ -236,7 +236,7 @@ std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool 
 
         // skip some stuff
         if (std::string(ent->name) == "cd" || std::string(ent->name) == "ram" || std::string(ent->name) == "pty"
-            /*|| std::string(ent->name) == "rd"*/ || std::string(ent->name) == "pc"
+            || std::string(ent->name) == "rd" || std::string(ent->name) == "pc"
             || Utility::toLower(ent->name) == "recycler"
             || Utility::toLower(ent->name) == "$recycle.bin"
             || (Utility::toLower(ent->name) == "system volume information")) {

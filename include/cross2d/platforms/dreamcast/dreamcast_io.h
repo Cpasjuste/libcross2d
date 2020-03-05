@@ -37,7 +37,7 @@ namespace c2d {
 
         char *read(const std::string &file, size_t offset = 0, size_t size = 0) override;
 
-        bool write(const std::string &file, const char *data) override;
+        bool write(const std::string &file, const char *data, size_t size) override;
 
         std::string getHomePath() override;
 
