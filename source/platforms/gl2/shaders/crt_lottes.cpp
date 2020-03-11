@@ -4,80 +4,97 @@
 
 const char *crt_lottes_v = R"text(
 
-    #pragma parameter MASK "Mask Type" 1.0 0.0 3.0 1.0
-    #pragma parameter MASK_INTENSITY "Mask Intensity" 0.5 0.0 1.0 0.05
-    #pragma parameter SCANLINE_THINNESS "Scanline Intensity" 0.5 0.0 1.0 0.1
-    #pragma parameter SCAN_BLUR "Sharpness" 2.5 1.0 3.0 0.1
-    #pragma parameter CURVATURE "Curvature" 0.02 0.0 0.25 0.01
-    #pragma parameter TRINITRON_CURVE "Trinitron-style Curve" 0.0 0.0 1.0 1.0
-    #pragma parameter CORNER "Corner Round" 3.0 0.0 11.0 1.0
-    #pragma parameter CRT_GAMMA "CRT Gamma" 2.4 0.0 51.0 0.1
+#pragma parameter hardScan "hardScan" -8.0 -20.0 0.0 1.0
+#pragma parameter hardPix "hardPix" -3.0 -20.0 0.0 1.0
+#pragma parameter warpX "warpX" 0.031 0.0 0.125 0.01
+#pragma parameter warpY "warpY" 0.041 0.0 0.125 0.01
+#pragma parameter maskDark "maskDark" 0.5 0.0 2.0 0.1
+#pragma parameter maskLight "maskLight" 1.5 0.0 2.0 0.1
+#pragma parameter scaleInLinearGamma "scaleInLinearGamma" 1.0 0.0 1.0 1.0
+#pragma parameter shadowMask "shadowMask" 3.0 0.0 4.0 1.0
+#pragma parameter brightBoost "brightness boost" 1.0 0.0 2.0 0.05
+#pragma parameter hardBloomPix "bloom-x soft" -1.5 -2.0 -0.5 0.1
+#pragma parameter hardBloomScan "bloom-y soft" -2.0 -4.0 -1.0 0.1
+#pragma parameter bloomAmount "bloom ammount" 0.15 0.0 1.0 0.05
+#pragma parameter shape "filter kernel shape" 2.0 0.0 10.0 0.05
 
-    #if __VERSION__ >= 130
-    #define COMPAT_VARYING out
-    #define COMPAT_ATTRIBUTE in
-    #define COMPAT_TEXTURE texture
-    #else
-    #define COMPAT_VARYING varying
-    #define COMPAT_ATTRIBUTE attribute
-    #define COMPAT_TEXTURE texture2D
-    #endif
+#if __VERSION__ >= 130
+#define COMPAT_VARYING out
+#define COMPAT_ATTRIBUTE in
+#define COMPAT_TEXTURE texture
+#else
+#define COMPAT_VARYING varying
+#define COMPAT_ATTRIBUTE attribute
+#define COMPAT_TEXTURE texture2D
+#endif
 
-    #ifdef GL_ES
-    #define COMPAT_PRECISION mediump
-    #else
-    #define COMPAT_PRECISION
-    #endif
+#ifdef GL_ES
+#define COMPAT_PRECISION mediump
+#else
+#define COMPAT_PRECISION
+#endif
 
+// CROSS2D
+//COMPAT_ATTRIBUTE vec4 VertexCoord;
+//COMPAT_ATTRIBUTE vec4 COLOR;
+//COMPAT_ATTRIBUTE vec4 TexCoord;
+COMPAT_VARYING vec4 COL0;
+COMPAT_VARYING vec4 TEX0;
+layout (location = 0) in vec4 VertexCoord;
+layout (location = 1) in vec4 COLOR;
+layout (location = 2) in vec4 TexCoord;
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 textureMatrix;
+
+uniform mat4 MVPMatrix;
+uniform COMPAT_PRECISION int FrameDirection;
+uniform COMPAT_PRECISION int FrameCount;
+uniform COMPAT_PRECISION vec2 OutputSize;
+uniform COMPAT_PRECISION vec2 TextureSize;
+uniform COMPAT_PRECISION vec2 InputSize;
+
+// vertex compatibility #defines
+#define vTexCoord TEX0.xy
+#define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
+#define outsize vec4(OutputSize, 1.0 / OutputSize)
+
+void main()
+{
     // CROSS2D
-    //COMPAT_ATTRIBUTE vec4 VertexCoord;
-    //COMPAT_ATTRIBUTE vec4 COLOR;
-    //COMPAT_ATTRIBUTE vec4 TexCoord;
-    layout (location = 0) in vec4 VertexCoord;
-    layout (location = 1) in vec4 COLOR;
-    layout (location = 2) in vec4 TexCoord;
-    uniform mat4 modelViewMatrix;
-    uniform mat4 projectionMatrix;
-    uniform mat4 textureMatrix;
-
-    COMPAT_VARYING vec4 COL0;
-    COMPAT_VARYING vec4 TEX0;
-
-    vec4 _oPosition1;
-    uniform mat4 MVPMatrix;
-    uniform COMPAT_PRECISION int FrameDirection;
-    uniform COMPAT_PRECISION int FrameCount;
-    uniform COMPAT_PRECISION vec2 OutputSize;
-    uniform COMPAT_PRECISION vec2 TextureSize;
-    uniform COMPAT_PRECISION vec2 InputSize;
-
-    // compatibility #defines
-    #define vTexCoord TEX0.xy
-    #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
-    #define OutSize vec4(OutputSize, 1.0 / OutputSize)
-
-    void main()
-    {
-        // CROSS2D
-        //gl_Position = MVPMatrix * VertexCoord;
-        //TEX0.xy = TexCoord.xy;
-        gl_Position = projectionMatrix * (modelViewMatrix * vec4(VertexCoord.x, VertexCoord.y, 0.0, 1.0));
-        COL0 = COLOR;
-        TEX0 = textureMatrix * vec4(VertexCoord.x, VertexCoord.y, 0.0, 1.0);
-    }
+    //gl_Position = MVPMatrix * VertexCoord;
+    //TEX0.xy = TexCoord.xy;
+    gl_Position = projectionMatrix * (modelViewMatrix * vec4(VertexCoord.x, VertexCoord.y, 0.0, 1.0));
+    TEX0 = textureMatrix * vec4(VertexCoord.x, VertexCoord.y, 0.0, 1.0);
+}
 
 )text";
 
 const char *crt_lottes_f = R"text(
 
-    #pragma parameter MASK "Mask Type" 1.0 0.0 3.0 1.0
-    #pragma parameter MASK_INTENSITY "Mask Intensity" 0.5 0.0 1.0 0.05
-    #pragma parameter SCANLINE_THINNESS "Scanline Intensity" 0.5 0.0 1.0 0.1
-    #pragma parameter SCAN_BLUR "Sharpness" 2.5 1.0 3.0 0.1
-    #pragma parameter CURVATURE "Curvature" 0.02 0.0 0.25 0.01
-    #pragma parameter TRINITRON_CURVE "Trinitron-style Curve" 0.0 0.0 1.0 1.0
-    #pragma parameter CORNER "Corner Round" 3.0 0.0 11.0 1.0
-    #pragma parameter CRT_GAMMA "CRT Gamma" 2.4 0.0 51.0 0.1
+#pragma parameter hardScan "hardScan" -8.0 -20.0 0.0 1.0
+#pragma parameter hardPix "hardPix" -3.0 -20.0 0.0 1.0
+#pragma parameter warpX "warpX" 0.031 0.0 0.125 0.01
+#pragma parameter warpY "warpY" 0.041 0.0 0.125 0.01
+#pragma parameter maskDark "maskDark" 0.5 0.0 2.0 0.1
+#pragma parameter maskLight "maskLight" 1.5 0.0 2.0 0.1
+#pragma parameter scaleInLinearGamma "scaleInLinearGamma" 1.0 0.0 1.0 1.0
+#pragma parameter shadowMask "shadowMask" 3.0 0.0 4.0 1.0
+#pragma parameter brightBoost "brightness boost" 1.0 0.0 2.0 0.05
+#pragma parameter hardBloomPix "bloom-x soft" -1.5 -2.0 -0.5 0.1
+#pragma parameter hardBloomScan "bloom-y soft" -2.0 -4.0 -1.0 0.1
+#pragma parameter bloomAmount "bloom ammount" 0.15 0.0 1.0 0.05
+#pragma parameter shape "filter kernel shape" 2.0 0.0 10.0 0.05
+
+#if __VERSION__ >= 130
+#define COMPAT_VARYING in
+#define COMPAT_TEXTURE texture
+out vec4 FragColor;
+#else
+#define COMPAT_VARYING varying
+#define FragColor gl_FragColor
+#define COMPAT_TEXTURE texture2D
+#endif
 
 #ifdef GL_ES
 #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -90,16 +107,6 @@ precision mediump float;
 #define COMPAT_PRECISION
 #endif
 
-#if __VERSION__ >= 130
-#define COMPAT_VARYING in
-#define COMPAT_TEXTURE texture
-out COMPAT_PRECISION vec4 FragColor;
-#else
-#define COMPAT_VARYING varying
-#define FragColor gl_FragColor
-#define COMPAT_TEXTURE texture2D
-#endif
-
 uniform COMPAT_PRECISION int FrameDirection;
 uniform COMPAT_PRECISION int FrameCount;
 uniform COMPAT_PRECISION vec2 OutputSize;
@@ -108,525 +115,328 @@ uniform COMPAT_PRECISION vec2 InputSize;
 uniform sampler2D Texture;
 COMPAT_VARYING vec4 TEX0;
 
-// compatibility #defines
+// fragment compatibility #defines
 #define Source Texture
 #define vTexCoord TEX0.xy
 
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
-#define OutSize vec4(OutputSize, 1.0 / OutputSize)
+#define outsize vec4(OutputSize, 1.0 / OutputSize)
 
 #ifdef PARAMETER_UNIFORM
-uniform COMPAT_PRECISION float CRT_GAMMA;
-uniform COMPAT_PRECISION float SCANLINE_THINNESS;
-uniform COMPAT_PRECISION float SCAN_BLUR;
-uniform COMPAT_PRECISION float MASK_INTENSITY;
-uniform COMPAT_PRECISION float CURVATURE;
-uniform COMPAT_PRECISION float CORNER;
-uniform COMPAT_PRECISION float MASK;
-uniform COMPAT_PRECISION float TRINITRON_CURVE;
+// All parameter floats need to have COMPAT_PRECISION in front of them
+uniform COMPAT_PRECISION float hardScan;
+uniform COMPAT_PRECISION float hardPix;
+uniform COMPAT_PRECISION float warpX;
+uniform COMPAT_PRECISION float warpY;
+uniform COMPAT_PRECISION float maskDark;
+uniform COMPAT_PRECISION float maskLight;
+uniform COMPAT_PRECISION float scaleInLinearGamma;
+uniform COMPAT_PRECISION float shadowMask;
+uniform COMPAT_PRECISION float brightBoost;
+uniform COMPAT_PRECISION float hardBloomPix;
+uniform COMPAT_PRECISION float hardBloomScan;
+uniform COMPAT_PRECISION float bloomAmount;
+uniform COMPAT_PRECISION float shape;
 #else
-#define CRT_GAMMA 2.4
-#define SCANLINE_THINNESS 0.5
-#define SCAN_BLUR 2.5
-#define MASK_INTENSITY 0.54
-#define CURVATURE 0.02
-#define CORNER 3.0
-#define MASK 1.0
-#define TRINITRON_CURVE 0.0
+#define hardScan -8.0
+#define hardPix -3.0
+#define warpX 0.031
+#define warpY 0.041
+#define maskDark 0.5
+#define maskLight 1.5
+#define scaleInLinearGamma 1.0
+#define shadowMask 3.0
+#define brightBoost 1.0
+#define hardBloomPix -1.5
+#define hardBloomScan -2.0
+#define bloomAmount 0.15
+#define shape 2.0
 #endif
 
-//_____________________________/\_______________________________
-//==============================================================
-//
-//                       GAMMA FUNCTIONS
-//
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-// Since shadertoy doesn't have sRGB textures
-// And we need linear input into shader
-// Don't do this in your code
-	float FromSrgb1(float c){
-		return (c<=0.04045)?c*(1.0/12.92):
-			pow(c*(1.0/1.055)+(0.055/1.055),CRT_GAMMA);}
-//--------------------------------------------------------------
-vec3 FromSrgb(vec3 c){return vec3(
- FromSrgb1(c.r),FromSrgb1(c.g),FromSrgb1(c.b));}
+//Uncomment to reduce instructions with simpler linearization
+//(fixes HD3000 Sandy Bridge IGP)
+//#define SIMPLE_LINEAR_GAMMA
+#define DO_BLOOM
 
-// Convert from linear to sRGB
-// Since shader toy output is not linear
-float ToSrgb1(float c){
- return(c<0.0031308?c*12.92:1.055*pow(c,0.41666)-0.055);}
-//--------------------------------------------------------------
-vec3 ToSrgb(vec3 c){return vec3(
- ToSrgb1(c.r),ToSrgb1(c.g),ToSrgb1(c.b));}
-//--------------------------------------------------------------
+// ------------- //
 
-//_____________________________/\_______________________________
-//==============================================================
-//
-//                           DEFINES
-//
-//--------------------------------------------------------------
-// CRTS_CPU - CPU code
-// CRTS_GPU - GPU code
-//--------------------------------------------------------------
-// CRTS_GLSL - GLSL
-// CRTS_HLSL - HLSL (not tested yet)
-//--------------------------------------------------------------
-// CRTS_DEBUG - Define to see on/off split screen
-//--------------------------------------------------------------
-// CRTS_WARP - Apply screen warp
-//--------------------------------------------------------------
-// CRTS_2_TAP - Faster very pixely 2-tap filter (off is 8)
-//--------------------------------------------------------------
-// CRTS_MASK_GRILLE      - Aperture grille (aka Trinitron)
-// CRTS_MASK_GRILLE_LITE - Brighter (subtractive channels)
-// CRTS_MASK_NONE        - No mask
-// CRTS_MASK_SHADOW      - Horizontally stretched shadow mask
-//--------------------------------------------------------------
-// CRTS_TONE       - Normalize mid-level and process color
-// CRTS_CONTRAST   - Process color - enable contrast control
-// CRTS_SATURATION - Process color - enable saturation control
-//--------------------------------------------------------------
-#define CRTS_STATIC
-#define CrtsPow
-#define CRTS_RESTRICT
-//==============================================================
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
+// sRGB to Linear.
+// Assuming using sRGB typed textures this should not be needed.
+#ifdef SIMPLE_LINEAR_GAMMA
+float ToLinear1(float c)
+{
+    return c;
+}
+vec3 ToLinear(vec3 c)
+{
+    return c;
+}
+vec3 ToSrgb(vec3 c)
+{
+    return pow(c, vec3(1.0 / 2.2));
+}
+#else
+float ToLinear1(float c)
+{
+    if (scaleInLinearGamma == 0.)
+        return c;
 
-//==============================================================
-//                      SETUP FOR CRTS
-//--------------------------------------------------------------
-//==============================================================
-//#define CRTS_DEBUG 1
-#define CRTS_GPU 1
-#define CRTS_GLSL 1
-//--------------------------------------------------------------
-//#define CRTS_2_TAP 1
-//--------------------------------------------------------------
-#define CRTS_TONE 1
-#define CRTS_CONTRAST 0
-#define CRTS_SATURATION 0
-//--------------------------------------------------------------
-#define CRTS_WARP 1
-//--------------------------------------------------------------
-// Try different masks -> moved to runtime parameters
-//#define CRTS_MASK_GRILLE 1
-//#define CRTS_MASK_GRILLE_LITE 1
-//#define CRTS_MASK_NONE 1
-//#define CRTS_MASK_SHADOW 1
-//--------------------------------------------------------------
-// Scanline thinness
-//  0.50 = fused scanlines
-//  0.70 = recommended default
-//  1.00 = thinner scanlines (too thin)
-#define INPUT_THIN 0.5 + (0.5 * SCANLINE_THINNESS)
-//--------------------------------------------------------------
-// Horizonal scan blur
-//  -3.0 = pixely
-//  -2.5 = default
-//  -2.0 = smooth
-//  -1.0 = too blurry
-#define INPUT_BLUR -1.0 * SCAN_BLUR
-//--------------------------------------------------------------
-// Shadow mask effect, ranges from,
-//  0.25 = large amount of mask (not recommended, too dark)
-//  0.50 = recommended default
-//  1.00 = no shadow mask
-#define INPUT_MASK 1.0 - MASK_INTENSITY
-//--------------------------------------------------------------
-#define INPUT_X InputSize.x
-#define INPUT_Y InputSize.y
-//--------------------------------------------------------------
-// Setup the function which returns input image color
-vec3 CrtsFetch(vec2 uv){
- // For shadertoy, scale to get native texels in the image
- uv*=vec2(INPUT_X,INPUT_Y)/TextureSize.xy;
- // Move towards intersting parts
-// uv+=vec2(0.5,0.5);
- // Non-shadertoy case would not have the color conversion
- return FromSrgb(COMPAT_TEXTURE(Texture,uv.xy,-16.0).rgb);}
+    return(c<=0.04045) ? c/12.92 : pow((c + 0.055)/1.055, 2.4);
+}
+
+vec3 ToLinear(vec3 c)
+{
+    if (scaleInLinearGamma==0.)
+        return c;
+
+    return vec3(ToLinear1(c.r), ToLinear1(c.g), ToLinear1(c.b));
+}
+
+// Linear to sRGB.
+// Assuming using sRGB typed textures this should not be needed.
+float ToSrgb1(float c)
+{
+    if (scaleInLinearGamma == 0.)
+        return c;
+
+    return(c<0.0031308 ? c*12.92 : 1.055*pow(c, 0.41666) - 0.055);
+}
+
+vec3 ToSrgb(vec3 c)
+{
+    if (scaleInLinearGamma == 0.)
+        return c;
+
+    return vec3(ToSrgb1(c.r), ToSrgb1(c.g), ToSrgb1(c.b));
+}
 #endif
 
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
-//_____________________________/\_______________________________
-//==============================================================
-//
-//                          GPU CODE
-//
-//==============================================================
-#ifdef CRTS_GPU
-//_____________________________/\_______________________________
-//==============================================================
-//                         PORTABILITY
-//==============================================================
- #ifdef CRTS_GLSL
-  #define CrtsF1 float
-  #define CrtsF2 vec2
-  #define CrtsF3 vec3
-  #define CrtsF4 vec4
-  #define CrtsFractF1 fract
-  #define CrtsRcpF1(x) (1.0/(x))
-  #define CrtsSatF1(x) clamp((x),0.0,1.0)
-//--------------------------------------------------------------
-  CrtsF1 CrtsMax3F1(CrtsF1 a,CrtsF1 b,CrtsF1 c){
-   return max(a,max(b,c));}
- #endif
-//==============================================================
- #ifdef CRTS_HLSL
-  #define CrtsF1 float
-  #define CrtsF2 float2
-  #define CrtsF3 float3
-  #define CrtsF4 float4
-  #define CrtsFractF1 frac
-  #define CrtsRcpF1(x) (1.0/(x))
-  #define CrtsSatF1(x) saturate(x)
-//--------------------------------------------------------------
-  CrtsF1 CrtsMax3F1(CrtsF1 a,CrtsF1 b,CrtsF1 c){
-   return max(a,max(b,c));}
- #endif
-//_____________________________/\_______________________________
-//==============================================================
-//              TONAL CONTROL CONSTANT GENERATION
-//--------------------------------------------------------------
-// This is in here for rapid prototyping
-// Please use the CPU code and pass in as constants
-//==============================================================
- CrtsF4 CrtsTone(
- CrtsF1 contrast,
- CrtsF1 saturation,
- CrtsF1 thin,
- CrtsF1 mask){
-//--------------------------------------------------------------
-  if(MASK == 0.0) mask=1.0;
-//--------------------------------------------------------------
-  if(MASK == 1.0){
-   // Normal R mask is {1.0,mask,mask}
-   // LITE   R mask is {mask,1.0,1.0}
-   mask=0.5+mask*0.5;
-   }
-//--------------------------------------------------------------
-  CrtsF4 ret;
-  CrtsF1 midOut=0.18/((1.5-thin)*(0.5*mask+0.5));
-  CrtsF1 pMidIn=pow(0.18,contrast);
-  ret.x=contrast;
-  ret.y=((-pMidIn)+midOut)/((1.0-pMidIn)*midOut);
-  ret.z=((-pMidIn)*midOut+pMidIn)/(midOut*(-pMidIn)+midOut);
-  ret.w=contrast+saturation;
-  return ret;}
-//_____________________________/\_______________________________
-//==============================================================
-//                            MASK
-//--------------------------------------------------------------
-// Letting LCD/OLED pixel elements function like CRT phosphors
-// So "phosphor" resolution scales with display resolution
-//--------------------------------------------------------------
-// Not applying any warp to the mask (want high frequency)
-// Real aperture grille has a mask which gets wider on ends
-// Not attempting to be "real" but instead look the best
-//--------------------------------------------------------------
-// Shadow mask is stretched horizontally
-//  RRGGBB
-//  GBBRRG
-//  RRGGBB
-// This tends to look better on LCDs than vertical
-// Also 2 pixel width is required to get triad centered
-//--------------------------------------------------------------
-// The LITE version of the Aperture Grille is brighter
-// Uses {dark,1.0,1.0} for R channel
-// Non LITE version uses {1.0,dark,dark}
-//--------------------------------------------------------------
-// 'pos' - This is 'fragCoord.xy'
-//         Pixel {0,0} should be {0.5,0.5}
-//         Pixel {1,1} should be {1.5,1.5}
-//--------------------------------------------------------------
-// 'dark' - Exposure of of masked channel
-//          0.0=fully off, 1.0=no effect
-//==============================================================
- CrtsF3 CrtsMask(CrtsF2 pos,CrtsF1 dark){
-  if(MASK == 2.0){
-   CrtsF3 m=CrtsF3(dark,dark,dark);
-   CrtsF1 x=CrtsFractF1(pos.x*(1.0/3.0));
-   if(x<(1.0/3.0))m.r=1.0;
-   else if(x<(2.0/3.0))m.g=1.0;
-   else m.b=1.0;
-   return m;
-  }
-//--------------------------------------------------------------
-  if(MASK == 1.0){
-   CrtsF3 m=CrtsF3(1.0,1.0,1.0);
-   CrtsF1 x=CrtsFractF1(pos.x*(1.0/3.0));
-   if(x<(1.0/3.0))m.r=dark;
-   else if(x<(2.0/3.0))m.g=dark;
-   else m.b=dark;
-   return m;
-  }
-//--------------------------------------------------------------
-  if(MASK == 0.0){
-   return CrtsF3(1.0,1.0,1.0);
-  }
-//--------------------------------------------------------------
-  if(MASK == 3.0){
-   pos.x+=pos.y*2.9999;
-   CrtsF3 m=CrtsF3(dark,dark,dark);
-   CrtsF1 x=CrtsFractF1(pos.x*(1.0/6.0));
-   if(x<(1.0/3.0))m.r=1.0;
-   else if(x<(2.0/3.0))m.g=1.0;
-   else m.b=1.0;
-   return m;
-  }
- }
-//_____________________________/\_______________________________
-//==============================================================
-//                        FILTER ENTRY
-//--------------------------------------------------------------
-// Input must be linear
-// Output color is linear
-//--------------------------------------------------------------
-// Must have fetch function setup: CrtsF3 CrtsFetch(CrtsF2 uv)
-//  - The 'uv' range is {0.0 to 1.0} for input texture
-//  - Output of this must be linear color
-//--------------------------------------------------------------
-// SCANLINE MATH & AUTO-EXPOSURE NOTES
-// ===================================
-// Each output line has contribution from at most 2 scanlines
-// Scanlines are shaped by a windowed cosine function
-// This shape blends together well with only 2 lines of overlap
-//--------------------------------------------------------------
-// Base scanline intensity is as follows
-// which leaves output intensity range from {0 to 1.0}
-// --------
-// thin := range {thick 0.5 to thin 1.0}
-// off  := range {0.0 to <1.0},
-//         sub-pixel offset between two scanlines
-//  --------
-//  a0=cos(min(0.5,     off *thin)*2pi)*0.5+0.5;
-//  a1=cos(min(0.5,(1.0-off)*thin)*2pi)*0.5+0.5;
-//--------------------------------------------------------------
-// This leads to a image darkening factor of roughly:
-//  {(1.5-thin)/1.0}
-// This is further reduced by the mask:
-//  {1.0/2.0+mask*1.0/2.0}
-// Reciprocal of combined effect is used for auto-exposure
-//  to scale up the mid-level in the tonemapper
-//==============================================================
- CrtsF3 CrtsFilter(
-//--------------------------------------------------------------
-  // SV_POSITION, fragCoord.xy
-  CrtsF2 ipos,
-//--------------------------------------------------------------
-  // inputSize / outputSize (in pixels)
-  CrtsF2 inputSizeDivOutputSize,
-//--------------------------------------------------------------
-  // 0.5 * inputSize (in pixels)
-  CrtsF2 halfInputSize,
-//--------------------------------------------------------------
-  // 1.0 / inputSize (in pixels)
-  CrtsF2 rcpInputSize,
-//--------------------------------------------------------------
-  // 1.0 / outputSize (in pixels)
-  CrtsF2 rcpOutputSize,
-//--------------------------------------------------------------
-  // 2.0 / outputSize (in pixels)
-  CrtsF2 twoDivOutputSize,
-//--------------------------------------------------------------
-  // inputSize.y
-  CrtsF1 inputHeight,
-//--------------------------------------------------------------
-  // Warp scanlines but not phosphor mask
-  //  0.0 = no warp
-  //  1.0/64.0 = light warping
-  //  1.0/32.0 = more warping
-  // Want x and y warping to be different (based on aspect)
-  CrtsF2 warp,
-//--------------------------------------------------------------
-  // Scanline thinness
-  //  0.50 = fused scanlines
-  //  0.70 = recommended default
-  //  1.00 = thinner scanlines (too thin)
-  // Shared with CrtsTone() function
-  CrtsF1 thin,
-//--------------------------------------------------------------
-  // Horizonal scan blur
-  //  -3.0 = pixely
-  //  -2.5 = default
-  //  -2.0 = smooth
-  //  -1.0 = too blurry
-  CrtsF1 blur,
-//--------------------------------------------------------------
-  // Shadow mask effect, ranges from,
-  //  0.25 = large amount of mask (not recommended, too dark)
-  //  0.50 = recommended default
-  //  1.00 = no shadow mask
-  // Shared with CrtsTone() function
-  CrtsF1 mask,
-//--------------------------------------------------------------
-  // Tonal curve parameters generated by CrtsTone()
-  CrtsF4 tone
-//--------------------------------------------------------------
- ){
-//--------------------------------------------------------------
-  #ifdef CRTS_DEBUG
-   CrtsF2 uv=ipos*rcpOutputSize;
-   // Show second half processed, and first half un-processed
-   if(uv.x<0.5){
-    // Force nearest to get squares
-    uv*=1.0/rcpInputSize;
-    uv=floor(uv)+CrtsF2(0.5,0.5);
-    uv*=rcpInputSize;
-    CrtsF3 color=CrtsFetch(uv);
-    return color;}
-  #endif
-//--------------------------------------------------------------
-  // Optional apply warp
-  CrtsF2 pos;
-  #ifdef CRTS_WARP
-   // Convert to {-1 to 1} range
-   pos=ipos*twoDivOutputSize-CrtsF2(1.0,1.0);
-   // Distort pushes image outside {-1 to 1} range
-   pos*=CrtsF2(
-    1.0+(pos.y*pos.y)*warp.x,
-    1.0+(pos.x*pos.x)*warp.y);
-   // TODO: Vignette needs optimization
-   CrtsF1 vin=(1.0-(
-    (1.0-CrtsSatF1(pos.x*pos.x))*(1.0-CrtsSatF1(pos.y*pos.y)))) * (0.998 + (0.001 * CORNER));
-   vin=CrtsSatF1((-vin)*inputHeight+inputHeight);
-   // Leave in {0 to inputSize}
-   pos=pos*halfInputSize+halfInputSize;
-  #else
-   pos=ipos*inputSizeDivOutputSize;
-  #endif
-//--------------------------------------------------------------
-  // Snap to center of first scanline
-  CrtsF1 y0=floor(pos.y-0.5)+0.5;
-  #ifdef CRTS_2_TAP
-   // Using Inigo's "Improved Texture Interpolation"
-   // http://iquilezles.org/www/articles/texture/texture.htm
-   pos.x+=0.5;
-   CrtsF1 xi=floor(pos.x);
-   CrtsF1 xf=pos.x-xi;
-   xf=xf*xf*xf*(xf*(xf*6.0-15.0)+10.0);
-   CrtsF1 x0=xi+xf-0.5;
-   CrtsF2 p=CrtsF2(x0*rcpInputSize.x,y0*rcpInputSize.y);
-   // Coordinate adjusted bilinear fetch from 2 nearest scanlines
-   CrtsF3 colA=CrtsFetch(p);
-   p.y+=rcpInputSize.y;
-   CrtsF3 colB=CrtsFetch(p);
-  #else
-   // Snap to center of one of four pixels
-   CrtsF1 x0=floor(pos.x-1.5)+0.5;
-   // Inital UV position
-   CrtsF2 p=CrtsF2(x0*rcpInputSize.x,y0*rcpInputSize.y);
-   // Fetch 4 nearest texels from 2 nearest scanlines
-   CrtsF3 colA0=CrtsFetch(p);
-   p.x+=rcpInputSize.x;
-   CrtsF3 colA1=CrtsFetch(p);
-   p.x+=rcpInputSize.x;
-   CrtsF3 colA2=CrtsFetch(p);
-   p.x+=rcpInputSize.x;
-   CrtsF3 colA3=CrtsFetch(p);
-   p.y+=rcpInputSize.y;
-   CrtsF3 colB3=CrtsFetch(p);
-   p.x-=rcpInputSize.x;
-   CrtsF3 colB2=CrtsFetch(p);
-   p.x-=rcpInputSize.x;
-   CrtsF3 colB1=CrtsFetch(p);
-   p.x-=rcpInputSize.x;
-   CrtsF3 colB0=CrtsFetch(p);
-  #endif
-//--------------------------------------------------------------
-  // Vertical filter
-  // Scanline intensity is using sine wave
-  // Easy filter window and integral used later in exposure
-  CrtsF1 off=pos.y-y0;
-  CrtsF1 pi2=6.28318530717958;
-  CrtsF1 hlf=0.5;
-  CrtsF1 scanA=cos(min(0.5,  off *thin     )*pi2)*hlf+hlf;
-  CrtsF1 scanB=cos(min(0.5,(-off)*thin+thin)*pi2)*hlf+hlf;
-//--------------------------------------------------------------
-  #ifdef CRTS_2_TAP
-   #ifdef CRTS_WARP
-    // Get rid of wrong pixels on edge
-    scanA*=vin;
-    scanB*=vin;
-   #endif
-   // Apply vertical filter
-   CrtsF3 color=(colA*scanA)+(colB*scanB);
-  #else
-   // Horizontal kernel is simple gaussian filter
-   CrtsF1 off0=pos.x-x0;
-   CrtsF1 off1=off0-1.0;
-   CrtsF1 off2=off0-2.0;
-   CrtsF1 off3=off0-3.0;
-   CrtsF1 pix0=exp2(blur*off0*off0);
-   CrtsF1 pix1=exp2(blur*off1*off1);
-   CrtsF1 pix2=exp2(blur*off2*off2);
-   CrtsF1 pix3=exp2(blur*off3*off3);
-   CrtsF1 pixT=CrtsRcpF1(pix0+pix1+pix2+pix3);
-   #ifdef CRTS_WARP
-    // Get rid of wrong pixels on edge
-    pixT*=vin;
-   #endif
-   scanA*=pixT;
-   scanB*=pixT;
-   // Apply horizontal and vertical filters
-   CrtsF3 color=
-    (colA0*pix0+colA1*pix1+colA2*pix2+colA3*pix3)*scanA +
-    (colB0*pix0+colB1*pix1+colB2*pix2+colB3*pix3)*scanB;
-  #endif
-//--------------------------------------------------------------
-  // Apply phosphor mask
-  color*=CrtsMask(ipos,mask);
-//--------------------------------------------------------------
-  // Optional color processing
-  #ifdef CRTS_TONE
-   // Tonal control, start by protecting from /0
-   CrtsF1 peak=max(1.0/(256.0*65536.0),
-    CrtsMax3F1(color.r,color.g,color.b));
-   // Compute the ratios of {R,G,B}
-   CrtsF3 ratio=color*CrtsRcpF1(peak);
-   // Apply tonal curve to peak value
-   #ifdef CRTS_CONTRAST
-    peak=pow(peak,tone.x);
-   #endif
-   peak=peak*CrtsRcpF1(peak*tone.y+tone.z);
-   // Apply saturation
-   #ifdef CRTS_SATURATION
-    ratio=pow(ratio,CrtsF3(tone.w,tone.w,tone.w));
-   #endif
-   // Reconstruct color
-   return ratio*peak;
- #else
-  return color;
- #endif
-//--------------------------------------------------------------
- }
+// Nearest emulated sample given floating point position and texel offset.
+// Also zero's off screen.
+vec3 Fetch(vec2 pos,vec2 off){
+  pos=(floor(pos*SourceSize.xy+off)+vec2(0.5,0.5))/SourceSize.xy;
+#ifdef SIMPLE_LINEAR_GAMMA
+  return ToLinear(brightBoost * pow(COMPAT_TEXTURE(Source,pos.xy).rgb, vec3(2.2)));
+#else
+  return ToLinear(brightBoost * COMPAT_TEXTURE(Source,pos.xy).rgb);
+#endif
+}
 
+// Distance in emulated pixels to nearest texel.
+vec2 Dist(vec2 pos)
+{
+    pos = pos*SourceSize.xy;
+
+    return -((pos - floor(pos)) - vec2(0.5));
+}
+
+// 1D Gaussian.
+float Gaus(float pos, float scale)
+{
+    return exp2(scale*pow(abs(pos), shape));
+}
+
+// 3-tap Gaussian filter along horz line.
+vec3 Horz3(vec2 pos, float off)
+{
+    vec3 b    = Fetch(pos, vec2(-1.0, off));
+    vec3 c    = Fetch(pos, vec2( 0.0, off));
+    vec3 d    = Fetch(pos, vec2( 1.0, off));
+    float dst = Dist(pos).x;
+
+    // Convert distance to weight.
+    float scale = hardPix;
+    float wb = Gaus(dst-1.0,scale);
+    float wc = Gaus(dst+0.0,scale);
+    float wd = Gaus(dst+1.0,scale);
+
+    // Return filtered sample.
+    return (b*wb+c*wc+d*wd)/(wb+wc+wd);
+}
+
+// 5-tap Gaussian filter along horz line.
+vec3 Horz5(vec2 pos,float off){
+    vec3 a = Fetch(pos,vec2(-2.0, off));
+    vec3 b = Fetch(pos,vec2(-1.0, off));
+    vec3 c = Fetch(pos,vec2( 0.0, off));
+    vec3 d = Fetch(pos,vec2( 1.0, off));
+    vec3 e = Fetch(pos,vec2( 2.0, off));
+
+    float dst = Dist(pos).x;
+    // Convert distance to weight.
+    float scale = hardPix;
+    float wa = Gaus(dst - 2.0, scale);
+    float wb = Gaus(dst - 1.0, scale);
+    float wc = Gaus(dst + 0.0, scale);
+    float wd = Gaus(dst + 1.0, scale);
+    float we = Gaus(dst + 2.0, scale);
+
+    // Return filtered sample.
+    return (a*wa+b*wb+c*wc+d*wd+e*we)/(wa+wb+wc+wd+we);
+}
+
+// 7-tap Gaussian filter along horz line.
+vec3 Horz7(vec2 pos,float off)
+{
+    vec3 a = Fetch(pos, vec2(-3.0, off));
+    vec3 b = Fetch(pos, vec2(-2.0, off));
+    vec3 c = Fetch(pos, vec2(-1.0, off));
+    vec3 d = Fetch(pos, vec2( 0.0, off));
+    vec3 e = Fetch(pos, vec2( 1.0, off));
+    vec3 f = Fetch(pos, vec2( 2.0, off));
+    vec3 g = Fetch(pos, vec2( 3.0, off));
+
+    float dst = Dist(pos).x;
+    // Convert distance to weight.
+    float scale = hardBloomPix;
+    float wa = Gaus(dst - 3.0, scale);
+    float wb = Gaus(dst - 2.0, scale);
+    float wc = Gaus(dst - 1.0, scale);
+    float wd = Gaus(dst + 0.0, scale);
+    float we = Gaus(dst + 1.0, scale);
+    float wf = Gaus(dst + 2.0, scale);
+    float wg = Gaus(dst + 3.0, scale);
+
+    // Return filtered sample.
+    return (a*wa+b*wb+c*wc+d*wd+e*we+f*wf+g*wg)/(wa+wb+wc+wd+we+wf+wg);
+}
+
+// Return scanline weight.
+float Scan(vec2 pos, float off)
+{
+    float dst = Dist(pos).y;
+
+    return Gaus(dst + off, hardScan);
+}
+
+// Return scanline weight for bloom.
+float BloomScan(vec2 pos, float off)
+{
+    float dst = Dist(pos).y;
+
+    return Gaus(dst + off, hardBloomScan);
+}
+
+// Allow nearest three lines to effect pixel.
+vec3 Tri(vec2 pos)
+{
+    vec3 a = Horz3(pos,-1.0);
+    vec3 b = Horz5(pos, 0.0);
+    vec3 c = Horz3(pos, 1.0);
+
+    float wa = Scan(pos,-1.0);
+    float wb = Scan(pos, 0.0);
+    float wc = Scan(pos, 1.0);
+
+    return a*wa + b*wb + c*wc;
+}
+
+// Small bloom.
+vec3 Bloom(vec2 pos)
+{
+    vec3 a = Horz5(pos,-2.0);
+    vec3 b = Horz7(pos,-1.0);
+    vec3 c = Horz7(pos, 0.0);
+    vec3 d = Horz7(pos, 1.0);
+    vec3 e = Horz5(pos, 2.0);
+
+    float wa = BloomScan(pos,-2.0);
+    float wb = BloomScan(pos,-1.0);
+    float wc = BloomScan(pos, 0.0);
+    float wd = BloomScan(pos, 1.0);
+    float we = BloomScan(pos, 2.0);
+
+    return a*wa+b*wb+c*wc+d*wd+e*we;
+}
+
+// Distortion of scanlines, and end of screen alpha.
+vec2 Warp(vec2 pos)
+{
+    pos  = pos*2.0-1.0;
+    pos *= vec2(1.0 + (pos.y*pos.y)*warpX, 1.0 + (pos.x*pos.x)*warpY);
+
+    return pos*0.5 + 0.5;
+}
+
+// Shadow mask.
+vec3 Mask(vec2 pos)
+{
+    vec3 mask = vec3(maskDark, maskDark, maskDark);
+
+    // Very compressed TV style shadow mask.
+    if (shadowMask == 1.0)
+    {
+        float line = maskLight;
+        float odd = 0.0;
+
+        if (fract(pos.x*0.166666666) < 0.5) odd = 1.0;
+        if (fract((pos.y + odd) * 0.5) < 0.5) line = maskDark;
+
+        pos.x = fract(pos.x*0.333333333);
+
+        if      (pos.x < 0.333) mask.r = maskLight;
+        else if (pos.x < 0.666) mask.g = maskLight;
+        else                    mask.b = maskLight;
+        mask*=line;
+    }
+
+    // Aperture-grille.
+    else if (shadowMask == 2.0)
+    {
+        pos.x = fract(pos.x*0.333333333);
+
+        if      (pos.x < 0.333) mask.r = maskLight;
+        else if (pos.x < 0.666) mask.g = maskLight;
+        else                    mask.b = maskLight;
+    }
+
+    // Stretched VGA style shadow mask (same as prior shaders).
+    else if (shadowMask == 3.0)
+    {
+        pos.x += pos.y*3.0;
+        pos.x  = fract(pos.x*0.166666666);
+
+        if      (pos.x < 0.333) mask.r = maskLight;
+        else if (pos.x < 0.666) mask.g = maskLight;
+        else                    mask.b = maskLight;
+    }
+
+    // VGA style shadow mask.
+    else if (shadowMask == 4.0)
+    {
+        pos.xy  = floor(pos.xy*vec2(1.0, 0.5));
+        pos.x  += pos.y*3.0;
+        pos.x   = fract(pos.x*0.166666666);
+
+        if      (pos.x < 0.333) mask.r = maskLight;
+        else if (pos.x < 0.666) mask.g = maskLight;
+        else                    mask.b = maskLight;
+    }
+
+    return mask;
+}
 
 void main()
 {
-	vec2 warp_factor;
-	warp_factor.x = CURVATURE;
-	warp_factor.y = (3.0 / 4.0) * warp_factor.x; // assume 4:3 aspect
-	warp_factor.x *= (1.0 - TRINITRON_CURVE);
-	FragColor.rgb = CrtsFilter(vTexCoord.xy * OutputSize.xy*(TextureSize.xy / InputSize.xy),
-	InputSize.xy / OutputSize.xy,
-	InputSize.xy * vec2(0.5,0.5),
-	1.0/InputSize.xy,
-	1.0/OutputSize.xy,
-	2.0/OutputSize.xy,
-	InputSize.y,
-	warp_factor,
-	INPUT_THIN,
-	INPUT_BLUR,
-	INPUT_MASK,
-	CrtsTone(1.0,0.0,INPUT_THIN,INPUT_MASK));
+    vec2 pos = Warp(TEX0.xy*(TextureSize.xy/InputSize.xy))*(InputSize.xy/TextureSize.xy);
+    vec3 outColor = Tri(pos);
 
-	// Shadertoy outputs non-linear color
-	FragColor.rgb=ToSrgb(FragColor.rgb);
+#ifdef DO_BLOOM
+    //Add Bloom
+    outColor.rgb += Bloom(pos)*bloomAmount;
+#endif
+
+    if (shadowMask > 0.0)
+        outColor.rgb *= Mask(gl_FragCoord.xy * 1.000001);
+
+#ifdef GL_ES    /* TODO/FIXME - hacky clamp fix */
+    vec2 bordertest = (pos);
+    if ( bordertest.x > 0.0001 && bordertest.x < 0.9999 && bordertest.y > 0.0001 && bordertest.y < 0.9999)
+        outColor.rgb = outColor.rgb;
+    else
+        outColor.rgb = vec3(0.0);
+#endif
+    FragColor = vec4(ToSrgb(outColor.rgb), 1.0);
 }
+
 )text";
