@@ -4,7 +4,7 @@
 
 #include "cross2d/c2d.h"
 
-#ifdef __NET_DEBUG__
+#ifndef NDEBUG
 
 #include <unistd.h>
 
@@ -26,4 +26,4 @@ void deinitNxLink() {
     }
 }
 
-#endif // __NET_DEBUG__
+#endif

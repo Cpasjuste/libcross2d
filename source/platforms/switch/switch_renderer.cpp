@@ -6,25 +6,25 @@
 
 using namespace c2d;
 
-#ifdef __NET_DEBUG__
+#ifndef NDEBUG
 
 void initNxLink();
 
 void deinitNxLink();
 
 #endif
+
 int switch_stock_cpu_clock = 0;
 int switch_stock_gpu_clock = 0;
 int switch_stock_emc_clock = 0;
 
 SWITCHRenderer::SWITCHRenderer(const Vector2f &size) : SDL2Renderer(size) {
 
-    printf("SWITCHRenderer(%ix%i)\n", (int) size.x, (int) size.y);
-
-#ifdef __NET_DEBUG__
+#ifndef NDEBUG
     initNxLink();
 #endif
 
+    printf("SWITCHRenderer(%ix%i)\n", (int) size.x, (int) size.y);
     romfsInit();
 
     if (R_SUCCEEDED(pcvInitialize())) {
@@ -65,7 +65,7 @@ SWITCHRenderer::~SWITCHRenderer() {
 
     romfsExit();
 
-#ifdef __NET_DEBUG__
+#ifndef NDEBUG
     deinitNxLink();
 #endif
 }
