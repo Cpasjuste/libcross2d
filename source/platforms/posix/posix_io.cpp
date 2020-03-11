@@ -210,7 +210,7 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bo
                 File file;
                 file.name = ent->d_name;
                 file.path = Utility::removeLastSlash(path) + "/" + file.name;
-#ifdef __SWITCH__
+#if 0
                 auto *dirSt = (fsdev_dir_t *) dir->dirData->dirStruct;
                 FsDirectoryEntry *entry = &dirSt->entry_data[dirSt->index];
                 file.type = entry->type == ENTRYTYPE_DIR ? Type::Directory : Type::File;
@@ -255,7 +255,8 @@ Io::File POSIXIo::findFile(const std::string &path,
                     }
                     file.name = ent->d_name;
                     file.path = Utility::removeLastSlash(path) + "/" + file.name;
-#ifdef __SWITCH__
+#if 0
+
                     auto *dirSt = (fsdev_dir_t *) dir->dirData->dirStruct;
                     FsDirectoryEntry *entry = &dirSt->entry_data[dirSt->index];
                     file.type = entry->type == ENTRYTYPE_DIR ? Type::Directory : Type::File;

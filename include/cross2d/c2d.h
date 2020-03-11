@@ -137,9 +137,9 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #include <switch.h>
 #include <glad/glad.h>
 #include "platforms/switch/switch_renderer.h"
-#include "platforms/gl/gl_shaders.h"
-#include "platforms/gl/gl_texture.h"
-#include "platforms/gl/gl_texture_buffer.h"
+#include "platforms/gl2/gl_shaders.h"
+#include "platforms/gl2/gl_texture.h"
+#include "platforms/gl2/gl_texture_buffer.h"
 #include "platforms/sdl2/sdl2_input.h"
 #include "platforms/sdl2/sdl2_audio.h"
 #include "platforms/switch/switch_io.h"
