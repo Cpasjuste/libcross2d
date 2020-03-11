@@ -127,10 +127,10 @@ Io::Type POSIXIo::getType(const std::string &file) {
     return S_ISDIR(st.st_mode) ? Type::Directory : Type::File;
 }
 
-char *POSIXIo::read(const std::string &file) {
+char *POSIXIo::read(const std::string &file, size_t offset, size_t size) {
 
-    size_t size;
     FILE *fp = nullptr;
+    size_t file_size;
     char *buffer = nullptr;
 
     fp = fopen(file.c_str(), "rb");
@@ -140,8 +140,21 @@ char *POSIXIo::read(const std::string &file) {
     }
 
     fseek(fp, 0L, SEEK_END);
-    size = ftell(fp);
+    file_size = ftell(fp);
     fseek(fp, 0L, SEEK_SET);
+
+    if (size <= 0) {
+        size = file_size;
+    }
+
+    if (offset + size > file_size) {
+        size = file_size - offset;
+    }
+
+    if (offset > 0) {
+        fseek(fp, offset, SEEK_SET);
+    }
+
     buffer = (char *) malloc(size);
 
     if (fread(buffer, 1, size, fp) != size) {
@@ -156,7 +169,7 @@ char *POSIXIo::read(const std::string &file) {
     return buffer;
 }
 
-bool POSIXIo::write(const std::string &file, const char *data) {
+bool POSIXIo::write(const std::string &file, const char *data, size_t size) {
 
     FILE *fp;
 
@@ -165,7 +178,7 @@ bool POSIXIo::write(const std::string &file, const char *data) {
         return false;
     }
 
-    fwrite(data, 1, strlen(data), fp);
+    fwrite(data, 1, size, fp);
     fclose(fp);
 
     return true;
