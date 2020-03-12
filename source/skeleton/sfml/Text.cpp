@@ -35,23 +35,26 @@ using namespace c2d;
 namespace {
 
     // Add an underline or strikethrough line to the vertex array
-    void addLine(c2d::VertexArray &vertices, float lineLength, float lineTop, const c2d::Color &color, float offset,
+    void addLine(c2d::VertexArray &vertices, c2d::Vector2f texSize,
+                 float lineLength, float lineTop, const c2d::Color &color, float offset,
                  float thickness, float outlineThickness = 0) {
         float top = std::floor(lineTop + offset - (thickness / 2) + 0.5f);
         float bottom = top + std::floor(thickness + 0.5f);
 
+        Vector2f texCoords = {1.0f / texSize.x, 1.0f / texSize.y};
+
         vertices.append(
-                c2d::Vertex(c2d::Vector2f(-outlineThickness, top - outlineThickness), color, c2d::Vector2f(1, 1)));
+                c2d::Vertex(c2d::Vector2f(-outlineThickness, top - outlineThickness), color, texCoords));
         vertices.append(c2d::Vertex(c2d::Vector2f(lineLength + outlineThickness, top - outlineThickness), color,
-                                    c2d::Vector2f(1, 1)));
+                                    texCoords));
         vertices.append(
-                c2d::Vertex(c2d::Vector2f(-outlineThickness, bottom + outlineThickness), color, c2d::Vector2f(1, 1)));
+                c2d::Vertex(c2d::Vector2f(-outlineThickness, bottom + outlineThickness), color, texCoords));
         vertices.append(
-                c2d::Vertex(c2d::Vector2f(-outlineThickness, bottom + outlineThickness), color, c2d::Vector2f(1, 1)));
+                c2d::Vertex(c2d::Vector2f(-outlineThickness, bottom + outlineThickness), color, texCoords));
         vertices.append(c2d::Vertex(c2d::Vector2f(lineLength + outlineThickness, top - outlineThickness), color,
-                                    c2d::Vector2f(1, 1)));
+                                    texCoords));
         vertices.append(c2d::Vertex(c2d::Vector2f(lineLength + outlineThickness, bottom + outlineThickness), color,
-                                    c2d::Vector2f(1, 1)));
+                                    texCoords));
     }
 
     // Add a glyph quad to the vertex array
@@ -542,19 +545,19 @@ namespace c2d {
 
                 // If we're using the underlined style and there's a new line, draw a line
                 if (underlined && (curChar == L'\n')) {
-                    addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
+                    addLine(m_vertices, m_textureSize, x, y, m_fillColor, underlineOffset, underlineThickness);
 
                     if (m_outlineThickness != 0)
-                        addLine(m_outlineVertices, x, y, m_outlineColor, underlineOffset, underlineThickness,
+                        addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, underlineOffset, underlineThickness,
                                 m_outlineThickness);
                 }
 
                 // If we're using the strike through style and there's a new line, draw a line across all characters
                 if (strikeThrough && (curChar == L'\n')) {
-                    addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
+                    addLine(m_vertices, m_textureSize, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
                     if (m_outlineThickness != 0)
-                        addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness,
+                        addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset, underlineThickness,
                                 m_outlineThickness);
                 }
 
@@ -632,19 +635,19 @@ namespace c2d {
 
             // If we're using the underlined style, add the last line
             if (underlined && (x > 0)) {
-                addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
+                addLine(m_vertices, m_textureSize, x, y, m_fillColor, underlineOffset, underlineThickness);
 
                 if (m_outlineThickness != 0)
-                    addLine(m_outlineVertices, x, y, m_outlineColor, underlineOffset, underlineThickness,
+                    addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, underlineOffset, underlineThickness,
                             m_outlineThickness);
             }
 
             // If we're using the strike through style, add the last line across all characters
             if (strikeThrough && (x > 0)) {
-                addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
+                addLine(m_vertices, m_textureSize, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
                 if (m_outlineThickness != 0)
-                    addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness,
+                    addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset, underlineThickness,
                             m_outlineThickness);
             }
 
