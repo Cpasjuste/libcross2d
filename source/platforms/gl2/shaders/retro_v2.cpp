@@ -3,105 +3,116 @@
 //
 
 const char *retro_v2_v = R"text(
+
+#pragma parameter RETRO_PIXEL_SIZE "Retro Pixel Size" 0.84 0.0 1.0 0.01
+// ^^This value must be between 0.0 (totally black) and 1.0 (nearest neighbor)
+
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
 #define COMPAT_ATTRIBUTE in
 #define COMPAT_TEXTURE texture
-#define COMPAT_PRECISION
 #else
-// assume opengl es...
 #define COMPAT_VARYING varying
 #define COMPAT_ATTRIBUTE attribute
 #define COMPAT_TEXTURE texture2D
-#define COMPAT_PRECISION mediump
 #endif
 
-    // CROSS2D
-    COMPAT_ATTRIBUTE vec4 positionAttribute;
-    COMPAT_ATTRIBUTE vec4 colorAttribute;
-    COMPAT_ATTRIBUTE vec4 texCoordAttribute;
-    uniform mat4 modelViewMatrix;
-    uniform mat4 projectionMatrix;
-    uniform mat4 textureMatrix;
-    // CROSS2D
-    COMPAT_VARYING vec4 COL0;
-    COMPAT_VARYING vec4 TEX0;
+#ifdef GL_ES
+#define COMPAT_PRECISION mediump
+#else
+#define COMPAT_PRECISION
+#endif
 
-    uniform mat4 MVPMatrix;
-    uniform COMPAT_PRECISION int FrameDirection;
-    uniform COMPAT_PRECISION int FrameCount;
-    uniform COMPAT_PRECISION vec2 OutputSize;
-    uniform COMPAT_PRECISION vec2 TextureSize;
-    uniform COMPAT_PRECISION vec2 InputSize;
+COMPAT_ATTRIBUTE vec4 VertexCoord;
+COMPAT_ATTRIBUTE vec4 COLOR;
+COMPAT_ATTRIBUTE vec4 TexCoord;
+COMPAT_VARYING vec4 COL0;
+COMPAT_VARYING vec4 TEX0;
 
-    // vertex compatibility #defines
-    #define vTexCoord TEX0.xy
-    #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
-    #define outsize vec4(OutputSize, 1.0 / OutputSize)
+uniform mat4 MVPMatrix;
+uniform COMPAT_PRECISION int FrameDirection;
+uniform COMPAT_PRECISION int FrameCount;
+uniform COMPAT_PRECISION vec2 OutputSize;
+uniform COMPAT_PRECISION vec2 TextureSize;
+uniform COMPAT_PRECISION vec2 InputSize;
 
-    void main()
-    {
-        // CROSS2D
-        // gl_Position = MVPMatrix * positionAttribute;
-        gl_Position = projectionMatrix * (modelViewMatrix * vec4(positionAttribute.x, positionAttribute.y, 0.0, 1.0));
-        COL0 = colorAttribute;
-        // CROSS2D
-        // TEX0.xy = texCoordAttribute.xy;
-        TEX0 = textureMatrix * vec4(texCoordAttribute.x, texCoordAttribute.y, 0.0, 1.0);
-    }
+// vertex compatibility #defines
+#define vTexCoord TEX0.xy
+#define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
+#define outsize vec4(OutputSize, 1.0 / OutputSize)
+
+void main()
+{
+    gl_Position = MVPMatrix * VertexCoord;
+    COL0 = COLOR;
+    TEX0.xy = TexCoord.xy;
+}
 
 )text";
 
 const char *retro_v2_f = R"text(
+
+#pragma parameter RETRO_PIXEL_SIZE "Retro Pixel Size" 0.84 0.0 1.0 0.01
+// ^^This value must be between 0.0 (totally black) and 1.0 (nearest neighbor)
+
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
 #define COMPAT_TEXTURE texture
-out vec4 fragColor;
-#define COMPAT_PRECISION
+out vec4 FragColor;
 #else
-// assume opengl es...
 #define COMPAT_VARYING varying
-#define fragColor gl_FragColor
+#define FragColor gl_FragColor
 #define COMPAT_TEXTURE texture2D
-#define COMPAT_PRECISION mediump
 #endif
 
-    uniform COMPAT_PRECISION int FrameDirection;
-    uniform COMPAT_PRECISION int FrameCount;
-    uniform COMPAT_PRECISION vec2 OutputSize;
-    uniform COMPAT_PRECISION vec2 TextureSize;
-    uniform COMPAT_PRECISION vec2 InputSize;
-    uniform sampler2D Texture;
-    COMPAT_VARYING COMPAT_PRECISION vec4 TEX0;
+#ifdef GL_ES
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+#define COMPAT_PRECISION mediump
+#else
+#define COMPAT_PRECISION
+#endif
 
-    // fragment compatibility #defines
-    #define Source Texture
-    #define vTexCoord TEX0.xy
+uniform COMPAT_PRECISION int FrameDirection;
+uniform COMPAT_PRECISION int FrameCount;
+uniform COMPAT_PRECISION vec2 OutputSize;
+uniform COMPAT_PRECISION vec2 TextureSize;
+uniform COMPAT_PRECISION vec2 InputSize;
+uniform sampler2D Texture;
+COMPAT_VARYING vec4 TEX0;
 
-    #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
-    #define outsize vec4(OutputSize, 1.0 / OutputSize)
+// fragment compatibility #defines
+#define Source Texture
+#define vTexCoord TEX0.xy
 
-    #ifdef PARAMETER_UNIFORM
-    uniform COMPAT_PRECISION float RETRO_PIXEL_SIZE;
-    #else
-    #define RETRO_PIXEL_SIZE 0.84
-    #endif
+#define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
+#define outsize vec4(OutputSize, 1.0 / OutputSize)
 
-    void main()
-    {
-        // Reading the texel
-        COMPAT_PRECISION vec3 E = pow(COMPAT_TEXTURE(Source, vTexCoord).xyz, vec3(2.4));
+#ifdef PARAMETER_UNIFORM
+uniform COMPAT_PRECISION float RETRO_PIXEL_SIZE;
+#else
+#define RETRO_PIXEL_SIZE 0.84
+#endif
 
-        COMPAT_PRECISION vec2 fp = fract(vTexCoord*SourceSize.xy);
-        COMPAT_PRECISION vec2 ps = InputSize.xy * outsize.zw;
+void main()
+{
+    // Reading the texel
+    vec3 E = pow(COMPAT_TEXTURE(Source, vTexCoord).xyz, vec3(2.4));
 
-        COMPAT_PRECISION vec2 f = clamp(clamp(fp + 0.5*ps, 0.0, 1.0) - RETRO_PIXEL_SIZE, vec2(0.0), ps)/ps;
+    vec2 fp = fract(vTexCoord*SourceSize.xy);
+    vec2 ps = InputSize.xy * outsize.zw;
 
-        COMPAT_PRECISION float max_coord =  max(f.x, f.y);
+    vec2 f = clamp(clamp(fp + 0.5*ps, 0.0, 1.0) - RETRO_PIXEL_SIZE, vec2(0.0), ps)/ps;
 
-        COMPAT_PRECISION vec3 res = mix(E*(1.04+fp.x*fp.y), E*0.36, max_coord);
+    float max_coord =  max(f.x, f.y);
 
-        // Product interpolation
-        fragColor = vec4(clamp( pow(res, vec3(1.0 / 2.2)), 0.0, 1.0 ), 1.0);
-    }
+    vec3 res = mix(E*(1.04+fp.x*fp.y), E*0.36, max_coord);
+
+    // Product interpolation
+    FragColor = vec4(clamp( pow(res, vec3(1.0 / 2.2)), 0.0, 1.0 ), 1.0);
+}
+
 )text";

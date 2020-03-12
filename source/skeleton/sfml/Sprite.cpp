@@ -244,12 +244,16 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void Sprite::updateTexCoords() {
 
+        if (m_texture == nullptr) {
+            return;
+        }
+
         setOrigin(m_sprite_origin);
 
-        auto left = (float) m_textureRect.left;
-        float right = left + m_textureRect.width;
-        auto top = (float) m_textureRect.top;
-        float bottom = top + m_textureRect.height;
+        auto left = (float) m_textureRect.left / m_texture->getSize().x;
+        float right = (left + m_textureRect.width) / m_texture->getSize().x;
+        auto top = (float) m_textureRect.top / m_texture->getSize().y;
+        float bottom = (top + m_textureRect.height) / m_texture->getSize().y;
 
         m_vertices[0].texCoords = Vector2f(left, top);
         m_vertices[1].texCoords = Vector2f(left, bottom);

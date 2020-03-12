@@ -143,7 +143,7 @@ namespace c2d {
         }
 
         GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-        GL_CHECK(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_vertices.size(), m_vertices.data(), GL_STATIC_DRAW));
+        GL_CHECK(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_vertices.size(), m_vertices.data(), GL_STREAM_DRAW));
         GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
 #endif
     }

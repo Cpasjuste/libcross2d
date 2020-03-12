@@ -11,14 +11,22 @@ extern const char *color_f;
 extern const char *texture_v;
 extern const char *texture_f;
 
-extern const char *retro_v2_v;
-extern const char *retro_v2_f;
+//////////////////////////////
 
-extern const char *lcd3x_v;
-extern const char *lcd3x_f;
+extern const char *bevel_v;
+extern const char *bevel_f;
+
+extern const char *crt_pi_v;
+extern const char *crt_pi_f;
+
+extern const char *crt_aperture_v;
+extern const char *crt_aperture_f;
 
 extern const char *crt_caligari_v;
 extern const char *crt_caligari_f;
+
+extern const char *crt_cgwg_fast_v;
+extern const char *crt_cgwg_fast_f;
 
 extern const char *crt_easymode_v;
 extern const char *crt_easymode_f;
@@ -26,11 +34,20 @@ extern const char *crt_easymode_f;
 extern const char *crt_geom_v;
 extern const char *crt_geom_f;
 
-extern const char *crt_lottes_v;
-extern const char *crt_lottes_f;
+extern const char *crt_hyllian_v;
+extern const char *crt_hyllian_f;
 
-extern const char *pixellate_v;
-extern const char *pixellate_f;
+extern const char *crt_zfast_v;
+extern const char *crt_zfast_f;
+
+extern const char *dot_v;
+extern const char *dot_f;
+
+extern const char *lcd3x_v;
+extern const char *lcd3x_f;
+
+extern const char *retro_v2_v;
+extern const char *retro_v2_f;
 
 extern const char *scanlines_v;
 extern const char *scanlines_f;
@@ -40,12 +57,6 @@ extern const char *sharp_bilinear_f;
 
 extern const char *sharp_bilinear_scanlines_v;
 extern const char *sharp_bilinear_scanlines_f;
-
-// TODO: not working
-// extern const char *xbr_lv2_v;
-// extern const char *xbr_lv2_f;
-// extern const char *xbr_lv3_v;
-// extern const char *xbr_lv3_f;
 
 extern const char *supereagle_v;
 extern const char *supereagle_f;

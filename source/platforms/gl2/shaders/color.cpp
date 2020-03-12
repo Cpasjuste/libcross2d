@@ -4,6 +4,7 @@
 
 // vertex color shader
 const char *color_v = R"text(
+
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
 #define COMPAT_ATTRIBUTE in
@@ -17,22 +18,22 @@ const char *color_v = R"text(
 #define COMPAT_PRECISION mediump
 #endif
 
-    COMPAT_ATTRIBUTE vec2 positionAttribute;
-    COMPAT_ATTRIBUTE vec4 colorAttribute;
+COMPAT_ATTRIBUTE vec4 VertexCoord;
+COMPAT_ATTRIBUTE vec4 COLOR;
+COMPAT_VARYING vec4 COL0;
 
-    uniform mat4 modelViewMatrix;
-    uniform mat4 projectionMatrix;
+uniform mat4 MVPMatrix;
 
-    COMPAT_VARYING vec4 frontColor;
+void main()
+{
+    gl_Position = MVPMatrix * VertexCoord;
+    COL0 = COLOR;
+}
 
-    void main()
-    {
-        gl_Position = projectionMatrix * (modelViewMatrix * vec4(positionAttribute.x, positionAttribute.y, 0.0, 1.0));
-        frontColor = colorAttribute;
-    }
 )text";
 
 const char *color_f = R"text(
+
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
 #define COMPAT_TEXTURE texture
@@ -46,10 +47,11 @@ out vec4 fragColor;
 #define COMPAT_PRECISION mediump
 #endif
 
-    COMPAT_VARYING COMPAT_PRECISION vec4 frontColor;
+COMPAT_VARYING COMPAT_PRECISION vec4 COL0;
 
-    void main()
-    {
-        fragColor = vec4(frontColor);
-    }
+void main()
+{
+    fragColor = vec4(COL0);
+}
+
 )text";

@@ -3,6 +3,7 @@
 //
 
 const char *texture_v = R"text(
+
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
 #define COMPAT_ATTRIBUTE in
@@ -16,26 +17,25 @@ const char *texture_v = R"text(
 #define COMPAT_PRECISION mediump
 #endif
 
-    COMPAT_ATTRIBUTE vec2 positionAttribute;
-    COMPAT_ATTRIBUTE vec2 texCoordAttribute;
-    COMPAT_ATTRIBUTE vec4 colorAttribute;
+COMPAT_ATTRIBUTE vec4 VertexCoord;
+COMPAT_ATTRIBUTE vec4 COLOR;
+COMPAT_ATTRIBUTE vec4 TexCoord;
+COMPAT_VARYING vec4 COL0;
+COMPAT_VARYING vec4 TEX0;
 
-    uniform mat4 modelViewMatrix;
-    uniform mat4 projectionMatrix;
-    uniform mat4 textureMatrix;
+uniform mat4 MVPMatrix;
 
-    COMPAT_VARYING vec4 frontColor;
-    COMPAT_VARYING vec4 texCoord;
+void main()
+{
+    gl_Position = MVPMatrix * VertexCoord;
+    COL0 = COLOR;
+    TEX0.xy = TexCoord.xy;
+}
 
-    void main()
-    {
-        gl_Position = projectionMatrix * (modelViewMatrix * vec4(positionAttribute.x, positionAttribute.y, 0.0, 1.0));
-        frontColor = colorAttribute;
-        texCoord = textureMatrix * vec4(texCoordAttribute, 0.0, 1.0);
-    }
 )text";
 
 const char *texture_f = R"text(
+
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
 #define COMPAT_TEXTURE texture
@@ -49,12 +49,13 @@ out vec4 fragColor;
 #define COMPAT_PRECISION mediump
 #endif
 
-    COMPAT_VARYING COMPAT_PRECISION vec4 frontColor;
-    COMPAT_VARYING COMPAT_PRECISION vec4 texCoord;
-    uniform sampler2D tex;
+COMPAT_VARYING COMPAT_PRECISION vec4 COL0;
+COMPAT_VARYING COMPAT_PRECISION vec4 TEX0;
+uniform sampler2D tex;
 
-    void main()
-    {
-        fragColor = COMPAT_TEXTURE(tex, texCoord.xy) * frontColor;
-    }
+void main()
+{
+    fragColor = COMPAT_TEXTURE(tex, TEX0.xy) * COL0;
+}
+
 )text";

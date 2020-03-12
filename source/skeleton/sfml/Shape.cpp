@@ -230,8 +230,9 @@ namespace c2d {
         m_vertices.resize(count + 2); // + 2 for center and repeated first point
 
         // Position
-        for (std::size_t i = 0; i < count; ++i)
+        for (std::size_t i = 0; i < count; ++i) {
             m_vertices[i + 1].position = getPoint(i);
+        }
         m_vertices[count + 1].position = m_vertices[1].position;
 
         // Update the bounding rectangle
@@ -285,16 +286,28 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Shape::updateTexCoords() {
-        for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i) {
-            float xratio =
-                    m_insideBounds.width > 0 ?
-                    (m_vertices[i].position.x - m_insideBounds.left) / m_insideBounds.width : 0;
-            float yratio =
-                    m_insideBounds.height > 0 ?
-                    (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height : 0;
-            m_vertices[i].texCoords.x = m_textureRect.left + m_textureRect.width * xratio;
-            m_vertices[i].texCoords.y = m_textureRect.top + m_textureRect.height * yratio;
+
+        if (m_texture == nullptr) {
+            return;
         }
+
+        for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i) {
+            if (i == 0) {
+                m_vertices[i].texCoords = {0.5f, 0.5f};
+            } else {
+                float xratio =
+                        m_insideBounds.width > 0 ?
+                        (m_vertices[i].position.x - m_insideBounds.left) / m_insideBounds.width : 0;
+                float yratio =
+                        m_insideBounds.height > 0 ?
+                        (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height : 0;
+                m_vertices[i].texCoords.x =
+                        (m_textureRect.left + m_textureRect.width * xratio) / m_texture->getTextureRect().width;
+                m_vertices[i].texCoords.y =
+                        (m_textureRect.top + m_textureRect.height * yratio) / m_texture->getTextureRect().height;
+            }
+        }
+
         m_vertices.update();
     }
 

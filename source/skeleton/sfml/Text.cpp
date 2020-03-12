@@ -56,17 +56,17 @@ namespace {
 
     // Add a glyph quad to the vertex array
     void
-    addGlyphQuad(c2d::VertexArray &vertices, c2d::Vector2f position, const c2d::Color &color, const c2d::Glyph &glyph,
-                 float italic, float outlineThickness = 0) {
+    addGlyphQuad(c2d::VertexArray &vertices, c2d::Vector2f texSize, c2d::Vector2f position,
+                 const c2d::Color &color, const c2d::Glyph &glyph, float italic, float outlineThickness = 0) {
         float left = glyph.bounds.left;
         float top = glyph.bounds.top;
         float right = glyph.bounds.left + glyph.bounds.width;
         float bottom = glyph.bounds.top + glyph.bounds.height;
 
-        float u1 = static_cast<float>(glyph.textureRect.left);
-        float v1 = static_cast<float>(glyph.textureRect.top);
-        float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width);
-        float v2 = static_cast<float>(glyph.textureRect.top + glyph.textureRect.height);
+        float u1 = static_cast<float>(glyph.textureRect.left) / texSize.x;
+        float v1 = static_cast<float>(glyph.textureRect.top) / texSize.y;
+        float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width) / texSize.x;
+        float v2 = static_cast<float>(glyph.textureRect.top + glyph.textureRect.height) / texSize.y;
 
         vertices.append(c2d::Vertex(
                 c2d::Vector2f(position.x + left - italic * top - outlineThickness, position.y + top - outlineThickness),
@@ -413,6 +413,12 @@ namespace c2d {
 
     void Text::onUpdate() {
         ensureGeometryUpdate();
+        // sfml use pixel coordinates for texCoords, but c2d use normalized one.
+        // if the texture size changed, we need to update vertex buffer for normalized texCoords
+        if (m_font->getTexture(m_characterSize)->getSize() != m_textureSize) {
+            m_geometryNeedUpdate = true;
+            ensureGeometryUpdate();
+        }
         setOrigin(m_text_origin);
     }
 
@@ -468,6 +474,10 @@ namespace c2d {
         // Precompute the variables needed by the algorithm
         float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
         float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + (float) m_line_spacing;
+
+        // sfml use pixel coordinates for texCoords, but c2d use normalized one.
+        // we keep a reference to texture size for checking this in "onUpdate"
+        m_textureSize = m_font->getTexture(m_characterSize)->getSize();
 
         float x = 0.f;
         float y = static_cast<float>(m_characterSize);
@@ -586,7 +596,8 @@ namespace c2d {
                     float bottom = glyph.bounds.top + glyph.bounds.height;
 
                     // Add the outline glyph to the vertices
-                    addGlyphQuad(m_outlineVertices, Vector2f(x, y), m_outlineColor, glyph, italic, m_outlineThickness);
+                    addGlyphQuad(m_outlineVertices, m_textureSize,
+                                 Vector2f(x, y), m_outlineColor, glyph, italic, m_outlineThickness);
 
                     // Update the current bounds with the outlined glyph bounds
                     minX = std::min(minX, x + left - italic * bottom - m_outlineThickness);
@@ -599,7 +610,8 @@ namespace c2d {
                 const Glyph &glyph = m_font->getGlyph(curChar, m_characterSize, bold);
 
                 // Add the glyph to the vertices
-                addGlyphQuad(m_vertices, Vector2f(x, y), m_fillColor, glyph, italic);
+                addGlyphQuad(m_vertices, m_textureSize,
+                             Vector2f(x, y), m_fillColor, glyph, italic);
 
                 // Update the current bounds with the non outlined glyph bounds
                 if (m_outlineThickness == 0) {

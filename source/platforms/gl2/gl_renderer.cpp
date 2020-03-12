@@ -87,16 +87,6 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
         GL_CHECK(glEnableVertexAttribArray(2));
         GL_CHECK(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                                        (void *) offsetof(Vertex, texCoords)));
-
-        // normalize texture coords
-        GLfloat texMtx[16] = {1.f, 0.f, 0.f, 0.f,
-                              0.f, 1.f, 0.f, 0.f,
-                              0.f, 0.f, 1.f, 0.f,
-                              0.f, 0.f, 0.f, 1.f};
-        texMtx[0] = 1.f / glTexture->getSize().x;
-        texMtx[5] = 1.f / glTexture->getSize().y;
-        shader->SetUniformMatrix("textureMatrix", texMtx);
-
         // set retroarch shader params
         if (sprite != nullptr) {
             inputSize = {sprite->getTextureRect().width, sprite->getTextureRect().height};
@@ -120,19 +110,17 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 #endif
     }
 
-    //auto pMtx = glm::orthoLH(0.0f, getSize().x, getSize().y, 0.0f, 0.0f, 1.0f);
-    //auto mMtx = glm::make_mat4(transform.getMatrix());
-    //auto pmMtx = glm::matrixCompMult(pMtx, mMtx);
-    //shader->SetUniformMatrix("MVPMatrix", glm::value_ptr(pmMtx));
-
-    // set projection matrix
+    // projection
     int w, h;
     SDL_Window *window = ((SDL2Renderer *) this)->getWindow();
     SDL_GL_GetDrawableSize(window, &w, &h);
-    auto mtx = glm::orthoLH(0.0f, (float) w, (float) h, 0.0f, 0.0f, 1.0f);
-    shader->SetUniformMatrix("projectionMatrix", glm::value_ptr(mtx));
-    // set model view matrix
-    shader->SetUniformMatrix("modelViewMatrix", transform.getMatrix());
+    auto projectionMatrix = glm::orthoLH(0.0f, (float) w, (float) h, 0.0f, 0.0f, 1.0f);
+    // view
+    auto viewMatrix = glm::make_mat4(transform.getMatrix());
+    // mpv
+    auto mpvMatrix = projectionMatrix * viewMatrix;
+    // set mpv matrix uniform
+    shader->SetUniformMatrix("MVPMatrix", glm::value_ptr(mpvMatrix));
 
     // enable blending if needed
     if (glTexture != nullptr || vertices[0].color.a < 255) {

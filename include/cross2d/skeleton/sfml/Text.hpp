@@ -400,6 +400,7 @@ namespace c2d {
         mutable c2d::Vector2f m_max_size = {2048, 2048};
         int m_line_spacing = 0;
         Origin m_text_origin = Origin::TopLeft;
+        mutable Vector2f m_textureSize = {128, 128};
     };
 
 } // namespace sf
