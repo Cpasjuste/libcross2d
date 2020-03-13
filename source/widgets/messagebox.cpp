@@ -84,7 +84,6 @@ int MessageBox::show(const std::string &txt, const std::string &msg,
             buttons[0]->setText(buttonLeftText);
             buttons[0]->setPosition((getSize().x / 3) - 8,
                                     getSize().y - buttons[0]->getSize().y - 16);
-            buttons[0]->getText()->setFillColor(Color::Red);
             buttons[0]->setVisibility(Visibility::Visible);
 
             buttons[1]->setText(buttonRightText);
