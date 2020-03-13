@@ -27,7 +27,12 @@ int main(int argc, char **argv) {
     rect->setOutlineThickness(8 * scaling);
 
     // create a texture and add it to the rect
-    auto *tex = new C2DTexture(renderer->getIo()->getDataPath() + "gbatemp.png");
+    C2DTexture *tex = nullptr;
+    if (renderer->getIo()->exist(renderer->getIo()->getRomFsPath() + "gbatemp.png")) {
+        tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "gbatemp.png");
+    } else {
+        tex = new C2DTexture(renderer->getIo()->getDataPath() + "gbatemp.png");
+    }
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
         tex->setScale(0.5f * scaling, 0.5f * scaling);

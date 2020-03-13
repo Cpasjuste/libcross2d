@@ -63,6 +63,36 @@ if (PLATFORM_SWITCH)
             )
 endif (PLATFORM_SWITCH)
 
+#####################
+# VITA target
+#####################
+if (PLATFORM_VITA)
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
+    add_custom_target(${PROJECT_NAME}.vpk
+            DEPENDS ${PROJECT_NAME}
+            DEPENDS ${PROJECT_NAME}.data
+            # create eboot
+            COMMAND ${VITASDK}/bin/vita-elf-create ${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.velf
+            COMMAND ${VITASDK}/bin/vita-make-fself -s -c ${PROJECT_NAME}.velf eboot.bin
+            # create vpk
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/vpk
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/vpk
+            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_romfs -D DST=${CMAKE_BINARY_DIR}/vpk -P ${CMAKE_CURRENT_LIST_DIR}/copy_directory_custom.cmake
+            COMMAND ${CMAKE_COMMAND} -E copy eboot.bin ${CMAKE_BINARY_DIR}/vpk/eboot.bin
+            COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID="${TITLE_ID}" "${PROJECT_NAME}" ${CMAKE_BINARY_DIR}/vpk/sce_sys/param.sfo
+            COMMAND cd ${CMAKE_BINARY_DIR}/vpk && ${ZIP} -r ../${PROJECT_NAME}.vpk .
+            )
+    add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
+            DEPENDS ${PROJECT_NAME}.vpk
+            COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.vpk ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
+            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_datadir -D DST=${CMAKE_BINARY_DIR}/release/${PROJECT_NAME} -P ${CMAKE_CURRENT_LIST_DIR}/copy_directory_custom.cmake
+            COMMAND cd ${CMAKE_BINARY_DIR}/release && ${ZIP} -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip ${PROJECT_NAME}
+            )
+endif (PLATFORM_VITA)
+
 ###########################
 # Dreamcast target
 ###########################
@@ -116,31 +146,3 @@ if (PLATFORM_3DS)
             )
 endif (PLATFORM_3DS)
 
-#####################
-# VITA target
-#####################
-if (PLATFORM_VITA)
-    add_custom_target(${PROJECT_NAME}.vpk
-            DEPENDS ${PROJECT_NAME}
-            DEPENDS ${PROJECT_NAME}.data
-            # create eboot
-            COMMAND ${VITASDK}/bin/vita-elf-create ${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.velf
-            COMMAND ${VITASDK}/bin/vita-make-fself -s -c ${PROJECT_NAME}.velf eboot.bin
-            # create vpk
-            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/vpk
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/vpk
-            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_romfs -D DST=${CMAKE_BINARY_DIR}/vpk -P ${CMAKE_CURRENT_LIST_DIR}/copy_directory_custom.cmake
-            COMMAND ${CMAKE_COMMAND} -E copy eboot.bin ${CMAKE_BINARY_DIR}/vpk/eboot.bin
-            COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID="${TITLE_ID}" "${PROJECT_NAME}" ${CMAKE_BINARY_DIR}/vpk/sce_sys/param.sfo
-            COMMAND cd ${CMAKE_BINARY_DIR}/vpk && ${ZIP} -r ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.vpk ..
-            )
-    add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
-            DEPENDS ${PROJECT_NAME}.vpk
-            COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip
-            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
-            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.vpk ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
-            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_datadir -D DST=${CMAKE_BINARY_DIR}/release/${PROJECT_NAME} -P ${CMAKE_CURRENT_LIST_DIR}/copy_directory_custom.cmake
-            COMMAND cd ${CMAKE_BINARY_DIR}/release && ${ZIP} -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip ${PROJECT_NAME}
-            )
-endif (PLATFORM_VITA)
