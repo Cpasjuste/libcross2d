@@ -13,11 +13,11 @@ namespace c2d {
 
     public:
 
-        std::string getRomFsPath() const override {
+        std::string getRomFsPath() override {
             return "app0:/";
         }
 
-        std::string getDataPath() const override {
+        std::string getDataPath() override {
             return "ux0:/data/";
         }
     };

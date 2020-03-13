@@ -17,7 +17,8 @@ namespace c2d {
 
         ~PSP2Renderer() override;
 
-        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
+        void draw(VertexArray *vertexArray, const Transform &transform,
+                  Texture *texture, Sprite *sprite = nullptr) override;
 
         void flip(bool draw = true, bool process_inputs = true) override;
 

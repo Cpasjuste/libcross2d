@@ -11,13 +11,16 @@
 
 #ifdef __WINDOWS__
 #define mkdir(x, y) mkdir(x)
+#elif __PSP2__
+#include <psp2/io/stat.h>
+#define rmdir(x) sceIoRmdir(x)
 #endif
 
 using namespace c2d;
 
 std::string POSIXIo::getHomePath() {
 #if defined(__PSP2__) || defined(__RECALBOX__)
-    return getDataWritePath();
+    return getDataPath();
 #else
     char buf[1024];
     if (getcwd(buf, sizeof(buf))) {

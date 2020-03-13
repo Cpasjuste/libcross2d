@@ -33,27 +33,24 @@ PSP2Renderer::PSP2Renderer(const Vector2f &size) : Renderer(size) {
     }
 
     vita2d_init();
-
     shaderList = (ShaderList *) new PSP2ShaderList("");
 }
 
-void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {
+void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture, Sprite *sprite) {
 
     Vertex *vertices;
     size_t vertexCount;
 
-    if (!vertexArray || vertexArray->getVertexCount() < 1) {
+    if (vertexArray == nullptr || vertexArray->getVertexCount() < 1) {
         printf("gl_render::draw: no vertices\n");
         return;
     }
 
     vertices = vertexArray->getVertices()->data();
     vertexCount = vertexArray->getVertexCount();
-
     auto v2d_indices = (uint16_t *) vita2d_pool_memalign(
             vertexCount * sizeof(uint16_t), sizeof(uint16_t));
-
-    if (!v2d_indices) {
+    if (v2d_indices == nullptr) {
         printf("PSP2Render::draw: vita2d_pool_memalign failed (v2d_indices)\n");
         return;
     }
@@ -82,8 +79,8 @@ void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
             return;
     }
 
-    auto tex = (PSP2Texture *) texture;
-    if (tex) {
+    auto tex = sprite != nullptr ? (PSP2Texture *) sprite->getTexture() : (PSP2Texture *) texture;
+    if (tex != nullptr) {
         if (vertices[0].color == Color::White) {
             // we only apply custom shader to "white" texture
             tex->applyShader();
@@ -93,17 +90,16 @@ void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
             void *color_buffer;
             sceGxmReserveFragmentDefaultUniformBuffer(vita2d_get_context(), &color_buffer);
             auto tint_color = (float *) vita2d_pool_memalign(4 * sizeof(float), sizeof(float));
-            tint_color[0] = vertices[0].color.r / 255.0f;
-            tint_color[1] = vertices[0].color.g / 255.0f;
-            tint_color[2] = vertices[0].color.b / 255.0f;
-            tint_color[3] = vertices[0].color.a / 255.0f;
+            tint_color[0] = (float) vertices[0].color.r / 255.0f;
+            tint_color[1] = (float) vertices[0].color.g / 255.0f;
+            tint_color[2] = (float) vertices[0].color.b / 255.0f;
+            tint_color[3] = (float) vertices[0].color.a / 255.0f;
             sceGxmSetUniformDataF(color_buffer, _vita2d_textureTintColorParam, 0, 4, tint_color);
         }
 
         auto v2d_vertices = (vita2d_texture_vertex *) vita2d_pool_memalign(
                 vertexCount * sizeof(vita2d_texture_vertex), sizeof(vita2d_texture_vertex));
-
-        if (!v2d_vertices) {
+        if (v2d_vertices == nullptr) {
             printf("PSP2Render::draw: vita2d_pool_memalign failed (v2d_vertices)\n");
             return;
         }
@@ -114,8 +110,8 @@ void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
             v2d_vertices[i].x = v.x;
             v2d_vertices[i].y = v.y;
             v2d_vertices[i].z = +0.5f;
-            v2d_vertices[i].u = vertices[i].texCoords.x / tex->getSize().x;
-            v2d_vertices[i].v = vertices[i].texCoords.y / tex->getSize().y;
+            v2d_vertices[i].u = vertices[i].texCoords.x;
+            v2d_vertices[i].v = vertices[i].texCoords.y;
 
             v2d_indices[i] = (uint16_t) i;
         }
@@ -130,11 +126,8 @@ void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
     } else {
         auto v2d_vertices =
                 (vita2d_color_vertex *)
-                        vita2d_pool_memalign(
-                                vertexCount * sizeof(vita2d_color_vertex),
-                                sizeof(vita2d_color_vertex));
-
-        if (!v2d_vertices) {
+                        vita2d_pool_memalign(vertexCount * sizeof(vita2d_color_vertex), sizeof(vita2d_color_vertex));
+        if (v2d_vertices == nullptr) {
             printf("PSP2Render::draw: vita2d_pool_memalign failed (v2d_vertices)\n");
             return;
         }
