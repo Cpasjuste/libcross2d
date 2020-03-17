@@ -250,15 +250,16 @@ namespace c2d {
 
         setOrigin(m_sprite_origin);
 
-        auto left = (float) m_textureRect.left / m_texture->getSize().x;
-        float right = (left + m_textureRect.width) / m_texture->getSize().x;
-        auto top = (float) m_textureRect.top / m_texture->getSize().y;
-        float bottom = (top + m_textureRect.height) / m_texture->getSize().y;
+        auto left = (float) m_textureRect.left;
+        float right = left + m_textureRect.width;
+        auto top = (float) m_textureRect.top;
+        float bottom = top + m_textureRect.height;
+        Vector2f texSize = m_texture->getSize();
 
-        m_vertices[0].texCoords = Vector2f(left, top);
-        m_vertices[1].texCoords = Vector2f(left, bottom);
-        m_vertices[2].texCoords = Vector2f(right, top);
-        m_vertices[3].texCoords = Vector2f(right, bottom);
+        m_vertices[0].texCoords = Vector2f(left / texSize.x, top / texSize.y);
+        m_vertices[1].texCoords = Vector2f(left / texSize.x, bottom / texSize.y);
+        m_vertices[2].texCoords = Vector2f(right / texSize.x, top / texSize.y);
+        m_vertices[3].texCoords = Vector2f(right / texSize.x, bottom / texSize.y);
         m_vertices.update();
     }
 
