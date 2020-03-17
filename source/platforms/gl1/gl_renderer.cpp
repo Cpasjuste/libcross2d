@@ -85,8 +85,7 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
 
     for (unsigned int i = 0; i < vertexCount; i++) {
         if (tex != nullptr && tex->available) {
-            glTexCoord2f(vertices[i].texCoords.x / tex->getSize().x,
-                         vertices[i].texCoords.y / tex->getSize().y);
+            glTexCoord2f(vertices[i].texCoords.x, vertices[i].texCoords.y);
         }
         glColor4f((float) vertices[i].color.r / 255.0f,
                   (float) vertices[i].color.g / 255.0f,
