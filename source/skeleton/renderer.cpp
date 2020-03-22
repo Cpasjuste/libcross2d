@@ -62,7 +62,7 @@ void Renderer::flip(bool draw, bool _process_inputs) {
     // call base class (draw childs)
     if (draw) {
         clear();
-        Transform trans = getTransform();
+        Transform trans = Transform::Identity;
         Rectangle::onDraw(trans, draw);
     }
 }
