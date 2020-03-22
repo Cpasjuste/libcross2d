@@ -71,9 +71,7 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Shape::setTextureRect(const IntRect &rect) {
-        if (m_texture) {
-            // TODO: verify this
-            //printf("%i, %i\n",  m_texture->pitch, m_texture->bpp);
+        if (m_texture != nullptr) {
             m_texture->pitch = rect.width * m_texture->bpp;
         }
         m_textureRect = rect;

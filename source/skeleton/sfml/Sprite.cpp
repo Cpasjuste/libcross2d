@@ -86,7 +86,9 @@ namespace c2d {
         if (rectangle != m_textureRect) {
             m_size = {rectangle.width, rectangle.height};
             m_textureRect = rectangle;
-            m_texture->setTextureRect(rectangle);
+            if (m_texture != nullptr) {
+                m_texture->setTextureRect(rectangle);
+            }
             updatePositions();
             updateTexCoords();
         }
