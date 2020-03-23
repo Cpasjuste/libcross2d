@@ -186,7 +186,6 @@ if (PLATFORM_VITA)
             SceAudio_stub SceTouch_stub SceHid_stub
             jpeg png z m c
             )
-    #png
     list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
             -Wl,-q -Wno-uninitialized
             -ftree-vectorize -mword-relocations
