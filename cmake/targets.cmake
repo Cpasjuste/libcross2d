@@ -67,7 +67,6 @@ endif (PLATFORM_SWITCH)
 # VITA target
 #####################
 if (PLATFORM_VITA)
-    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
     add_custom_target(${PROJECT_NAME}.vpk
             DEPENDS ${PROJECT_NAME}
             DEPENDS ${PROJECT_NAME}.data
