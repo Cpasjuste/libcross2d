@@ -187,10 +187,8 @@ if (PLATFORM_VITA)
             jpeg png z m c
             )
     list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
-            -Wl,-q -Wno-uninitialized
-            -ftree-vectorize -mword-relocations
-            -fomit-frame-pointer -ffast-math
-            -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard)
+            -Wno-uninitialized -ftree-vectorize -mword-relocations
+            -fomit-frame-pointer -ffast-math)
     if (BUILD_DEBUG)
         list(APPEND C2D_CFLAGS -D__PSP2_DEBUG__)
     endif (BUILD_DEBUG)
