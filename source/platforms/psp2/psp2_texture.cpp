@@ -145,8 +145,7 @@ void PSP2Texture::setShader(int shaderIndex) {
 
     ShaderList *shaderList = c2d_renderer->getShaderList();
     if (shaderIndex >= shaderList->getCount()) {
-        shader = shaderList->get(0);
-        return;
+        shaderIndex = 0;
     }
 
     shader = shaderList->get(shaderIndex);
