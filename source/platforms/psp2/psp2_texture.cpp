@@ -20,17 +20,16 @@ PSP2Texture::PSP2Texture(const std::string &p) : Texture(p) {
         tex = vita2d_load_PNG_file(path.c_str());
     }
 
-    if (!tex) {
+    if (tex == nullptr) {
         printf("PSP2Texture: could not create texture from `%s`\n", path.c_str());
         return;
     }
 
-    m_vertices.setPrimitiveType(TriangleStrip);
-    setSize(vita2d_texture_get_width(tex), vita2d_texture_get_height(tex));
+    PSP2Texture::setSize((float) vita2d_texture_get_width(tex), (float) vita2d_texture_get_height(tex));
     setTexture(this, true);
-    pitch = vita2d_texture_get_stride(tex);
-    setFilter(filter);
-    setShader(0);
+    pitch = (int) vita2d_texture_get_stride(tex);
+    PSP2Texture::setFilter(filter);
+    PSP2Texture::setShader(0);
 
     available = true;
 }
@@ -43,17 +42,17 @@ PSP2Texture::PSP2Texture(const Vector2f &size, Format fmt) : Texture(size, fmt) 
             fmt == Format::RGBA8 ? SCE_GXM_TEXTURE_FORMAT_A8B8G8R8
                                  : SCE_GXM_TEXTURE_FORMAT_R5G6B5);
     vita2d_texture_set_alloc_memblock_type(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW);
-    if (!tex) {
+    if (tex == nullptr) {
         printf("PSP2Texture: couldn't create texture\n");
         return;
     }
 
-    m_vertices.setPrimitiveType(TriangleStrip);
-    setSize(size.x, size.y);
+    PSP2Texture::setSize(size.x, size.y);
+    setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     setTexture(this, true);
-    pitch = vita2d_texture_get_stride(tex);
-    setFilter(filter);
-    setShader(0);
+    pitch = (int) vita2d_texture_get_stride(tex);
+    PSP2Texture::setFilter(filter);
+    PSP2Texture::setShader(0);
 
     available = true;
 }
@@ -62,17 +61,16 @@ PSP2Texture::PSP2Texture(const unsigned char *buffer, int bufferSize) : Texture(
 
 
     tex = vita2d_load_PNG_buffer(buffer);
-    if (!tex) {
+    if (tex == nullptr) {
         printf("PSP2Texture: couldn't create texture\n");
         return;
     }
 
-    m_vertices.setPrimitiveType(TriangleStrip);
-    setSize(vita2d_texture_get_width(tex), vita2d_texture_get_height(tex));
+    PSP2Texture::setSize((float) vita2d_texture_get_width(tex), (float) vita2d_texture_get_height(tex));
     setTexture(this, true);
-    pitch = vita2d_texture_get_stride(tex);
-    setFilter(filter);
-    setShader(0);
+    pitch = (int) vita2d_texture_get_stride(tex);
+    PSP2Texture::setFilter(filter);
+    PSP2Texture::setShader(0);
 
     available = true;
 }
@@ -88,7 +86,7 @@ int PSP2Texture::resize(const Vector2f &size, bool copyPixels) {
             format == Format::RGBA8 ? SCE_GXM_TEXTURE_FORMAT_A8B8G8R8
                                     : SCE_GXM_TEXTURE_FORMAT_R5G6B5);
 
-    if (!tex_new) {
+    if (tex_new == nullptr) {
         printf("PSP2Texture: couldn't create texture\n");
         return -1;
     }
@@ -96,7 +94,7 @@ int PSP2Texture::resize(const Vector2f &size, bool copyPixels) {
     if (copyPixels) {
         unsigned char *src = (unsigned char *) vita2d_texture_get_datap(tex);
         unsigned char *dst = (unsigned char *) vita2d_texture_get_datap(tex_new);
-        int dst_pitch = vita2d_texture_get_stride(tex_new);
+        int dst_pitch = (int) vita2d_texture_get_stride(tex_new);
         Vector2i dst_size = Vector2i(
                 std::min((int) getSize().x, (int) size.x),
                 std::min((int) getSize().y, (int) size.y));
@@ -110,7 +108,7 @@ int PSP2Texture::resize(const Vector2f &size, bool copyPixels) {
 
     vita2d_free_texture(tex);
     tex = tex_new;
-    pitch = (int) (size.x * bpp);
+    pitch = (int) size.x * bpp;
     setSize(size);
     setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     setFilter(filter);
@@ -120,14 +118,14 @@ int PSP2Texture::resize(const Vector2f &size, bool copyPixels) {
 
 int PSP2Texture::lock(FloatRect *rect, void **pixels, int *p) {
 
-    if (!rect) {
+    if (rect == nullptr) {
         *pixels = vita2d_texture_get_datap(tex);
     } else {
         *pixels = (void *) ((uint8_t *) vita2d_texture_get_datap(tex) +
                             (int) rect->top * pitch + (int) rect->left * bpp);
     }
 
-    if (p) {
+    if (p != nullptr) {
         *p = pitch;
     }
 
@@ -163,29 +161,29 @@ void PSP2Texture::applyShader() {
 
     // set shader params
     float *tex_size = (float *) vita2d_pool_memalign(2 * sizeof(float), sizeof(float));
-    tex_size[0] = getSize().x;
-    tex_size[1] = getSize().y;
+    tex_size[0] = getTextureRect().width;
+    tex_size[1] = getTextureRect().height;
 
     float *out_size = (float *) vita2d_pool_memalign(2 * sizeof(float), sizeof(float));
-    out_size[0] = getSize().x * getScale().x;
-    out_size[1] = getSize().y * getScale().y;
+    out_size[0] = getTextureRect().width * getScale().x;
+    out_size[1] = getTextureRect().height * getScale().y;
 
-    if (v2d_shader->vertexInput.texture_size) {
+    if (v2d_shader->vertexInput.texture_size != nullptr) {
         PSP2ShaderList::setVertexUniform(v2d_shader->vertexInput.texture_size, tex_size, 2);
     }
-    if (v2d_shader->vertexInput.output_size) {
+    if (v2d_shader->vertexInput.output_size != nullptr) {
         PSP2ShaderList::setVertexUniform(v2d_shader->vertexInput.output_size, out_size, 2);
     }
-    if (v2d_shader->vertexInput.video_size) {
+    if (v2d_shader->vertexInput.video_size != nullptr) {
         PSP2ShaderList::setVertexUniform(v2d_shader->vertexInput.video_size, tex_size, 2);
     }
-    if (v2d_shader->fragmentInput.texture_size) {
+    if (v2d_shader->fragmentInput.texture_size != nullptr) {
         PSP2ShaderList::setFragmentUniform(v2d_shader->fragmentInput.texture_size, tex_size, 2);
     }
-    if (v2d_shader->fragmentInput.output_size) {
+    if (v2d_shader->fragmentInput.output_size != nullptr) {
         PSP2ShaderList::setFragmentUniform(v2d_shader->fragmentInput.output_size, out_size, 2);
     }
-    if (v2d_shader->fragmentInput.video_size) {
+    if (v2d_shader->fragmentInput.video_size != nullptr) {
         PSP2ShaderList::setFragmentUniform(v2d_shader->fragmentInput.video_size, tex_size, 2);
     }
 }
