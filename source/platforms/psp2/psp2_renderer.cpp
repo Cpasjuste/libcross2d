@@ -33,6 +33,8 @@ PSP2Renderer::PSP2Renderer(const Vector2f &size) : Renderer(size) {
     }
 
     vita2d_init();
+    vita2d_set_vblank_wait(1);
+
     shaderList = (ShaderList *) new PSP2ShaderList("");
 }
 
