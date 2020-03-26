@@ -163,12 +163,14 @@ void PSP2Texture::applyShader() {
 
     // set shader params
     float *tex_size = (float *) vita2d_pool_memalign(2 * sizeof(float), sizeof(float));
-    tex_size[0] = getTextureRect().width;
-    tex_size[1] = getTextureRect().height;
+    tex_size[0] = (float) vita2d_texture_get_width(tex);
+    tex_size[1] = (float) vita2d_texture_get_height(tex);
+    //printf("tex_size: %f %f\n", tex_size[0], tex_size[1]);
 
     float *out_size = (float *) vita2d_pool_memalign(2 * sizeof(float), sizeof(float));
-    out_size[0] = getTextureRect().width * getScale().x;
-    out_size[1] = getTextureRect().height * getScale().y;
+    out_size[0] = (float) getTextureRect().width * getScale().x;
+    out_size[1] = (float) getTextureRect().height * getScale().y;
+    //printf("out_size: %f %f\n", out_size[0], out_size[1]);
 
     if (v2d_shader->vertexInput.texture_size != nullptr) {
         PSP2ShaderList::setVertexUniform(v2d_shader->vertexInput.texture_size, tex_size, 2);
