@@ -8,6 +8,10 @@
 #include "cross2d/c2d.h"
 #include "cross2d/platforms/psp2/psp2_shaders.h"
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+
+#include "cross2d/skeleton/stb_image_write.h"
+
 using namespace c2d;
 
 PSP2Texture::PSP2Texture(const std::string &p) : Texture(p) {
@@ -184,6 +188,38 @@ void PSP2Texture::applyShader() {
     if (v2d_shader->fragmentInput.video_size != nullptr) {
         PSP2ShaderList::setFragmentUniform(v2d_shader->fragmentInput.video_size, tex_size, 2);
     }
+}
+
+int PSP2Texture::save(const std::string &path) {
+
+    int res;
+    int width = getTextureRect().width;
+    int height = getTextureRect().height;
+    void *pixels = vita2d_texture_get_datap(tex);
+
+    if (pixels == nullptr) {
+        return -1;
+    }
+
+    if (bpp == 2) {
+        // convert rgb565 to bgr888
+        auto *tmp = (unsigned char *) malloc((size_t) width * (size_t) height * 3);
+        for (int i = 0; i < width * height; i++) {
+            signed short nColour = ((signed short *) pixels)[i];
+            *(tmp + i * 3 + 2) = (unsigned char) ((nColour & 0x1F) << 3);
+            *(tmp + i * 3 + 2) |= *(tmp + 3 * i + 0) >> 5;
+            *(tmp + i * 3 + 1) = (unsigned char) (((nColour >> 5) & 0x3F) << 2);
+            *(tmp + i * 3 + 1) |= *(tmp + i * 3 + 1) >> 6;
+            *(tmp + i * 3 + 0) = (unsigned char) (((nColour >> 11) & 0x1F) << 3);
+            *(tmp + i * 3 + 0) |= *(tmp + i * 3 + 2) >> 5;
+        }
+        res = stbi_write_png(path.c_str(), width, height, 3, tmp, width * 3);
+        free(tmp);
+    } else {
+        res = stbi_write_png(path.c_str(), width, height, 4, pixels, width * 4);
+    }
+
+    return res;
 }
 
 PSP2Texture::~PSP2Texture() {
