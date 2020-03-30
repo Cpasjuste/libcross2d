@@ -28,6 +28,11 @@ void GLRenderer::initGL() {
     glewInit();
 #endif
 
+    printf("GL vendor   : %s\n", glGetString(GL_VENDOR));
+    printf("GL renderer : %s\n", glGetString(GL_RENDERER));
+    printf("GL version  : %s\n", glGetString(GL_VERSION));
+    printf("GL glsl     : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
 #ifndef __GLES2__
     // vao
     GL_CHECK(glGenVertexArrays(1, &vao));

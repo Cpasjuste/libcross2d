@@ -50,10 +50,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
         return;
     }
 
-    int x, y;
-    SDL_GetWindowSize(window, &x, &y);
-    setSize(x, y);
-
     printf("SDL_GL_CreateContext\n");
     context = SDL_GL_CreateContext(window);
     if (context == nullptr) {
@@ -64,14 +60,9 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
     initGL();
 
-    printf("GL vendor   : %s\n", glGetString(GL_VENDOR));
-    printf("GL renderer : %s\n", glGetString(GL_RENDERER));
-    printf("GL version  : %s\n", glGetString(GL_VERSION));
-    printf("GL glsl     : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
     available = true;
 
-    printf("SDL2Renderer(GL)(%p): %ix%i\n", this, (int) x, (int) y);
+    printf("SDL2Renderer(GL)(%p): %ix%i\n", this, (int) m_size.x, (int) m_size.y);
 }
 
 void SDL2Renderer::flip(bool draw, bool inputs) {
