@@ -74,12 +74,12 @@ if (PLATFORM_VITA)
             COMMAND ${VITASDK}/bin/vita-elf-create ${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.velf
             COMMAND ${VITASDK}/bin/vita-make-fself -s -c ${PROJECT_NAME}.velf eboot.bin
             # create vpk
-            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/vpk
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/vpk
-            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_romfs -D DST=${CMAKE_BINARY_DIR}/vpk -P ${CMAKE_CURRENT_LIST_DIR}/copy_directory_custom.cmake
-            COMMAND ${CMAKE_COMMAND} -E copy eboot.bin ${CMAKE_BINARY_DIR}/vpk/eboot.bin
-            COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID="${TITLE_ID}" "${PROJECT_NAME}" ${CMAKE_BINARY_DIR}/vpk/sce_sys/param.sfo
-            COMMAND cd ${CMAKE_BINARY_DIR}/vpk && ${ZIP} -r ../${PROJECT_NAME}.vpk .
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/vpk
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/vpk
+            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_romfs -D DST=${CMAKE_CURRENT_BINARY_DIR}/vpk -P ${CMAKE_CURRENT_LIST_DIR}/copy_directory_custom.cmake
+            COMMAND ${CMAKE_COMMAND} -E copy eboot.bin ${CMAKE_CURRENT_BINARY_DIR}/vpk/eboot.bin
+            COMMAND ${VITASDK}/bin/vita-mksfoex -s TITLE_ID="${TITLE_ID}" "${PROJECT_NAME}" ${CMAKE_CURRENT_BINARY_DIR}/vpk/sce_sys/param.sfo
+            COMMAND cd ${CMAKE_CURRENT_BINARY_DIR}/vpk && ${ZIP} -r ../${PROJECT_NAME}.vpk .
             )
     add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
             DEPENDS ${PROJECT_NAME}.vpk
