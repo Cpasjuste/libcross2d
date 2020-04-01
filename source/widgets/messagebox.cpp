@@ -120,8 +120,7 @@ int MessageBox::show(const std::string &txt, const std::string &msg,
             }
 
             if (pressed != nullptr) {
-                key = input->waitButton();
-                if (key != 0) {
+                if (input->waitKey(&key)) {
                     setVisibility(Visibility::Hidden);
                     break;
                 }

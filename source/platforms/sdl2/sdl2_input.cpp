@@ -72,18 +72,24 @@ SDL2Input::~SDL2Input() {
     }
 }
 
-int SDL2Input::waitButton(int player) {
+bool SDL2Input::waitKey(unsigned int *key, int player) {
 
     SDL_Event event = {};
     while (SDL_PollEvent(&event) != 0) {
         if (event.type == SDL_JOYBUTTONDOWN) {
-            return event.jbutton.button;
+            if (key != nullptr) {
+                *key = event.jbutton.button;
+            }
+            return true;
         } else if (event.type == SDL_KEYDOWN) {
-            return event.key.keysym.scancode;
+            if (key != nullptr) {
+                *key = event.key.keysym.scancode;
+            }
+            return true;
         }
     }
 
-    return 0;
+    return false;
 }
 
 Input::Player *SDL2Input::update(int rotate) {

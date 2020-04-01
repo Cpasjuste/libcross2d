@@ -72,7 +72,7 @@ namespace c2d {
 
         virtual Player *update(int rotate = 0); // to implement
 
-        virtual int waitButton(int player = 0) { return 0; }; // to implement
+        virtual bool waitKey(unsigned int *key, int player = 0) { return false; }; // to implement
 
         virtual unsigned int getKeys(int player = 0);
 
