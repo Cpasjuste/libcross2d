@@ -64,7 +64,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    const Texture *Shape::getTexture() const {
+    Texture *Shape::getTexture() {
         return m_texture;
     }
 

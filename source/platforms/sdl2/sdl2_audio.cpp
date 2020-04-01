@@ -74,7 +74,7 @@ void SDL2Audio::play(const void *data, int len, bool sync) {
         }
 
         if (callback) {
-            printf("SDL2Audio::play: can't manually play, a callback was defined\n");
+            //printf("SDL2Audio::play: can't manually play, a callback was defined\n");
             return;
         }
 
@@ -85,8 +85,8 @@ void SDL2Audio::play(const void *data, int len, bool sync) {
         } else {
             // Clear the audio queue arbitrarily to avoid it backing up too far
             if (SDL_GetQueuedAudioSize(deviceID) > (size_t) (len * 5)) {
-                printf("SDL2Audio::play: queue is full (buffer len = %i, queued = %u)\n",
-                       len, SDL_GetQueuedAudioSize(deviceID));
+                //printf("SDL2Audio::play: queue is full (buffer len = %i, queued = %u)\n",
+                       //len, SDL_GetQueuedAudioSize(deviceID));
                 SDL_ClearQueuedAudio(deviceID);
             }
         }

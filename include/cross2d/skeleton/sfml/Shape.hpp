@@ -160,7 +160,7 @@ namespace c2d {
         /// \see setTexture
         ///
         ////////////////////////////////////////////////////////////
-        const Texture *getTexture() const;
+        Texture *getTexture();
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the sub-rectangle of the texture displayed by the shape
