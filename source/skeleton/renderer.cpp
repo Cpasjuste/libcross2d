@@ -54,9 +54,9 @@ void Renderer::onUpdate() {
     Rectangle::onUpdate();
 }
 
-void Renderer::flip(bool draw, bool _process_inputs) {
+void Renderer::flip(bool draw, bool inputs) {
 
-    process_inputs = _process_inputs;
+    process_inputs = inputs;
     onUpdate();
 
     // call base class (draw childs)
