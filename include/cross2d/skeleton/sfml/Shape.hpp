@@ -119,7 +119,7 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         void setAlpha(uint8_t alpha, bool recursive = false) override;
 
-        uint8_t getAlpha() override;;
+        uint8_t getAlpha() override;
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the outline color of the shape
