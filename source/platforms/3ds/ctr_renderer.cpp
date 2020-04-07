@@ -118,6 +118,8 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_mdlvMtx, &ctx.mdlvMtx);
 
     consoleInit(GFX_BOTTOM, nullptr);
+    //consoleDebugInit(debugDevice_SVC);
+    //stdout = stderr;
 
     available = true;
 }

@@ -23,8 +23,11 @@ std::string POSIXIo::getHomePath() {
     return getDataPath();
 #else
     char buf[1024];
-    if (getcwd(buf, sizeof(buf))) {
-        std::string str = std::string(buf) + "/";
+    if (getcwd(buf, sizeof(buf)) != nullptr) {
+        std::string str = buf;
+        if (!Utility::endsWith(str, "/")) {
+            str += "/";
+        }
 #ifdef __SWITCH__
         // some library does not like "sdmc:"
         if (str.compare(0, 5, "sdmc:") == 0) {
