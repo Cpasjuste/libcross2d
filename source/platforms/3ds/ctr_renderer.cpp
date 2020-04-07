@@ -18,11 +18,11 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     /// from citro2d (init)
     ctx.vtxBufSize = 64 * 1024;
     ctx.vtxBuf = (C2Di_Vertex *) linearAlloc(ctx.vtxBufSize * sizeof(C2Di_Vertex));
-    if (!ctx.vtxBuf)
+    if (ctx.vtxBuf == nullptr)
         return;
 
     ctx.shader = DVLB_ParseFile((u32 *) render2d_shbin, render2d_shbin_size);
-    if (!ctx.shader) {
+    if (ctx.shader == nullptr) {
         linearFree(ctx.vtxBuf);
         return;
     }
@@ -107,7 +107,7 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     C3D_CullFace(GPU_CULL_NONE);
 
     target = C3D_RenderTargetCreate((int) size.y, (int) size.x, GPU_RB_RGBA8, GPU_RB_DEPTH16);
-    if (target)
+    if (target != nullptr)
         C3D_RenderTargetSetOutput(target, GFX_TOP, GFX_LEFT,
                                   GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) |
                                   GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) |
@@ -122,15 +122,16 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     available = true;
 }
 
-void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {
+void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture, Sprite *sprite) {
 
-    if (!vertexArray || vertexArray->getVertexCount() < 1) {
-        //printf("ctr_renderer::draw: no vertices\n");
+    if (vertexArray == nullptr || vertexArray->getVertexCount() < 1) {
+        //printf("gl_render::draw: no vertices\n");
         return;
     }
 
     Vertex *vertices = vertexArray->getVertices()->data();
     size_t vertexCount = vertexArray->getVertexCount();
+    auto *tex = sprite != nullptr ? (CTRTexture *) sprite->getTexture() : (CTRTexture *) texture;
 
     GPU_Primitive_t type;
     switch (vertexArray->getPrimitiveType()) {
@@ -148,12 +149,12 @@ void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
             return;
     }
 
-    if (texture) {
-        C3D_TexBind(0, &((CTRTexture *) texture)->tex);
+    if (tex != nullptr) {
+        C3D_TexBind(0, &tex->tex);
     }
 
     C3D_TexEnvSrc(C3D_GetTexEnv(0), C3D_Both,
-                  texture ? GPU_TEXTURE0 : GPU_CONSTANT, (GPU_TEVSRC) 0, (GPU_TEVSRC) 0);
+                  tex != nullptr ? GPU_TEXTURE0 : GPU_CONSTANT, (GPU_TEVSRC) 0, (GPU_TEVSRC) 0);
 
     for (unsigned int i = 0; i < vertexCount; i++) {
 
@@ -164,15 +165,11 @@ void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
         vtx->pos[0] = pos.x;
         vtx->pos[1] = pos.y;
         vtx->pos[2] = 0.5f;
-        vtx->texcoord[0] = texture ? v.texCoords.x /
-                                     (texture->getTextureRect().width *
-                                      (texture->getTextureRect().width / texture->getSize().x)) : 0;
-        vtx->texcoord[1] = texture ? v.texCoords.y /
-                                     (texture->getTextureRect().height *
-                                      (texture->getTextureRect().height / texture->getSize().y)) : 0;
+        vtx->texcoord[0] = v.texCoords.x;
+        vtx->texcoord[1] = v.texCoords.y;
         vtx->blend[0] = 0;
         float blend = v.color.r == 255 && v.color.g == 255 && v.color.b == 255 ? 0 : 1;
-        vtx->blend[1] = texture ? blend : 1.0f;
+        vtx->blend[1] = tex != nullptr ? blend : 1.0f;
         vtx->color = v.color.toABGR();
     }
 
@@ -191,19 +188,17 @@ void CTRRenderer::clear() {
 
 void CTRRenderer::flip(bool draw, bool inputs) {
 
-    process_inputs = _process_inputs;
+    process_inputs = inputs;
     Renderer::onUpdate();
 
     if (draw) {
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
         clear();
         C3D_FrameDrawOn(target);
-    }
 
-    // call base class (draw childs)
-    Renderer::flip(draw, inputs);
+        Transform trans = Transform::Identity;
+        Rectangle::onDraw(trans, draw);
 
-    if (draw) {
         C3D_FrameEnd(0);
         ctx.vtxBufPos = 0;
         ctx.vtxBufLastPos = 0;

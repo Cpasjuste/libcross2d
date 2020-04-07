@@ -162,13 +162,13 @@ CTRTexture::CTRTexture(const Vector2f &size, Format format) : Texture(size, form
 
 int CTRTexture::lock(FloatRect *rect, void **pix, int *p) {
 
-    if (!rect) {
+    if (rect == nullptr) {
         *pix = pixels;
     } else {
         *pix = (void *) (pixels + (int) rect->top * pitch + (int) rect->left * bpp);
     }
 
-    if (p) {
+    if (p != nullptr) {
         *p = pitch;
     }
 
@@ -178,7 +178,7 @@ int CTRTexture::lock(FloatRect *rect, void **pix, int *p) {
 void CTRTexture::unlock() {
 
     // tile buffer for 3ds...
-    if (pixels) {
+    if (pixels != nullptr) {
         uploadSoft();
     }
 }
@@ -225,7 +225,7 @@ void CTRTexture::upload() {
 
 void CTRTexture::uploadSoft() {
 
-    if (pixels) {
+    if (pixels != nullptr) {
         // TODO: add RGB565 support
         int i, j, w = getTextureRect().width, h = getTextureRect().height;
         for (j = 0; j < h; j++) {

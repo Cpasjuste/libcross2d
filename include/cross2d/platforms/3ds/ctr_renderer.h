@@ -18,7 +18,7 @@ namespace c2d {
 
         ~CTRRenderer() override;
 
-        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
+        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture, Sprite *sprite) override;
 
         void clear() override;
 

@@ -22,7 +22,7 @@ namespace c2d {
             romfsExit();
         }
 
-        std::string getRomFsPath() const override {
+        std::string getRomFsPath() override {
             return "romfs:/";
         }
     };

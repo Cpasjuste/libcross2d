@@ -20,7 +20,7 @@ namespace c2d {
 
         Player *update(int rotate = 0) override;
 
-        int waitButton(int player = 0) override;
+        bool waitKey(unsigned int *key, int player = 0) override;
 
     private:
         void process_buttons(Input::Player &player, int rotate = 0);

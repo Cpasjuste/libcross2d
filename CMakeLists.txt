@@ -81,7 +81,7 @@ file(GLOB C2D_SOURCES
         source/widgets/*.c*
         source/skeleton/*.c*
         source/skeleton/sfml/*.c*)
-if (NOT PLATFORM_DREAMCAST)
+if (NOT PLATFORM_DREAMCAST AND NOT PLATFORM_3DS)
     include(FindPkgConfig)
     pkg_search_module(ZLIB REQUIRED zlib)
     pkg_search_module(FREETYPE REQUIRED freetype2)

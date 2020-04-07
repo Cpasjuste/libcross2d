@@ -94,7 +94,7 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #include "platforms/3ds/ctr_input.h"
 #include "platforms/3ds/ctr_io.h"
 #include "platforms/3ds/ctr_clock.h"
-#include "platforms/sdl2/sdl2_audio.h"
+//#include "platforms/sdl2/sdl2_audio.h"
 
 #define C2DRenderer CTRRenderer
 #define C2DTexture CTRTexture

@@ -40,10 +40,10 @@ CTRInput::~CTRInput() {
     }
 }
 
-int CTRInput::waitButton(int player) {
+bool CTRInput::waitKey(unsigned int *key, int player) {
 
     // TODO:
-    return -1;
+    return true;
 }
 
 Input::Player *CTRInput::update(int rotate) {
