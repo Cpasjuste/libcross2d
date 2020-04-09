@@ -218,8 +218,8 @@ elseif (PLATFORM_3DS)
             source/platforms/3ds/vshaders.v.o
             source/platforms/3ds/render2d.shbin.o
             )
-    list(APPEND C2D_LDFLAGS freetype png bz2 z citro3d ctru m)
-    list(APPEND C2D_CFLAGS -O3 -DARM11 -D_3DS -D__3DS__ -D__CITRO3D__)
+    list(APPEND C2D_LDFLAGS freetype png bz2 z citro2d citro3d ctru m)
+    list(APPEND C2D_CFLAGS -DARM11 -D_3DS -D__3DS__ -D__CITRO3D__)
     #####################
     # SWITCH PLATORM
     #####################
