@@ -12,6 +12,13 @@ int main(int argc, char **argv) {
     auto *renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
     renderer->setClearColor(Color::Black);
 
+    auto *border = new C2DRectangle({2, 2,
+                                     renderer->getSize().x - 4, renderer->getSize().y - 4});
+    border->setFillColor(Color::Transparent);
+    border->setOutlineColor(Color::Red);
+    border->setOutlineThickness(2);
+    renderer->add(border);
+
     // scale font and texture for different resolution (devices),
     // based on 720p resolution
     float scaling = renderer->getSize().y / 720.0f;
