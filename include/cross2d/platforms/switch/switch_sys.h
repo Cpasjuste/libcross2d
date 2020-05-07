@@ -40,11 +40,13 @@ namespace c2d {
             Emc = PcvModule_EMC
         };
 
-        static int getClock(const Module &module);
-
-        static int getClockStock(const Module &module);
+        static int getClock(const Module &module, bool stockClocks = false);
 
         static bool setClock(const Module &module, int hz);
+
+        static int stock_cpu_clock;
+        static int stock_gpu_clock;
+        static int stock_emc_clock;
     };
 }
 
