@@ -23,13 +23,13 @@ namespace c2d {
         enum class GPUClock {
             Stock = 0,          // default clock when application is launched
             Min = 307200000,    // minimal clock
-            Med = 384000000,    // medium clock
-            Max = 768000000     // maximal clock
+            Med = 460000000,    // medium clock
+            Max = 921000000     // maximal clock
         };
 
         enum class EMCClock {
             Stock = 0,          // default clock when application is launched
-            Min = 1065600000,   // minimal clock
+            Min = 1331200000,   // minimal clock
             Med = 1331200000,   // medium clock
             Max = 1600000000    // maximal clock
         };

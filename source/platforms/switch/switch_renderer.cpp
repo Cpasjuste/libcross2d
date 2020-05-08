@@ -6,22 +6,16 @@
 
 using namespace c2d;
 
-#ifndef NDEBUG
-
 void initNxLink();
 
 void deinitNxLink();
 
-#endif
-
 SWITCHRenderer::SWITCHRenderer(const Vector2f &size) : SDL2Renderer(size) {
 
-#ifndef NDEBUG
     initNxLink();
-#endif
+    romfsInit();
 
     printf("SWITCHRenderer(%ix%i)\n", (int) size.x, (int) size.y);
-    romfsInit();
 
     if (hosversionBefore(8, 0, 0)) {
         if (R_SUCCEEDED(pcvInitialize())) {
@@ -79,8 +73,5 @@ SWITCHRenderer::~SWITCHRenderer() {
     }
 
     romfsExit();
-
-#ifndef NDEBUG
     deinitNxLink();
-#endif
 }
