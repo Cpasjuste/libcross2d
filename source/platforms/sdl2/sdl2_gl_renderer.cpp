@@ -40,7 +40,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
 
-    printf("SDL_CreateWindow\n");
     window = SDL_CreateWindow(
             "CROSS2D_SDL2_GL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
             (int) s.x, (int) s.y, flags);
@@ -50,7 +49,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
         return;
     }
 
-    printf("SDL_GL_CreateContext\n");
     context = SDL_GL_CreateContext(window);
     if (context == nullptr) {
         printf("Couldn't SDL_GL_CreateContext: %s\n", SDL_GetError());

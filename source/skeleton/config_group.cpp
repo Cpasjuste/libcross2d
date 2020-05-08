@@ -186,13 +186,13 @@ bool Group::load(config_setting_t *parent) {
     }
 
     if (parent == nullptr) {
-        printf("Config::Group::load: could not find root config: %s\n", name.c_str());
+        //printf("Config::Group::load: could not find root config: %s\n", name.c_str());
         return false;
     }
 
     config_setting_t *settings = config_setting_lookup(parent, name.c_str());
     if (settings == nullptr) {
-        printf("Config::Group::load: group not found, skipping: %s\n", name.c_str());
+        //printf("Config::Group::load: group not found, skipping: %s\n", name.c_str());
         return false;
     }
 
@@ -203,21 +203,21 @@ bool Group::load(config_setting_t *parent) {
         if (option.getType() == Option::Type::String) {
             const char *value;
             if (config_setting_lookup_string(settings, option.getName().c_str(), &value) == CONFIG_FALSE) {
-                printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
+                //printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
                 continue;
             }
             option.setString(value);
         } else if (option.getType() == Option::Type::Integer) {
             int value = 0;
             if (config_setting_lookup_int(settings, option.getName().c_str(), &value) == CONFIG_FALSE) {
-                printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
+                //printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
                 continue;
             }
             option.setInteger(value);
         } else if (option.getType() == Option::Type::Float) {
             double value = 0;
             if (config_setting_lookup_float(settings, option.getName().c_str(), &value) == CONFIG_FALSE) {
-                printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
+                //printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
                 continue;
             }
             option.setFloat((float) value);
@@ -253,7 +253,7 @@ bool Group::load(config_setting_t *parent) {
         } else if (option.getType() == Option::Type::Choice) {
             int value = 0;
             if (config_setting_lookup_int(settings, option.getName().c_str(), &value) == CONFIG_FALSE) {
-                printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
+                //printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
                 continue;
             }
             option.setChoicesIndex(value);
@@ -275,7 +275,7 @@ bool Group::save(config_setting_t *parent) {
     }
 
     if (parent == nullptr) {
-        printf("Config::Group::save: could not save group (%s), no parent\n", name.c_str());
+        //printf("Config::Group::save: could not save group (%s), no parent\n", name.c_str());
         return false;
     }
 
