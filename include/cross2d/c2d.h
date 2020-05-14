@@ -452,22 +452,6 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define KEY_KB_START1_DEFAULT  40   // ENTER
 #define KEY_KB_MENU1_DEFAULT   40   // ENTER
 #define KEY_KB_MENU2_DEFAULT   41   // SPACE
-#elif __FREEPLAY__
-// SDL key.keysym.scancode
-#define KEY_KB_UP_DEFAULT      82
-#define KEY_KB_DOWN_DEFAULT    81
-#define KEY_KB_LEFT_DEFAULT    80
-#define KEY_KB_RIGHT_DEFAULT   79
-#define KEY_KB_FIRE1_DEFAULT   28
-#define KEY_KB_FIRE2_DEFAULT   4
-#define KEY_KB_FIRE3_DEFAULT   22
-#define KEY_KB_FIRE4_DEFAULT   27
-#define KEY_KB_FIRE5_DEFAULT   15
-#define KEY_KB_FIRE6_DEFAULT   21
-#define KEY_KB_COIN1_DEFAULT   44   // SPACE
-#define KEY_KB_START1_DEFAULT  40   // ENTER
-#define KEY_KB_MENU1_DEFAULT   40   // ENTER
-#define KEY_KB_MENU2_DEFAULT   44   // SPACE
 #else
 // SDL key.keysym.scancode
 #define KEY_KB_UP_DEFAULT      82

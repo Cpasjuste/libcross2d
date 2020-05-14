@@ -20,12 +20,10 @@ option(PLATFORM_DREAMCAST "Sega Dreamcast platform target" OFF)
 ####################
 option(OPTION_SDL1 "SDL1 support (software, slow, unsupported)" OFF)
 option(OPTION_SDL2 "SDL2 support" OFF)
-#option(OPTION_SDL2_SOFT "SDL2 support (software, slow)" OFF)
 option(OPTION_RENDER_GL1 "OpenGL 1.2 rendering" OFF)
 option(OPTION_RENDER_GL2 "OpenGL 3.3 rendering" OFF)
 option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
-option(OPTION_FREEPLAY "Build with FreePlay (CM3/ZERO) support" OFF)
 option(OPTION_RECALBOX_BUILDROOT "Build from recalbox buildroot" OFF)
 set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width")
 set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
@@ -86,16 +84,14 @@ if (NOT PLATFORM_DREAMCAST AND NOT PLATFORM_3DS)
     pkg_search_module(ZLIB REQUIRED zlib)
     pkg_search_module(FREETYPE REQUIRED freetype2)
 endif ()
+
 set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
 set(C2D_CFLAGS -Wall -Wno-narrowing -DLIBCONFIG_STATIC)
 set(C2D_LDFLAGS ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
+set(CMAKE_CXX_STANDARD 17)
 
 if (BUILD_DEBUG)
     list(APPEND C2D_CFLAGS -g -O0)
-else ()
-    if (NOT PLATFORM_DREAMCAST)
-        list(APPEND C2D_CFLAGS -g -O3)
-    endif ()
 endif ()
 
 if (OPTION_BUILTIN_LIBCONFIG)
@@ -184,11 +180,12 @@ if (PLATFORM_VITA)
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub
-            jpeg png z m c
+            jpeg png z c stdc++ pthread m
             )
-    list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
-            -Wno-uninitialized -ftree-vectorize -mword-relocations
-            -fomit-frame-pointer -ffast-math)
+    list(APPEND C2D_CFLAGS
+            -D__PSP2__ -DNO_KEYBOARD
+            -ffast-math -mtune=cortex-a9 -mfpu=neon -flto -ftree-vectorize
+            )
     if (BUILD_DEBUG)
         list(APPEND C2D_CFLAGS -D__PSP2_DEBUG__)
     endif (BUILD_DEBUG)
@@ -241,6 +238,7 @@ elseif (PLATFORM_SWITCH)
             -Wno-int-in-bool-context
             )
     list(APPEND C2D_LDFLAGS glad EGL glapi drm_nouveau nx freetype bz2 png z)
+    set(CMAKE_CXX_STANDARD 20 CACHE STRING "CMAKE_CXX_STANDARD" FORCE)
     ########################
     # DREAMCAST PLATORM
     ########################
@@ -266,10 +264,6 @@ elseif (PLATFORM_LINUX)
         list(APPEND C2D_LDFLAGS dl)
     endif ()
     if (PLATFORM_RPI3)
-        if (OPTION_FREEPLAY)
-            list(APPEND C2D_CFLAGS -D__FREEPLAY__)
-            list(APPEND C2D_LDFLAGS fbcp)
-        endif ()
         list(APPEND C2D_CFLAGS -mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -mlittle-endian -munaligned-access)
         list(APPEND C2D_LDFLAGS bcm_host vchostif pthread dl)
     endif ()
