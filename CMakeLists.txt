@@ -210,9 +210,8 @@ elseif (PLATFORM_SWITCH)
             source/platforms/switch/*.c*
             )
     list(APPEND C2D_CFLAGS
+            -D__SWITCH__ -DNO_KEYBOARD
             -ffunction-sections -fomit-frame-pointer
-            -D__SDL2_GL__ -D__GL2__ -D__SWITCH__ -DNO_KEYBOARD
-            -D_GLIBCXX_USE_C99_MATH_TR1 -D_LDBL_EQ_DBL
             -Wno-int-in-bool-context
             )
     list(APPEND C2D_LDFLAGS glad EGL glapi drm_nouveau nx freetype bz2 png z)
