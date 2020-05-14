@@ -19,7 +19,7 @@
 using namespace c2d;
 
 std::string POSIXIo::getHomePath() {
-#if defined(__PSP2__) || defined(__RECALBOX__)
+#if defined(__PSP2__)
     return getDataPath();
 #else
     char buf[1024];

@@ -39,10 +39,8 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 
 #ifdef __PSP2__
 #define NO_KEYBOARD 1
-#ifdef __PSP2_DEBUG__
-
+#ifndef NDEBUG
 #include <psp2/kernel/clib.h>
-
 #define printf sceClibPrintf
 #endif
 

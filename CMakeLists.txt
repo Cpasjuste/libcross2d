@@ -6,7 +6,6 @@ cmake_minimum_required(VERSION 3.0)
 ####################
 option(PLATFORM_LINUX "Linux platform target" OFF)
 option(PLATFORM_WINDOWS "Windows platform target (msys/mingw64)" OFF)
-option(PLATFORM_RPI3 "RIP3 platform target" OFF)
 option(PLATFORM_SWITCH "Nintendo Switch platform target" OFF)
 option(PLATFORM_3DS "Nintendo 3DS platform target" OFF)
 option(PLATFORM_VITA "Sony PS Vita platform target" OFF)
@@ -24,7 +23,6 @@ option(OPTION_RENDER_GL1 "OpenGL 1.2 rendering" OFF)
 option(OPTION_RENDER_GL2 "OpenGL 3.3 rendering" OFF)
 option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
-option(OPTION_RECALBOX_BUILDROOT "Build from recalbox buildroot" OFF)
 set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width")
 set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
 ####################
@@ -42,12 +40,6 @@ if (PLATFORM_LINUX OR PLATFORM_WINDOWS OR PLATFORM_SWITCH)
     endif ()
 endif ()
 
-if (PLATFORM_RPI3)
-    message(STATUS "C2D: SDL2 OpenGLES 2.0 support enabled")
-    set(OPTION_SDL2 ON CACHE BOOL "SDL2 support" FORCE)
-    set(OPTION_RENDER_GLES2 ON CACHE BOOL "OpenGLES 2.0 rendering" FORCE)
-endif ()
-
 if (PLATFORM_DREAMCAST)
     message(STATUS "C2D: DREAMCAST OpenGL 1.2 support enabled")
     set(OPTION_RENDER_GL1 ON CACHE BOOL "OpenGL 1.2 rendering" FORCE)
@@ -60,9 +52,6 @@ if (OPTION_RENDER_GL1 AND NOT PLATFORM_DREAMCAST)
     set(OPTION_SDL1 ON CACHE BOOL "OpenGL 1.2 rendering" FORCE)
 endif ()
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(BUILD_DEBUG true CACHE BOOL "Debug build")
-endif ()
 ####################
 # SANITY CHECKS
 ####################
@@ -89,10 +78,6 @@ set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
 set(C2D_CFLAGS -Wall -Wno-narrowing -DLIBCONFIG_STATIC)
 set(C2D_LDFLAGS ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
 set(CMAKE_CXX_STANDARD 17)
-
-if (BUILD_DEBUG)
-    list(APPEND C2D_CFLAGS -g -O0)
-endif ()
 
 if (OPTION_BUILTIN_LIBCONFIG)
     list(APPEND LIBCONFIG_INCLUDES source/skeleton/libconfig)
@@ -142,10 +127,6 @@ if (OPTION_RENDER_GL1)
     list(APPEND C2D_CFLAGS -D__GL1__)
 endif ()
 
-if (OPTION_RECALBOX_BUILDROOT)
-    list(APPEND C2D_CFLAGS -D__RECALBOX__)
-endif ()
-
 # export tools
 set(ZIP zip CACHE STRING "zip executable path")
 ####################
@@ -186,9 +167,6 @@ if (PLATFORM_VITA)
             -D__PSP2__ -DNO_KEYBOARD
             -ffast-math -mtune=cortex-a9 -mfpu=neon -flto -ftree-vectorize
             )
-    if (BUILD_DEBUG)
-        list(APPEND C2D_CFLAGS -D__PSP2_DEBUG__)
-    endif (BUILD_DEBUG)
 elseif (PLATFORM_3DS)
     #####################
     # 3DS PLATORM
@@ -262,10 +240,6 @@ elseif (PLATFORM_LINUX)
     list(APPEND C2D_LDFLAGS glad)
     if (NOT PLATFORM_WINDOWS)
         list(APPEND C2D_LDFLAGS dl)
-    endif ()
-    if (PLATFORM_RPI3)
-        list(APPEND C2D_CFLAGS -mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -mlittle-endian -munaligned-access)
-        list(APPEND C2D_LDFLAGS bcm_host vchostif pthread dl)
     endif ()
     if (PLATFORM_WINDOWS)
         find_package(GLEW REQUIRED)
