@@ -2,14 +2,15 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#ifndef SDL1_RENDERER_H
-#define SDL1_RENDERER_H
+#ifndef SDL1_GL_RENDERER_H
+#define SDL1_GL_RENDERER_H
 
-#include "cross2d/skeleton/renderer.h"
+#include <SDL/SDL.h>
+#include "cross2d/platforms/gl1/gl_renderer.h"
 
 namespace c2d {
 
-    class SDL1Renderer : public Renderer {
+    class SDL1Renderer : public GL1Renderer {
 
     public:
 
@@ -17,18 +18,11 @@ namespace c2d {
 
         ~SDL1Renderer() override;
 
-        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
-
-        void clear() override;
-
         void flip(bool draw = true, bool inputs = true) override;
 
         void delay(unsigned int ms) override;
 
-    private:
-
-        SDL_Surface *screen = nullptr;
     };
 }
 
-#endif //SDL1_RENDERER_H
+#endif // SDL1_GL_RENDERER_H

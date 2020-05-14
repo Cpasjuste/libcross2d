@@ -5,7 +5,7 @@
 #ifndef CROSS2D_SWITCH_RENDERER_H
 #define CROSS2D_SWITCH_RENDERER_H
 
-#include "cross2d/platforms/sdl2/sdl2_gl_renderer.h"
+#include "cross2d/platforms/sdl2/sdl2_renderer.h"
 
 namespace c2d {
 

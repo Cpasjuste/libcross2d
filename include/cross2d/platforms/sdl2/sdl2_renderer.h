@@ -2,14 +2,17 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#ifndef SDL2_RENDERER_H
-#define SDL2_RENDERER_H
+#ifndef SDL2_GL_RENDERER_H
+#define SDL2_GL_RENDERER_H
+
+#if defined(__SDL2__) && defined(__GL2__)
 
 #include <SDL2/SDL.h>
+#include "cross2d/platforms/gl2/gl_renderer.h"
 
 namespace c2d {
 
-    class SDL2Renderer : public Renderer {
+    class SDL2Renderer : public GLRenderer {
 
     public:
 
@@ -17,20 +20,20 @@ namespace c2d {
 
         ~SDL2Renderer() override;
 
-        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
-
-        void clear() override;
-
         void flip(bool draw = true, bool inputs = true) override;
 
         void delay(unsigned int ms) override;
 
-        SDL_Renderer *renderer = nullptr;
+        SDL_Window *getWindow();
+
+        SDL_GLContext getContext();
 
     private:
 
         SDL_Window *window = nullptr;
+        SDL_GLContext context = nullptr;
     };
 }
 
-#endif // SDL2_RENDERER_H
+#endif // defined(__SDL2__) && defined(__GL2__)
+#endif // SDL2_GL_RENDERER_H

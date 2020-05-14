@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-set(CMAKE_VERBOSE_MAKEFILE ON)
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ####################
 # TARGET PLATFORM
@@ -14,7 +14,7 @@ option(PLATFORM_DREAMCAST "Sega Dreamcast platform target" OFF)
 ####################
 # BUILD OPTIONS
 ####################
-option(OPTION_SDL1 "SDL1 support (software, slow, unsupported)" OFF)
+option(OPTION_SDL1 "SDL1 support" OFF)
 option(OPTION_SDL2 "SDL2 support" OFF)
 option(OPTION_RENDER_GL1 "OpenGL 1.2 rendering" OFF)
 option(OPTION_RENDER_GL2 "OpenGL 3.3 rendering" OFF)
