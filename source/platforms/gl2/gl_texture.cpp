@@ -8,6 +8,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#define GL_ABGR_EXT 0x8000
 
 #include "cross2d/skeleton/stb_image.h"
 #include "cross2d/skeleton/stb_image_write.h"

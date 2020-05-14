@@ -2,13 +2,46 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#ifndef SDL2_GL_RENDERER_H
-#define SDL2_GL_RENDERER_H
+#ifndef SDL2_RENDERER_H
+#define SDL2_RENDERER_H
 
-#if defined(__SDL2__) && defined(__GL2__)
+#if __GLAD__
 
-#include <SDL2/SDL.h>
+#include <glad/glad.h>
+
+#endif
+
+#if defined(__GL1__)
+
+#include "cross2d/platforms/gl1/gl_renderer.h"
+#include "cross2d/platforms/gl1/gl_texture.h"
+
+#else
+
+#define GL_GLEXT_PROTOTYPES 1
+#ifdef __WINDOWS__
+#include <GL/glew.h>
+#elif __GLES2__
+#ifndef __GLAD__
+#include <SDL2/SDL_opengles2.h>
+#endif
+// ?!
+#undef GL_RGBA8
+#define GL_RGBA8 GL_RGBA
+#undef GL_RGB565
+#define GL_RGB565 GL_RGB
+// ?!
+#ifndef GL_QUADS
+#define GL_QUADS 0x0006
+#endif
+#endif
+
 #include "cross2d/platforms/gl2/gl_renderer.h"
+#include "cross2d/platforms/gl2/gl_shaders.h"
+#include "cross2d/platforms/gl2/gl_texture.h"
+#include "cross2d/platforms/gl2/gl_texture_buffer.h"
+
+#endif
 
 namespace c2d {
 
@@ -35,5 +68,4 @@ namespace c2d {
     };
 }
 
-#endif // defined(__SDL2__) && defined(__GL2__)
-#endif // SDL2_GL_RENDERER_H
+#endif // SDL2_RENDERER_H

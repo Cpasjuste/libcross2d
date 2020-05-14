@@ -15,14 +15,14 @@
 using namespace c2d;
 
 GLRenderer::GLRenderer(const Vector2f &size) : Renderer(size) {
-    printf("GLRenderer\n");
+    printf("GL2Renderer\n");
 }
 
 void GLRenderer::initGL() {
 
 #ifdef __WINDOWS__
     glewInit();
-#elif defined(__PLATFORM_LINUX__) || defined(__SWITCH__)
+#elif __GLAD__
     // amdgpu proprietary driver 19.30 and SDL2 getproc bug
     // it's seems safer to also use glad on linux
     gladLoadGL();
@@ -116,9 +116,14 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     }
 
     // projection
+#ifdef __SDL1__
+    int w = getSize().x, h = getSize().y;
+#else
     int w, h;
     SDL_Window *window = ((SDL2Renderer *) this)->getWindow();
     SDL_GL_GetDrawableSize(window, &w, &h);
+#endif
+
     auto projectionMatrix = glm::orthoLH(0.0f, (float) w, (float) h, 0.0f, 0.0f, 1.0f);
     // view
     auto viewMatrix = glm::make_mat4(transform.getMatrix());
@@ -178,7 +183,7 @@ void GLRenderer::flip(bool draw, bool inputs) {
 
 GLRenderer::~GLRenderer() {
 
-    printf("~GLRenderer\n");
+    printf("~GL2Renderer\n");
 
 #ifndef __GLES2__
     if (glIsVertexArray(vao)) {

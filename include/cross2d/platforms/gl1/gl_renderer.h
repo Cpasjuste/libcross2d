@@ -9,15 +9,15 @@
 
 namespace c2d {
 
-    class GL1Renderer : public Renderer {
+    class GLRenderer : public Renderer {
 
     public:
 
-        explicit GL1Renderer(const Vector2f &size = Vector2f(0, 0));
+        explicit GLRenderer(const Vector2f &size = Vector2f(0, 0));
 
-        ~GL1Renderer() override;
+        ~GLRenderer() override;
 
-        virtual void glInit();
+        virtual void initGL();
 
         void draw(VertexArray *vertexArray, const Transform &transform,
                   Texture *texture, Sprite *sprite = nullptr) override;

@@ -8,6 +8,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#define GL_ABGR_EXT 0x8000
 
 #include "cross2d/skeleton/stb_image.h"
 #include "cross2d/skeleton/stb_image_write.h"
@@ -33,7 +34,7 @@ GLTexture::GLTexture(const std::string &p) : Texture(p) {
 
     if (texID != 0u) {
         pitch = w * bpp;
-        setSize((float) w, (float) h);
+        Texture::setSize((float) w, (float) h);
         setTextureRect(IntRect(0, 0, w, h));
         setTexture(this, true);
         available = true;
@@ -63,7 +64,7 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
 
     if (texID != 0u) {
         pitch = w * bpp;
-        setSize((float) w, (float) h);
+        Texture::setSize((float) w, (float) h);
         setTextureRect(IntRect(0, 0, w, h));
         setTexture(this, true);
         available = true;
@@ -95,7 +96,7 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        setSize(size);
+        Texture::setSize(size);
         setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
         setTexture(this, true);
         glBindTexture(GL_TEXTURE_2D, 0);

@@ -41,11 +41,6 @@ if (PLATFORM_DREAMCAST)
     set(OPTION_SCREEN_HEIGHT 480 CACHE STRING "Custom screen height" FORCE)
 endif ()
 
-if (OPTION_RENDER_GL1 AND NOT PLATFORM_DREAMCAST)
-    message(STATUS "C2D: SDL1 with OpenGL 1.2 support enabled")
-    set(OPTION_SDL1 ON CACHE BOOL "OpenGL 1.2 rendering" FORCE)
-endif ()
-
 ####################
 # COMMON STUFF
 ####################
@@ -193,7 +188,7 @@ elseif (PLATFORM_SWITCH)
             source/platforms/posix/posix_io.cpp
             source/platforms/posix/posix_clock.cpp
             source/platforms/switch/*.c*)
-    list(APPEND C2D_CFLAGS -D__SWITCH__ -DNO_KEYBOARD -Wno-int-in-bool-context)
+    list(APPEND C2D_CFLAGS -D__SWITCH__ -D__GLAD__ -DNO_KEYBOARD -Wno-int-in-bool-context)
     list(APPEND C2D_LDFLAGS glad)
     set(CMAKE_CXX_STANDARD 20 CACHE STRING "CMAKE_CXX_STANDARD" FORCE)
     ########################
@@ -212,7 +207,7 @@ elseif (PLATFORM_DREAMCAST)
     # LINUX PLATORM
     ########################
 elseif (PLATFORM_LINUX)
-    list(APPEND C2D_CFLAGS -D__PLATFORM_LINUX__)
+    list(APPEND C2D_CFLAGS -D__GLAD__)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
     add_subdirectory(source/platforms/gl2/glad)
     list(APPEND PLATFORM_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/source/platforms/gl/glad/include)

@@ -2,16 +2,13 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#if defined(__SDL2__) && defined(__GL2__)
-
-#include <SDL2/SDL.h>
 #include "cross2d/c2d.h"
 
 using namespace c2d;
 
 SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
-    printf("SDL2Renderer(GL)\n");
+    printf("SDL2Renderer\n");
 
     SDL_ShowCursor(SDL_DISABLE);
 
@@ -33,10 +30,14 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #ifdef __SWITCH__
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-#else
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-#endif
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+#elif __GL1__
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+#elif __GL2__
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+#endif
 #endif
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
@@ -57,7 +58,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
         return;
     }
 
-    initGL();
+    GLRenderer::initGL();
 
     available = true;
 
@@ -88,7 +89,7 @@ SDL_GLContext SDL2Renderer::getContext() {
 
 SDL2Renderer::~SDL2Renderer() {
 
-    printf("~SDL2Renderer(GL)\n");
+    printf("~SDL2Renderer\n");
 
     if (context != nullptr) {
         SDL_GL_DeleteContext(context);
@@ -101,4 +102,3 @@ SDL2Renderer::~SDL2Renderer() {
     SDL_Quit();
 }
 
-#endif // defined(__SDL2__) && defined(__GL2__)

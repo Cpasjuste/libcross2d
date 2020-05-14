@@ -10,15 +10,15 @@
 
 using namespace c2d;
 
-GL1Renderer::GL1Renderer(const Vector2f &size) : Renderer(size) {
-    printf("GLRenderer\n");
+GLRenderer::GLRenderer(const Vector2f &size) : Renderer(size) {
+    printf("GL1Renderer\n");
 }
 
-void GL1Renderer::glInit() {
+void GLRenderer::initGL() {
 
 #ifdef __WINDOWS__
     glewInit();
-#elif defined(__PLATFORM_LINUX__) || defined(__SWITCH__)
+#elif __GLAD__
     // amdgpu proprietary driver 19.30 and SDL2 getproc bug
     // it's seems safer to also use glad on linux
     gladLoadGL();
@@ -42,7 +42,7 @@ void GL1Renderer::glInit() {
     glLoadIdentity();
 }
 
-void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture, Sprite *sprite) {
+void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture, Sprite *sprite) {
 
     Vertex *vertices;
     size_t vertexCount;
@@ -109,7 +109,7 @@ void GL1Renderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
 #endif
 }
 
-void GL1Renderer::clear() {
+void GLRenderer::clear() {
 
     glClearColor((float) m_clearColor.r / 255.0f,
                  (float) m_clearColor.g / 255.0f,
@@ -118,14 +118,14 @@ void GL1Renderer::clear() {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void GL1Renderer::flip(bool draw, bool inputs) {
+void GLRenderer::flip(bool draw, bool inputs) {
 
     // call base class (draw childs)
     Renderer::flip(draw, inputs);
 }
 
-GL1Renderer::~GL1Renderer() {
-    printf("~GLRenderer\n");
+GLRenderer::~GLRenderer() {
+    printf("~GL1Renderer\n");
 }
 
 #endif // __GL1__

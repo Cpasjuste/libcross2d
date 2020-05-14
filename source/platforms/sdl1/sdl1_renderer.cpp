@@ -2,13 +2,13 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#if defined(__SDL1__) && defined(__GL1__)
+#if defined(__SDL1__)
 
 #include "cross2d/c2d.h"
 
 using namespace c2d;
 
-SDL1Renderer::SDL1Renderer(const Vector2f &s) : GL1Renderer(s) {
+SDLRenderer::SDLRenderer(const Vector2f &s) : GLRenderer(s) {
 
     printf("SDL1Renderer(GL)\n");
 
@@ -25,7 +25,7 @@ SDL1Renderer::SDL1Renderer(const Vector2f &s) : GL1Renderer(s) {
     m_size = s;
     SDL_SetVideoMode(m_size.x, m_size.y, 16, SDL_DOUBLEBUF | SDL_OPENGL);
 
-    glInit();
+    GLRenderer::initGL();
     printf("GL vendor   : %s\n", glGetString(GL_VENDOR));
     printf("GL renderer : %s\n", glGetString(GL_RENDERER));
     printf("GL version  : %s\n", glGetString(GL_VERSION));
@@ -35,22 +35,22 @@ SDL1Renderer::SDL1Renderer(const Vector2f &s) : GL1Renderer(s) {
     printf("SDL1Renderer(GL)(%p): %ix%i\n", this, (int) m_size.x, (int) m_size.y);
 }
 
-void SDL1Renderer::flip(bool draw, bool inputs) {
+void SDLRenderer::flip(bool draw, bool inputs) {
 
     // call base class (draw childs)
-    GL1Renderer::flip(draw, inputs);
+    GLRenderer::flip(draw, inputs);
 
     // flip
     glFlush();
     SDL_GL_SwapBuffers();
 }
 
-void SDL1Renderer::delay(unsigned int ms) {
+void SDLRenderer::delay(unsigned int ms) {
 
     SDL_Delay(ms);
 }
 
-SDL1Renderer::~SDL1Renderer() {
+SDLRenderer::~SDLRenderer() {
 
     printf("~SDL1Renderer(GL)\n");
     SDL_Quit();

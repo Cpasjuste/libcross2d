@@ -182,51 +182,14 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 
 #include <SDL2/SDL.h>
 
-#if defined(__GL2__)
-#define GL_GLEXT_PROTOTYPES 1
-#ifdef __WINDOWS__
-#include <GL/glew.h>
-#else
-#ifdef __GLES2__
-#include <SDL2/SDL_opengles2.h>
-// ?!
-#undef GL_RGBA8
-#define GL_RGBA8 GL_RGBA
-#undef GL_RGB565
-#define GL_RGB565 GL_RGB
-// ?!
-#ifndef GL_QUADS
-#define GL_QUADS 0x0006
-#endif
-#elif __PLATFORM_LINUX__
-
-#include "glad/glad.h"
-
-#define GL_ABGR_EXT 0x8000
-#else
-#include <SDL2/SDL_opengl.h>
-#endif
-#endif
-
 #include "cross2d/platforms/sdl2/sdl2_renderer.h"
-#include "cross2d/platforms/gl2/gl_shaders.h"
-#include "cross2d/platforms/gl2/gl_texture.h"
-#include "cross2d/platforms/gl2/gl_texture_buffer.h"
-
-#define C2DRenderer SDL2Renderer
-#define C2DTexture GLTexture
-#else
-#include "platforms/sdl2/sdl2_renderer.h"
-#include "platforms/sdl2/sdl2_texture.h"
-#define C2DRenderer SDL2Renderer
-#define C2DTexture SDL2Texture
-#endif
-
 #include "cross2d/platforms/sdl2/sdl2_input.h"
 #include "cross2d/platforms/sdl2/sdl2_audio.h"
 #include "cross2d/platforms/posix/posix_io.h"
 #include "cross2d/platforms/posix/posix_clock.h"
 
+#define C2DRenderer SDL2Renderer
+#define C2DTexture GLTexture
 #define C2DRectangle RectangleShape
 #define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape
@@ -260,26 +223,14 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 
 #include <SDL/SDL.h>
 
-#if defined(__GL1__)
-
-#include "glad/glad.h"
-#define GL_ABGR_EXT 0x8000
-
-#include "cross2d/platforms/sdl1/sdl1_gl_renderer.h"
-#include "cross2d/platforms/gl1/gl_texture.h"
-#define C2DTexture GLTexture
-#else
 #include "platforms/sdl1/sdl1_renderer.h"
-#include "platforms/sdl1/sdl1_texture.h"
-#define C2DTexture SDL1Texture
-#endif
-
 #include "platforms/sdl1/sdl1_input.h"
 #include "platforms/sdl1/sdl1_audio.h"
 #include "platforms/posix/posix_io.h"
 #include "platforms/posix/posix_clock.h"
 
-#define C2DRenderer SDL1Renderer
+#define C2DRenderer SDLRenderer
+#define C2DTexture GLTexture
 #define C2DRectangle RectangleShape
 #define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape

@@ -6,6 +6,8 @@
 
 #include "cross2d/c2d.h"
 
+#define GL_ABGR_EXT 0x8000
+
 using namespace c2d;
 
 GLTextureBuffer::GLTextureBuffer(const Vector2f &size, Format format) : Texture(size, format) {
