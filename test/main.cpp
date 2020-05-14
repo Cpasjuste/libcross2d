@@ -6,7 +6,7 @@
 
 using namespace c2d;
 
-int main(int argc, char **argv) {
+int main() {
 
     // create main renderer
     auto *renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
     while (true) {
 
         // stop if any key is pressed
-        if (renderer->getInput()->getKeys()) {
+        if (renderer->getInput()->getKeys() != 0) {
             break;
         }
 
