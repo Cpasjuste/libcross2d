@@ -5,7 +5,7 @@
 #ifndef C2D_TWEEN_H
 #define C2D_TWEEN_H
 
-#include "cross2d/skeleton/tweeny/tween.h"
+#include "cross2d/skeleton/tweeny/include/tweeny.h"
 #include "cross2d/skeleton/sfml/Clock.hpp"
 #include "cross2d/skeleton/sfml/Color.hpp"
 #include "cross2d/skeleton/sfml/Vector2.hpp"
@@ -52,11 +52,11 @@ namespace c2d {
 
         void reset();
 
-        TweenState getState() const;
+        TweenState getState();
 
         void setState(TweenState state);
 
-        TweenDirection getDirection() const;
+        TweenDirection getDirection();
 
         void setDirection(TweenDirection direction);
 

@@ -1,7 +1,7 @@
 /*
  This file is part of the Tweeny library.
 
- Copyright (c) 2016-2018 Leonardo G. Lucena de Freitas
+ Copyright (c) 2016-2020 Leonardo Guilherme Lucena de Freitas
  Copyright (c) 2016 Guilherme R. Costa
 
  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -34,44 +34,20 @@
 #include <type_traits>
 
 namespace tweeny {
-    template<typename T, typename... Ts>
-    class tween;
+    template<typename T, typename... Ts> class tween;
 
     namespace detail {
 
-        template<typename... Ts>
-        struct equal {
-            enum {
-                value = true
-            };
-        };
-        template<typename T>
-        struct equal<T> {
-            enum {
-                value = true
-            };
-        };
-        template<typename T, typename... Ts>
-        struct equal<T, T, Ts...> {
-            enum {
-                value = true && equal<Ts...>::value
-            };
-        };
-        template<typename T, typename U, typename... Ts>
-        struct equal<T, U, Ts...> {
-            enum {
-                value = false
-            };
-        };
+      template<typename... Ts> struct equal {};
+      template<typename T> struct equal<T> { enum { value = true }; };
+      template <typename T, typename U, typename... Ts> struct equal<T, U, Ts...> {
+        enum { value = std::is_same<T, U>::value && equal<T, Ts...>::value && equal<U, Ts...>::value };
+      };
 
-        template<typename T, typename...>
-        struct first {
-            typedef T type;
-        };
+        template<typename T, typename...> struct first { typedef T type; };
 
         template<bool equal, typename... Ts>
-        struct valuetype {
-        };
+        struct valuetype { };
 
         template<typename... Ts>
         struct valuetype<false, Ts...> {

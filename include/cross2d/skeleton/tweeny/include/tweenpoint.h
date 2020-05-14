@@ -1,7 +1,7 @@
 /*
  This file is part of the Tweeny library.
 
- Copyright (c) 2016-2018 Leonardo G. Lucena de Freitas
+ Copyright (c) 2016-2020 Leonardo Guilherme Lucena de Freitas
  Copyright (c) 2016 Guilherme R. Costa
 
  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -57,20 +57,16 @@ namespace tweeny {
             tweenpoint(Ts... vs);
 
             /* Set the duration for all the values in this currentPoint */
-            template<typename D>
-            void during(D milis);
+            template<typename D> void during(D milis);
 
             /* Sets the duration for each value in this currentPoint */
-            template<typename... Ds>
-            void during(Ds... vs);
+            template<typename... Ds> void during(Ds... vs);
 
             /* Sets the easing functions of each value */
-            template<typename... Fs>
-            void via(Fs... fs);
+            template<typename... Fs> void via(Fs... fs);
 
             /* Sets the same easing function for all values */
-            template<typename F>
-            void via(F f);
+            template<typename F> void via(F f);
 
             /* Returns the highest value in duration array */
             uint16_t duration() const;

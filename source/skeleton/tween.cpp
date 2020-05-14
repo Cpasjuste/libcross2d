@@ -3,7 +3,7 @@
 //
 
 #include "cross2d/c2d.h"
-#include "cross2d/skeleton/tweeny/tweeny.h"
+#include "cross2d/skeleton/tweeny/include/tweeny.h"
 
 using namespace c2d;
 using namespace tweeny;
@@ -111,7 +111,7 @@ void TweenAlpha::setFromTo(float from, float to, float duration) {
 Tween::~Tween() {
 
     printf("~Tween(%p)\n", this);
-    if (deltaClock) {
+    if (deltaClock != nullptr) {
         delete (deltaClock);
         deltaClock = nullptr;
     }
@@ -143,7 +143,7 @@ void Tween::reset() {
     }
 }
 
-TweenState Tween::getState() const {
+TweenState Tween::getState() {
     return state;
 }
 
@@ -151,7 +151,7 @@ void Tween::setState(TweenState st) {
     state = st;
 }
 
-TweenDirection Tween::getDirection() const {
+TweenDirection Tween::getDirection() {
     return direction;
 }
 

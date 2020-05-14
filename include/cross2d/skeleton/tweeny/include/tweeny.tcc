@@ -1,7 +1,7 @@
 /*
  This file is part of the Tweeny library.
 
- Copyright (c) 2016-2018 Leonardo G. Lucena de Freitas
+ Copyright (c) 2016-2020 Leonardo Guilherme Lucena de Freitas
  Copyright (c) 2016 Guilherme R. Costa
 
  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -23,17 +23,18 @@
 */
 
 /*
- * This file declares a helper struct to create a type from a integer value, to aid in template tricks.
- * This file is private.
+ * This file provides the implementation for tweeny.h
  */
-#ifndef TWEENY_INT2TYPE_H
-#define TWEENY_INT2TYPE_H
+
+#ifndef TWEENY_TWEENY_TCC
+#define TWEENY_TWEENY_TCC
+
+#include "tween.h"
 
 namespace tweeny {
-    namespace detail {
-        template<std::size_t>
-        struct int2type {
-        };
-    }
+  template<typename... Ts> inline tween<Ts...> from(Ts... vs) {
+    return tween<Ts...>::from(vs...);
+  }
 }
-#endif //TWEENY_INT2TYPE_H
+
+#endif //TWEENY_TWEENY_TCC

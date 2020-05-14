@@ -1,7 +1,7 @@
 /*
  This file is part of the Tweeny library.
 
- Copyright (c) 2016-2018 Leonardo G. Lucena de Freitas
+ Copyright (c) 2016-2020 Leonardo Guilherme Lucena de Freitas
  Copyright (c) 2016 Guilherme R. Costa
 
  Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -22,20 +22,32 @@
  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*
- * This file provides the implementation for tweeny.h
- */
+/* This file contains code to help call a function applying a tuple as its arguments.
+ * This code is private and not documented. */
 
-#ifndef TWEENY_TWEENY_TCC
-#define TWEENY_TWEENY_TCC
+#ifndef TWEENY_DISPATCHER_H
+#define TWEENY_DISPATCHER_H
 
-#include "tween.h"
+#include <tuple>
 
 namespace tweeny {
-    template<typename... Ts>
-    inline tween<Ts...> from(Ts... vs) {
-        return tween<Ts...>::from(vs...);
+    namespace detail {
+        template<int ...> struct seq { };
+        template<int N, int ...S> struct gens : gens<N - 1, N - 1, S...> { };
+        template<int ...S> struct gens<0, S...> {
+            typedef seq<S...> type;
+        };
+
+        template<typename R, typename Func, typename TupleType, int ...S>
+        R dispatch(Func && f, TupleType && args, seq<S...>) {
+           return f(std::get<S>(args) ...);
+        }
+
+        template<typename R, typename Func, typename... Ts>
+        R call(Func && f, const std::tuple<Ts...> & args) {
+            return dispatch<R>(f, args, typename gens<sizeof...(Ts)>::type());
+        }
     }
 }
 
-#endif //TWEENY_TWEENY_TCC
+#endif //TWEENY_DISPATCHER_H
