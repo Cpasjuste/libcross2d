@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ####################
 # TARGET PLATFORM
@@ -68,15 +68,18 @@ file(GLOB C2D_SOURCES
         source/widgets/*.c*
         source/skeleton/*.c*
         source/skeleton/sfml/*.c*)
-if (NOT PLATFORM_DREAMCAST AND NOT PLATFORM_3DS)
+
+# deps
+if (NOT PLATFORM_DREAMCAST)
     include(FindPkgConfig)
-    pkg_search_module(ZLIB REQUIRED zlib)
     pkg_search_module(FREETYPE REQUIRED freetype2)
+    pkg_search_module(PNG REQUIRED libpng)
+    pkg_search_module(ZLIB REQUIRED zlib)
 endif ()
 
-set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
+set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
 set(C2D_CFLAGS -Wall -Wno-narrowing -DLIBCONFIG_STATIC)
-set(C2D_LDFLAGS ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES})
+set(C2D_LDFLAGS ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
 set(CMAKE_CXX_STANDARD 17)
 
 if (OPTION_BUILTIN_LIBCONFIG)
@@ -182,8 +185,6 @@ elseif (PLATFORM_3DS)
             ${DEVKITPRO}/libctru/include
             ${DEVKITPRO}/portlibs/3ds/include
             #${DEVKITPRO}/portlibs/3ds/include/SDL2
-            ${DEVKITPRO}/portlibs/3ds/include/freetype2
-            ${DEVKITPRO}/portlibs/armv6k/include
             )
     file(GLOB PLATFORM_SOURCES
             source/platforms/3ds/*.c*
@@ -191,30 +192,23 @@ elseif (PLATFORM_3DS)
             #source/platforms/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
             # TODO: fix that crap...
             source/platforms/3ds/vshaders.v.o
-            source/platforms/3ds/render2d.shbin.o
-            )
-    list(APPEND C2D_LDFLAGS freetype png bz2 z citro2d citro3d ctru m)
+            source/platforms/3ds/render2d.shbin.o)
+    list(APPEND C2D_LDFLAGS citro2d citro3d ctru m)
     list(APPEND C2D_CFLAGS -DARM11 -D_3DS -D__3DS__ -D__CITRO3D__)
+    set(CMAKE_CXX_STANDARD 20 CACHE STRING "CMAKE_CXX_STANDARD" FORCE)
     #####################
     # SWITCH PLATORM
     #####################
 elseif (PLATFORM_SWITCH)
     set(PLATFORM_INCLUDES
             source/platforms/posix
-            source/platforms/switch
-            ${DEVKITPRO}/portlibs/switch/include/freetype2
-            )
+            source/platforms/switch)
     file(GLOB PLATFORM_SOURCES
             source/platforms/posix/posix_io.cpp
             source/platforms/posix/posix_clock.cpp
-            source/platforms/switch/*.c*
-            )
-    list(APPEND C2D_CFLAGS
-            -D__SWITCH__ -DNO_KEYBOARD
-            -ffunction-sections -fomit-frame-pointer
-            -Wno-int-in-bool-context
-            )
-    list(APPEND C2D_LDFLAGS glad EGL glapi drm_nouveau nx freetype bz2 png z)
+            source/platforms/switch/*.c*)
+    list(APPEND C2D_CFLAGS -D__SWITCH__ -DNO_KEYBOARD -Wno-int-in-bool-context)
+    list(APPEND C2D_LDFLAGS glad)
     set(CMAKE_CXX_STANDARD 20 CACHE STRING "CMAKE_CXX_STANDARD" FORCE)
     ########################
     # DREAMCAST PLATORM

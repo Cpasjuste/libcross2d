@@ -227,7 +227,7 @@ namespace tweeny {
 
     template<typename T>
     inline const T & tween<T>::jump(int32_t p, bool suppress) {
-        p = detail::clip(p, 0, static_cast<int>(points.size() -1));
+        p = detail::clip((const long) p, (const long) 0, (const long) (points.size() - 1));
         return seek(points.at(p).stacked, suppress);
     }
 
