@@ -10,9 +10,6 @@ option(PLATFORM_SWITCH "Nintendo Switch platform target" OFF)
 option(PLATFORM_3DS "Nintendo 3DS platform target" OFF)
 option(PLATFORM_VITA "Sony PS Vita platform target" OFF)
 option(PLATFORM_DREAMCAST "Sega Dreamcast platform target" OFF)
-####################
-# TARGET PLATFORM
-####################
 
 ####################
 # BUILD OPTIONS
@@ -25,9 +22,6 @@ option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
 set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width")
 set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
-####################
-# BUILD OPTIONS
-####################
 
 ####################
 # SANITY CHECKS
@@ -53,7 +47,7 @@ if (OPTION_RENDER_GL1 AND NOT PLATFORM_DREAMCAST)
 endif ()
 
 ####################
-# SANITY CHECKS
+# COMMON STUFF
 ####################
 
 # setup target toolchain
@@ -61,9 +55,6 @@ include(cmake/toolchain.cmake)
 
 project(cross2d)
 
-####################
-# COMMON STUFF
-####################
 file(GLOB C2D_SOURCES
         source/widgets/*.c*
         source/skeleton/*.c*
@@ -132,9 +123,6 @@ endif ()
 
 # export tools
 set(ZIP zip CACHE STRING "zip executable path")
-####################
-# COMMON STUFF
-####################
 
 #####################
 # PLATORM SPECIFIC
