@@ -138,7 +138,6 @@ if (PLATFORM_VITA)
             source/platforms/posix
             source/platforms/psp2
             source/platforms/psp2/vita-shader-collection/includes
-            ${VITASDK}/arm-vita-eabi/include/freetype2
             )
     file(GLOB PLATFORM_SOURCES
             source/platforms/posix/posix_io.cpp
@@ -148,11 +147,10 @@ if (PLATFORM_VITA)
             source/platforms/psp2/vita-shader-collection/lib/*.o
             )
     list(APPEND C2D_LDFLAGS
-            SDL2 vita2d freetype
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub
-            jpeg png z c stdc++ pthread m
+            SDL2 vita2d jpeg png z c stdc++ pthread m
             )
     list(APPEND C2D_CFLAGS
             -D__PSP2__ -DNO_KEYBOARD
