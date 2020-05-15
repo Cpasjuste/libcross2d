@@ -60,8 +60,7 @@ namespace c2d {
 
     private:
 
-        SDL_Window *window = nullptr;
-        SDL_GLContext context = nullptr;
+        static void exitCallback();
     };
 }
 

@@ -184,7 +184,7 @@ C2DObject::~C2DObject() {
     for (auto tween = tweens.begin(); tween != tweens.end();) {
         if (*tween != nullptr) {
             delete (*tween);
-            remove(*tween);
+            C2DObject::remove(*tween);
         }
     }
     tweens.clear();
@@ -196,8 +196,6 @@ C2DObject::~C2DObject() {
                 //printf("\t~C2DObject(%p): delete child(%p)\n", this, *widget);
                 delete (*widget);
             }
-        } else {
-            //printf("\t~C2DObject(%p): delete child(%p): child is NULL\n", this, *widget);
         }
     }
     childs.clear();

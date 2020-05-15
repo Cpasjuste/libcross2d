@@ -6,6 +6,9 @@
 
 using namespace c2d;
 
+static SDL_Window *window = nullptr;
+static SDL_GLContext context = nullptr;
+
 SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
     printf("SDL2Renderer\n");
@@ -67,9 +70,12 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
     GLRenderer::initGL();
 
+    // we need to delete gl context after all resources are freed by C2DObject destructor
+    std::atexit(exitCallback);
+
     available = true;
 
-    printf("SDL2Renderer(GL)(%p): %ix%i\n", this, (int) m_size.x, (int) m_size.y);
+    printf("SDL2Renderer(%p): %ix%i\n", this, (int) m_size.x, (int) m_size.y);
 }
 
 void SDL2Renderer::flip(bool draw, bool inputs) {
@@ -94,9 +100,7 @@ SDL_GLContext SDL2Renderer::getContext() {
     return context;
 }
 
-SDL2Renderer::~SDL2Renderer() {
-
-    printf("~SDL2Renderer\n");
+void SDL2Renderer::exitCallback() {
 
     if (context != nullptr) {
         SDL_GL_DeleteContext(context);
@@ -109,3 +113,6 @@ SDL2Renderer::~SDL2Renderer() {
     SDL_Quit();
 }
 
+SDL2Renderer::~SDL2Renderer() {
+    printf("~SDL2Renderer\n");
+}
