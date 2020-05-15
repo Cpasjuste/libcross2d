@@ -7,7 +7,7 @@
 
 #if __GLAD__
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 
 #endif
 

@@ -131,7 +131,8 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define GL_ABGR_EXT 0x8000
 
 #include <switch.h>
-#include <glad/glad.h>
+#include <SDL2/SDL.h>
+
 #include "platforms/switch/switch_renderer.h"
 #include "platforms/gl2/gl_shaders.h"
 #include "platforms/gl2/gl_texture.h"

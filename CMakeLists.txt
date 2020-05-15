@@ -63,8 +63,8 @@ if (NOT PLATFORM_DREAMCAST)
     pkg_search_module(ZLIB REQUIRED zlib)
 endif ()
 
-set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
 set(C2D_CFLAGS -Wall -Wno-narrowing -DLIBCONFIG_STATIC)
+set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
 set(C2D_LDFLAGS ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
 set(CMAKE_CXX_STANDARD 17)
 
@@ -107,6 +107,13 @@ if (OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
         find_package(OpenGL REQUIRED)
         list(APPEND C2D_INCLUDES ${OPENGL_INCLUDE_DIRS})
         list(APPEND C2D_LDFLAGS ${OPENGL_LIBRARIES})
+    endif ()
+    if (PLATFORM_LINUX OR PLATFORM_SWITCH)
+        set(GLAD_NO_LOADER ON CACHE BOOL "No loader")
+        add_subdirectory(source/platforms/glad)
+        list(APPEND PLATFORM_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/source/platforms/glad/include)
+        list(APPEND C2D_CFLAGS -D__GLAD__)
+        list(APPEND C2D_LDFLAGS glad)
     endif ()
 endif ()
 
@@ -188,8 +195,7 @@ elseif (PLATFORM_SWITCH)
             source/platforms/posix/posix_io.cpp
             source/platforms/posix/posix_clock.cpp
             source/platforms/switch/*.c*)
-    list(APPEND C2D_CFLAGS -D__SWITCH__ -D__GLAD__ -DNO_KEYBOARD -Wno-int-in-bool-context)
-    list(APPEND C2D_LDFLAGS glad)
+    list(APPEND C2D_CFLAGS -D__SWITCH__ -DNO_KEYBOARD -Wno-int-in-bool-context)
     set(CMAKE_CXX_STANDARD 20 CACHE STRING "CMAKE_CXX_STANDARD" FORCE)
     ########################
     # DREAMCAST PLATORM
@@ -207,11 +213,7 @@ elseif (PLATFORM_DREAMCAST)
     # LINUX PLATORM
     ########################
 elseif (PLATFORM_LINUX)
-    list(APPEND C2D_CFLAGS -D__GLAD__)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
-    add_subdirectory(source/platforms/gl2/glad)
-    list(APPEND PLATFORM_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/source/platforms/gl/glad/include)
-    list(APPEND C2D_LDFLAGS glad)
     if (NOT PLATFORM_WINDOWS)
         list(APPEND C2D_LDFLAGS dl)
     endif ()

@@ -16,13 +16,10 @@ GLRenderer::GLRenderer(const Vector2f &size) : Renderer(size) {
 
 void GLRenderer::initGL() {
 
-#ifdef __WINDOWS__
-    glewInit();
-#elif __GLAD__
-    // amdgpu proprietary driver 19.30 and SDL2 getproc bug
-    // it's seems safer to also use glad on linux
-    gladLoadGL();
-#endif
+    printf("GL vendor   : %s\n", glGetString(GL_VENDOR));
+    printf("GL renderer : %s\n", glGetString(GL_RENDERER));
+    printf("GL version  : %s\n", glGetString(GL_VERSION));
+    printf("GL glsl     : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
