@@ -93,6 +93,7 @@ if (OPTION_SDL2)
     list(APPEND C2D_SOURCES ${SDL2_SRC})
 endif ()
 
+# gl2 / gles2
 if (OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
     file(GLOB GL_SRC source/platforms/gl2/*.c*)
     file(GLOB GL_SHADERS_SRC source/platforms/gl2/shaders/*.c*)
@@ -108,6 +109,17 @@ if (OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
         list(APPEND C2D_INCLUDES ${OPENGL_INCLUDE_DIRS})
         list(APPEND C2D_LDFLAGS ${OPENGL_LIBRARIES})
     endif ()
+endif ()
+
+# gl1
+if (OPTION_RENDER_GL1)
+    file(GLOB GL_SRC source/platforms/gl1/*.c*)
+    list(APPEND C2D_SOURCES ${GL_SRC})
+    list(APPEND C2D_CFLAGS -D__GL1__)
+endif ()
+
+# glad
+if (OPTION_RENDER_GL1 OR OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
     if (PLATFORM_LINUX OR PLATFORM_SWITCH)
         set(GLAD_NO_LOADER ON CACHE BOOL "No loader")
         add_subdirectory(source/platforms/glad)
@@ -115,12 +127,6 @@ if (OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
         list(APPEND C2D_CFLAGS -D__GLAD__)
         list(APPEND C2D_LDFLAGS glad)
     endif ()
-endif ()
-
-if (OPTION_RENDER_GL1)
-    file(GLOB GL_SRC source/platforms/gl1/*.c*)
-    list(APPEND C2D_SOURCES ${GL_SRC})
-    list(APPEND C2D_CFLAGS -D__GL1__)
 endif ()
 
 # export tools
