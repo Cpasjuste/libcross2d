@@ -18,10 +18,7 @@
 
 #else
 
-#define GL_GLEXT_PROTOTYPES 1
-#ifdef __WINDOWS__
-#include <GL/glew.h>
-#elif __GLES2__
+#if __GLES2__
 #ifndef __GLAD__
 #include <SDL2/SDL_opengles2.h>
 #endif

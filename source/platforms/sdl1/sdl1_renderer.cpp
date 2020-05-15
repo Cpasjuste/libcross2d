@@ -25,9 +25,7 @@ SDLRenderer::SDLRenderer(const Vector2f &s) : GLRenderer(s) {
     m_size = s;
     SDL_SetVideoMode(m_size.x, m_size.y, 16, SDL_DOUBLEBUF | SDL_OPENGL);
 
-#ifdef __WINDOWS__
-    glewInit();
-#elif __GLAD__
+#if __GLAD__
     // amdgpu proprietary driver 19.30 and SDL2 getproc bug
     // it's seems safer to also use glad on linux (nintendo switch also use this)
     gladLoadGLLoader(SDL_GL_GetProcAddress);
