@@ -228,7 +228,8 @@ elseif (PLATFORM_LINUX)
         list(APPEND C2D_LDFLAGS freetype brotlidec-static brotlicommon-static
                 harfbuzz graphite2 rpcrt4 dwrite bz2 png z
                 ole32 oleaut32 imm32 winmm version setupapi gdi32 opengl32)
-        set(ZIP "/usr/bin/zip" CACHE STRING "zip executable path" FORCE)
+        # TODO: fix zip path...
+        set(ZIP "C:\\msys64\\usr\\bin\\zip.exe" CACHE STRING "zip executable path" FORCE)
     endif ()
 endif ()
 
