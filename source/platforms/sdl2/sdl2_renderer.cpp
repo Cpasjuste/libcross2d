@@ -41,6 +41,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 #endif
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
+    SDL_GL_SetSwapInterval(1);
 
     window = SDL_CreateWindow(
             "CROSS2D_SDL2_GL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
