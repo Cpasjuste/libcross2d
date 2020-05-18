@@ -2,15 +2,11 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#if defined(__SDL1__)
-
 #include "cross2d/c2d.h"
 
 using namespace c2d;
 
 SDLRenderer::SDLRenderer(const Vector2f &s) : GLRenderer(s) {
-
-    printf("SDL1Renderer(GL)\n");
 
     SDL_ShowCursor(SDL_DISABLE);
 
@@ -33,9 +29,12 @@ SDLRenderer::SDLRenderer(const Vector2f &s) : GLRenderer(s) {
 
     GLRenderer::initGL();
 
+    // we need to delete gl context after all resources are freed by C2DObject destructor
+    std::atexit(exitCallback);
+
     available = true;
 
-    printf("SDL1Renderer(GL)(%p): %ix%i\n", this, (int) m_size.x, (int) m_size.y);
+    printf("SDLRenderer(SDL1)(%p): %ix%i\n", this, (int) m_size.x, (int) m_size.y);
 }
 
 void SDLRenderer::flip(bool draw, bool inputs) {
@@ -53,10 +52,6 @@ void SDLRenderer::delay(unsigned int ms) {
     SDL_Delay(ms);
 }
 
-SDLRenderer::~SDLRenderer() {
-
-    printf("~SDL1Renderer(GL)\n");
+void SDLRenderer::exitCallback() {
     SDL_Quit();
 }
-
-#endif

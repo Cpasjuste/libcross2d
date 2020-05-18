@@ -48,8 +48,6 @@ namespace c2d {
 
         explicit SDL2Renderer(const Vector2f &size = Vector2f(0, 0));
 
-        ~SDL2Renderer() override;
-
         void flip(bool draw = true, bool inputs = true) override;
 
         void delay(unsigned int ms) override;

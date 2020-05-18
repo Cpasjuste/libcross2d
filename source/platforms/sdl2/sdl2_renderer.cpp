@@ -11,8 +11,6 @@ static SDL_GLContext context = nullptr;
 
 SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
-    printf("SDL2Renderer\n");
-
     SDL_ShowCursor(SDL_DISABLE);
 
     if ((SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
@@ -75,7 +73,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
     available = true;
 
-    printf("SDL2Renderer(%p): %ix%i\n", this, (int) m_size.x, (int) m_size.y);
+    printf("SDLRenderer(SDL2)(%p): %ix%i\n", this, (int) m_size.x, (int) m_size.y);
 }
 
 void SDL2Renderer::flip(bool draw, bool inputs) {
@@ -111,8 +109,4 @@ void SDL2Renderer::exitCallback() {
     }
 
     SDL_Quit();
-}
-
-SDL2Renderer::~SDL2Renderer() {
-    printf("~SDL2Renderer\n");
 }
