@@ -185,10 +185,11 @@ elseif (PLATFORM_3DS)
             source/platforms/posix/*.c*
             #source/platforms/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
             # TODO: fix that crap...
-            source/platforms/3ds/vshaders.v.o
-            source/platforms/3ds/render2d.shbin.o)
+            #source/platforms/3ds/vshaders.v.o
+            #source/platforms/3ds/render2d.shbin.o
+            )
     list(APPEND C2D_LDFLAGS citro2d citro3d ctru m)
-    list(APPEND C2D_CFLAGS -DARM11 -D_3DS -D__3DS__ -D__CITRO3D__)
+    list(APPEND C2D_CFLAGS -DARM11 -D_3DS -D__3DS__ -D__CITRO3D__ -Wno-pedantic)
     set(CMAKE_CXX_STANDARD 20 CACHE STRING "CMAKE_CXX_STANDARD" FORCE)
     #####################
     # SWITCH PLATORM

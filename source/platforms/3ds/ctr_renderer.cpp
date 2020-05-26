@@ -2,6 +2,7 @@
 // Created by cpasjuste on 21/11/16.
 //
 
+#include <cross2d/c2d.h>
 #include <citro2d.h>
 #include "cross2d/platforms/3ds/ctr_texture.h"
 #include "cross2d/platforms/3ds/ctr_renderer.h"
@@ -19,12 +20,12 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
 
     gfxInitDefault();
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
-    C2D_Init(10000);
+    C2D_Init(0x10000);
     C2D_Prepare();
 
-    //consoleInit(GFX_BOTTOM, nullptr);
-    consoleDebugInit(debugDevice_SVC);
-    stdout = stderr;
+    consoleInit(GFX_BOTTOM, nullptr);
+    //consoleDebugInit(debugDevice_SVC);
+    //stdout = stderr;
 
     renderTarget = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     C3D_FrameEndHook(nullptr, nullptr);
