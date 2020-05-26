@@ -190,7 +190,7 @@ elseif (PLATFORM_3DS)
             )
     list(APPEND C2D_LDFLAGS citro2d citro3d ctru m)
     list(APPEND C2D_CFLAGS -DARM11 -D_3DS -D__3DS__ -D__CITRO3D__ -Wno-pedantic)
-    set(CMAKE_CXX_STANDARD 20 CACHE STRING "CMAKE_CXX_STANDARD" FORCE)
+    #set(CMAKE_CXX_STANDARD 20 CACHE STRING "CMAKE_CXX_STANDARD" FORCE)
     #####################
     # SWITCH PLATORM
     #####################
@@ -203,7 +203,7 @@ elseif (PLATFORM_SWITCH)
             source/platforms/posix/posix_clock.cpp
             source/platforms/switch/*.c*)
     list(APPEND C2D_CFLAGS -D__SWITCH__ -DNO_KEYBOARD -Wno-int-in-bool-context)
-    set(CMAKE_CXX_STANDARD 20 CACHE STRING "CMAKE_CXX_STANDARD" FORCE)
+    #set(CMAKE_CXX_STANDARD 20 CACHE STRING "CMAKE_CXX_STANDARD" FORCE)
     ########################
     # DREAMCAST PLATORM
     ########################
