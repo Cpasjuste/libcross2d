@@ -172,7 +172,11 @@ void CTRTexture::unlock() {
 
     // tile buffer for 3ds...
     if (pixels != nullptr) {
-        uploadSoft();
+        if (format == Format::RGB565) {
+            upload();
+        } else {
+            uploadSoft();
+        }
     }
 }
 
@@ -183,43 +187,23 @@ void CTRTexture::setFilter(Filter filter) {
     C3D_TexSetFilter(&tex, GPU_LINEAR, param);
 }
 
-#if 0
 void CTRTexture::upload() {
 
-    //C3D_TexUpload(&tex, pixels);
+    GX_TRANSFER_FORMAT fmt = format == Format::RGB565 ? GX_TRANSFER_FMT_RGB565 : GX_TRANSFER_FMT_RGBA8;
 
-    GSPGPU_FlushDataCache(pixels, (u32) getTextureRect().height * pitch);
-    //GSPGPU_FlushDataCache(tex.data, tex.size);
-
-    GX_TRANSFER_FORMAT fmt =
-            format == Format::RGB565 ? GX_TRANSFER_FMT_RGB565 : GX_TRANSFER_FMT_RGBA8;
-
-    C3D_SafeDisplayTransfer(
+    GSPGPU_FlushDataCache(pixels, (u32) tex.height * pitch);
+    C3D_SyncDisplayTransfer(
             (u32 *) pixels,
-            (u32) GX_BUFFER_DIM(getTextureRect().width, getTextureRect().height),
+            (u32) GX_BUFFER_DIM(tex.width, tex.height),
             (u32 *) tex.data,
             (u32) GX_BUFFER_DIM(tex.width, tex.height),
             (u32) TILE_FLAGS(fmt, fmt)
     );
-    gspWaitForPPF();
-
-    /*
-    C3D_SafeTextureCopy((u32 *) pixels,
-                        (u32) GX_BUFFER_DIM(getTextureRect().width, getTextureRect().height),
-                        (u32 *) tex.data,
-                        (u32) GX_BUFFER_DIM(tex.width, tex.height),
-                        (u32) getSize().y * pitch,
-                        (u32) TILE_FLAGS(fmt, fmt));
-
-    gspWaitForPPF();
-    */
 }
-#endif
 
 void CTRTexture::uploadSoft() {
 
     if (pixels != nullptr) {
-        // TODO: add RGB565 support
         int i, j, w = tex.width, h = tex.height;
         for (j = 0; j < h; j++) {
             for (i = 0; i < w; i++) {

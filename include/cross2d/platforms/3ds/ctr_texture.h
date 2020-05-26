@@ -31,7 +31,7 @@ namespace c2d {
         C3D_Tex tex;
     private:
 
-        //void upload();
+        void upload();
 
         void uploadSoft();
 
