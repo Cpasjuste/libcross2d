@@ -6,7 +6,6 @@
 #include <cstdio>
 #include <malloc.h>
 #include "cross2d/platforms/3ds/ctr_audio.h"
-#include "cross2d/platforms/3ds/audio_buffer.h"
 
 using namespace c2d;
 
@@ -17,7 +16,6 @@ static Thread threadId;
 static LightEvent s_event;
 static ndspWaveBuf s_waveBufs[3];
 static int16_t *s_audioBuffer = nullptr;
-static AudioBuffer ctrAudioBuffer;
 volatile bool s_quit = false;
 static LightLock lock;
 
@@ -52,8 +50,8 @@ static void audioThread(void *data) {
             ndspWaveBuf *waveBuf = &s_waveBufs[i];
 
             LightLock_Lock(&lock);
-            if (ctrAudioBuffer.avail() >= audio->getBufferSize()) {
-                ctrAudioBuffer.pull((int16_t *) waveBuf->data_pcm16, audio->getBufferSize());
+            if (audio->getAudioBuffer()->space_filled() >= audio->getBufferSize() >> 1) {
+                audio->getAudioBuffer()->pull((int16_t *) waveBuf->data_pcm16, audio->getBufferSize() >> 1);
                 LightLock_Unlock(&lock);
                 // Pass samples to NDSP
                 waveBuf->nsamples = audio->getSamples();
@@ -86,8 +84,6 @@ CTRAudio::CTRAudio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps, 
         available = false;
         return;
     }
-
-    ctrAudioBuffer.resize(buffer_size * (int) ARRAY_SIZE(s_waveBufs));
 
     ndspChnReset(0);
     ndspSetOutputMode(NDSP_OUTPUT_STEREO);
@@ -134,9 +130,16 @@ void CTRAudio::play(const void *data, int samples, bool sync) {
             return;
         }
 
+        int size = (samples * channels * (int) sizeof(int16_t)) >> 1;
+
+        if (sync) {
+            while (audioBuffer->space_filled() > size) {
+                svcSleepThread(10 * 1000000);
+            }
+        }
+
         LightLock_Lock(&lock);
-        int size = samples * channels * (int) sizeof(int16_t);
-        ctrAudioBuffer.push((int16_t *) data, size);
+        audioBuffer->push((int16_t *) data, size);
         LightLock_Unlock(&lock);
     }
 }
@@ -159,8 +162,8 @@ void CTRAudio::pause(int pause) {
     }
 }
 
-uint32_t CTRAudio::getQueuedSize() {
-    return 0;
+int CTRAudio::getQueuedSize() {
+    return audioBuffer->space_filled() << 1;
 }
 
 CTRAudio::~CTRAudio() {

@@ -14,23 +14,29 @@ namespace c2d {
 
     public:
 
-        SDL2Audio(int rate = 48000, float fps = 60, C2DAudioCallback cb = nullptr);
+        SDL2Audio(int rate = 48000, float fps = 60, C2DAudioCallback cb = nullptr, bool useSdlAudioBuffer = false);
 
-        virtual ~SDL2Audio();
+        ~SDL2Audio() override;
 
-        virtual void play(const void *data, int samples, bool sync = false);
+        void play(const void *data, int samples, bool sync = false) override;
 
-        virtual void pause(int pause);
+        void pause(int pause) override;
 
-        virtual void reset();
+        void reset() override;
 
-        uint32_t getQueuedSize();
+        int getQueuedSize() override;
 
         SDL_AudioDeviceID getDeviceID();
+
+        SDL_mutex *getMutex() {
+            return mutex;
+        }
 
     private:
 
         SDL_AudioDeviceID deviceID;
+        SDL_mutex *mutex = nullptr;
+        bool useSdlAudioBuffer = false;
     };
 }
 

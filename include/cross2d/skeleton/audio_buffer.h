@@ -30,50 +30,57 @@ namespace c2d {
             buffer = nullptr;
         }
 
+        AudioBuffer(int num_samples) {
+            this->buffer_size = num_samples;
+            buffer = new int16_t[this->buffer_size];
+            clear();
+        }
+
         ~AudioBuffer() {
             delete[] buffer;
             buffer = nullptr;
         }
 
         inline void clear() {
-            if (buffer == nullptr)
+            if (buffer == nullptr) {
                 return;
+            }
 
             start = 0;
             size = 0;
             memset(buffer, 0, buffer_size * 2);
         }
 
-        inline bool pull(int16_t *dst, int bufSize) {
-            if (space_filled() < bufSize)
+        inline bool pull(int16_t *dst, int num_samples) {
+            if (space_filled() < num_samples)
                 return false;
 
-            memcpy(dst, buffer + start, min(bufSize, buffer_size - start));
+            memcpy(dst, buffer + start, min(num_samples, buffer_size - start) * 2);
 
-            if (bufSize > (buffer_size - start))
-                memcpy(dst + (buffer_size - start), buffer, bufSize - (buffer_size - start));
+            if (num_samples > (buffer_size - start))
+                memcpy(dst + (buffer_size - start), buffer, (num_samples - (buffer_size - start)) * 2);
 
-            start = (start + bufSize) % buffer_size;
-            size -= bufSize;
+            start = (start + num_samples) % buffer_size;
+            size -= num_samples;
 
             return true;
         }
 
-        inline bool push(int16_t *src, int bufSize) {
-            if (space_empty() < bufSize)
+        inline bool push(int16_t *src, int num_samples) {
+            if (space_empty() < num_samples)
                 return false;
 
             int end = start + size;
             if (end > buffer_size)
                 end -= buffer_size;
-            int first_write_size = min(bufSize, buffer_size - end);
+            int first_write_size = min(num_samples, buffer_size - end);
 
-            memcpy(buffer + end, src, first_write_size);
+            memcpy(buffer + end, src, first_write_size * 2);
 
-            if (bufSize > first_write_size)
-                memcpy(buffer, src + first_write_size, (bufSize - first_write_size));
+            if (num_samples > first_write_size)
+                memcpy(buffer, src + first_write_size, (num_samples - first_write_size) * 2);
 
-            size += bufSize;
+            size += num_samples;
 
             return true;
         }
@@ -86,14 +93,11 @@ namespace c2d {
             return size;
         }
 
-        inline int avail() {
-            return size;
-        }
-
-        void resize(int bufSize) {
-            if (buffer != nullptr)
+        void resize(int num_samples) {
+            if (buffer != nullptr) {
                 delete[] buffer;
-            buffer_size = bufSize;
+            }
+            buffer_size = num_samples;
             buffer = new int16_t[buffer_size];
             clear();
         }

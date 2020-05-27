@@ -24,6 +24,9 @@ Audio::Audio(int rate, float fps, C2DAudioCallback cb) {
     }
     memset(buffer, 0, (size_t) buffer_size);
 
+    audioBuffer = new AudioBuffer();
+    audioBuffer->resize(buffer_size * 3);
+
     callback = cb;
     available = true;
 
@@ -45,7 +48,9 @@ void Audio::pause(int pause) {
 Audio::~Audio() {
     if (buffer != nullptr) {
         free(buffer);
-        buffer = nullptr;
+    }
+    if (audioBuffer != nullptr) {
+        delete (audioBuffer);
     }
 }
 

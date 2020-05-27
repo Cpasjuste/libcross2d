@@ -6,6 +6,7 @@
 #define _C2D_AUDIO_H_
 
 #include <cstring>
+#include "audio_buffer.h"
 
 namespace c2d {
 
@@ -29,15 +30,23 @@ namespace c2d {
 
         virtual void reset();
 
+        virtual int getQueuedSize() {
+            return 0;
+        }
+
         int getSampleRate();
 
         int getChannels();
+
+        int getSamples();
 
         short *getBuffer();
 
         int getBufferSize();
 
-        int getSamples();
+        AudioBuffer *getAudioBuffer() {
+            return audioBuffer;
+        }
 
         bool isAvailable();
 
@@ -46,6 +55,7 @@ namespace c2d {
         int sample_rate = 48000;
         int channels = 2;
         int16_t *buffer = nullptr;
+        AudioBuffer *audioBuffer = nullptr;
         int buffer_size = 0;
         int samples = 0;
         bool paused = false;
