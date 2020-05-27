@@ -5,18 +5,18 @@
 #ifndef _SDL2_AUDIO_H_
 #define _SDL2_AUDIO_H_
 
-#include <SDL2/SDL.h>
+//#include <SDL2/SDL.h>
 #include "cross2d/skeleton/audio.h"
 
 namespace c2d {
 
-    class SDL2Audio : public Audio {
+    class CTRAudio : public Audio {
 
     public:
 
-        SDL2Audio(int rate = 48000, float fps = 60, C2DAudioCallback cb = nullptr);
+        CTRAudio(int rate = 48000, float fps = 60, C2DAudioCallback cb = nullptr);
 
-        virtual ~SDL2Audio();
+        virtual ~CTRAudio();
 
         virtual void play(const void *data, int samples, bool sync = false);
 
@@ -26,11 +26,10 @@ namespace c2d {
 
         uint32_t getQueuedSize();
 
-        SDL_AudioDeviceID getDeviceID();
+        //SDL_AudioDeviceID getDeviceID();
 
     private:
 
-        SDL_AudioDeviceID deviceID;
     };
 }
 

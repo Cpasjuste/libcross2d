@@ -18,12 +18,12 @@ SDL2Audio::SDL2Audio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps
     wanted.freq = freq;
     wanted.format = AUDIO_S16SYS;
     wanted.channels = (Uint8) channels;
-    wanted.samples = (Uint16) buffer_len;
+    wanted.samples = (Uint16) samples;
     wanted.callback = cb;
     wanted.userdata = nullptr;
 
 #ifdef __WINDOWS__
-	SDL_setenv("SDL_AUDIODRIVER", "directsound", true);
+    SDL_setenv("SDL_AUDIODRIVER", "directsound", true);
 #endif
 
     if (!SDL_WasInit(SDL_INIT_AUDIO)) {
@@ -35,7 +35,7 @@ SDL2Audio::SDL2Audio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps
     }
 
     deviceID = SDL_OpenAudioDevice(nullptr, 0, &wanted, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
-    if (!deviceID) {
+    if (deviceID == 0u) {
         printf("SDL2Audio: Unable to open audio: %s\n", SDL_GetError());
         available = false;
         return;
@@ -50,7 +50,7 @@ SDL2Audio::SDL2Audio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps
 
 SDL2Audio::~SDL2Audio() {
 
-    if (deviceID) {
+    if (deviceID != 0u) {
         SDL_PauseAudioDevice(deviceID, 1);
         SDL_CloseAudioDevice(deviceID);
     }
@@ -60,12 +60,7 @@ SDL2Audio::~SDL2Audio() {
     }
 }
 
-void SDL2Audio::play(bool sync) {
-
-    play(buffer, buffer_size, sync);
-}
-
-void SDL2Audio::play(const void *data, int len, bool sync) {
+void SDL2Audio::play(const void *data, int samples, bool sync) {
 
     if (available && !paused) {
 
@@ -73,26 +68,28 @@ void SDL2Audio::play(const void *data, int len, bool sync) {
             SDL_PauseAudioDevice(deviceID, 0);
         }
 
-        if (callback) {
+        if (callback != nullptr) {
             //printf("SDL2Audio::play: can't manually play, a callback was defined\n");
             return;
         }
 
+        int size = samples * channels * (int) sizeof(int16_t);
+
         if (sync) {
-            while (SDL_GetQueuedAudioSize(deviceID) > (Uint32) (len)) {
+            while (SDL_GetQueuedAudioSize(deviceID) > (Uint32) (size)) {
                 SDL_Delay(1);
             }
         } else {
             // Clear the audio queue arbitrarily to avoid it backing up too far
-            if (SDL_GetQueuedAudioSize(deviceID) > (size_t) (len * 5)) {
+            if (SDL_GetQueuedAudioSize(deviceID) > size * 3) {
                 //printf("SDL2Audio::play: queue is full (buffer len = %i, queued = %u)\n",
-                       //len, SDL_GetQueuedAudioSize(deviceID));
+                //len, SDL_GetQueuedAudioSize(deviceID));
                 SDL_ClearQueuedAudio(deviceID);
             }
         }
 
         //printf("SDL2Audio::play: len = %i, queued = %i\n", len, SDL_GetQueuedAudioSize(deviceID));
-        SDL_QueueAudio(deviceID, data, (Uint32) len);
+        SDL_QueueAudio(deviceID, data, (Uint32) size);
     }
 }
 

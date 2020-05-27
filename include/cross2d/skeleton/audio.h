@@ -19,9 +19,11 @@ namespace c2d {
 
         virtual ~Audio();
 
-        virtual void play(bool sync = false) {};
+        virtual void play(bool sync = false) {
+            play(buffer, samples, sync);
+        };
 
-        virtual void play(const void *data, int len, bool sync = false) {};
+        virtual void play(const void *data, int samples, bool sync = false) {};
 
         virtual void pause(int pause);
 
@@ -35,7 +37,7 @@ namespace c2d {
 
         int getBufferSize();
 
-        int getBufferLen();
+        int getSamples();
 
         bool isAvailable();
 
@@ -43,11 +45,11 @@ namespace c2d {
 
         int sample_rate = 48000;
         int channels = 2;
-        short *buffer = nullptr;
+        int16_t *buffer = nullptr;
         int buffer_size = 0;
-        int buffer_len = 0;
-        int paused = 0;
-        int available = 0;
+        int samples = 0;
+        bool paused = false;
+        bool available = false;
         C2DAudioCallback callback = nullptr;
     };
 }

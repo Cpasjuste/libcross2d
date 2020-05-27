@@ -15,9 +15,9 @@ Audio::Audio(int rate, float fps, C2DAudioCallback cb) {
         return;
     }
 
-    buffer_len = (int) ((float) rate / fps);
-    buffer_size = buffer_len * channels * 2;
-    buffer = (short *) malloc((size_t) buffer_size);
+    samples = (int) ((float) rate / fps);
+    buffer_size = samples * channels * (int) sizeof(int16_t);
+    buffer = (int16_t *) malloc(buffer_size);
     if (buffer == nullptr) {
         printf("Audio: error, can't alloc buffer (size=%i)\n", buffer_size);
         return;
@@ -27,23 +27,23 @@ Audio::Audio(int rate, float fps, C2DAudioCallback cb) {
     callback = cb;
     available = true;
 
-    printf("Audio: rate = %i, fps = %f, buf_size = %i, buf_len = %i\n", rate, fps, buffer_size, buffer_len);
+    printf("Audio: rate = %i, fps = %f, buf_size = %i, buf_len = %i\n", rate, fps, buffer_size, samples);
 }
 
 void Audio::reset() {
 
-    if (buffer) {
+    if (buffer != nullptr) {
         memset(buffer, 0, (size_t) buffer_size);
     }
-    paused = 0;
+    paused = false;
 }
 
 void Audio::pause(int pause) {
-    paused = pause;
+    paused = pause == 1;
 }
 
 Audio::~Audio() {
-    if (buffer) {
+    if (buffer != nullptr) {
         free(buffer);
         buffer = nullptr;
     }
@@ -65,10 +65,10 @@ int Audio::getBufferSize() {
     return buffer_size;
 }
 
-int Audio::getBufferLen() {
-    return buffer_len;
+int Audio::getSamples() {
+    return samples;
 }
 
 bool Audio::isAvailable() {
-    return available == 1;
+    return available;
 }

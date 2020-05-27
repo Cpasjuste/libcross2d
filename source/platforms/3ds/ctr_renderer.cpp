@@ -23,9 +23,9 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     C2D_Init(0x10000);
     C2D_Prepare();
 
-    consoleInit(GFX_BOTTOM, nullptr);
-    //consoleDebugInit(debugDevice_SVC);
-    //stdout = stderr;
+    //consoleInit(GFX_BOTTOM, nullptr);
+    consoleDebugInit(debugDevice_SVC);
+    stdout = stderr;
 
     renderTarget = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     C3D_FrameEndHook(nullptr, nullptr);
