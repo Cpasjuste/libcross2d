@@ -126,7 +126,6 @@ void CTRAudio::play(const void *data, int samples, bool sync) {
     if (available && !paused) {
 
         if (callback != nullptr) {
-            //printf("CTRAudio::play: can't manually play, a callback was defined\n");
             return;
         }
 
@@ -134,7 +133,13 @@ void CTRAudio::play(const void *data, int samples, bool sync) {
 
         if (sync) {
             while (audioBuffer->space_filled() > size) {
-                svcSleepThread(10 * 1000000);
+                svcSleepThread(100000);
+            }
+        } else {
+            if (audioBuffer->space_empty() <= 0) {
+                LightLock_Lock(&lock);
+                audioBuffer->clear();
+                LightLock_Unlock(&lock);
             }
         }
 
