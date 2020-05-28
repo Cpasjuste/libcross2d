@@ -504,8 +504,9 @@ namespace c2d {
 
             // handle maxSize.x in NewLine mode
             if (m_overflow == NewLine && m_max_size.x > 0) {
+#if 0
                 // calculate word width (approximated width for speed)
-#if 1
+                // edit: not precise enough...
                 auto width = (float) (words[i].size() * m_characterSize);
 #else
                 float width = 0;
@@ -548,7 +549,8 @@ namespace c2d {
                     addLine(m_vertices, m_textureSize, x, y, m_fillColor, underlineOffset, underlineThickness);
 
                     if (m_outlineThickness != 0)
-                        addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, underlineOffset, underlineThickness,
+                        addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, underlineOffset,
+                                underlineThickness,
                                 m_outlineThickness);
                 }
 
@@ -557,7 +559,8 @@ namespace c2d {
                     addLine(m_vertices, m_textureSize, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
                     if (m_outlineThickness != 0)
-                        addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset, underlineThickness,
+                        addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset,
+                                underlineThickness,
                                 m_outlineThickness);
                 }
 
@@ -647,7 +650,8 @@ namespace c2d {
                 addLine(m_vertices, m_textureSize, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
                 if (m_outlineThickness != 0)
-                    addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset, underlineThickness,
+                    addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset,
+                            underlineThickness,
                             m_outlineThickness);
             }
 

@@ -193,14 +193,28 @@ void MessageBox::setNotSelectedColor(const c2d::Color &fillColor, const c2d::Col
     notSelectedOutlineColor = outlineColor;
 }
 
-c2d::Text *MessageBox::getTitleText() {
+Text *MessageBox::getTitleText() {
     return title;
 }
 
-c2d::Text *MessageBox::getMessageText() {
+Text *MessageBox::getMessageText() {
     return message;
 }
 
-c2d::Button *MessageBox::getButton(int index) {
+Button *MessageBox::getButton(int index) {
     return buttons[index];
+}
+
+void MessageBox::setSize(const Vector2f &size) {
+    MessageBox::setSize(size.x, size.y);
+}
+
+void MessageBox::setSize(float width, float height) {
+    RectangleShape::setSize(width, height);
+
+    float fontSize = (float) title->getCharacterSize();
+    title->setSizeMax(width - fontSize * 2, fontSize + 4);
+
+    fontSize = (float) message->getCharacterSize();
+    message->setSizeMax(width - fontSize * 2, height * 0.6f);
 }

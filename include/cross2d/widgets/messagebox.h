@@ -35,6 +35,10 @@ namespace c2d {
 
         c2d::Button *getButton(int index);
 
+        void setSize(const c2d::Vector2f &size) override;
+
+        void setSize(float width, float height) override;
+
     private:
 
         c2d::Input *input = nullptr;
