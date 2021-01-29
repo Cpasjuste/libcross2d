@@ -41,9 +41,9 @@ namespace c2d {
 
         ~DCRenderer() override;
 
-        void flip(bool draw = true, bool inputs = true);
+        void flip(bool draw = true, bool inputs = true) override;
 
-        void delay(unsigned int ms);
+        void delay(unsigned int ms) override;
 
         bool mount(Device::Type type, Device::Flag flag);
 
