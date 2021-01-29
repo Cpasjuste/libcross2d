@@ -17,7 +17,7 @@ using namespace c2d;
 extern uint8 romdisk[];
 KOS_INIT_ROMDISK(romdisk);
 
-DCRenderer::DCRenderer(const Vector2f &s) : GL1Renderer(s) {
+DCRenderer::DCRenderer(const Vector2f &s) : GLRenderer(s) {
 
     printf("DCRenderer\n");
 
@@ -31,7 +31,7 @@ DCRenderer::DCRenderer(const Vector2f &s) : GL1Renderer(s) {
 #endif
 
     glKosInit();
-    glInit();
+    initGL();
 
     available = true;
 
@@ -41,7 +41,7 @@ DCRenderer::DCRenderer(const Vector2f &s) : GL1Renderer(s) {
 void DCRenderer::flip(bool draw, bool inputs) {
 
     // call base class (draw childs)
-    GL1Renderer::flip(draw, inputs);
+    GLRenderer::flip(draw, inputs);
 
     if (draw) {
         glKosSwapBuffers();
@@ -135,55 +135,5 @@ DCRenderer::~DCRenderer() {
 
     fs_fat_shutdown();
     fs_ext2_shutdown();
-#endif
-}
-
-/// crap
-namespace {
-    __gnu_cxx::__mutex atomic_mutex;
-} // anonymous namespace
-
-_Atomic_word __attribute__ ((__unused__))
-__gnu_cxx::__exchange_and_add(volatile _Atomic_word *__mem, int __val) throw() {
-#if 1
-    //printf("__exchange_and_add\n");
-    __gnu_cxx::__scoped_lock sentry(atomic_mutex);
-    _Atomic_word __result;
-    __result = *__mem;
-    *__mem += __val;
-    return __result;
-#endif
-#if 0
-    _Atomic_word __result;
-
-    __asm__ __volatile__
-    ("0:\n"
-     "\tmovli.l\t@%2,r0\n"
-     "\tmov\tr0,%1\n"
-     "\tadd\t%3,r0\n"
-     "\tmovco.l\tr0,@%2\n"
-     "\tbf\t0b"
-    : "+m" (*__mem), "=&r" (__result)
-    : "r" (__mem), "rI08" (__val)
-    : "r0");
-
-    return __result;
-#endif
-}
-
-void __attribute__ ((__unused__))
-__gnu_cxx::__atomic_add(volatile _Atomic_word *__mem, int __val) throw() {
-#if 1
-    __exchange_and_add(__mem, __val);
-#endif
-#if 0
-    asm("0:\n"
-        "\tmovli.l\t@%1,r0\n"
-        "\tadd\t%2,r0\n"
-        "\tmovco.l\tr0,@%1\n"
-        "\tbf\t0b"
-    : "+m" (*__mem)
-    : "r" (__mem), "rI08" (__val)
-    : "r0");
 #endif
 }

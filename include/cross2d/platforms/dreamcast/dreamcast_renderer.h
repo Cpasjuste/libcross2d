@@ -9,7 +9,7 @@
 
 namespace c2d {
 
-    class DCRenderer : public GL1Renderer {
+    class DCRenderer : public GLRenderer {
 
     public:
 

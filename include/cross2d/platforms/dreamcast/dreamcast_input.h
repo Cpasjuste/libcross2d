@@ -16,7 +16,7 @@ namespace c2d {
 
         ~DCInput() override;
 
-        int waitButton(int player = 0) override;
+        bool waitKey(unsigned int *key, int player = 0) override;
 
         Player *update(int rotate = 0) override;
 

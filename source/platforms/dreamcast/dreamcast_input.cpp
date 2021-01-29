@@ -53,9 +53,9 @@ DCInput::~DCInput() {
     }
 }
 
-int DCInput::waitButton(int player) {
+bool DCInput::waitKey(unsigned int *key, int player) {
     // TODO
-    return 0;
+    return false;
 }
 
 Input::Player *DCInput::update(int rotate) {
