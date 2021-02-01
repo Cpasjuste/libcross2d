@@ -14,6 +14,12 @@
 
 using namespace c2d;
 
+#ifdef NDEBUG
+KOS_INIT_FLAGS(INIT_DEFAULT | INIT_QUIET | INIT_NO_DCLOAD);
+#else
+KOS_INIT_FLAGS(INIT_DEFAULT);
+#endif
+
 extern uint8 romdisk[];
 KOS_INIT_ROMDISK(romdisk);
 
