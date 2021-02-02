@@ -235,7 +235,7 @@ std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool 
         }
 
         // skip some stuff
-        if (std::string(ent->name) == "cd" || std::string(ent->name) == "ram" || std::string(ent->name) == "pty"
+        if (std::string(ent->name) == "ram" || std::string(ent->name) == "pty"
             || std::string(ent->name) == "rd" || std::string(ent->name) == "pc"
             || Utility::toLower(ent->name) == "recycler"
             || Utility::toLower(ent->name) == "$recycle.bin"
