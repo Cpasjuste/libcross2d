@@ -57,7 +57,7 @@ SDL1Audio::SDL1Audio(int rate, float fps, C2DAudioCallback cb) : Audio(rate, fps
     SDL_AudioSpec aspec, obtained;
 
     // Find the value which is slighly bigger than buffer_len*2
-    for (sample_size = 512; sample_size < (buffer_len * 2); sample_size <<= 1);
+    for (sample_size = 512; sample_size < (samples * 2); sample_size <<= 1);
     sample_size /= 4; // fix audio delay
     buf_size = sample_size * channels * 2 * 8;
     buffer_sdl = (unsigned char *) malloc((size_t) buf_size);
