@@ -20,17 +20,17 @@ namespace c2d {
         GLTexture(const Vector2f &size = Vector2f(0, 0),
                   Format format = Format::RGBA8);
 
-        ~GLTexture();
+        ~GLTexture() override;
 
-        int save(const std::string &path);
+        int save(const std::string &path) override;
 
-        int lock(FloatRect *rect, void **pixels, int *pitch);
+        int lock(FloatRect *rect, void **pixels, int *pitch) override;
 
-        void unlock();
+        void unlock(void *data = nullptr) override;
 
-        void setFilter(Filter filter);
+        void setFilter(Filter filter) override;
 
-        void setShader(int shaderIndex);
+        void setShader(int shaderIndex) override;
 
         unsigned int texID = 0;
 

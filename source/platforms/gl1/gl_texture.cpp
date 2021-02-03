@@ -4,6 +4,8 @@
 
 #ifdef __GL1__
 
+#include <cross2d/platforms/gl1/gl_texture.h>
+
 #include "cross2d/c2d.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -154,7 +156,7 @@ int GLTexture::lock(FloatRect *rect, void **pix, int *p) {
     return 0;
 }
 
-void GLTexture::unlock() {
+void GLTexture::unlock(void *data) {
 
     glBindTexture(GL_TEXTURE_2D, texID);
 
@@ -171,16 +173,16 @@ void GLTexture::unlock() {
                          0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
             break;
 #else
-            case Format::RGBA8:
-                glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
-                                (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                                GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-                break;
-            default:
-                glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
-                                (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                                GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
-                break;
+        case Format::RGBA8:
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+                            (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                            GL_RGBA, GL_UNSIGNED_BYTE, data ? data : pixels);
+            break;
+        default:
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+                            (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                            GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
+            break;
 #endif
     }
 

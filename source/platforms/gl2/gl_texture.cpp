@@ -225,7 +225,7 @@ int GLTexture::lock(FloatRect *rect, void **pix, int *p) {
     return 0;
 }
 
-void GLTexture::unlock() {
+void GLTexture::unlock(void *data) {
 
     glBindTexture(GL_TEXTURE_2D, texID);
 
@@ -233,29 +233,29 @@ void GLTexture::unlock() {
         case Format::RGBA8:
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
                             (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+                            GL_RGBA, GL_UNSIGNED_BYTE, data ? data : pixels);
             break;
 #ifndef __GLES2__
         case Format::BGRA8:
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
                             (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
+                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data ? data : pixels);
             break;
         case Format::ARGB8:
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
                             (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, pixels);
+                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, data ? data : pixels);
             break;
         case Format::ABGR8:
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
                             (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_ABGR_EXT, GL_UNSIGNED_INT_8_8_8_8, pixels);
+                            GL_ABGR_EXT, GL_UNSIGNED_INT_8_8_8_8, data ? data : pixels);
             break;
 #endif
         default:
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
                             (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
+                            GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
             break;
     }
 }

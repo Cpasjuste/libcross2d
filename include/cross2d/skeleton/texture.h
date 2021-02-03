@@ -36,7 +36,7 @@ namespace c2d {
 
         virtual int lock(FloatRect *rect, void **pixels, int *pitch) { return -1; };
 
-        virtual void unlock() {};
+        virtual void unlock(void *data = nullptr) {};
 
         virtual int save(const std::string &path) { return -1; };
 
