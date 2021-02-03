@@ -80,7 +80,7 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
     glGenTextures(1, &texID);
 
     if (texID != 0u) {
-        pixels = (unsigned char *) malloc((size_t) (size.x * size.y * bpp));
+        pixels = (unsigned char *) malloc((size_t) ((int) size.x * (int) size.y * bpp));
         glBindTexture(GL_TEXTURE_2D, texID);
 
         switch (format) {
@@ -171,16 +171,16 @@ void GLTexture::unlock() {
                          0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
             break;
 #else
-        case Format::RGBA8:
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
-                            (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-            break;
-        default:
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
-                            (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
-            break;
+            case Format::RGBA8:
+                glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+                                (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                                GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+                break;
+            default:
+                glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+                                (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                                GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
+                break;
 #endif
     }
 
