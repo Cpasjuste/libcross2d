@@ -21,6 +21,8 @@
 #include "cross2d/skeleton/utility.h"
 #include "cross2d/skeleton/tween.h"
 #include "cross2d/skeleton/config.h"
+#include "cross2d/skeleton/thread.h"
+#include "cross2d/skeleton/mutex.h"
 #include "cross2d/widgets/button.h"
 #include "cross2d/widgets/textbox.h"
 #include "cross2d/widgets/listbox.h"
@@ -187,6 +189,8 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #include "cross2d/platforms/sdl2/sdl2_renderer.h"
 #include "cross2d/platforms/sdl2/sdl2_input.h"
 #include "cross2d/platforms/sdl2/sdl2_audio.h"
+#include "cross2d/platforms/sdl2/sdl2_thread.h"
+#include "cross2d/platforms/sdl2/sdl2_mutex.h"
 #include "cross2d/platforms/posix/posix_io.h"
 #include "cross2d/platforms/posix/posix_clock.h"
 
@@ -201,6 +205,8 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define C2DAudio SDL2Audio
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
+#define C2DThread SDL2Thread
+#define C2DMutex SDL2Mutex
 
 #define KEY_JOY_UP_DEFAULT      -1  // use hat
 #define KEY_JOY_DOWN_DEFAULT    -1  // use hat
@@ -276,11 +282,15 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #include "platforms/dreamcast/dreamcast_clock.h"
 #include "platforms/dreamcast/dreamcast_input.h"
 #include "platforms/dreamcast/dreamcast_io.h"
+#include "platforms/dreamcast/dreamcast_mutex.h"
+#include "platforms/dreamcast/dreamcast_thread.h"
 //#include "platforms/dreamcast/dreamcast_audio.h" // TODO
 
 #define C2DRenderer DCRenderer
 #define C2DIo DCIo
 #define C2DClock DCClock
+#define C2DMutex DCMutex
+#define C2DThread DCThread
 #define C2DTexture GLTexture
 #define C2DInput DCInput
 #define C2DAudio Audio

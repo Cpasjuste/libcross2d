@@ -118,7 +118,7 @@ if (PLATFORM_DREAMCAST)
     add_custom_target(${PROJECT_NAME}.cdi
             DEPENDS ${PROJECT_NAME}.bin
             COMMAND scramble ${PROJECT_NAME}.bin 1DS_CORE.BIN
-            COMMAND genisoimage -V ${PROJECT_NAME} -G ${CMAKE_CURRENT_SOURCE_DIR}/libcross2d/data/dreamcast/IP.BIN -joliet -rock -l -x .svn -o ${PROJECT_NAME}.iso 1DS_CORE.BIN ${CMAKE_CURRENT_BINARY_DIR}/data_datadir
+            COMMAND genisoimage -V ${PROJECT_NAME} -G ${CMAKE_SOURCE_DIR}/data/dreamcast/IP.BIN -joliet -rock -l -x .svn -o ${PROJECT_NAME}.iso 1DS_CORE.BIN ${CMAKE_CURRENT_BINARY_DIR}/data_datadir
             COMMAND cdi4dc ${PROJECT_NAME}.iso ${PROJECT_NAME}.cdi -d >> cdi4dc.log
             )
 endif (PLATFORM_DREAMCAST)
