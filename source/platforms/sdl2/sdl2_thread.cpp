@@ -6,7 +6,7 @@
 
 using namespace c2d;
 
-SDL2Thread::SDL2Thread(ThreadFunc fn, void *data) : Thread(fn, data) {
+SDL2Thread::SDL2Thread(Function fn, void *data) : Thread(fn, data) {
     thread = SDL_CreateThread(fn, "SDL2Thread", data);
 }
 

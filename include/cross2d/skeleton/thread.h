@@ -9,10 +9,11 @@ namespace c2d {
 
     class Thread {
 
-        typedef int (*ThreadFunc)(void *data);
-
     public:
-        Thread(ThreadFunc fn, void *data) {};
+
+        typedef int (*Function)(void *data);
+
+        Thread(Function fn, void *data) {};
 
         virtual ~Thread() = default;
 

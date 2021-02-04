@@ -11,10 +11,8 @@ namespace c2d {
 
     class DCThread : public Thread {
 
-        typedef int (*ThreadFunc)(void *data);
-
     public:
-        DCThread(ThreadFunc fn, void *data);
+        DCThread(Function fn, void *data);
 
         ~DCThread() override;
 

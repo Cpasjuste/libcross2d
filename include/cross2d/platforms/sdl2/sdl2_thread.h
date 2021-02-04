@@ -11,10 +11,8 @@ namespace c2d {
 
     class SDL2Thread : public Thread {
 
-        typedef int (*ThreadFunc)(void *data);
-
     public:
-        SDL2Thread(ThreadFunc fn, void *data);
+        SDL2Thread(Function fn, void *data);
 
         int join() override;
 

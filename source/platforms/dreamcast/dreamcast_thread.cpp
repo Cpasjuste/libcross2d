@@ -6,7 +6,7 @@
 
 using namespace c2d;
 
-DCThread::DCThread(ThreadFunc fn, void *data) : Thread(fn, data) {
+DCThread::DCThread(Function fn, void *data) : Thread(fn, data) {
     thread = thd_create(0, reinterpret_cast<void *(*)(void *)>(fn), data);
 }
 
