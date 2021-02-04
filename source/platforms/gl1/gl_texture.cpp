@@ -165,12 +165,12 @@ void GLTexture::unlock(void *data) {
         case Format::RGBA8:
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
                          (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                         0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+                         0, GL_RGBA, GL_UNSIGNED_BYTE, data ? data : pixels);
             break;
         default:
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565,
                          (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                         0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
+                         0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
             break;
 #else
         case Format::RGBA8:
