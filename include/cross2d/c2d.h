@@ -288,7 +288,7 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #include "platforms/dreamcast/dreamcast_io.h"
 #include "platforms/dreamcast/dreamcast_mutex.h"
 #include "platforms/dreamcast/dreamcast_thread.h"
-//#include "platforms/dreamcast/dreamcast_audio.h" // TODO
+#include "platforms/dreamcast/dreamcast_audio.h"
 
 #define C2DRenderer DCRenderer
 #define C2DIo DCIo
@@ -297,7 +297,7 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define C2DThread DCThread
 #define C2DTexture GLTexture
 #define C2DInput DCInput
-#define C2DAudio Audio
+#define C2DAudio DCAudio
 #define C2DRectangle RectangleShape
 #define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape

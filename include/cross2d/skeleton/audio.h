@@ -24,7 +24,7 @@ namespace c2d {
             play(buffer, samples, sync);
         };
 
-        virtual void play(const void *data, int samples, bool sync = false) {};
+        virtual void play(const void *data, int samples_count, bool sync = false) {};
 
         virtual void pause(int pause);
 
@@ -55,8 +55,8 @@ namespace c2d {
         int sample_rate = 48000;
         int channels = 2;
         int16_t *buffer = nullptr;
-        AudioBuffer *audioBuffer = nullptr;
         int buffer_size = 0;
+        AudioBuffer *audioBuffer = nullptr;
         int samples = 0;
         bool paused = false;
         bool available = false;
