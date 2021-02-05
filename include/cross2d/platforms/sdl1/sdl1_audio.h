@@ -12,17 +12,27 @@ namespace c2d {
     class SDL1Audio : public Audio {
 
     public:
-        SDL1Audio(int rate = 48000, float fps = 60, C2DAudioCallback cb = nullptr);
+        explicit SDL1Audio(int freq = 48000, float fps = 60, C2DAudioCallback cb = nullptr);
 
         ~SDL1Audio() override;
 
         void play(bool sync = false) override;
 
-        //void play(const void *data, int len, bool sync = false) override;
+        void play(const void *data, int samples, bool sync = false) override;
 
         void pause(int pause) override;
 
         void reset() override;
+
+        int getQueuedSize() override;
+
+        SDL_mutex *getMutex() {
+            return mutex;
+        }
+
+    private:
+
+        SDL_mutex *mutex = nullptr;
     };
 }
 

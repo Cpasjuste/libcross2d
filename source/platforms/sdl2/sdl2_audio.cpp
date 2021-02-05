@@ -114,6 +114,15 @@ void SDL2Audio::play(const void *data, int samples, bool sync) {
     }
 }
 
+void SDL2Audio::pause(int pause) {
+
+    if (available) {
+        SDL_PauseAudioDevice(deviceID, pause);
+    }
+
+    Audio::pause(pause);
+}
+
 void SDL2Audio::reset() {
 
     if (available) {
@@ -121,16 +130,6 @@ void SDL2Audio::reset() {
     }
 
     Audio::reset();
-}
-
-void SDL2Audio::pause(int pause) {
-
-    if (!available) {
-        return;
-    }
-
-    Audio::pause(pause);
-    SDL_PauseAudioDevice(deviceID, pause);
 }
 
 int SDL2Audio::getQueuedSize() {
