@@ -231,11 +231,13 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 
 #include <SDL/SDL.h>
 
-#include "platforms/sdl1/sdl1_renderer.h"
-#include "platforms/sdl1/sdl1_input.h"
-#include "platforms/sdl1/sdl1_audio.h"
-#include "platforms/posix/posix_io.h"
-#include "platforms/posix/posix_clock.h"
+#include "cross2d/platforms/sdl1/sdl1_renderer.h"
+#include "cross2d/platforms/sdl1/sdl1_input.h"
+#include "cross2d/platforms/sdl1/sdl1_audio.h"
+#include "cross2d/platforms/sdl1/sdl1_thread.h"
+#include "cross2d/platforms/sdl1/sdl1_mutex.h"
+#include "cross2d/platforms/posix/posix_io.h"
+#include "cross2d/platforms/posix/posix_clock.h"
 
 #define C2DRenderer SDLRenderer
 #define C2DTexture GLTexture
@@ -248,6 +250,8 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define C2DAudio SDL1Audio
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
+#define C2DThread SDL1Thread
+#define C2DMutex SDL1Mutex
 
 #define KEY_JOY_UP_DEFAULT      -1  // use hat
 #define KEY_JOY_DOWN_DEFAULT    -1  // use hat
