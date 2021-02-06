@@ -22,16 +22,10 @@ namespace c2d {
 
         void reset() override;
 
-        int getQueuedSize() override;
-
-        c2d::Mutex *getMutex() {
-            return mutex;
-        }
-
     private:
 
-        c2d::Mutex *mutex = nullptr;
-        snd_stream_hnd_t stream_hnd;
+        c2d::Thread *thread = nullptr;
+        bool running = true;
     };
 }
 

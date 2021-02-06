@@ -12,13 +12,14 @@ static void audioThread(void *data, Uint8 *stream, int len) {
 
     auto *audio = (SDL1Audio *) data;
 
-    SDL_LockMutex(audio->getMutex());
+    printf("c2d::sdl1audio::thread: want: %i, filled: %i\n",
+           len >> 1, audio->getAudioBufferQueued());
 
+    audio->lock();
     if (audio->getAudioBuffer()->space_filled() >= len >> 1) {
         audio->getAudioBuffer()->pull((int16_t *) stream, len >> 1);
     }
-
-    SDL_UnlockMutex(audio->getMutex());
+    audio->unlock();
 }
 
 SDL1Audio::SDL1Audio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps, cb) {
@@ -69,36 +70,33 @@ SDL1Audio::~SDL1Audio() {
         SDL_CloseAudio();
         SDL_QuitSubSystem(SDL_INIT_AUDIO);
     }
-
-    SDL_DestroyMutex(mutex);
 }
 
 void SDL1Audio::play(bool sync) {
+
 }
 
 void SDL1Audio::play(const void *data, int samples, bool sync) {
 
-    if (available && !paused) {
-
-        // TODO
-        //if (SDL_GetAudioDeviceStatus(deviceID) == SDL_AUDIO_PAUSED) {
-        //    SDL_PauseAudioDevice(deviceID, 0);
-        //}
+    if (available) {
+        if (paused) {
+            pause(0);
+        }
 
         if (callback != nullptr) {
             return;
         }
 
         int size = samples * channels * (int) sizeof(int16_t);
-
         if (sync) {
             while (audioBuffer->space_filled() > size >> 1) {
-                SDL_Delay(10);
+                SDL_Delay(1);
             }
         }
-        SDL_LockMutex(mutex);
+
+        lock();
         audioBuffer->push((int16_t *) data, size >> 1);
-        SDL_UnlockMutex(mutex);
+        unlock();
     }
 }
 
@@ -118,14 +116,4 @@ void SDL1Audio::reset() {
     }
 
     Audio::reset();
-}
-
-int SDL1Audio::getQueuedSize() {
-    int queued;
-
-    SDL_LockMutex(mutex);
-    queued = audioBuffer->space_filled() << 1;
-    SDL_UnlockMutex(mutex);
-
-    return queued;
 }

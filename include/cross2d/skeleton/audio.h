@@ -6,6 +6,7 @@
 #define _C2D_AUDIO_H_
 
 #include <cstring>
+#include "cross2d/skeleton/mutex.h"
 #include "audio_buffer.h"
 
 namespace c2d {
@@ -24,31 +25,45 @@ namespace c2d {
             play(buffer, samples, sync);
         };
 
-        virtual void play(const void *data, int samples_count, bool sync = false) {};
+        virtual void play(const void *data, int samples_count, bool sync = false) {
+            printf("c2d::Audio::play: not implemented\n");
+        }
 
         virtual void pause(int pause);
 
         virtual void reset();
 
-        virtual int getQueuedSize() {
-            return 0;
+        virtual bool isPaused() {
+            return paused;
         }
 
-        int getSampleRate();
+        bool lock() {
+            return mutex->lock();
+        }
 
-        int getChannels();
+        bool unlock() {
+            return mutex->unlock();
+        }
 
-        int getSamples();
+        [[nodiscard]] bool isAvailable() const;
+
+        [[nodiscard]] int getSampleRate() const;
+
+        [[nodiscard]] int getChannels() const;
+
+        [[nodiscard]] int getSamples() const;
+
+        [[nodiscard]] int getBufferSize() const;
 
         short *getBuffer();
-
-        int getBufferSize();
 
         AudioBuffer *getAudioBuffer() {
             return audioBuffer;
         }
 
-        bool isAvailable();
+        virtual int getAudioBufferQueued() {
+            return audioBuffer->space_filled() << 1;
+        }
 
     protected:
 
@@ -61,6 +76,9 @@ namespace c2d {
         bool paused = false;
         bool available = false;
         C2DAudioCallback callback = nullptr;
+
+    private:
+        c2d::Mutex *mutex = nullptr;
     };
 }
 

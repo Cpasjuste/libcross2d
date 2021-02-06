@@ -15,9 +15,10 @@
 
 namespace c2d {
     class AudioBuffer {
+    private:
+        int buffer_size;
     public:
         int size;
-        int buffer_size;
         int start;
         int16_t *buffer;
 
@@ -83,6 +84,10 @@ namespace c2d {
             size += num_samples;
 
             return true;
+        }
+
+        inline int space() const {
+            return buffer_size;
         }
 
         inline int space_empty() const {

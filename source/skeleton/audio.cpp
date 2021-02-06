@@ -15,6 +15,8 @@ Audio::Audio(int rate, float fps, C2DAudioCallback cb) {
         return;
     }
 
+    mutex = new C2DMutex();
+
     samples = (int) ((float) rate / fps);
     buffer_size = samples * channels * (int) sizeof(int16_t);
     buffer = (int16_t *) malloc(buffer_size);
@@ -30,19 +32,44 @@ Audio::Audio(int rate, float fps, C2DAudioCallback cb) {
     callback = cb;
     available = true;
 
-    printf("Audio: rate = %i, fps = %f, buf_size = %i, buf_len = %i\n", rate, fps, buffer_size, samples);
+    printf("Audio: rate = %i, fps = %f, buf_size = %i, buf_len = %i\n",
+           rate, fps, buffer_size, samples);
 }
 
 void Audio::reset() {
-
     if (buffer != nullptr) {
         memset(buffer, 0, (size_t) buffer_size);
     }
+    audioBuffer->clear();
     paused = false;
 }
 
 void Audio::pause(int pause) {
     paused = pause == 1;
+}
+
+int Audio::getSampleRate() const {
+    return sample_rate;
+}
+
+int Audio::getChannels() const {
+    return channels;
+}
+
+short *Audio::getBuffer() {
+    return buffer;
+}
+
+int Audio::getBufferSize() const {
+    return buffer_size;
+}
+
+int Audio::getSamples() const {
+    return samples;
+}
+
+bool Audio::isAvailable() const {
+    return available;
 }
 
 Audio::~Audio() {
@@ -52,28 +79,5 @@ Audio::~Audio() {
     if (audioBuffer != nullptr) {
         delete (audioBuffer);
     }
-}
-
-int Audio::getSampleRate() {
-    return sample_rate;
-}
-
-int Audio::getChannels() {
-    return channels;
-}
-
-short *Audio::getBuffer() {
-    return buffer;
-}
-
-int Audio::getBufferSize() {
-    return buffer_size;
-}
-
-int Audio::getSamples() {
-    return samples;
-}
-
-bool Audio::isAvailable() {
-    return available;
+    delete (mutex);
 }

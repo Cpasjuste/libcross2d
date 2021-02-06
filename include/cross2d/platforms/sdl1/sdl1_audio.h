@@ -23,16 +23,6 @@ namespace c2d {
         void pause(int pause) override;
 
         void reset() override;
-
-        int getQueuedSize() override;
-
-        SDL_mutex *getMutex() {
-            return mutex;
-        }
-
-    private:
-
-        SDL_mutex *mutex = nullptr;
     };
 }
 
