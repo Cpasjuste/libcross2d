@@ -164,12 +164,12 @@ void GLTexture::unlock(void *data) {
 #ifdef __DREAMCAST__
         case Format::RGBA8:
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
-                         (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                         (GLsizei) getSize().x, (GLsizei) getSize().y,
                          0, GL_RGBA, GL_UNSIGNED_BYTE, data ? data : pixels);
             break;
         default:
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565,
-                         (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                         (GLsizei) getSize().x, (GLsizei) getSize().y,
                          0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
             break;
 #else
