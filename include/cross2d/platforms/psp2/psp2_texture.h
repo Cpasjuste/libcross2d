@@ -27,7 +27,7 @@ namespace c2d {
 
         int lock(FloatRect *rect, void **pixels, int *pitch) override;
 
-        int save(const std::string &path);
+        int save(const std::string &path) override;
 
         void setFilter(Filter filter) override;
 

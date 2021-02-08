@@ -152,13 +152,16 @@ if (PLATFORM_VITA)
             source/platforms/psp2/*.c*
             source/platforms/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
             source/platforms/sdl2/sdl2_input.cpp # TODO: get rid of sdl2, use sdl2 input for now
+            source/platforms/sdl2/sdl2_thread.cpp
+            source/platforms/sdl2/sdl2_mutex.cpp
             source/platforms/psp2/vita-shader-collection/lib/*.o
             )
     list(APPEND C2D_LDFLAGS
+            SDL2 vita2d jpeg png
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
-            SceCtrl_stub SceCommonDialog_stub
-            SceAudio_stub SceTouch_stub SceHid_stub
-            SDL2 vita2d jpeg png z c stdc++ pthread m
+            SceAppMgr_stub SceCtrl_stub SceCommonDialog_stub
+            SceAudio_stub SceTouch_stub SceHid_stub SceMotion_stub
+            z c stdc++ pthread m
             )
     list(APPEND C2D_CFLAGS
             -D__PSP2__ -DNO_KEYBOARD

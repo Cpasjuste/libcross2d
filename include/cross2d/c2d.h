@@ -52,6 +52,8 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #include "platforms/psp2/psp2_clock.h"
 #include "platforms/sdl2/sdl2_input.h"
 #include "platforms/sdl2/sdl2_audio.h"
+#include "platforms/sdl2/sdl2_thread.h"
+#include "platforms/sdl2/sdl2_mutex.h"
 
 #define C2DRenderer PSP2Renderer
 #define C2DTexture PSP2Texture
@@ -59,6 +61,8 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define C2DAudio SDL2Audio
 #define C2DIo PSP2Io
 #define C2DClock PSP2Clock
+#define C2DThread SDL2Thread
+#define C2DMutex SDL2Mutex
 #define C2DRectangle RectangleShape
 #define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape
