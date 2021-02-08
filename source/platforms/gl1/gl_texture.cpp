@@ -17,27 +17,87 @@
 
 using namespace c2d;
 
+// TODO: dreamcast: fix pow2 "setOrigin"
+#ifdef __DREAMCAST__
+
+int GLTexture::pow2(int w) {
+    if (w == 0)
+        return 0;
+    int n = 2;
+    while (w > n)
+        n <<= 1;
+    return n;
+}
+
+stbi_uc *GLTexture::getPixels(int *w, int *h, const unsigned char *buffer, int bufferSize) {
+
+    int n = 0;
+    stbi_uc *img;
+
+    if (buffer) {
+        img = stbi_load_from_memory(buffer, bufferSize, w, h, &n, 4);
+    } else {
+        img = stbi_load(path.c_str(), w, h, &n, bpp);
+        if (img == nullptr) {
+            return nullptr;
+        }
+    }
+
+    // copy img to power of 2 pixel data
+    p2_w = pow2(*w), p2_h = pow2(*h);
+    pixels = (stbi_uc *) malloc((size_t) (p2_w * p2_h * bpp));
+    if (pixels == nullptr) {
+        free(img);
+        return nullptr;
+    }
+
+    memset(pixels, 0, p2_w * p2_h * bpp);
+    stbi_uc *dst = pixels;
+    int dst_pitch = p2_w * bpp;
+    stbi_uc *src = img;
+    int src_pitch = *w * bpp;
+    for (int i = 0; i < *h; i++) {
+        memcpy(dst, src, (size_t) *w * bpp);
+        dst += dst_pitch;
+        src += src_pitch;
+    }
+
+    free(img);
+    return pixels;
+}
+
+#endif
+
 GLTexture::GLTexture(const std::string &p) : Texture(p) {
 
-    int w, h, n = 0;
+    int w, h;
 
+#ifdef __DREAMCAST__
+    pixels = getPixels(&w, &h);
+    if (!pixels) {
+        printf("GLTexture(%p): couldn't create texture (%s)\n", this, path.c_str());
+        return;
+    }
+#else
+    int n = 0;
     pixels = stbi_load(path.c_str(), &w, &h, &n, 4);
+    p2_w = w; p2_h = h;
     if (pixels == nullptr) {
         printf("GLTexture(%p): couldn't create texture (%s)\n", this, path.c_str());
         return;
     }
+#endif
 
     glGenTextures(1, &texID);
     glBindTexture(GL_TEXTURE_2D, texID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, p2_w, p2_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     if (texID != 0u) {
-        pitch = w * bpp;
+        pitch = p2_w * bpp;
         Texture::setSize((float) w, (float) h);
-        setTextureRect(IntRect(0, 0, w, h));
         setTexture(this, true);
         available = true;
     } else {
@@ -49,23 +109,33 @@ GLTexture::GLTexture(const std::string &p) : Texture(p) {
 
 GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
 
-    int w, h, n = 0;
+    int w, h;
 
+#ifdef __DREAMCAST__
+    pixels = getPixels(&w, &h, buffer, bufferSize);
+    if (!pixels) {
+        printf("GLTexture(%p): couldn't create texture \n", this);
+        return;
+    }
+#else
+    int n = 0;
     pixels = stbi_load_from_memory(buffer, bufferSize, &w, &h, &n, 4);
+    p2_w = w; p2_h = h;
     if (pixels == nullptr) {
         printf("GLTexture(%p): couldn't create texture from buffer\n", this);
         return;
     }
+#endif
 
     glGenTextures(1, &texID);
     glBindTexture(GL_TEXTURE_2D, texID);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, p2_w, p2_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     if (texID != 0u) {
-        pitch = w * bpp;
+        pitch = p2_w * bpp;
         Texture::setSize((float) w, (float) h);
         setTextureRect(IntRect(0, 0, w, h));
         setTexture(this, true);
@@ -81,17 +151,26 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
 
     glGenTextures(1, &texID);
 
+#ifdef __DREAMCAST__
+    p2_w = pow2((int) size.x);
+    p2_h = pow2((int) size.y);
+    pitch = p2_w * bpp;
+#else
+    p2_w = size.x;
+    p2_h = size.y;
+#endif
+
     if (texID != 0u) {
-        pixels = (unsigned char *) malloc((size_t) ((int) size.x * (int) size.y * bpp));
+        pixels = (unsigned char *) malloc((size_t) (p2_w * p2_h * bpp));
         glBindTexture(GL_TEXTURE_2D, texID);
 
         switch (format) {
             case Format::RGBA8:
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) p2_w, (GLsizei) p2_h, 0,
                              GL_RGBA, GL_UNSIGNED_BYTE, pixels);
                 break;
             default:
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, (GLsizei) size.x, (GLsizei) size.y, 0,
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, (GLsizei) p2_w, (GLsizei) p2_h, 0,
                              GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
                 break;
         }
@@ -99,7 +178,6 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         Texture::setSize(size);
-        setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
         setTexture(this, true);
         glBindTexture(GL_TEXTURE_2D, 0);
         available = true;
@@ -164,25 +242,25 @@ void GLTexture::unlock(void *data) {
 #ifdef __DREAMCAST__
         case Format::RGBA8:
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
-                         (GLsizei) getSize().x, (GLsizei) getSize().y,
+                         (GLsizei) p2_w, (GLsizei) p2_h,
                          0, GL_RGBA, GL_UNSIGNED_BYTE, data ? data : pixels);
             break;
         default:
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565,
-                         (GLsizei) getSize().x, (GLsizei) getSize().y,
+                         (GLsizei) p2_w, (GLsizei) p2_h,
                          0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
             break;
 #else
-        case Format::RGBA8:
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
-                            (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_RGBA, GL_UNSIGNED_BYTE, data ? data : pixels);
-            break;
-        default:
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
-                            (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
-            break;
+            case Format::RGBA8:
+                glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+                                (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                                GL_RGBA, GL_UNSIGNED_BYTE, data ? data : pixels);
+                break;
+            default:
+                glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+                                (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                                GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
+                break;
 #endif
     }
 

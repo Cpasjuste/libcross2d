@@ -12,8 +12,8 @@ static void audioThread(void *data, Uint8 *stream, int len) {
 
     auto *audio = (SDL1Audio *) data;
 
-    printf("c2d::sdl1audio::thread: want: %i, filled: %i\n",
-           len >> 1, audio->getAudioBufferQueued());
+    //printf("c2d::sdl1audio::thread: want: %i, filled: %i\n",
+    //     len >> 1, audio->getAudioBufferQueued());
 
     audio->lock();
     if (audio->getAudioBuffer()->space_filled() >= len >> 1) {
@@ -70,10 +70,6 @@ SDL1Audio::~SDL1Audio() {
         SDL_CloseAudio();
         SDL_QuitSubSystem(SDL_INIT_AUDIO);
     }
-}
-
-void SDL1Audio::play(bool sync) {
-
 }
 
 void SDL1Audio::play(const void *data, int samples, bool sync) {

@@ -34,6 +34,14 @@ namespace c2d {
 
         unsigned char *pixels = nullptr;
 
+    private:
+        int p2_w, p2_h;
+#ifdef __DREAMCAST__
+        int pow2(int w);
+
+        unsigned char *getPixels(int *w, int *h, const unsigned char *buffer = nullptr, int bufferSize = 0);
+
+#endif
     };
 }
 

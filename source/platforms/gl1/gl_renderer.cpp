@@ -4,7 +4,8 @@
 
 #ifdef __GL1__
 
-//#define BLEND_TEST
+// GLdc doesn't like mixing blend and non blend textures
+//#define BLEND_TEST 1
 
 #include "cross2d/c2d.h"
 
@@ -19,7 +20,6 @@ void GLRenderer::initGL() {
     printf("GL vendor   : %s\n", glGetString(GL_VENDOR));
     printf("GL renderer : %s\n", glGetString(GL_RENDERER));
     printf("GL version  : %s\n", glGetString(GL_VERSION));
-    //printf("GL glsl     : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
@@ -27,7 +27,6 @@ void GLRenderer::initGL() {
     glDepthMask(GL_FALSE);
 
 #ifndef BLEND_TEST
-    // GLdc doesn't like mixing blend and non blend textures
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
@@ -112,7 +111,8 @@ void GLRenderer::clear() {
                  (float) m_clearColor.g / 255.0f,
                  (float) m_clearColor.b / 255.0f,
                  (float) m_clearColor.a / 255.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClearDepth(0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void GLRenderer::flip(bool draw, bool inputs) {
