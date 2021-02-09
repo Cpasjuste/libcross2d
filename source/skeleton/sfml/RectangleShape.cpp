@@ -59,26 +59,75 @@ namespace c2d {
         return m_size;
     }
 
+    ////////////////////////////////////////////////////////////
+    void RectangleShape::setCornersRadius(float radius) {
+        m_radius = radius;
+        update();
+    }
+
+////////////////////////////////////////////////////////////
+    float RectangleShape::getCornersRadius() const {
+        return m_radius;
+    }
+
+////////////////////////////////////////////////////////////
+    void RectangleShape::setCornerPointCount(unsigned int count) {
+        m_corner_point_count = count;
+        update();
+    }
 
 ////////////////////////////////////////////////////////////
     std::size_t RectangleShape::getPointCount() const {
-        return 4;
+        return m_corner_point_count * 4;
     }
-
 
 ////////////////////////////////////////////////////////////
     Vector2f RectangleShape::getPoint(std::size_t index) const {
-        switch (index) {
-            default:
-            case 0:
-                return {0, 0};
-            case 1:
-                return {m_size.x, 0};
-            case 2:
-                return {m_size.x, m_size.y};
-            case 3:
-                return {0, m_size.y};
+        if (m_radius <= 0) {
+            switch (index) {
+                default:
+                case 0:
+                    return {0, 0};
+                case 1:
+                    return {m_size.x, 0};
+                case 2:
+                    return {m_size.x, m_size.y};
+                case 3:
+                    return {0, m_size.y};
+            }
         }
+
+        if (index >= m_corner_point_count * 4)
+            return Vector2f(0, 0);
+
+        Vector2f center;
+        float deltaAngle = 90.0f / (float) (m_corner_point_count - 1);
+        unsigned int centerIndex = index / m_corner_point_count;
+        static const float pi = 3.141592654f;
+
+        switch (centerIndex) {
+            case 0:
+                center.x = m_size.x - m_radius;
+                center.y = m_radius;
+                break;
+            case 1:
+                center.x = m_radius;
+                center.y = m_radius;
+                break;
+            case 2:
+                center.x = m_radius;
+                center.y = m_size.y - m_radius;
+                break;
+            case 3:
+                center.x = m_size.x - m_radius;
+                center.y = m_size.y - m_radius;
+                break;
+            default:
+                return {0, 0};
+        }
+
+        return Vector2f(m_radius * cos(deltaAngle * (index - centerIndex) * pi / 180) + center.x,
+                        -m_radius * sin(deltaAngle * (index - centerIndex) * pi / 180) + center.y);
     }
 
 } // namespace sf

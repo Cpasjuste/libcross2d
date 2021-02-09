@@ -6,7 +6,7 @@
 
 using namespace c2d;
 
-Texture::Texture(const std::string &p) : Shape() {
+Texture::Texture(const std::string &p) : RectangleShape(Vector2f{0, 0}) {
 
     printf("Texture(%p): %s\n", this, p.c_str());
 
@@ -18,7 +18,7 @@ Texture::Texture(const std::string &p) : Shape() {
     setFillColor(Color::White);
 }
 
-Texture::Texture(const unsigned char *buffer, int bufferSize) : Shape() {
+Texture::Texture(const unsigned char *buffer, int bufferSize) : RectangleShape(Vector2f{0, 0}) {
 
     printf("Texture(%p)\n", this);
 
@@ -29,7 +29,7 @@ Texture::Texture(const unsigned char *buffer, int bufferSize) : Shape() {
     setFillColor(Color::White);
 }
 
-Texture::Texture(const Vector2f &size, Format fmt) : Shape() {
+Texture::Texture(const Vector2f &size, Format fmt) : RectangleShape(Vector2f{0, 0}) {
 
     printf("Texture(%p): %i x %i\n", this, (int) size.x, (int) size.y);
 
@@ -40,39 +40,6 @@ Texture::Texture(const Vector2f &size, Format fmt) : Shape() {
 
     setFillColor(Color::White);
     setSize(size);
-}
-
-void Texture::setSize(const Vector2f &size) {
-    m_size = size;
-    update();
-}
-
-void Texture::setSize(float width, float height) {
-    m_size.x = width;
-    m_size.y = height;
-    update();
-}
-
-const Vector2f &Texture::getSize() const {
-    return m_size;
-}
-
-std::size_t Texture::getPointCount() const {
-    return 4;
-}
-
-Vector2f Texture::getPoint(std::size_t index) const {
-    switch (index) {
-        default:
-        case 0:
-            return {0, 0};
-        case 1:
-            return {m_size.x, 0};
-        case 2:
-            return {m_size.x, m_size.y};
-        case 3:
-            return {0, m_size.y};
-    }
 }
 
 Texture::~Texture() {

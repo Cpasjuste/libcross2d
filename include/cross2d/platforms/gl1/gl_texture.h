@@ -35,7 +35,6 @@ namespace c2d {
         unsigned char *pixels = nullptr;
 
     private:
-        int p2_w, p2_h;
 #ifdef __DREAMCAST__
         int pow2(int w);
 

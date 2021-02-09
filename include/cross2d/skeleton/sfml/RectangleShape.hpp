@@ -44,9 +44,9 @@ namespace c2d {
         /// \param size Size of the rectangle
         ///
         ////////////////////////////////////////////////////////////
-        explicit RectangleShape(const c2d::Vector2f &size = c2d::Vector2f(0, 0));
+        explicit RectangleShape(const c2d::Vector2f &size = c2d::Vector2f());
 
-        explicit RectangleShape(const c2d::FloatRect &rect = c2d::FloatRect(0, 0, 0, 0));
+        explicit RectangleShape(const c2d::FloatRect &rect = c2d::FloatRect());
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the size of the rectangle
@@ -69,6 +69,36 @@ namespace c2d {
         ///
         ////////////////////////////////////////////////////////////
         const c2d::Vector2f &getSize() const override;
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Set the radius of the rounded corners
+        ///
+        /// \param Radius of the rounded corners
+        ///
+        /// \see GetRadius
+        ///
+        ////////////////////////////////////////////////////////////
+        void setCornersRadius(float radius);
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Get the radius of the rounded corners
+        ///
+        /// \return Radius of the rounded corners
+        ///
+        /// \see SetRadius
+        ///
+        ////////////////////////////////////////////////////////////
+        float getCornersRadius() const;
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Set the number of points of each corner
+        ///
+        /// \param count New number of points of the rounded rectangle
+        ///
+        /// \see GetPointCount
+        ///
+        ////////////////////////////////////////////////////////////
+        void setCornerPointCount(unsigned int count);
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the number of points defining the shape
@@ -100,10 +130,11 @@ namespace c2d {
         // Member data
         ////////////////////////////////////////////////////////////
         c2d::Vector2f m_size; ///< Size of the rectangle
+        float m_radius = 0;
+        unsigned int m_corner_point_count = 1;
     };
 
 } // namespace c2d
-
 
 #endif // C2D_RECTANGLESHAPE_HPP
 

@@ -7,11 +7,11 @@
 
 #include "object.h"
 #include "shader_list.h"
-#include "cross2d/skeleton/sfml/Shape.hpp"
+#include "cross2d/skeleton/sfml/RectangleShape.hpp"
 
 namespace c2d {
 
-    class Texture : public Shape {
+    class Texture : public RectangleShape {
 
     public:
 
@@ -28,9 +28,13 @@ namespace c2d {
 
         Texture(const unsigned char *buffer, int bufferSize);
 
-        Texture(const Vector2f &size = Vector2f(0, 0), Format format = Format::RGBA8);
+        Texture(const Vector2f &size = Vector2f(), Format format = Format::RGBA8);
 
         virtual ~Texture();
+
+        virtual Vector2i getTextureSize() {
+            return tex_size;
+        }
 
         virtual int resize(const Vector2f &size, bool copyPixels = false) { return -1; };
 
@@ -47,16 +51,6 @@ namespace c2d {
         virtual void applyShader() {};
         // END - to implement, device specific code
 
-        virtual void setSize(const c2d::Vector2f &size);
-
-        virtual void setSize(float width, float height);
-
-        virtual const c2d::Vector2f &getSize() const;
-
-        std::size_t getPointCount() const;
-
-        c2d::Vector2f getPoint(std::size_t index) const;
-
         std::string path;
         int bpp = 4;
         int pitch = 0;
@@ -64,9 +58,8 @@ namespace c2d {
         Filter filter = Filter::Linear;
         ShaderList::Shader *shader = nullptr;
 
-    private:
-
-        c2d::Vector2f m_size;
+    protected:
+        Vector2i tex_size;
     };
 }
 

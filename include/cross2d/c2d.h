@@ -11,7 +11,6 @@
 #include "cross2d/skeleton/audio.h"
 #include "cross2d/skeleton/sfml/Rectangle.hpp"
 #include "cross2d/skeleton/sfml/RectangleShape.hpp"
-#include "cross2d/skeleton/sfml/RoundedRectangleShape.h"
 #include "cross2d/skeleton/sfml/CircleShape.hpp"
 #include "cross2d/skeleton/sfml/ConvexShape.hpp"
 #include "cross2d/skeleton/sfml/Text.hpp"
@@ -64,7 +63,6 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define C2DThread SDL2Thread
 #define C2DMutex SDL2Mutex
 #define C2DRectangle RectangleShape
-#define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape
 #define C2DFont Font
 #define C2DText Text
@@ -108,7 +106,6 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define C2DIo CTRIo
 #define C2DClock CTRClock
 #define C2DRectangle RectangleShape
-#define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape
 #define C2DFont Font
 #define C2DText Text
@@ -154,7 +151,6 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define C2DRenderer SWITCHRenderer
 #define C2DTexture GLTexture
 #define C2DRectangle RectangleShape
-#define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape
 #define C2DFont Font
 #define C2DText Text
@@ -201,7 +197,6 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define C2DRenderer SDL2Renderer
 #define C2DTexture GLTexture
 #define C2DRectangle RectangleShape
-#define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape
 #define C2DFont Font
 #define C2DText Text
@@ -246,7 +241,6 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define C2DRenderer SDLRenderer
 #define C2DTexture GLTexture
 #define C2DRectangle RectangleShape
-#define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape
 #define C2DFont Font
 #define C2DText Text
@@ -303,7 +297,6 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define C2DInput DCInput
 #define C2DAudio DCAudio
 #define C2DRectangle RectangleShape
-#define C2DRoundedRectangle RoundedRectangleShape
 #define C2DCircle CircleShape
 #define C2DFont Font
 #define C2DText Text

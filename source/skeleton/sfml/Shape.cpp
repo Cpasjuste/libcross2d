@@ -56,8 +56,10 @@ namespace c2d {
         if (texture) {
             m_texture = texture;
             // Recompute the texture area if requested, or if there was no texture & rect before
-            if (resetRect || (!m_texture && (m_textureRect == IntRect())))
-                setTextureRect(IntRect(0, 0, (int) m_texture->getSize().x, (int) m_texture->getSize().y));
+            if (resetRect || (!m_texture && (m_textureRect == IntRect()))) {
+                setTextureRect(IntRect(0, 0,
+                                       (int) m_texture->getTextureSize().x, (int) m_texture->getTextureSize().y));
+            }
             m_shape_dirty = true;
         }
     }
@@ -71,7 +73,7 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Shape::setTextureRect(const IntRect &rect) {
-        if (m_texture != nullptr) {
+        if (m_texture) {
             m_texture->pitch = rect.width * m_texture->bpp;
         }
         m_textureRect = rect;
@@ -290,20 +292,16 @@ namespace c2d {
         }
 
         for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i) {
-            if (i == 0) {
-                m_vertices[i].texCoords = {0.5f, 0.5f};
-            } else {
-                float xratio =
-                        m_insideBounds.width > 0 ?
-                        (m_vertices[i].position.x - m_insideBounds.left) / m_insideBounds.width : 0;
-                float yratio =
-                        m_insideBounds.height > 0 ?
-                        (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height : 0;
-                m_vertices[i].texCoords.x =
-                        (m_textureRect.left + m_textureRect.width * xratio) / m_texture->getTextureRect().width;
-                m_vertices[i].texCoords.y =
-                        (m_textureRect.top + m_textureRect.height * yratio) / m_texture->getTextureRect().height;
-            }
+            float xratio =
+                    m_insideBounds.width > 0 ?
+                    (m_vertices[i].position.x - m_insideBounds.left) / m_insideBounds.width : 0;
+            float yratio =
+                    m_insideBounds.height > 0 ?
+                    (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height : 0;
+            m_vertices[i].texCoords.x =
+                    (m_textureRect.left + m_textureRect.width * xratio) / m_texture->getTextureSize().x;
+            m_vertices[i].texCoords.y =
+                    (m_textureRect.top + m_textureRect.height * yratio) / m_texture->getTextureSize().y;
         }
 
         m_vertices.update();

@@ -58,7 +58,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     }
 
     GLTexture *tex = sprite != nullptr ? (GLTexture *) sprite->getTexture() : (GLTexture *) texture;
-    if (tex != nullptr && tex->available) {
+    if (tex && tex->available) {
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex->texID);
 #if BLEND_TEST
@@ -80,7 +80,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     glBegin(mode);
 
     for (unsigned int i = 0; i < vertexCount; i++) {
-        if (tex != nullptr && tex->available) {
+        if (tex && tex->available) {
             glTexCoord2f(vertices[i].texCoords.x, vertices[i].texCoords.y);
         }
         glColor4f((float) vertices[i].color.r / 255.0f,
