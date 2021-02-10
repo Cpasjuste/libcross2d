@@ -12,11 +12,11 @@ namespace c2d {
     class DCAudio : public Audio {
 
     public:
-        explicit DCAudio(int freq = 48000, float fps = 60, C2DAudioCallback cb = nullptr);
+        explicit DCAudio(int freq = 48000, int samples = 2048, C2DAudioCallback cb = nullptr);
 
         ~DCAudio() override;
 
-        void play(const void *data, int samples_count, bool sync = false) override;
+        void play(const void *data, int samples, bool sync = false) override;
 
         void pause(int pause) override;
 

@@ -17,15 +17,15 @@ namespace c2d {
 
         typedef void (*C2DAudioCallback)(void *data, unsigned char *stream, int len);
 
-        explicit Audio(int rate = 48000, int samples = 2048, C2DAudioCallback cb = nullptr);
+        Audio(int rate = 48000, int samples = 2048, C2DAudioCallback cb = nullptr);
 
         virtual ~Audio();
 
         virtual void play(bool sync = false) {
-            play(buffer, samples, sync);
+            play(buffer, m_samples, sync);
         };
 
-        virtual void play(const void *data, int samples_count, bool sync = false) {
+        virtual void play(const void *data, int samples, bool sync = false) {
             printf("c2d::Audio::play: not implemented\n");
         }
 
@@ -72,7 +72,7 @@ namespace c2d {
         int16_t *buffer = nullptr;
         int buffer_size = 0;
         AudioBuffer *audioBuffer = nullptr;
-        int samples = 0;
+        int m_samples = 0;
         bool paused = false;
         bool available = false;
         C2DAudioCallback callback = nullptr;

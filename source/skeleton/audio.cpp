@@ -20,7 +20,7 @@ Audio::Audio(int rate, int samples, C2DAudioCallback cb) {
     mutex = new C2DMutex();
 
     //samples = (int) ((float) rate / fps);
-    this->samples = samples;
+    m_samples = samples;
     buffer_size = samples * channels * (int) sizeof(int16_t);
     buffer = (int16_t *) malloc(buffer_size);
     if (buffer == nullptr) {
@@ -68,7 +68,7 @@ int Audio::getBufferSize() const {
 }
 
 int Audio::getSamples() const {
-    return samples;
+    return m_samples;
 }
 
 bool Audio::isAvailable() const {

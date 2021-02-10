@@ -6,19 +6,17 @@
 
 using namespace c2d;
 
-#define AUDIO_BUF_SIZE 8192
-static int16_t buf[AUDIO_BUF_SIZE / 2];
 static snd_stream_hnd_t stream_hnd;
 
 static void *audioCb(snd_stream_hnd_t hnd, int smp_req, int *smp_recv) {
 
     auto *audio = (DCAudio *) snd_stream_get_userdata(hnd);
     audio->lock();
-    audio->getAudioBuffer()->pull(buf, smp_req >> 1);
+    audio->getAudioBuffer()->pull(audio->getBuffer(), smp_req >> 1);
     audio->unlock();
     *smp_recv = smp_req;
 
-    return buf;
+    return audio->getBuffer();
 }
 
 static int audioThread(void *data) {
@@ -26,13 +24,12 @@ static int audioThread(void *data) {
     auto audio = (DCAudio *) data;
 
     snd_stream_init();
-    stream_hnd = snd_stream_alloc(audioCb, AUDIO_BUF_SIZE);
-    audio->getAudioBuffer()->resize(AUDIO_BUF_SIZE);
+    stream_hnd = snd_stream_alloc(audioCb, audio->getBufferSize());
     snd_stream_set_userdata(stream_hnd, audio);
     snd_stream_start(stream_hnd, audio->getSampleRate(), audio->getChannels() - 1);
 
     while (audio->isAvailable()) {
-        while (audio->isAvailable() && audio->getAudioBuffer()->space_filled() < AUDIO_BUF_SIZE >> 1) {
+        while (audio->isAvailable() && audio->getAudioBufferQueued() < audio->getBufferSize()) {
             //printf("audioCb: req: %i, filled: %i\n", smp_req, filled);
             thd_pass();
         }
@@ -42,7 +39,7 @@ static int audioThread(void *data) {
     return 0;
 }
 
-DCAudio::DCAudio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps, cb) {
+DCAudio::DCAudio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, samples, cb) {
 
     if (!available) {
         return;
@@ -51,7 +48,8 @@ DCAudio::DCAudio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps, cb
     thread = new C2DThread(audioThread, this);
     paused = true;
 
-    printf("DCAudio: available = %i, tid: %i\n", available, thd_get_current()->tid);
+    printf("DCAudio: available = %i, samples = %i, buffer size = %i, tid: %i\n",
+           available, m_samples, buffer_size, thd_get_current()->tid);
 }
 
 DCAudio::~DCAudio() {
@@ -69,7 +67,7 @@ DCAudio::~DCAudio() {
     delete (thread);
 }
 
-void DCAudio::play(const void *data, int samples_count, bool sync) {
+void DCAudio::play(const void *data, int samples, bool sync) {
 
     if (available) {
         if (paused) {
@@ -82,10 +80,9 @@ void DCAudio::play(const void *data, int samples_count, bool sync) {
         }
 
         int size = samples * channels * (int) sizeof(int16_t);
-        //printf("DCAudio::play: %i\n", size);
         if (sync) {
-            while (audioBuffer->space_filled() > size) {
-                thd_sleep(10);
+            while (getAudioBufferQueued() > size >> 1) {
+                thd_sleep(1);
             }
         }
 
