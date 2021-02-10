@@ -104,7 +104,7 @@ GLTexture::GLTexture(const std::string &p) : Texture(p) {
         printf("GLTexture(%p): couldn't create texture: %s\n", this, path.c_str());
     }
 
-    //printf("GLTexture(%p): %ix%i\n", this, w, h);
+    printf("GLTexture(%p): %i x %i (id=%i)\n", this, tex_size.x, tex_size.y, texID);
 }
 
 GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
@@ -143,7 +143,7 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
         printf("GLTexture(%p): couldn't create texture\n", this);
     }
 
-    //printf("GLTexture(%p): %ix%i\n", this, w, h);
+    printf("GLTexture(%p): %i x %i (id=%i)\n", this, tex_size.x, tex_size.y, texID);
 }
 
 GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format) {
@@ -183,7 +183,7 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
         printf("GLTexture(%p): couldn't create texture", this);
     }
 
-    //printf("GLTexture(%p): %ix%i\n", this, (int) size.x, (int) size.y);
+    printf("GLTexture(%p): %i x %i (id=%i)\n", this, tex_size.x, tex_size.y, texID);
 }
 
 int GLTexture::save(const std::string &path) {

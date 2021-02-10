@@ -40,9 +40,10 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     Vertex *vertices;
     size_t vertexCount;
-    GLTexture *glTexture;
+    GLTexture *tex;
     GLShader *shader;
     Vector2f inputSize, textureSize, outputSize;
+    GLint texId = 0;
 
     if (vertexArray == nullptr || vertexArray->getVertexCount() < 1) {
         //printf("gl_render::draw: no vertices\n");
@@ -51,11 +52,11 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     vertices = vertexArray->getVertices()->data();
     vertexCount = vertexArray->getVertexCount();
-    glTexture = sprite != nullptr ? (GLTexture *) sprite->getTexture() : (GLTexture *) texture;
-    shader = glTexture != nullptr && glTexture->available ? (GLShader *) shaderList->get(0)->data :
+    tex = sprite ? (GLTexture *) sprite->getTexture() : (GLTexture *) texture;
+    shader = tex && tex->available ? (GLShader *) shaderList->get(0)->data :
              (GLShader *) ((GLShaderList *) shaderList)->color->data;
-    if (glTexture != nullptr && glTexture->shader != nullptr) {
-        shader = (GLShader *) glTexture->shader->data;
+    if (tex && tex->shader) {
+        shader = (GLShader *) tex->shader->data;
     }
 
     // set shader
@@ -77,9 +78,15 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     GL_CHECK(glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex),
                                    (void *) offsetof(Vertex, color)));
 
-    if (glTexture != nullptr && glTexture->available) {
+    if (tex && tex->available) {
         // bind texture
-        GL_CHECK(glBindTexture(GL_TEXTURE_2D, glTexture->texID));
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &texId);
+        if (texId != (GLint) tex->texID) {
+            GL_CHECK(glBindTexture(GL_TEXTURE_2D, tex->texID));
+        } else {
+            //printf("glBindTexture: skipping: %i\n", texId);
+            draw_calls_batched++;
+        }
         // set tex coords
         GL_CHECK(glEnableVertexAttribArray(2));
         GL_CHECK(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
@@ -125,7 +132,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     shader->SetUniformMatrix("MVPMatrix", glm::value_ptr(mpvMatrix));
 
     // enable blending if needed
-    if (glTexture != nullptr || vertices[0].color.a < 255) {
+    if (tex || vertices[0].color.a < 255) {
         GL_CHECK(glEnable(GL_BLEND));
         GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     }
@@ -139,10 +146,10 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     GL_CHECK(glDisableVertexAttribArray(0));
     GL_CHECK(glDisableVertexAttribArray(1));
 
-    if (glTexture != nullptr || vertices[0].color.a < 255) {
+    if (tex || vertices[0].color.a < 255) {
         GL_CHECK(glDisable(GL_BLEND));
-        if (glTexture != nullptr && glTexture->available) {
-            GL_CHECK(glBindTexture(GL_TEXTURE_2D, 0));
+        if (tex && tex->available) {
+            //GL_CHECK(glBindTexture(GL_TEXTURE_2D, 0));
             GL_CHECK(glDisableVertexAttribArray(2));
         }
     }
@@ -155,6 +162,8 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 #endif
 
     GL_CHECK(glUseProgram(0));
+
+    draw_calls++;
 }
 
 void GLRenderer::clear() {

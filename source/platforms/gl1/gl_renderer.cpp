@@ -42,6 +42,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     Vertex *vertices;
     size_t vertexCount;
+    GLint texId = 0;
 
     if (vertexArray == nullptr || vertexArray->getVertexCount() < 1) {
         //printf("GL1Renderer::draw: no vertices\n");
@@ -60,7 +61,13 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     GLTexture *tex = sprite != nullptr ? (GLTexture *) sprite->getTexture() : (GLTexture *) texture;
     if (tex && tex->available) {
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, tex->texID);
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &texId);
+        if (texId != (GLint) tex->texID) {
+            glBindTexture(GL_TEXTURE_2D, tex->texID);
+        } else {
+            //printf("glBindTexture: skipping: %i\n", texId);
+            draw_calls_batched++;
+        }
 #if BLEND_TEST
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -93,7 +100,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     glEnd();
 
     if (tex != nullptr && tex->available) {
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
 #if BLEND_TEST
         glDisable(GL_BLEND);
 #endif
@@ -103,6 +110,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
         glDisable(GL_BLEND);
     }
 #endif
+    draw_calls++;
 }
 
 void GLRenderer::clear() {

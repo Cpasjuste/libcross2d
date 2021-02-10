@@ -16,6 +16,7 @@ Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 
     deltaClock = new C2DClock();
     elapsedClock = new C2DClock();
+    drawTimer = new C2DClock();
 
     input = new C2DInput();
     input->setJoystickMapping(0, C2D_DEFAULT_JOY_KEYS);
@@ -63,7 +64,11 @@ void Renderer::flip(bool draw, bool inputs) {
     if (draw) {
         clear();
         Transform trans = Transform::Identity;
+        draw_calls_batched = draw_calls = 0;
+        drawTimer->restart();
         Rectangle::onDraw(trans, draw);
+        //printf("time: %f, draw call: %i, batched: %i\n",
+        //       drawTimer->getElapsedTime().asSeconds(), draw_calls, draw_calls_batched);
     }
 }
 
@@ -107,6 +112,7 @@ Renderer::~Renderer() {
     delete (input);
     delete (deltaClock);
     delete (elapsedClock);
+    delete (drawTimer);
     if (shaderList != nullptr) {
         delete (shaderList);
     }

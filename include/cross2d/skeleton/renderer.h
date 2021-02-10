@@ -77,6 +77,18 @@ namespace c2d {
             input = _input;
         };
 
+        virtual int getDrawCalls() {
+            return draw_calls;
+        }
+
+        virtual int getDrawCallsBatched() {
+            return draw_calls_batched;
+        }
+
+        virtual float getDrawTime() {
+            return draw_time;
+        }
+
     protected:
 
         void onUpdate() override;
@@ -91,6 +103,10 @@ namespace c2d {
         Time deltaTime, elapsedTime;
         float time_now = 0, time_last = 0, fps = 0;
         int frames = 0;
+        Clock *drawTimer;
+        int draw_calls;
+        int draw_calls_batched;
+        float draw_time;
     };
 }
 
