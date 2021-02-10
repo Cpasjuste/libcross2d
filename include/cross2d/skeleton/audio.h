@@ -17,7 +17,7 @@ namespace c2d {
 
         typedef void (*C2DAudioCallback)(void *data, unsigned char *stream, int len);
 
-        Audio(int rate = 48000, float fps = 60, C2DAudioCallback cb = nullptr);
+        Audio(int rate = 48000, int samples = 2048, C2DAudioCallback cb = nullptr);
 
         virtual ~Audio();
 

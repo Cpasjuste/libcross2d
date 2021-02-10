@@ -3,12 +3,14 @@
 //
 
 #include <string>
+#include <cross2d/skeleton/audio.h>
+
 
 #include "cross2d/c2d.h"
 
 using namespace c2d;
 
-Audio::Audio(int rate, float fps, C2DAudioCallback cb) {
+Audio::Audio(int rate, int samples_, C2DAudioCallback cb) {
 
     sample_rate = rate;
     if (sample_rate <= 0) {
@@ -17,7 +19,8 @@ Audio::Audio(int rate, float fps, C2DAudioCallback cb) {
 
     mutex = new C2DMutex();
 
-    samples = (int) ((float) rate / fps);
+    //samples = (int) ((float) rate / fps);
+    samples = samples_;
     buffer_size = samples * channels * (int) sizeof(int16_t);
     buffer = (int16_t *) malloc(buffer_size);
     if (buffer == nullptr) {
@@ -32,8 +35,8 @@ Audio::Audio(int rate, float fps, C2DAudioCallback cb) {
     callback = cb;
     available = true;
 
-    printf("Audio: rate = %i, fps = %f, buf_size = %i, buf_len = %i\n",
-           rate, fps, buffer_size, samples);
+    printf("Audio: rate = %i, samples = %i, buf_size = %i\n",
+           rate, samples, buffer_size);
 }
 
 void Audio::reset() {

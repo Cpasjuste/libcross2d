@@ -21,7 +21,7 @@ static void audioThread(void *data, Uint8 *stream, int len) {
     audio->unlock();
 }
 
-SDL2Audio::SDL2Audio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps, cb) {
+SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, samples, cb) {
 
     if (!available) {
         return;
