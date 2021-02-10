@@ -34,12 +34,12 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     RectangleShape::RectangleShape(const Vector2f &size) {
-        setSize(size);
+        RectangleShape::setSize(size);
     }
 
     RectangleShape::RectangleShape(const FloatRect &rect) {
-        setSize(rect.width, rect.height);
-        setPosition(rect.left, rect.top);
+        RectangleShape::setSize(rect.width, rect.height);
+        RectangleShape::setPosition(rect.left, rect.top);
     }
 
 ////////////////////////////////////////////////////////////
@@ -126,8 +126,8 @@ namespace c2d {
                 return {0, 0};
         }
 
-        return Vector2f(m_radius * cos(deltaAngle * (index - centerIndex) * pi / 180) + center.x,
-                        -m_radius * sin(deltaAngle * (index - centerIndex) * pi / 180) + center.y);
+        return Vector2f(m_radius * std::cos(deltaAngle * (float) (index - centerIndex) * pi / 180) + center.x,
+                        -m_radius * std::sin(deltaAngle * (float) (index - centerIndex) * pi / 180) + center.y);
     }
 
 } // namespace sf
