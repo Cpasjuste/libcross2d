@@ -13,31 +13,23 @@
 
 #endif
 
+// TODO: fix mono ?
+
 namespace c2d {
-    class AudioBuffer {
-    private:
-        int buffer_size;
+    class SampleBuffer {
     public:
-        int size;
-        int start;
-        int16_t *buffer;
-
-        static inline int min(int a, int b) {
-            return ((a) < (b) ? (a) : (b));
-        }
-
-        AudioBuffer() {
-            this->buffer_size = 0;
+        SampleBuffer() {
+            buffer_size = 0;
             buffer = nullptr;
         }
 
-        AudioBuffer(int num_samples) {
-            this->buffer_size = num_samples;
-            buffer = new int16_t[this->buffer_size];
+        explicit SampleBuffer(int num_samples) {
+            buffer_size = num_samples;
+            buffer = new int16_t[buffer_size];
             clear();
         }
 
-        ~AudioBuffer() {
+        ~SampleBuffer() {
             delete[] buffer;
             buffer = nullptr;
         }
@@ -46,7 +38,6 @@ namespace c2d {
             if (buffer == nullptr) {
                 return;
             }
-
             start = 0;
             size = 0;
             memset(buffer, 0, buffer_size * 2);
@@ -99,12 +90,22 @@ namespace c2d {
         }
 
         void resize(int num_samples) {
-            if (buffer != nullptr) {
+            if (buffer) {
                 delete[] buffer;
             }
             buffer_size = num_samples;
             buffer = new int16_t[buffer_size];
             clear();
+        }
+
+    private:
+        int size = 0;
+        int start = 0;
+        int16_t *buffer;
+        int buffer_size;
+
+        static inline int min(int a, int b) {
+            return ((a) < (b) ? (a) : (b));
         }
     };
 }

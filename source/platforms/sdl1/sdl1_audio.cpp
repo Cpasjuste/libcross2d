@@ -8,16 +8,16 @@
 
 using namespace c2d;
 
-static void audioThread(void *data, Uint8 *stream, int len) {
+static void audioThread(void *data, Uint8 *stream, int size) {
 
     auto *audio = (SDL1Audio *) data;
 
     //printf("c2d::sdl1audio::thread: want: %i, filled: %i\n",
-    //     len >> 1, audio->getAudioBufferQueued());
+    //       size >> 1, audio->getSampleBufferQueued());
 
-    if (audio->getAudioBufferQueued() >= len >> 1) {
+    if (audio->getSampleBufferQueued() >= size >> 1) {
         audio->lock();
-        audio->getAudioBuffer()->pull((int16_t *) stream, len >> 1);
+        audio->getSampleBuffer()->pull((int16_t *) stream, size >> 1);
         audio->unlock();
     } else {
         SDL_Delay(1);
@@ -53,10 +53,10 @@ SDL1Audio::SDL1Audio(int rate, int samples, C2DAudioCallback cb) : Audio(rate, s
         return;
     }
 
-    printf("SDL1Audio: format %d (wanted: %d)\n", obtained.format, obtained.format);
-    printf("SDL1Audio: frequency %d (wanted: %d)\n", obtained.freq, obtained.freq);
-    printf("SDL1Audio: samples %d (wanted: %d)\n", obtained.samples, obtained.samples);
-    printf("SDL1Audio: channels %d (wanted: %d)\n", obtained.channels, obtained.channels);
+    printf("SDL1Audio: format %d (wanted: %d)\n", wanted.format, obtained.format);
+    printf("SDL1Audio: frequency %d (wanted: %d)\n", wanted.freq, obtained.freq);
+    printf("SDL1Audio: samples %d (wanted: %d)\n", wanted.samples, obtained.samples);
+    printf("SDL1Audio: channels %d (wanted: %d)\n", wanted.channels, obtained.channels);
 
     SDL_PauseAudio(0);
 }
@@ -87,13 +87,13 @@ void SDL1Audio::play(const void *data, int samples, bool sync) {
 
         int size = samples * channels * (int) sizeof(int16_t);
         if (sync) {
-            while (getAudioBufferQueued() > size >> 1) {
+            while (getSampleBufferQueued() > size >> 1) {
                 SDL_Delay(1);
             }
         }
 
         lock();
-        audioBuffer->push((int16_t *) data, size >> 1);
+        m_buffer->push((int16_t *) data, size >> 1);
         unlock();
     }
 }

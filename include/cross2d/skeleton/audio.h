@@ -21,10 +21,6 @@ namespace c2d {
 
         virtual ~Audio();
 
-        virtual void play(bool sync = false) {
-            play(buffer, m_samples, sync);
-        };
-
         virtual void play(const void *data, int samples, bool sync = false) {
             printf("c2d::Audio::play: not implemented\n");
         }
@@ -37,42 +33,35 @@ namespace c2d {
             return paused;
         }
 
-        bool lock() {
-            return mutex->lock();
-        }
+        bool lock();
 
-        bool unlock() {
-            return mutex->unlock();
-        }
+        bool unlock();
 
-        [[nodiscard]] bool isAvailable() const;
+        bool isAvailable() const;
 
-        [[nodiscard]] int getSampleRate() const;
+        int getChannels() const;
 
-        [[nodiscard]] int getChannels() const;
+        int getSampleRate() const;
 
-        [[nodiscard]] int getSamples() const;
+        int getSamples() const;
 
-        [[nodiscard]] int getBufferSize() const;
+        int getSamplesSize() const;
 
-        short *getBuffer();
+        SampleBuffer *getSampleBuffer();
 
-        AudioBuffer *getAudioBuffer() {
-            return audioBuffer;
-        }
+        int getSampleBufferQueued() const;
 
-        virtual int getAudioBufferQueued() {
-            return audioBuffer->space_filled() << 1;
-        }
+        int getSampleBufferCapacity() const;
+
+        int getSampleBufferAvailable() const;
 
     protected:
 
-        int sample_rate = 48000;
+        int m_sample_rate = 48000;
         int channels = 2;
-        int16_t *buffer = nullptr;
-        int buffer_size = 0;
-        AudioBuffer *audioBuffer = nullptr;
+        SampleBuffer *m_buffer = nullptr;
         int m_samples = 0;
+        int m_samples_size = 0;
         bool paused = false;
         bool available = false;
         C2DAudioCallback callback = nullptr;
