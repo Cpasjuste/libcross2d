@@ -15,14 +15,16 @@ static void audioThread(void *data, Uint8 *stream, int len) {
     //printf("c2d::sdl1audio::thread: want: %i, filled: %i\n",
     //     len >> 1, audio->getAudioBufferQueued());
 
-    audio->lock();
-    if (audio->getAudioBuffer()->space_filled() >= len >> 1) {
+    if (audio->getAudioBufferQueued() >= len >> 1) {
+        audio->lock();
         audio->getAudioBuffer()->pull((int16_t *) stream, len >> 1);
+        audio->unlock();
+    } else {
+        SDL_Delay(1);
     }
-    audio->unlock();
 }
 
-SDL1Audio::SDL1Audio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps, cb) {
+SDL1Audio::SDL1Audio(int rate, int samples, C2DAudioCallback cb) : Audio(rate, samples, cb) {
 
     if (!available) {
         return;
@@ -30,7 +32,7 @@ SDL1Audio::SDL1Audio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps
 
     SDL_AudioSpec wanted, obtained;
 
-    wanted.freq = freq;
+    wanted.freq = rate;
     wanted.format = AUDIO_S16SYS;
     wanted.channels = (Uint8) channels;
     wanted.samples = (Uint16) samples;
@@ -85,7 +87,7 @@ void SDL1Audio::play(const void *data, int samples, bool sync) {
 
         int size = samples * channels * (int) sizeof(int16_t);
         if (sync) {
-            while (audioBuffer->space_filled() > size >> 1) {
+            while (getAudioBufferQueued() > size >> 1) {
                 SDL_Delay(1);
             }
         }

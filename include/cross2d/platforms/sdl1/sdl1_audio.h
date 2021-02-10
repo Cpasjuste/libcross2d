@@ -12,7 +12,7 @@ namespace c2d {
     class SDL1Audio : public Audio {
 
     public:
-        explicit SDL1Audio(int freq = 48000, float fps = 60, C2DAudioCallback cb = nullptr);
+        explicit SDL1Audio(int rate = 48000, int samples = 2048, C2DAudioCallback cb = nullptr);
 
         ~SDL1Audio() override;
 

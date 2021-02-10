@@ -10,7 +10,7 @@
 
 using namespace c2d;
 
-Audio::Audio(int rate, int samples_, C2DAudioCallback cb) {
+Audio::Audio(int rate, int samples, C2DAudioCallback cb) {
 
     sample_rate = rate;
     if (sample_rate <= 0) {
@@ -20,7 +20,7 @@ Audio::Audio(int rate, int samples_, C2DAudioCallback cb) {
     mutex = new C2DMutex();
 
     //samples = (int) ((float) rate / fps);
-    samples = samples_;
+    this->samples = samples;
     buffer_size = samples * channels * (int) sizeof(int16_t);
     buffer = (int16_t *) malloc(buffer_size);
     if (buffer == nullptr) {
