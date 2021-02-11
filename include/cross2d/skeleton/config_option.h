@@ -32,19 +32,19 @@ namespace c2d {
 
             /// Constructors
 
-            Option(const std::string &name, const std::string &value, int id = 0);
+            Option(const std::string &name, const std::string &value, int id = -1);
 
-            Option(const std::string &name, int value, int id = 0);
+            Option(const std::string &name, int value, int id = -1);
 
-            Option(const std::string &name, float value, int id = 0);
+            Option(const std::string &name, float value, int id = -1);
 
-            Option(const std::string &name, const Vector2f &value, int id = 0);
+            Option(const std::string &name, const Vector2f &value, int id = -1);
 
-            Option(const std::string &name, const FloatRect &value, int id = 0);
+            Option(const std::string &name, const FloatRect &value, int id = -1);
 
-            Option(const std::string &name, const Color &value, int id = 0);
+            Option(const std::string &name, const Color &value, int id = -1);
 
-            Option(const std::string &name, const std::vector<std::string> &values, int index, int id = 0);
+            Option(const std::string &name, const std::vector<std::string> &values, int index, int id = -1);
 
             /// Type::String
 
@@ -131,7 +131,7 @@ namespace c2d {
             std::string name;
             std::string info;
             Type type;
-            int id = 0;
+            int id = -1;
             bool savable = true;
             void *user_data = nullptr;
         };

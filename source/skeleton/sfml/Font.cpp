@@ -133,7 +133,11 @@ namespace c2d {
     bool Font::loadDefault() {
         bool res = loadFromMemory(
                 c2d_font_default, (std::size_t) c2d_font_default_length);
+#ifdef __DREAMCAST__
+        setOffset({0, 1});
+#else
         setOffset({0, -5});
+#endif
         return res;
     }
 

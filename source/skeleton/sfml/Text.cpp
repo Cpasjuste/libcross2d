@@ -346,31 +346,40 @@ namespace c2d {
 
         switch (origin) {
             case Origin::Left:
-                Transformable::setOriginVector(0, height / 2);
+                Transformable::setOriginVector(0 - m_outlineThickness,
+                                               (height / 2) - m_outlineThickness);
                 break;
             case Origin::TopLeft:
-                Transformable::setOriginVector(0, 0);
+                Transformable::setOriginVector(0 - m_outlineThickness,
+                                               0 - m_outlineThickness);
                 break;
             case Origin::Top:
-                Transformable::setOriginVector(m_bounds.width / 2, 0);
+                Transformable::setOriginVector((m_bounds.width / 2) - m_outlineThickness,
+                                               0 - m_outlineThickness);
                 break;
             case Origin::TopRight:
-                Transformable::setOriginVector(m_bounds.width, 0);
+                Transformable::setOriginVector(m_bounds.width - m_outlineThickness,
+                                               0 - m_outlineThickness);
                 break;
             case Origin::Right:
-                Transformable::setOriginVector(m_bounds.width, height / 2);
+                Transformable::setOriginVector(m_bounds.width - m_outlineThickness,
+                                               (height / 2) - m_outlineThickness);
                 break;
             case Origin::BottomRight:
-                Transformable::setOriginVector(m_bounds.width, height);
+                Transformable::setOriginVector(m_bounds.width - m_outlineThickness,
+                                               height - m_outlineThickness);
                 break;
             case Origin::Bottom:
-                Transformable::setOriginVector(m_bounds.width / 2, height);
+                Transformable::setOriginVector((m_bounds.width / 2) - m_outlineThickness,
+                                               height - m_outlineThickness);
                 break;
             case Origin::BottomLeft:
-                Transformable::setOriginVector(0, height);
+                Transformable::setOriginVector(0 - m_outlineThickness,
+                                               height - m_outlineThickness);
                 break;
             case Origin::Center:
-                Transformable::setOriginVector(m_bounds.width / 2, height / 2);
+                Transformable::setOriginVector((m_bounds.width / 2) - m_outlineThickness,
+                                               (height / 2) - m_outlineThickness);
                 break;
             default:
                 break;

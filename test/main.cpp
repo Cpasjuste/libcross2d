@@ -44,7 +44,6 @@ int main(int argc, char *argv[]) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
         tex->setScale(0.5f * scaling, 0.5f * scaling);
         tex->setOrigin(Origin::Center);
-        tex->setTextureRect({0, 0, 128, 128});
         rect->add(tex);
     }
 
