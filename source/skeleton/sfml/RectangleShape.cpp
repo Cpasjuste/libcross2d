@@ -78,6 +78,9 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     std::size_t RectangleShape::getPointCount() const {
+        if (m_radius <= 0) {
+            return 4;
+        }
         return m_corner_point_count * 4;
     }
 

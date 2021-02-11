@@ -97,6 +97,11 @@ Text *ListBoxLine::getText() {
     return text;
 }
 
+void ListBoxLine::onDraw(Transform &transform, bool draw) {
+    setFillColor(Color::Transparent);
+    RectangleShape::onDraw(transform, draw);
+}
+
 ListBoxLine::~ListBoxLine() {
     //printf("~ListBoxLine(%p)\n", this);
 }

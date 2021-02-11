@@ -34,6 +34,8 @@ namespace c2d {
 
     private:
 
+        void onDraw(Transform &transform, bool draw = true) override;
+
         RectangleShape *iconRect = nullptr;
         Texture *icon = nullptr;
         Text *text = nullptr;

@@ -89,8 +89,10 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Shape::setFillColor(const Color &color) {
-        m_fillColor = color;
-        m_shape_dirty = true;
+        if (m_fillColor != color) {
+            m_fillColor = color;
+            m_shape_dirty = true;
+        }
     }
 
 
