@@ -9,6 +9,10 @@
 
 #include "glad/glad.h"
 
+#elif __GLEW__
+
+#include <GL/glew.h>
+
 #endif
 
 #if defined(__GL1__)

@@ -64,6 +64,8 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
     // amdgpu proprietary driver 19.30 and SDL2 getproc bug
     // it's seems safer to also use glad on linux (nintendo switch also use this)
     gladLoadGLLoader(SDL_GL_GetProcAddress);
+#elif __GLEW__
+    glewInit();
 #endif
 
     GLRenderer::initGL();
