@@ -244,9 +244,9 @@ void GLTexture::unlock(void *data) {
                          0, GL_RGBA, GL_UNSIGNED_BYTE, data ? data : pixels);
             break;
         default:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565,
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
                          (GLsizei) tex_size.x, (GLsizei) tex_size.y,
-                         0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
+                         0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5_TWID_KOS, data ? data : pixels);
             break;
 #else
         case Format::RGBA8:

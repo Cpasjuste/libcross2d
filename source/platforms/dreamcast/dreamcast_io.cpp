@@ -347,7 +347,7 @@ bool DCIo::_copy(const std::string &src, const std::string &dst,
         return res;
     }
 
-    if (!create(dstFile.path)) {
+    if (!exist(dstFile.path) && !create(dstFile.path)) {
         if (callback != nullptr) {
             callback(srcFile, dstFile, -1);
         }
@@ -423,7 +423,7 @@ bool DCIo::_copyFile(const File &src, const File &dst,
         return false;
     }
 
-    file_t dstFd = fs_open(dst.path.c_str(), O_WRONLY);
+    file_t dstFd = fs_open(dst.path.c_str(), O_CREAT | O_WRONLY | O_TRUNC);
     if (dstFd == FILEHND_INVALID) {
         fs_close(srcFd);
         if (callback != nullptr) {
