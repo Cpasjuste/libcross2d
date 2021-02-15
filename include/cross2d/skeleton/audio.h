@@ -21,9 +21,7 @@ namespace c2d {
 
         virtual ~Audio();
 
-        virtual void play(const void *data, int samples, bool sync = false) {
-            printf("c2d::Audio::play: not implemented\n");
-        }
+        virtual void play(const void *data, int samples, bool sync = false);
 
         virtual void pause(int pause);
 

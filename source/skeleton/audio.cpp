@@ -28,13 +28,43 @@ Audio::Audio(int rate, int samples, C2DAudioCallback cb) {
            rate, samples, m_samples_size);
 }
 
+void Audio::play(const void *data, int samples, bool sync) {
+    if (available) {
+        if (paused) {
+            pause(0);
+        }
+
+        if (callback != nullptr) {
+            return;
+        }
+
+        int size = samples * channels * (int) sizeof(int16_t);
+        if (sync) {
+            while (getSampleBufferQueued() > size >> 1) {
+                c2d_renderer->delay(1);
+            }
+        }
+
+        lock();
+        m_buffer->push((int16_t *) data, size >> 1);
+        unlock();
+    }
+}
+
 void Audio::reset() {
+    lock();
     m_buffer->clear();
+    unlock();
     paused = false;
 }
 
 void Audio::pause(int pause) {
-    paused = pause == 1;
+    paused = pause;
+    if (paused) {
+        lock();
+        m_buffer->clear();
+        unlock();
+    }
 }
 
 int Audio::getSampleRate() const {
@@ -89,4 +119,5 @@ Audio::~Audio() {
         delete (mutex);
     }
 }
+
 

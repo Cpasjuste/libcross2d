@@ -18,8 +18,6 @@ namespace c2d {
 
         ~SDL2Audio() override;
 
-        void play(const void *data, int samples, bool sync = false) override;
-
         void pause(int pause) override;
 
         void reset() override;

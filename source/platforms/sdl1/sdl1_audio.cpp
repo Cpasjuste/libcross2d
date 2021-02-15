@@ -74,30 +74,6 @@ SDL1Audio::~SDL1Audio() {
     }
 }
 
-void SDL1Audio::play(const void *data, int samples, bool sync) {
-
-    if (available) {
-        if (paused) {
-            pause(0);
-        }
-
-        if (callback != nullptr) {
-            return;
-        }
-
-        int size = samples * channels * (int) sizeof(int16_t);
-        if (sync) {
-            while (getSampleBufferQueued() > size >> 1) {
-                SDL_Delay(1);
-            }
-        }
-
-        lock();
-        m_buffer->push((int16_t *) data, size >> 1);
-        unlock();
-    }
-}
-
 void SDL1Audio::pause(int pause) {
 
     if (available) {

@@ -18,8 +18,6 @@ static void audioThread(void *data, Uint8 *stream, int size) {
         audio->lock();
         audio->getSampleBuffer()->pull((int16_t *) stream, size >> 1);
         audio->unlock();
-    } else {
-        SDL_Delay(1);
     }
 }
 
@@ -73,30 +71,6 @@ SDL2Audio::~SDL2Audio() {
 
     if (SDL_WasInit(SDL_INIT_AUDIO)) {
         SDL_QuitSubSystem(SDL_INIT_AUDIO);
-    }
-}
-
-void SDL2Audio::play(const void *data, int samples, bool sync) {
-
-    if (available) {
-        if (paused) {
-            pause(0);
-        }
-
-        if (callback != nullptr) {
-            return;
-        }
-
-        int size = samples * channels * (int) sizeof(int16_t);
-        if (sync) {
-            while (getSampleBufferQueued() > size >> 1) {
-                SDL_Delay(1);
-            }
-        }
-
-        lock();
-        m_buffer->push((int16_t *) data, size >> 1);
-        unlock();
     }
 }
 

@@ -70,31 +70,6 @@ DCAudio::~DCAudio() {
     delete (thread);
 }
 
-void DCAudio::play(const void *data, int samples, bool sync) {
-
-    if (available) {
-        if (paused) {
-            snd_stream_volume(stream_hnd, 255);
-            paused = false;
-        }
-
-        if (callback != nullptr) {
-            return;
-        }
-
-        int size = samples * channels * (int) sizeof(int16_t);
-        if (sync) {
-            while (getSampleBufferQueued() > size >> 1) {
-                thd_sleep(1);
-            }
-        }
-
-        lock();
-        m_buffer->push((int16_t *) data, size >> 1);
-        unlock();
-    }
-}
-
 void DCAudio::pause(int pause) {
     snd_stream_volume(stream_hnd, pause ? 0 : 255);
     Audio::pause(pause);

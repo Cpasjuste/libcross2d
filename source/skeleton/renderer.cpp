@@ -15,7 +15,7 @@ Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
     c2d_renderer = this;
 
     deltaClock = new C2DClock();
-    elapsedClock = new C2DClock();
+    fpsClock = new C2DClock();
     drawTimer = new C2DClock();
 
     input = new C2DInput();
@@ -31,15 +31,7 @@ Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 void Renderer::onUpdate() {
 
     deltaTime = deltaClock->restart();
-    elapsedTime = elapsedClock->getElapsedTime();
-
-    frames++;
-    time_now = elapsedTime.asSeconds();
-    if (time_now - time_last >= 1.0f) {
-        fps = (float) frames;
-        frames = 0;
-        time_last = time_now;
-    }
+    fps = 1.f / fpsClock->restart().asSeconds();
 
     if (process_inputs) {
         input->update();
@@ -85,11 +77,6 @@ Time Renderer::getDeltaTime() const {
     return deltaTime;
 }
 
-Time Renderer::getElapsedTime() const {
-
-    return elapsedTime;
-}
-
 float Renderer::getFps() const {
 
     return fps;
@@ -111,7 +98,7 @@ Renderer::~Renderer() {
     delete (io);
     delete (input);
     delete (deltaClock);
-    delete (elapsedClock);
+    delete (fpsClock);
     delete (drawTimer);
     if (shaderList != nullptr) {
         delete (shaderList);
