@@ -232,9 +232,16 @@ elseif (PLATFORM_DREAMCAST)
     ########################
 elseif (PLATFORM_LINUX)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
-    if (NOT PLATFORM_WINDOWS)
-        list(APPEND C2D_LDFLAGS dl)
-    endif ()
+    # romfs: physfs
+    pkg_search_module(PHYSFS REQUIRED physfs)
+    # romfs: funchook
+    add_subdirectory(source/skeleton/romfs/funchook)
+    # romfs: physfs wrapper
+    list(APPEND PLATFORM_SOURCES source/skeleton/romfs/romfs.cpp)
+    list(APPEND C2D_INCLUDES ${PHYSFS_INCLUDE_DIRS})
+    list(APPEND C2D_CFLAGS -D__PHYSFS_HOOKS__)
+    list(APPEND C2D_LDFLAGS ${PHYSFS_LIBRARIES} funchook-static)
+    set(PHYSFS_HOOKS ON CACHE BOOL "" FORCE)
     if (PLATFORM_WINDOWS)
         # hum... static linking, not easy on mingw64 :)
         list(APPEND C2D_LDFLAGS freetype brotlidec-static brotlicommon-static

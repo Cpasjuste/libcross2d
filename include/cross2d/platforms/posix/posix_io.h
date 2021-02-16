@@ -13,6 +13,10 @@ namespace c2d {
 
     public:
 
+        POSIXIo();
+
+        ~POSIXIo() override;
+
         File getFile(const std::string &path) override;
 
         bool exist(const std::string &path) override;
@@ -40,6 +44,8 @@ namespace c2d {
         bool write(const std::string &file, const char *data, size_t size) override;
 
         std::string getHomePath() override;
+
+        std::string getRomFsPath() override;
 
     private:
 

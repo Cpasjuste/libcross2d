@@ -9,6 +9,14 @@
 
 #include "cross2d/c2d.h"
 
+#ifdef __PHYSFS_HOOKS__
+
+extern int romfsInit();
+
+extern int romfsExit();
+
+#endif
+
 #ifdef __WINDOWS__
 #define mkdir(x, y) mkdir(x)
 #elif __PSP2__
@@ -17,6 +25,26 @@
 #endif
 
 using namespace c2d;
+
+POSIXIo::POSIXIo() : Io() {
+#ifdef __PHYSFS_HOOKS__
+    romfsInit();
+#endif
+}
+
+POSIXIo::~POSIXIo() {
+#ifdef __PHYSFS_HOOKS__
+    romfsExit();
+#endif
+}
+
+std::string POSIXIo::getRomFsPath() {
+#ifdef __PHYSFS_HOOKS__
+    return "romfs:/";
+#else
+    return Io::getRomFsPath();
+#endif
+}
 
 std::string POSIXIo::getHomePath() {
 #if defined(__PSP2__)
@@ -464,3 +492,5 @@ bool POSIXIo::_copyFile(const File &src, const File &dst,
 
     return true;
 }
+
+
