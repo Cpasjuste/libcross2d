@@ -14,17 +14,6 @@ int main(int argc, char *argv[]) {
     auto *renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
     renderer->setClearColor(Color::Black);
 
-    auto tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "gbatemp.png");
-    renderer->add(tex);
-
-    /*
-    std::vector<Io::File> files = renderer->getIo()->getDirList("/");
-    for(const auto& file : files) {
-        printf("%s\n", file.path.c_str());
-    }
-    */
-
-#if 0
     auto *border = new C2DRectangle({2, 2,
                                      renderer->getSize().x - 4, renderer->getSize().y - 4});
     border->setFillColor(Color::Transparent);
@@ -90,7 +79,7 @@ int main(int argc, char *argv[]) {
     auto *tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     tweenAlpha->play();
     rect->add(tweenAlpha);
-#endif
+
     while (true) {
 
         // stop if any key is pressed

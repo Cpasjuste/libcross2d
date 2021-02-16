@@ -18,9 +18,9 @@
      )
 
      # add static library
-     add_library(ROMFS STATIC app.romfs.o)
+     add_library(${target}-romfs STATIC app.romfs.o)
      set_source_files_properties(app.romfs.o PROPERTIES EXTERNAL_OBJECT true GENERATED true)
-     set_target_properties(ROMFS PROPERTIES LINKER_LANGUAGE C)
-     target_link_libraries(${target} ROMFS)
+     set_target_properties(${target}-romfs PROPERTIES LINKER_LANGUAGE C)
+     target_link_libraries(${target} ${target}-romfs)
 
  endmacro()

@@ -235,6 +235,7 @@ elseif (PLATFORM_LINUX)
     # romfs: physfs
     pkg_search_module(PHYSFS REQUIRED physfs)
     # romfs: funchook
+    set(FUNCHOOK_CPU x86 CACHE STRING "" FORCE)
     add_subdirectory(source/skeleton/romfs/funchook)
     # romfs: physfs wrapper
     list(APPEND PLATFORM_SOURCES source/skeleton/romfs/romfs.cpp)
