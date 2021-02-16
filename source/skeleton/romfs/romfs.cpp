@@ -58,6 +58,7 @@ static bool isRomFs(const char *pathname) {
 static int (*open_func)(const char *pathname, int flags, mode_t mode);
 
 static int open_hook(const char *pathname, int flags, mode_t mode) {
+
     if (isRomFs(pathname)) {
         std::string path = std::string(pathname).replace(0, 6, "/romfs");
         PHYSFS_File *file;
@@ -71,7 +72,7 @@ static int open_hook(const char *pathname, int flags, mode_t mode) {
         if (file) {
             fdcount--;
             physfsPtrList->push_back({file, fdcount, PHYSFS_fileLength(file)});
-            //printf("OK: open_hook:(%s, %i, %i)\n", path.c_str(), flags, mode);
+            printf("OK: open_hook:(%s, %i, %i)\n", path.c_str(), flags, mode);
             return fdcount;
         } else {
             printf("NOK: open_hook:(%s, %i, %i)\n", path.c_str(), flags, mode);
@@ -89,7 +90,7 @@ static ssize_t read_hook(int fd, void *buf, size_t count) {
     physfsPtr *fsPtr = physfsGet(fd);
     if (fsPtr) {
         size_t len = PHYSFS_readBytes(fsPtr->file, buf, count);
-        //printf("OK: read_hook:(%i, %p, %zu), read = %zu\n", fd, buf, count, len);
+        printf("OK: read_hook:(%i, %p, %zu), read = %zu\n", fd, buf, count, len);
         return len;
     }
 
@@ -102,7 +103,7 @@ static int close_hook(int fd) {
 
     physfsPtr *fsPtr = physfsGet(fd);
     if (fsPtr) {
-        //printf("OK: close_hook:(%i)\n", fd);
+        printf("OK: close_hook:(%i)\n", fd);
         PHYSFS_close(fsPtr->file);
         physfsDel(fsPtr->fd);
     }
@@ -110,13 +111,33 @@ static int close_hook(int fd) {
     return close_func(fd);
 }
 
+static FILE *(*fopen_func)(const char *filename, const char *mode);
+
+static FILE *fopen_hook(const char *filename, const char *mode) {
+
+    if (isRomFs(filename)) {
+        printf("OK: fopen_hook:(%s, %s)\n", filename, mode);
+        int fd = open_hook(filename, O_RDONLY, 0);
+        FILE *file = (FILE *) malloc(sizeof(FILE));
+        memset(file, 0, sizeof(FILE));
+        file->_file = fd;
+        return file;
+    }
+
+    return fopen_func(filename, mode);
+}
+
 static int (*fclose_func)(FILE *stream);
 
 static int fclose_hook(FILE *stream) {
 
+#ifdef __WINDOWS__
+    physfsPtr *fsPtr = physfsGet(stream->_file);
+#else
     physfsPtr *fsPtr = physfsGet(stream->_fileno);
+#endif
     if (fsPtr) {
-        //printf("OK: fclose_hook:(%i)\n", stream->_fileno);
+        printf("OK: fclose_hook:(%i)\n", stream->_file);
         PHYSFS_close(fsPtr->file);
         physfsDel(fsPtr->fd);
     }
@@ -144,7 +165,7 @@ static off_t lseek_hook(int fd, off_t offset, int whence) {
             return -1;
         }
 
-        //printf("OK: lseek_hook:(%i, %li, %i)\n", fd, offset, whence);
+        printf("OK: lseek_hook:(%i, %li, %i)\n", fd, offset, whence);
         return cur;
     }
 
@@ -172,11 +193,17 @@ int stat_hook(const char *pathname, struct stat *buf) {
         } else if (st.filetype == PHYSFS_FILETYPE_DIRECTORY) {
             buf->st_mode = S_IFDIR;
         } else if (st.filetype == PHYSFS_FILETYPE_SYMLINK) {
+#ifndef __WINDOWS__
             buf->st_mode = S_IFLNK;
+#endif
         }
         buf->st_nlink = 1;
+#ifdef __WINDOWS__
+        buf->st_size = 512;
+#else
         buf->st_blksize = 512;
         buf->st_blocks = (buf->st_blksize + 511) / 512;
+#endif
         return 0;
     }
 
@@ -184,6 +211,8 @@ int stat_hook(const char *pathname, struct stat *buf) {
 }
 
 int romfsInit() {
+
+    int ret;
 
     if (initialised)
         return 0;
@@ -198,24 +227,51 @@ int romfsInit() {
     funchook = funchook_create();
 
     open_func = (int (*)(const char *, int, mode_t)) open;
-    funchook_prepare(funchook, (void **) &open_func, (void *) open_hook);
+    ret = funchook_prepare(funchook, (void **) &open_func, (void *) open_hook);
+    if (ret != 0) {
+        printf("romfsInit: open_hook failed\n");
+    }
 
     read_func = (ssize_t (*)(int, void *, size_t)) read;
-    funchook_prepare(funchook, (void **) &read_func, (void *) read_hook);
+    ret = funchook_prepare(funchook, (void **) &read_func, (void *) read_hook);
+    if (ret != 0) {
+        printf("romfsInit: read_hook failed\n");
+    }
 
     close_func = (int (*)(int)) close;
-    funchook_prepare(funchook, (void **) &close_func, (void *) close_hook);
+    ret = funchook_prepare(funchook, (void **) &close_func, (void *) close_hook);
+    if (ret != 0) {
+        printf("romfsInit: close_hook failed\n");
+    }
+
+    fopen_func = (FILE *(*)(const char *, const char *)) fopen;
+    ret = funchook_prepare(funchook, (void **) &fopen_func, (void *) fopen_hook);
+    if (ret != 0) {
+        printf("romfsInit: fopen_hook failed\n");
+    }
 
     fclose_func = (int (*)(FILE *)) fclose;
-    funchook_prepare(funchook, (void **) &fclose_func, (void *) fclose_hook);
+    ret = funchook_prepare(funchook, (void **) &fclose_func, (void *) fclose_hook);
+    if (ret != 0) {
+        printf("romfsInit: fclose_hook failed\n");
+    }
 
     lseek_func = (off_t (*)(int, off_t, int)) lseek;
-    funchook_prepare(funchook, (void **) &lseek_func, (void *) lseek_hook);
+    ret = funchook_prepare(funchook, (void **) &lseek_func, (void *) lseek_hook);
+    if (ret != 0) {
+        printf("romfsInit: lseek_hook failed\n");
+    }
 
     stat_func = (int (*)(const char *, struct stat *)) stat;
-    funchook_prepare(funchook, (void **) &stat_func, (void *) stat_hook);
+    ret = funchook_prepare(funchook, (void **) &stat_func, (void *) stat_hook);
+    if (ret != 0) {
+        printf("romfsInit: stat_hook failed\n");
+    }
 
-    funchook_install(funchook, 0);
+    ret = funchook_install(funchook, 0);
+    if (ret != 0) {
+        printf("romfsInit: funchook_install failed\n");
+    }
 
     initialised = 1;
 

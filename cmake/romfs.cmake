@@ -13,7 +13,7 @@
              OUTPUT app.romfs.o
              COMMAND cd ${ROMFS_INPUT_DIR} && ${ZIP} -r ${CMAKE_CURRENT_BINARY_DIR}/romfs.zip .
              COMMAND ${CMAKE_LINKER} --relocatable --format binary --output app.romfs.o romfs.zip
-             COMMAND rm -f romfs.zip
+             COMMAND ${CMAKE_COMMAND} -E remove -f romfs.zip
              #DEPENDS ${ROMFS_INPUT_DIR}
      )
 
