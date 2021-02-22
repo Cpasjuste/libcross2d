@@ -73,9 +73,11 @@ DCAudio::~DCAudio() {
 void DCAudio::pause(int pause) {
     snd_stream_volume(stream_hnd, pause ? 0 : 255);
     Audio::pause(pause);
+    if (pause) {
+        memset(dc_buf, 0, getSamplesSize());
+    }
 }
 
 void DCAudio::reset() {
     Audio::reset();
 }
-
