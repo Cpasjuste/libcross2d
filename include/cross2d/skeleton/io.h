@@ -30,21 +30,17 @@ namespace c2d {
             File() = default;
 
             File(const std::string &name, const std::string &path,
-                 Type type = Type::File, const size_t &size = 0, const Color &color = Color::White) {
+                 Type type = Type::File, const size_t &size = 0) {
                 this->name = name;
                 this->path = path;
                 this->type = type;
                 this->size = size;
-                this->color = color;
             }
 
             std::string name;
             std::string path;
             size_t size = 0;
             Type type = Type::Unknown;
-            // for ui
-            Color color = Color::White;
-            Texture *icon = nullptr;
         };
 
         Io() = default;

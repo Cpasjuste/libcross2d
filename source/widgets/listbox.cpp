@@ -157,9 +157,11 @@ void ListBox::init(Font *font, int fontSize, bool useIcons, float lineHeight) {
     for (unsigned int i = 0; i < (unsigned int) max_lines; i++) {
         FloatRect r = {1, (line_height * i) + 1, getSize().x - 2, line_height};
         Texture *icon = nullptr;
+        /* TODO
         if (use_icons) {
             icon = files.size() > i ? files[i]->icon : nullptr;
         }
+        */
         auto line = new ListBoxLine(r, "", font, (unsigned int) fontSize, icon, use_icons);
         lines.push_back(line);
         add(line);
@@ -177,21 +179,27 @@ void ListBox::updateLines() {
             Io::File *file = files[start_index + i];
             lines[i]->setVisibility(Visibility::Visible);
             lines[i]->setString(file->name);
+            // TODO
+            /*
             // set text color based on file color
             lines[i]->setIcon(file->icon);
             if (use_files_color) {
                 lines[i]->setColor(file->color);
             }
+            */
             // set highlight position and color
             if ((int) i == highlight_index) {
                 highlight->setPosition(lines[i]->getPosition());
-                Color color = highlight_use_files_color ?
-                              file->color : highlight->getFillColor();
+                // TODO
+                //Color color = highlight_use_files_color ?
+                //            file->color : highlight->getFillColor();
+                Color color = highlight->getFillColor();
                 color.a = highlight->getAlpha();
                 highlight->setFillColor(color);
-                color = highlight_use_files_color ?
-                        file->color : highlight->getOutlineColor();
-                //color.a = highlight->getAlpha();
+                // TODO
+                //color = highlight_use_files_color ?
+                //      file->color : highlight->getOutlineColor();
+                color = highlight->getOutlineColor();
                 highlight->setOutlineColor(color);
             }
         }

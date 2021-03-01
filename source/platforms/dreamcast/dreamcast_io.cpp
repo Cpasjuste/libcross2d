@@ -235,11 +235,10 @@ std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool 
         }
 
         // skip some stuff
-        if (std::string(ent->name) == "ram" || std::string(ent->name) == "pty"
-            || std::string(ent->name) == "rd" || std::string(ent->name) == "pc"
-            || Utility::toLower(ent->name) == "recycler"
-            || Utility::toLower(ent->name) == "$recycle.bin"
-            || (Utility::toLower(ent->name) == "system volume information")) {
+        std::string lower = Utility::toLower(ent->name);
+        if (strcmp(ent->name, "ram") == 0 || strcmp(ent->name, "pty") == 0
+            || strcmp(ent->name, "rd") == 0 || strcmp(ent->name, "pc") == 0
+            || lower == "recycler" || lower == "$recycle.bin" || lower == "system volume information") {
             continue;
         }
 
@@ -248,7 +247,6 @@ std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool 
         file.path = Utility::removeLastSlash(path) + "/" + file.name;
         file.type = ent->attr == O_DIR ? Type::Directory : Type::File;
         file.size = ent->size;
-        file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
         files.push_back(file);
     }
 
@@ -282,7 +280,7 @@ Io::File DCIo::findFile(const std::string &path,
                     file.name = ent->name;
                     file.path = Utility::removeLastSlash(path) + "/" + file.name;
                     file.type = ent->attr == O_DIR ? Type::Directory : Type::File;
-                    file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
+                    file.size = ent->size;
                     break;
                 }
             }

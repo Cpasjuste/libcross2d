@@ -228,7 +228,6 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bo
                     file.type = S_ISDIR(st.st_mode) ? Type::Directory : Type::File;
                 }
 #endif
-                file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
                 files.push_back(file);
             }
             closedir(dir);
@@ -274,7 +273,6 @@ Io::File POSIXIo::findFile(const std::string &path,
                         file.type = S_ISDIR(st.st_mode) ? Type::Directory : Type::File;
                     }
 #endif
-                    file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
                     break;
                 }
             }
