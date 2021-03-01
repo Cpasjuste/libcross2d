@@ -394,7 +394,6 @@ namespace c2d {
         c2d::Color m_outlineColor;       ///< Text outline color
         float m_outlineThickness;   ///< Thickness of the text's outline
         mutable c2d::VertexArray m_vertices;           ///< Vertex array containing the fill geometry
-        mutable c2d::VertexArray m_outlineVertices;    ///< Vertex array containing the outline geometry
         mutable c2d::FloatRect m_bounds;             ///< Bounding rectangle of the text (in local coordinates)
         mutable bool m_geometryNeedUpdate; ///< Does the geometry need to be recomputed?
         mutable c2d::Vector2f m_max_size = {2048, 2048};

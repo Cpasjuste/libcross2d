@@ -39,10 +39,6 @@
 
 namespace c2d {
 
-    //class Texture;
-
-    class Renderer;
-
 ////////////////////////////////////////////////////////////
 /// \brief Class for loading and manipulating character fonts
 ///
@@ -82,7 +78,7 @@ namespace c2d {
         /// Cleans up all the internal resources used by the font
         ///
         ////////////////////////////////////////////////////////////
-        ~Font();
+        virtual ~Font();
 
         ////////////////////////////////////////////////////////////
         /// \brief Load the font from a file
@@ -104,9 +100,9 @@ namespace c2d {
         /// \see loadFromMemory, loadFromStream
         ///
         ////////////////////////////////////////////////////////////
-        bool loadFromFile(const std::string &filename);
+        virtual bool loadFromFile(const std::string &filename);
 
-        bool loadDefault();
+        virtual bool loadDefault();
 
         ////////////////////////////////////////////////////////////
         /// \brief Load the font from a file in memory
@@ -127,7 +123,7 @@ namespace c2d {
         /// \see loadFromFile, loadFromStream
         ///
         ////////////////////////////////////////////////////////////
-        bool loadFromMemory(const void *data, std::size_t sizeInBytes);
+        virtual bool loadFromMemory(const void *data, std::size_t sizeInBytes);
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the font information
@@ -135,7 +131,7 @@ namespace c2d {
         /// \return A structure that holds the font information
         ///
         ////////////////////////////////////////////////////////////
-        const Info &getInfo() const;
+        virtual const Info &getInfo() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Retrieve a glyph of the font
@@ -155,8 +151,8 @@ namespace c2d {
         /// \return The glyph corresponding to \a codePoint and \a characterSize
         ///
         ////////////////////////////////////////////////////////////
-        const Glyph &
-        getGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness = 0) const;
+        virtual const Glyph &getGlyph(uint32_t codePoint, unsigned int characterSize,
+                                      bool bold, float outlineThickness = 0) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the kerning offset of two glyphs
@@ -174,7 +170,7 @@ namespace c2d {
         /// \return Kerning value for \a first and \a second, in pixels
         ///
         ////////////////////////////////////////////////////////////
-        float getKerning(uint32_t first, uint32_t second, unsigned int characterSize) const;
+        virtual float getKerning(uint32_t first, uint32_t second, unsigned int characterSize) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the line spacing
@@ -187,7 +183,7 @@ namespace c2d {
         /// \return Line spacing, in pixels
         ///
         ////////////////////////////////////////////////////////////
-        float getLineSpacing(unsigned int characterSize) const;
+        virtual float getLineSpacing(unsigned int characterSize) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the position of the underline
@@ -202,7 +198,7 @@ namespace c2d {
         /// \see getUnderlineThickness
         ///
         ////////////////////////////////////////////////////////////
-        float getUnderlinePosition(unsigned int characterSize) const;
+        virtual float getUnderlinePosition(unsigned int characterSize) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the thickness of the underline
@@ -216,7 +212,7 @@ namespace c2d {
         /// \see getUnderlinePosition
         ///
         ////////////////////////////////////////////////////////////
-        float getUnderlineThickness(unsigned int characterSize) const;
+        virtual float getUnderlineThickness(unsigned int characterSize) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Retrieve the texture containing the loaded glyphs of a certain size
@@ -230,21 +226,21 @@ namespace c2d {
         /// \return Texture containing the glyphs of the requested size
         ///
         ////////////////////////////////////////////////////////////
-        Texture *getTexture(unsigned int characterSize);
+        virtual Texture *getTexture(unsigned int characterSize);
 
-        void setFilter(Texture::Filter filter);
+        virtual void setFilter(Texture::Filter filter);
 
-        void setOffset(Vector2f offset);
+        virtual void setOffset(Vector2f offset);
 
-        Vector2f getOffset() const;
+        virtual Vector2f getOffset() const;
 
-        const std::string &getPath() const;
+        virtual const std::string &getPath() const;
 
-        bool isDirtyTex() {
+        virtual bool isDirtyTex() {
             return m_dirty_tex;
         }
 
-        void setDirtyTex(bool dirty) {
+        virtual void setDirtyTex(bool dirty) {
             m_dirty_tex = dirty;
         }
 
@@ -256,7 +252,7 @@ namespace c2d {
         /// \return Reference to self
         ///
         ////////////////////////////////////////////////////////////
-        Font &operator=(const Font &right);
+        virtual Font &operator=(const Font &right);
 
     private:
 
@@ -296,7 +292,7 @@ namespace c2d {
         /// \brief Free all the internal resources
         ///
         ////////////////////////////////////////////////////////////
-        void cleanup();
+        virtual void cleanup();
 
         ////////////////////////////////////////////////////////////
         /// \brief Load a new glyph and store it in the cache
@@ -309,7 +305,8 @@ namespace c2d {
         /// \return The glyph corresponding to \a codePoint and \a characterSize
         ///
         ////////////////////////////////////////////////////////////
-        Glyph loadGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const;
+        virtual Glyph
+        loadGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Find a suitable rectangle within the texture for a glyph
@@ -321,7 +318,7 @@ namespace c2d {
         /// \return Found rectangle within the texture
         ///
         ////////////////////////////////////////////////////////////
-        IntRect findGlyphRect(Page &page, unsigned int width, unsigned int height) const;
+        virtual IntRect findGlyphRect(Page &page, unsigned int width, unsigned int height) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Make sure that the given size is the current one
@@ -331,7 +328,7 @@ namespace c2d {
         /// \return True on success, false if any error happened
         ///
         ////////////////////////////////////////////////////////////
-        bool setCurrentSize(unsigned int characterSize) const;
+        virtual bool setCurrentSize(unsigned int characterSize) const;
 
         ////////////////////////////////////////////////////////////
         // Types
@@ -353,17 +350,11 @@ namespace c2d {
         Vector2f offset;
         std::string m_font_path;
         mutable bool m_dirty_tex = false;
-
-#ifdef SFML_SYSTEM_ANDROID
-        void*                      m_stream; ///< Asset file streamer (if loaded from file)
-#endif
     };
 
-} // namespace sf
-
+} // namespace c2d
 
 #endif // SFML_FONT_HPP
-
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Font

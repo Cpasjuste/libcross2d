@@ -104,7 +104,6 @@ namespace c2d {
             m_outlineColor(0, 0, 0),
             m_outlineThickness(0),
             m_vertices(Triangles),
-            m_outlineVertices(Triangles),
             m_bounds(),
             m_geometryNeedUpdate(false) {
         type = Type::Text;
@@ -121,7 +120,6 @@ namespace c2d {
             m_outlineColor(0, 0, 0),
             m_outlineThickness(0),
             m_vertices(Triangles),
-            m_outlineVertices(Triangles),
             m_bounds(),
             m_geometryNeedUpdate(true) {
         type = Type::Text;
@@ -424,6 +422,11 @@ namespace c2d {
     }
 
     void Text::onUpdate() {
+
+        if (m_string.empty()) {
+            return;
+        }
+
         ensureGeometryUpdate();
         // sfml use pixel coordinates for texCoords, but c2d use normalized one.
         // if the texture size changed, we need to update vertex buffer for normalized texCoords
@@ -442,9 +445,6 @@ namespace c2d {
 
         if (draw) {
             Transform combined = transform * getTransform();
-            if (getOutlineThickness() > 0) {
-                c2d_renderer->draw(&m_outlineVertices, combined, m_font->getTexture(m_characterSize));
-            }
             c2d_renderer->draw(&m_vertices, combined, m_font->getTexture(m_characterSize));
         }
         C2DObject::onDraw(transform, draw);
@@ -457,17 +457,18 @@ namespace c2d {
         if (!m_geometryNeedUpdate)
             return;
 
+        //printf("ensureGeometryUpdate: %s\n", m_string.c_str());
+
         // Mark geometry as updated
         m_geometryNeedUpdate = false;
-
-        // Clear the previous geometry
-        m_vertices.clear();
-        m_outlineVertices.clear();
-        m_bounds = FloatRect();
 
         // No font or text: nothing to draw
         if ((m_font == nullptr) || m_string.empty())
             return;
+
+        // Clear the previous geometry
+        m_vertices.clear();
+        m_bounds = FloatRect();
 
         // Compute values related to the text style
         bool bold = (m_style & Bold) != 0;
@@ -507,7 +508,6 @@ namespace c2d {
         float maxY = 0.f;
         uint32_t prevChar = 0;
 
-        //printf("Text::ensureGeometryUpdate: %s\n", m_string.c_str());
         std::vector<std::string> words = Utility::split(m_string, " ");
         for (size_t i = 0; i < words.size(); i++) {
 
@@ -558,7 +558,7 @@ namespace c2d {
                     addLine(m_vertices, m_textureSize, x, y, m_fillColor, underlineOffset, underlineThickness);
 
                     if (m_outlineThickness != 0)
-                        addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, underlineOffset,
+                        addLine(m_vertices, m_textureSize, x, y, m_outlineColor, underlineOffset,
                                 underlineThickness,
                                 m_outlineThickness);
                 }
@@ -568,7 +568,7 @@ namespace c2d {
                     addLine(m_vertices, m_textureSize, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
                     if (m_outlineThickness != 0)
-                        addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset,
+                        addLine(m_vertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset,
                                 underlineThickness,
                                 m_outlineThickness);
                 }
@@ -600,7 +600,6 @@ namespace c2d {
                     continue;
                 }
 
-
                 // Apply the outline
                 if (m_outlineThickness != 0) {
                     const Glyph &glyph = m_font->getGlyph(curChar, m_characterSize, bold, m_outlineThickness);
@@ -611,7 +610,7 @@ namespace c2d {
                     float bottom = glyph.bounds.top + glyph.bounds.height;
 
                     // Add the outline glyph to the vertices
-                    addGlyphQuad(m_outlineVertices, m_textureSize,
+                    addGlyphQuad(m_vertices, m_textureSize,
                                  Vector2f(x, y), m_outlineColor, glyph, italic, m_outlineThickness);
 
                     // Update the current bounds with the outlined glyph bounds
@@ -648,18 +647,16 @@ namespace c2d {
             // If we're using the underlined style, add the last line
             if (underlined && (x > 0)) {
                 addLine(m_vertices, m_textureSize, x, y, m_fillColor, underlineOffset, underlineThickness);
-
                 if (m_outlineThickness != 0)
-                    addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, underlineOffset, underlineThickness,
+                    addLine(m_vertices, m_textureSize, x, y, m_outlineColor, underlineOffset, underlineThickness,
                             m_outlineThickness);
             }
 
             // If we're using the strike through style, add the last line across all characters
             if (strikeThrough && (x > 0)) {
                 addLine(m_vertices, m_textureSize, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
-
                 if (m_outlineThickness != 0)
-                    addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset,
+                    addLine(m_vertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset,
                             underlineThickness,
                             m_outlineThickness);
             }
@@ -671,7 +668,6 @@ namespace c2d {
             m_bounds.height = maxY - minY;
 
             m_vertices.update();
-            m_outlineVertices.update();
 
             if (m_font->isDirtyTex()) {
                 m_font->getTexture(m_characterSize)->unlock();
