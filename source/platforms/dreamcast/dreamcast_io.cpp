@@ -79,6 +79,28 @@ Io::Type DCIo::getType(const std::string &file) {
     return type;
 }
 
+bool DCIo::existsFile(const std::string &path) {
+
+    file_t f = fs_open(path.c_str(), O_RDONLY);
+    if (f != FILEHND_INVALID) {
+        fs_close(f);
+        return true;
+    }
+
+    return false;
+}
+
+bool DCIo::existsDir(const std::string &path) {
+
+    file_t f = fs_open(path.c_str(), O_DIR | O_RDONLY);
+    if (f != FILEHND_INVALID) {
+        fs_close(f);
+        return true;
+    }
+
+    return false;
+}
+
 bool DCIo::exist(const std::string &path) {
 
     file_t f = fs_open(path.c_str(), O_RDONLY);

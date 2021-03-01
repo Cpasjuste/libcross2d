@@ -17,6 +17,10 @@ namespace c2d {
 
         bool exist(const std::string &path) override;
 
+        static bool existsFile(const std::string &path);
+
+        static bool existsDir(const std::string &path);
+
         size_t getSize(const std::string &file) override;
 
         Type getType(const std::string &file) override;
