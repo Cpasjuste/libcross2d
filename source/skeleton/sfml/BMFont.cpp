@@ -199,8 +199,8 @@ namespace c2d {
                 return {
                         glyph.advance * scaling,
                         {
-                                glyph.bounds.left,
-                                glyph.bounds.top,
+                                glyph.bounds.left * scaling,
+                                glyph.bounds.top * scaling,
                                 glyph.bounds.width * scaling,
                                 glyph.bounds.height * scaling
                         },
