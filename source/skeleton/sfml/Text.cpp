@@ -26,8 +26,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cmath>
-#include <cross2d/skeleton/sfml/Text.hpp>
-
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -182,7 +180,7 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Text::setOutlineColor(const Color &color) {
-        if (color != m_outlineColor) {
+        if (!m_font->isBmFont() && color != m_outlineColor) {
             m_outlineColor = color;
             // update geometry in onUpdate to be thread safe
             m_geometryNeedUpdate = true;
@@ -192,7 +190,7 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Text::setOutlineThickness(float thickness) {
-        if (thickness != m_outlineThickness) {
+        if (!m_font->isBmFont() && thickness != m_outlineThickness) {
             m_outlineThickness = thickness;
             m_geometryNeedUpdate = true;
         }
@@ -669,7 +667,7 @@ namespace c2d {
 
             m_vertices.update();
 
-            if (m_font->isDirtyTex()) {
+            if (!m_font->isBmFont() && m_font->isDirtyTex()) {
                 m_font->getTexture(m_characterSize)->unlock();
                 m_font->setDirtyTex(false);
             }

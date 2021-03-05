@@ -13,6 +13,7 @@
 #include "cross2d/skeleton/sfml/RectangleShape.hpp"
 #include "cross2d/skeleton/sfml/CircleShape.hpp"
 #include "cross2d/skeleton/sfml/ConvexShape.hpp"
+#include "cross2d/skeleton/sfml/BMFont.hpp"
 #include "cross2d/skeleton/sfml/Text.hpp"
 #include "cross2d/skeleton/sfml/Sprite.hpp"
 #include "cross2d/skeleton/renderer.h"

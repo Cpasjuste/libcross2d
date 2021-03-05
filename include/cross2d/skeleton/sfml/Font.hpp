@@ -65,14 +65,6 @@ namespace c2d {
         Font();
 
         ////////////////////////////////////////////////////////////
-        /// \brief Copy constructor
-        ///
-        /// \param copy Instance to copy
-        ///
-        ////////////////////////////////////////////////////////////
-        Font(const Font &copy);
-
-        ////////////////////////////////////////////////////////////
         /// \brief Destructor
         ///
         /// Cleans up all the internal resources used by the font
@@ -123,7 +115,7 @@ namespace c2d {
         /// \see loadFromFile, loadFromStream
         ///
         ////////////////////////////////////////////////////////////
-        virtual bool loadFromMemory(const void *data, std::size_t sizeInBytes);
+        virtual bool loadFromMemory(const void *data, std::size_t size);
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the font information
@@ -151,8 +143,8 @@ namespace c2d {
         /// \return The glyph corresponding to \a codePoint and \a characterSize
         ///
         ////////////////////////////////////////////////////////////
-        virtual const Glyph &getGlyph(uint32_t codePoint, unsigned int characterSize,
-                                      bool bold, float outlineThickness = 0) const;
+        virtual Glyph getGlyph(uint32_t codePoint, unsigned int characterSize,
+                               bool bold, float outlineThickness = 0);
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the kerning offset of two glyphs
@@ -244,15 +236,9 @@ namespace c2d {
             m_dirty_tex = dirty;
         }
 
-        ////////////////////////////////////////////////////////////
-        /// \brief Overload of assignment operator
-        ///
-        /// \param right Instance to assign
-        ///
-        /// \return Reference to self
-        ///
-        ////////////////////////////////////////////////////////////
-        virtual Font &operator=(const Font &right);
+        virtual bool isBmFont() {
+            return false;
+        }
 
     private:
 
@@ -283,7 +269,7 @@ namespace c2d {
             ~Page();
 
             GlyphTable glyphs;  ///< Table mapping code points to their corresponding glyph
-            Texture *texture = NULL; ///< Texture containing the pixels of the glyphs
+            Texture *texture = nullptr; ///< Texture containing the pixels of the glyphs
             unsigned int nextRow; ///< Y position of the next new row in the texture
             std::vector<Row> rows;    ///< List containing the position of all the existing rows
         };
@@ -305,8 +291,8 @@ namespace c2d {
         /// \return The glyph corresponding to \a codePoint and \a characterSize
         ///
         ////////////////////////////////////////////////////////////
-        virtual Glyph
-        loadGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const;
+        virtual Glyph loadGlyph(uint32_t codePoint, unsigned int characterSize,
+                                bool bold, float outlineThickness) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Find a suitable rectangle within the texture for a glyph
@@ -347,7 +333,7 @@ namespace c2d {
         mutable PageTable m_pages;       ///< Table containing the glyphs pages by character size
         mutable std::vector<uint8_t> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
         Texture::Filter m_filtering = Texture::Filter::Linear;
-        Vector2f offset;
+        Vector2f m_offset;
         std::string m_font_path;
         mutable bool m_dirty_tex = false;
     };

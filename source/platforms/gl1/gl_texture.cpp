@@ -249,18 +249,18 @@ void GLTexture::unlock(void *data) {
                          0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5_TWID_KOS, data ? data : pixels);
             break;
 #else
-        case Format::RGBA8:
-            glTexSubImage2D(GL_TEXTURE_2D, 0,
-                            (GLsizei) getTextureRect().left, (GLsizei) getTextureRect().top,
-                            (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_RGBA, GL_UNSIGNED_BYTE, data ? data : pixels);
-            break;
-        default:
-            glTexSubImage2D(GL_TEXTURE_2D, 0,
-                            (GLsizei) getTextureRect().left, (GLsizei) getTextureRect().top,
-                            (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
-            break;
+            case Format::RGBA8:
+                glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                (GLsizei) getTextureRect().left, (GLsizei) getTextureRect().top,
+                                (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                                GL_RGBA, GL_UNSIGNED_BYTE, data ? data : pixels);
+                break;
+            default:
+                glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                (GLsizei) getTextureRect().left, (GLsizei) getTextureRect().top,
+                                (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                                GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
+                break;
 #endif
     }
 
@@ -283,16 +283,15 @@ GLTexture::~GLTexture() {
 
     printf("~GLTexture(%p)\n", this);
 
-    if (pixels != nullptr) {
-        stbi_image_free(pixels);
-        pixels = nullptr;
-    }
-
     if (texID > 0) {
         //printf("glDeleteTextures(%i)\n", texID);
-        glBindTexture(GL_TEXTURE_2D, 0);
         glDeleteTextures(1, &texID);
         texID = 0;
+    }
+
+    if (pixels != nullptr) {
+        free(pixels);
+        pixels = nullptr;
     }
 }
 

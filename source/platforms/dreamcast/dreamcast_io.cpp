@@ -165,16 +165,16 @@ bool DCIo::removeDir(const std::string &path) {
     return fs_rmdir(path.c_str()) == 0;
 }
 
-char *DCIo::read(const std::string &file, size_t offset, size_t size) {
+size_t DCIo::read(const std::string &file, char **out, size_t size, size_t offset) {
 
     file_t fd;
     size_t file_size;
-    char *buffer = nullptr;
+    size_t read_size;
 
     fd = fs_open(file.c_str(), O_RDONLY);
     if (fd == FILEHND_INVALID) {
         printf("DCIo::read: can't open %s\n", file.c_str());
-        return nullptr;
+        return -1;
     }
 
     file_size = fs_total(fd);
@@ -191,17 +191,18 @@ char *DCIo::read(const std::string &file, size_t offset, size_t size) {
         fs_seek(fd, offset, SEEK_SET);
     }
 
-    buffer = (char *) malloc(size);
-    if (fs_read(fd, buffer, size) != (ssize_t) size) {
+    *out = (char *) malloc(size);
+    read_size = fs_read(fd, *out, size);
+    if (read_size != size) {
         fs_close(fd);
-        free(buffer);
+        free(*out);
         printf("DCIo::read: can't read %s\n", file.c_str());
-        return nullptr;
+        return -1;
     }
 
     fs_close(fd);
 
-    return buffer;
+    return read_size;
 }
 
 bool DCIo::write(const std::string &file, const char *data, size_t size) {
