@@ -37,6 +37,10 @@ namespace c2d {
                 this->size = size;
             }
 
+            bool isFile() const {
+                return type == Type::File;
+            }
+
             std::string name;
             std::string path;
             size_t size = 0;

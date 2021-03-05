@@ -179,6 +179,8 @@ void ListBox::updateLines() {
             Io::File *file = files[start_index + i];
             lines[i]->setVisibility(Visibility::Visible);
             lines[i]->setString(file->name);
+            lines[i]->setColor(file->isFile() ? textFileColor : textDirColor);
+            lines[i]->setOutlineColor(file->isFile() ? textFileColorOutline : textDirColorOutline);
             // TODO
             /*
             // set text color based on file color
@@ -322,16 +324,14 @@ std::vector<ListBoxLine *> ListBox::getLines() {
     return lines;
 }
 
-void ListBox::setTextOutlineColor(const Color &color) {
-    for (auto &line : lines) {
-        line->getText()->setOutlineColor(color);
-    }
+void ListBox::setTextColor(const Color &fileColor, const Color &dirColor) {
+    textFileColor = fileColor;
+    textDirColor = dirColor;
 }
 
-void ListBox::setTextColor(const Color &color) {
-    for (auto &line : lines) {
-        line->getText()->setFillColor(color);
-    }
+void ListBox::setTextOutlineColor(const Color &fileColor, const Color &dirColor) {
+    textFileColorOutline = fileColor;
+    textDirColorOutline = dirColor;
 }
 
 void ListBox::setTextOutlineThickness(float thickness) {
@@ -344,11 +344,6 @@ void ListBox::setHighlightEnabled(bool enable) {
     use_highlight = enable;
     highlight->setVisibility(enable ? Visibility::Visible
                                     : Visibility::Hidden);
-}
-
-void ListBox::setHighlightUseFileColor(bool enable) {
-    highlight_use_files_color = enable;
-    setSelection(file_index);
 }
 
 int ListBox::getIndex() {

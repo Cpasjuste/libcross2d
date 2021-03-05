@@ -102,14 +102,12 @@ namespace c2d {
     }
 
     void Shape::setAlpha(uint8_t alpha, bool recursive) {
-
         if (alpha != m_fillColor.a) {
             m_fillColor.a = alpha;
             m_outlineColor.a = alpha;
             m_shape_dirty = true;
+            C2DObject::setAlpha(alpha, recursive);
         }
-
-        C2DObject::setAlpha(alpha, recursive);
     }
 
     uint8_t Shape::getAlpha() {
@@ -118,8 +116,10 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Shape::setOutlineColor(const Color &color) {
-        m_outlineColor = color;
-        m_shape_dirty = true;
+        if (m_outlineColor != color) {
+            m_outlineColor = color;
+            m_shape_dirty = true;
+        }
     }
 
 
@@ -131,8 +131,10 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Shape::setOutlineThickness(float thickness) {
-        m_outlineThickness = thickness;
-        m_shape_dirty = true;
+        if (m_outlineThickness != thickness) {
+            m_outlineThickness = thickness;
+            m_shape_dirty = true;
+        }
     }
 
 

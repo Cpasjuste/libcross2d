@@ -68,15 +68,13 @@ namespace c2d {
 
         void setSize(float width, float height) override;
 
-        void setTextColor(const Color &color);
+        void setTextColor(const Color &fileColor, const Color &dirColor);
 
-        void setTextOutlineColor(const Color &color);
+        void setTextOutlineColor(const Color &fileColor, const Color &dirColor);
 
         void setTextOutlineThickness(float thickness);
 
         void setHighlightEnabled(bool enable);
-
-        void setHighlightUseFileColor(bool enable);
 
         RectangleShape *getHighlight();
 
@@ -99,6 +97,10 @@ namespace c2d {
         std::vector<Io::File *> files;
         std::vector<ListBoxLine *> lines;
         RectangleShape *highlight;
+        Color textFileColor;
+        Color textFileColorOutline;
+        Color textDirColor;
+        Color textDirColorOutline;
         float line_height;
         int max_lines;
         int file_index = 0;
@@ -106,8 +108,6 @@ namespace c2d {
         int highlight_index = 0;
         bool use_icons = false;
         bool use_highlight = true;
-        bool highlight_use_files_color = false;
-        bool use_files_color = false;
         bool files_are_mine = false;
     };
 }
