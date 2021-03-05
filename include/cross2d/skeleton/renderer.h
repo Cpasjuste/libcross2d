@@ -52,6 +52,10 @@ namespace c2d {
 
         Time getDeltaTime() const;
 
+        Time getElapsedTime() const;
+
+        Time getDrawTime() const;
+
         float getFps() const;
 
         virtual Io *getIo() { return io; };
@@ -83,10 +87,6 @@ namespace c2d {
             return draw_calls_batched;
         }
 
-        virtual float getDrawTime() {
-            return draw_time;
-        }
-
     protected:
 
         void onUpdate() override;
@@ -97,14 +97,12 @@ namespace c2d {
         Io *io = nullptr;
         Font *font = nullptr;
         ShaderList *shaderList = nullptr;
-        Clock *deltaClock = nullptr, *fpsClock = nullptr;
-        Time deltaTime;
+        Clock *elapsedClock, *deltaClock, *fpsClock, *drawClock;
+        Time elapsedTime, deltaTime, drawTime;
         float time_now = 0, time_last = 0, fps = 0;
         int frames = 0;
-        Clock *drawTimer;
         int draw_calls;
         int draw_calls_batched;
-        float draw_time;
     };
 }
 

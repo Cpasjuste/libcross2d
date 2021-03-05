@@ -2,6 +2,8 @@
 // Created by cpasjuste on 09/12/16.
 //
 
+#include <cross2d/skeleton/renderer.h>
+
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -14,9 +16,10 @@ Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 
     c2d_renderer = this;
 
+    elapsedClock = new C2DClock();
     deltaClock = new C2DClock();
     fpsClock = new C2DClock();
-    drawTimer = new C2DClock();
+    drawClock = new C2DClock();
 
     input = new C2DInput();
     input->setJoystickMapping(0, C2D_DEFAULT_JOY_KEYS);
@@ -30,6 +33,7 @@ Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 
 void Renderer::onUpdate() {
 
+    elapsedTime = elapsedClock->getElapsedTime();
     deltaTime = deltaClock->restart();
     fps = 1.f / fpsClock->restart().asSeconds();
 
@@ -57,10 +61,11 @@ void Renderer::flip(bool draw, bool inputs) {
         clear();
         Transform trans = Transform::Identity;
         draw_calls_batched = draw_calls = 0;
-        drawTimer->restart();
+        drawClock->restart();
         Rectangle::onDraw(trans, draw);
         //printf("time: %f, draw call: %i, batched: %i\n",
         //       drawTimer->getElapsedTime().asSeconds(), draw_calls, draw_calls_batched);
+        drawTime = drawClock->getElapsedTime();
     }
 }
 
@@ -70,6 +75,14 @@ void Renderer::setClearColor(const Color &color) {
 
 Color Renderer::getClearColor() const {
     return m_clearColor;
+}
+
+Time Renderer::getElapsedTime() const {
+    return elapsedTime;
+}
+
+Time Renderer::getDrawTime() const {
+    return drawTime;
 }
 
 Time Renderer::getDeltaTime() const {
@@ -97,9 +110,12 @@ Renderer::~Renderer() {
     delete (font);
     delete (io);
     delete (input);
+
+    delete (elapsedClock);
     delete (deltaClock);
     delete (fpsClock);
-    delete (drawTimer);
+    delete (drawClock);
+
     if (shaderList != nullptr) {
         delete (shaderList);
     }
