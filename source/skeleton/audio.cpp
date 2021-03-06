@@ -41,7 +41,7 @@ void Audio::play(const void *data, int samples, bool sync) {
 
         int size = samples * channels;
         if (sync) {
-            while (getSampleBufferQueued() >= size) {
+            while (getSampleBufferQueued() > size) {
                 c2d_renderer->delay(1);
             }
         }
