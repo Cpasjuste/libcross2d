@@ -71,7 +71,6 @@ DCAudio::~DCAudio() {
 }
 
 void DCAudio::pause(int pause) {
-    printf("DCAudio::pause(%i)\n", pause);
     Audio::pause(pause);
     if (pause) {
         snd_stream_stop(stream_hnd);

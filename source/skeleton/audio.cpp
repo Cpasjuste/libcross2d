@@ -39,7 +39,7 @@ void Audio::play(const void *data, int samples, bool sync) {
             return;
         }
 
-        int size = samples * channels;
+        int size = samples * channels * (int) sizeof(int16_t) >> 1;
         if (sync) {
             while (getSampleBufferQueued() > size) {
                 c2d_renderer->delay(1);
@@ -120,5 +120,3 @@ Audio::~Audio() {
         delete (mutex);
     }
 }
-
-
