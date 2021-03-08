@@ -4,8 +4,6 @@
 
 #ifdef __GL1__
 
-#include <cross2d/platforms/gl1/gl_texture.h>
-
 #include "cross2d/c2d.h"
 
 #define STB_IMAGE_IMPLEMENTATION
