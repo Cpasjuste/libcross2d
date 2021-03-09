@@ -68,6 +68,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
             //printf("glBindTexture: skipping: %i\n", texId);
             draw_calls_batched++;
         }
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 #if BLEND_TEST
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -84,22 +85,22 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
                             GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
     GLenum mode = modes[vertexArray->getPrimitiveType()];
 
-    glBegin(mode);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
 
-    for (unsigned int i = 0; i < vertexCount; i++) {
-        if (tex && tex->available) {
-            glTexCoord2f(vertices[i].texCoords.x, vertices[i].texCoords.y);
-        }
-        glColor4f((float) vertices[i].color.r / 255.0f,
-                  (float) vertices[i].color.g / 255.0f,
-                  (float) vertices[i].color.b / 255.0f,
-                  (float) vertices[i].color.a / 255.0f);
-        glVertex2f(vertices[i].position.x, vertices[i].position.y);
+    glVertexPointer(2, GL_FLOAT, sizeof(Vertex), &vertices[0].position);
+    if (tex && tex->available) {
+        glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), &vertices[0].texCoords);
     }
+    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), &vertices[0].color);
 
-    glEnd();
+    glDrawArrays(mode, 0, (GLsizei) vertexCount);
 
-    if (tex != nullptr && tex->available) {
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+
+    if (tex && tex->available) {
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         glDisable(GL_TEXTURE_2D);
 #if BLEND_TEST
         glDisable(GL_BLEND);
