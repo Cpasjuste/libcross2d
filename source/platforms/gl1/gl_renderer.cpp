@@ -64,9 +64,6 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
         glGetIntegerv(GL_TEXTURE_BINDING_2D, &texId);
         if (texId != (GLint) tex->texID) {
             glBindTexture(GL_TEXTURE_2D, tex->texID);
-        } else {
-            //printf("glBindTexture: skipping: %i\n", texId);
-            draw_calls_batched++;
         }
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 #if BLEND_TEST
@@ -111,7 +108,6 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
         glDisable(GL_BLEND);
     }
 #endif
-    draw_calls++;
 }
 
 void GLRenderer::clear() {

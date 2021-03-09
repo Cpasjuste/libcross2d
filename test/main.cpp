@@ -10,6 +10,7 @@ int main(int argc, char *argv[]) {
 
     // create main renderer
     auto *renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
+    renderer->setPrintStats(true);
     renderer->setClearColor(Color::Black);
 
     auto *border = new C2DRectangle({2, 2,
