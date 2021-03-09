@@ -53,8 +53,9 @@ GLTextureBuffer::GLTextureBuffer(const Vector2f &size, Format format) : Texture(
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             printf("GLTextureBuffer(%p): couldn't create texture buffer", this);
         } else {
-            setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
-            setTexture(this, true);
+            tex_size = {size.x, size.y};
+            Texture::setSize(size.x, size.y);
+            Texture::setTexture(this, true);
             available = true;
         }
         glBindTexture(GL_TEXTURE_2D, 0);
