@@ -37,7 +37,6 @@
 
 // for internal usage
 extern c2d::Renderer *c2d_renderer;
-extern c2d::Vector2f c2d_default_font_texture_size;
 
 #ifdef __PSP2__
 #define NO_KEYBOARD 1
@@ -144,6 +143,8 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #include "platforms/gl2/gl_texture_buffer.h"
 #include "platforms/sdl2/sdl2_input.h"
 #include "platforms/sdl2/sdl2_audio.h"
+#include "platforms/sdl2/sdl2_thread.h"
+#include "platforms/sdl2/sdl2_mutex.h"
 #include "platforms/switch/switch_io.h"
 #include "platforms/switch/switch_sys.h"
 #include "platforms/switch/switch_input.h"
@@ -159,6 +160,8 @@ extern c2d::Vector2f c2d_default_font_texture_size;
 #define C2DAudio SDL2Audio
 #define C2DClock POSIXClock
 #define C2DIo NXIo
+#define C2DThread SDL2Thread
+#define C2DMutex SDL2Mutex
 
 // https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
 #define KEY_JOY_UP_DEFAULT      13          // KEY_DUP
