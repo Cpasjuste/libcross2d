@@ -37,7 +37,6 @@
 #include <cstdlib>
 #include <cstring>
 
-//c2d::Vector2f c2d_default_font_texture_size = {128, 128};
 extern unsigned char c2d_font_default[];
 extern int c2d_font_default_length;
 
@@ -55,6 +54,16 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     Font::~Font() {
         Font::cleanup();
+    }
+
+    const char *getErrorMessage(FT_Error err) {
+#undef FTERRORS_H_
+#define FT_ERRORDEF(e, v, s)  case e: return s;
+#define FT_ERROR_START_LIST     switch (err) {
+#define FT_ERROR_END_LIST       }
+
+#include FT_ERRORS_H
+        return "(unknown error)";
     }
 
 ////////////////////////////////////////////////////////////
@@ -76,8 +85,10 @@ namespace c2d {
 
         // Load the new font face from the specified file
         FT_Face face;
-        if (FT_New_Face(static_cast<FT_Library>(m_library), filename.c_str(), 0, &face) != 0) {
-            printf("Failed to load font %s (failed to create the font face)\n", filename.c_str());
+        int ret = FT_New_Face(static_cast<FT_Library>(m_library), filename.c_str(), 0, &face);
+        if (ret != 0) {
+            printf("Failed to load font %s (failed to create the font face: %s)\n",
+                   filename.c_str(), getErrorMessage(ret));
             return false;
         }
 

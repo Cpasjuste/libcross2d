@@ -19,6 +19,7 @@ int main(int argc, char *argv[]) {
     renderer->setPrintStats(true);
     renderer->setClearColor(Color::Black);
 
+    /*
     int fd = open((renderer->getIo()->getRomFsPath() + "comicate.ttf").c_str(), O_RDONLY);
     struct stat st{};
     if (fstat(fd, &st) != 0) {
@@ -27,6 +28,23 @@ int main(int argc, char *argv[]) {
         printf("file size: %li\n", st.st_size);
     }
     close(fd);
+    */
+
+    // create a text
+    auto *font = new Font();
+    font->loadFromFile(renderer->getIo()->getRomFsPath() + "comicate.ttf");
+    auto *text = new Text("libcross2d @ Cpasjuste", C2D_DEFAULT_CHAR_SIZE, font);
+    text->setOutlineThickness(2);
+    text->setPosition(renderer->getSize().x / 2, renderer->getSize().y / 2);
+    text->setOrigin(Origin::Center);
+    renderer->add(text);
+
+    /*
+    auto tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "gbatemp.png");
+    if (tex->available) {
+        renderer->add(tex);
+    }
+    */
 
 #if 0
     auto *border = new C2DRectangle({2, 2,
@@ -107,9 +125,11 @@ int main(int argc, char *argv[]) {
         // renderer everything
         renderer->flip();
     }
+#endif
+    delete (font);
 
     // will delete child's (textures, shapes, text..)
     delete (renderer);
-#endif
+
     return 0;
 }
