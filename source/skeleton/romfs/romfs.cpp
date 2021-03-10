@@ -152,7 +152,11 @@ static FILE *fopen_hook(const char *filename, const char *mode) {
         int fd = open_hook(filename, O_RDONLY, 0);
         FILE *file = (FILE *) malloc(sizeof(FILE));
         memset(file, 0, sizeof(FILE));
+#ifdef __WINDOWS__
         file->_file = fd;
+#else
+        file->_fileno = fd;
+#endif
         return file;
     }
 
@@ -162,10 +166,16 @@ static FILE *fopen_hook(const char *filename, const char *mode) {
 static size_t (*fread_func)(void *buffer, size_t blocSize, size_t blocCount, FILE *stream);
 
 static size_t fread_hook(void *buffer, size_t blocSize, size_t blocCount, FILE *stream) {
-    physfsPtr *fsPtr = physfsGet(stream->_file);
+#ifdef __WINDOWS__
+    int fd = stream->_file;
+    physfsPtr *fsPtr = physfsGet(fd);
+#else
+    int fd = stream->_fileno;
+    physfsPtr *fsPtr = physfsGet(stream->_fileno);
+#endif
     if (fsPtr) {
-        printf("OK: fread_hook:(%i, %llu, %llu)\n", stream->_file, blocSize, blocCount);
-        return read_hook(stream->_file, buffer, blocSize * blocCount);
+        printf("OK: fread_hook:(%i, %lu, %lu)\n", fd, blocSize, blocCount);
+        return read_hook(fd, buffer, blocSize * blocCount);
     }
 
     return fread_func(buffer, blocSize, blocCount, stream);
@@ -174,10 +184,16 @@ static size_t fread_hook(void *buffer, size_t blocSize, size_t blocCount, FILE *
 static int (*fseek_func)(FILE *stream, long offset, int whence);
 
 static int fseek_hook(FILE *stream, long offset, int whence) {
-    physfsPtr *fsPtr = physfsGet(stream->_file);
+#ifdef __WINDOWS__
+    int fd = stream->_file;
+    physfsPtr *fsPtr = physfsGet(fd);
+#else
+    int fd = stream->_fileno;
+    physfsPtr *fsPtr = physfsGet(stream->_fileno);
+#endif
     if (fsPtr) {
-        printf("OK: fseek_hook:(%i, %lu, %i)\n", stream->_file, offset, whence);
-        return lseek_hook(stream->_file, offset, whence);
+        printf("OK: fseek_hook:(%i, %lu, %i)\n", fd, offset, whence);
+        return lseek_hook(fd, offset, whence);
     }
 
     return fseek_func(stream, offset, whence);
@@ -186,16 +202,19 @@ static int fseek_hook(FILE *stream, long offset, int whence) {
 static int (*fclose_func)(FILE *stream);
 
 static int fclose_hook(FILE *stream) {
-
 #ifdef __WINDOWS__
-    physfsPtr *fsPtr = physfsGet(stream->_file);
+    int fd = stream->_file;
+    physfsPtr *fsPtr = physfsGet(fd);
 #else
+    int fd = stream->_fileno;
     physfsPtr *fsPtr = physfsGet(stream->_fileno);
 #endif
     if (fsPtr) {
-        printf("OK: fclose_hook:(%i)\n", stream->_file);
+        printf("OK: fclose_hook:(%i)\n", fd);
         PHYSFS_close(fsPtr->file);
         physfsDel(fsPtr->fd);
+        free(stream);
+        return 0;
     }
 
     return fclose_func(stream);
