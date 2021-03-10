@@ -86,11 +86,6 @@ int main(int argc, char *argv[]) {
             break;
         }
 
-        // time / delta time
-        //float delta = renderer->getDeltaTime().asSeconds();
-        //printf("Time: %f (delta: %f), fps: %2g\n",
-        //       renderer->getElapsedTime().asSeconds(), delta, renderer->getFps());
-
         // renderer everything
         renderer->flip();
     }
