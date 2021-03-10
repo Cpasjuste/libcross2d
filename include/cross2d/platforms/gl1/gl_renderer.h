@@ -25,6 +25,11 @@ namespace c2d {
         void clear() override;
 
         void flip(bool draw = true, bool inputs = true) override;
+
+    private:
+
+        const GLenum modes[7] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
+                                 GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
     };
 }
 

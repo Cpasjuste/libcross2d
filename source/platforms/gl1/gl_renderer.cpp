@@ -6,6 +6,7 @@
 
 // GLdc doesn't like mixing blend and non blend textures
 //#define BLEND_TEST 1
+//#define GL1_IMMEDIATE 1
 
 #include "cross2d/c2d.h"
 
@@ -45,7 +46,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     GLint texId = 0;
 
     if (vertexArray == nullptr || vertexArray->getVertexCount() < 1) {
-        //printf("GL1Renderer::draw: no vertices\n");
+        //printf("GLRenderer::draw: no vertices\n");
         return;
     }
 
@@ -65,23 +66,37 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
         if (texId != (GLint) tex->texID) {
             glBindTexture(GL_TEXTURE_2D, tex->texID);
         }
+#ifndef GL1_IMMEDIATE
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
 #if BLEND_TEST
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
     }
 #if BLEND_TEST
-    else if (vertices[0].color.a < 255) {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
+        else if (vertices[0].color.a < 255) {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
 #endif
 
-    const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
-                            GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
     GLenum mode = modes[vertexArray->getPrimitiveType()];
 
+#ifdef GL1_IMMEDIATE
+    glBegin(mode);
+    for (unsigned int i = 0; i < vertexCount; i++) {
+        if (tex && tex->available) {
+            glTexCoord2f(vertices[i].texCoords.x, vertices[i].texCoords.y);
+        }
+        glColor4f((float) vertices[i].color.r / 255.0f,
+                  (float) vertices[i].color.g / 255.0f,
+                  (float) vertices[i].color.b / 255.0f,
+                  (float) vertices[i].color.a / 255.0f);
+        glVertex2f(vertices[i].position.x, vertices[i].position.y);
+    }
+    glEnd();
+#else
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
@@ -95,13 +110,16 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
+#endif
 
     if (tex && tex->available) {
+#ifndef GL1_IMMEDIATE
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        glDisable(GL_TEXTURE_2D);
+#endif
 #if BLEND_TEST
         glDisable(GL_BLEND);
 #endif
+        glDisable(GL_TEXTURE_2D);
     }
 #if BLEND_TEST
     else if (vertices[0].color.a < 255) {

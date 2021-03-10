@@ -28,6 +28,8 @@ namespace c2d {
 
         unsigned int vao = 0;
 
+    private:
+
         const GLenum modes[7] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
                                  GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
     };
