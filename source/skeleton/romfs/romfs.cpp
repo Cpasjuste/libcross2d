@@ -19,24 +19,25 @@
 extern "C" char _binary_romfs_zip_start[];
 extern "C" char _binary_romfs_zip_end[];
 
-struct physfsPtr {
-    PHYSFS_File *file;
-    int fd;
-    size_t size;
+struct PhysPtr {
+    //std::string path;
+    PHYSFS_File *file = nullptr;
+    int fd = 0;
+    size_t size = 0;
 };
 
-static std::vector<physfsPtr> *physfsPtrList;
+static std::vector<PhysPtr> *physPtrList = nullptr;
 static int32_t initialised = 0;
 static funchook_t *funchook;
 static int fdcount = INT_MAX;
 
-static physfsPtr *physfsGet(int fd) {
+static PhysPtr *physGet(int fd) {
 
-    if (!physfsPtrList) {
+    if (!physPtrList) {
         return nullptr;
     }
 
-    for (auto &ptr : *physfsPtrList) {
+    for (auto &ptr : *physPtrList) {
         if (ptr.fd == fd) {
             return &ptr;
         }
@@ -45,15 +46,19 @@ static physfsPtr *physfsGet(int fd) {
     return nullptr;
 }
 
-static void *physfsDel(int fd) {
+static int physDel(int fd) {
 
-    for (size_t i = 0; i < physfsPtrList->size(); i++) {
-        if (physfsPtrList->at(i).fd == fd) {
-            physfsPtrList->erase(physfsPtrList->begin() + i);
+    if (!physPtrList) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < physPtrList->size(); i++) {
+        if (physPtrList->at(i).fd == fd) {
+            physPtrList->erase(physPtrList->begin() + i);
         }
     }
 
-    return nullptr;
+    return 0;
 }
 
 static bool isRomFs(const char *pathname) {
@@ -76,11 +81,12 @@ static int open_hook(const char *pathname, int flags, mode_t mode) {
         }
         if (file) {
             fdcount--;
-            physfsPtrList->push_back({file, fdcount, PHYSFS_fileLength(file)});
-            printf("OK: open_hook:(%s, %i, %i)\n", path.c_str(), flags, mode);
+            int size = PHYSFS_fileLength(file);
+            physPtrList->push_back({file, fdcount, size});
+            printf("OK: open_hook(%i, %s, %i, %i)\n", fdcount, path.c_str(), flags, mode);
             return fdcount;
         } else {
-            printf("NOK: open_hook:(%s, %i, %i)\n", path.c_str(), flags, mode);
+            printf("NOK: open_hook(%s, %i, %i)\n", path.c_str(), flags, mode);
             return -1;
         }
     }
@@ -92,10 +98,10 @@ static ssize_t (*read_func)(int fd, void *buf, size_t count);
 
 static ssize_t read_hook(int fd, void *buf, size_t count) {
 
-    physfsPtr *fsPtr = physfsGet(fd);
+    PhysPtr *fsPtr = physGet(fd);
     if (fsPtr) {
         size_t len = PHYSFS_readBytes(fsPtr->file, buf, count);
-        printf("OK: read_hook:(%i, %p, %zu), read = %zu\n", fd, buf, count, len);
+        printf("OK: read_hook(%i, %p, %zu), read = %zu\n", fd, buf, count, len);
         return len;
     }
 
@@ -106,7 +112,7 @@ static off_t (*lseek_func)(int fd, off_t offset, int whence);
 
 static off_t lseek_hook(int fd, off_t offset, int whence) {
 
-    physfsPtr *fsPtr = physfsGet(fd);
+    PhysPtr *fsPtr = physGet(fd);
     if (fsPtr) {
         off_t cur = PHYSFS_tell(fsPtr->file);
         if (whence == SEEK_SET) {
@@ -118,11 +124,11 @@ static off_t lseek_hook(int fd, off_t offset, int whence) {
         }
 
         if (PHYSFS_seek(fsPtr->file, cur) == 0) {
-            printf("NOK: lseek_hook:(%i, %li, %i)\n", fd, offset, whence);
+            printf("NOK: lseek_hook(%i, %li, %i)\n", fd, offset, whence);
             return -1;
         }
 
-        printf("OK: lseek_hook:(%i, %li, %i)\n", fd, offset, whence);
+        printf("OK: lseek_hook(%i, %li, %i)\n", fd, offset, whence);
         return cur;
     }
 
@@ -133,91 +139,15 @@ static int (*close_func)(int fd);
 
 static int close_hook(int fd) {
 
-    physfsPtr *fsPtr = physfsGet(fd);
+    PhysPtr *fsPtr = physGet(fd);
     if (fsPtr) {
-        printf("OK: close_hook:(%i)\n", fd);
+        printf("OK: close_hook(%i)\n", fd);
         PHYSFS_close(fsPtr->file);
-        physfsDel(fsPtr->fd);
-    }
-
-    return close_func(fd);
-}
-
-static FILE *(*fopen_func)(const char *filename, const char *mode);
-
-static FILE *fopen_hook(const char *filename, const char *mode) {
-
-    if (isRomFs(filename)) {
-        printf("OK: fopen_hook:(%s, %s)\n", filename, mode);
-        int fd = open_hook(filename, O_RDONLY, 0);
-        FILE *file = (FILE *) malloc(sizeof(FILE));
-        memset(file, 0, sizeof(FILE));
-#ifdef __WINDOWS__
-        file->_file = fd;
-#else
-        file->_fileno = fd;
-#endif
-        return file;
-    }
-
-    return fopen_func(filename, mode);
-}
-
-static size_t (*fread_func)(void *buffer, size_t blocSize, size_t blocCount, FILE *stream);
-
-static size_t fread_hook(void *buffer, size_t blocSize, size_t blocCount, FILE *stream) {
-#ifdef __WINDOWS__
-    int fd = stream->_file;
-    physfsPtr *fsPtr = physfsGet(fd);
-#else
-    int fd = stream->_fileno;
-    physfsPtr *fsPtr = physfsGet(stream->_fileno);
-#endif
-    if (fsPtr) {
-        printf("OK: fread_hook:(%i, %lu, %lu)\n", fd, blocSize, blocCount);
-        return read_hook(fd, buffer, blocSize * blocCount);
-    }
-
-    return fread_func(buffer, blocSize, blocCount, stream);
-}
-
-static int (*fseek_func)(FILE *stream, long offset, int whence);
-
-static int fseek_hook(FILE *stream, long offset, int whence) {
-#ifdef __WINDOWS__
-    int fd = stream->_file;
-    physfsPtr *fsPtr = physfsGet(fd);
-#else
-    int fd = stream->_fileno;
-    physfsPtr *fsPtr = physfsGet(stream->_fileno);
-#endif
-    if (fsPtr) {
-        printf("OK: fseek_hook:(%i, %lu, %i)\n", fd, offset, whence);
-        return lseek_hook(fd, offset, whence);
-    }
-
-    return fseek_func(stream, offset, whence);
-}
-
-static int (*fclose_func)(FILE *stream);
-
-static int fclose_hook(FILE *stream) {
-#ifdef __WINDOWS__
-    int fd = stream->_file;
-    physfsPtr *fsPtr = physfsGet(fd);
-#else
-    int fd = stream->_fileno;
-    physfsPtr *fsPtr = physfsGet(stream->_fileno);
-#endif
-    if (fsPtr) {
-        printf("OK: fclose_hook:(%i)\n", fd);
-        PHYSFS_close(fsPtr->file);
-        physfsDel(fsPtr->fd);
-        free(stream);
+        physDel(fsPtr->fd);
         return 0;
     }
 
-    return fclose_func(stream);
+    return close_func(fd);
 }
 
 int (*stat_func)(const char *pathname, struct stat *buf);
@@ -258,6 +188,94 @@ int stat_hook(const char *pathname, struct stat *buf) {
     return stat_func(pathname, buf);
 }
 
+static FILE *(*fopen_func)(const char *filename, const char *mode);
+
+static FILE *fopen_hook(const char *filename, const char *mode) {
+
+    if (isRomFs(filename)) {
+        printf("OK: fopen_hook(%s, %s)\n", filename, mode);
+        int fd = open_hook(filename, O_RDONLY, 0);
+        FILE *file = (FILE *) malloc(sizeof(FILE));
+        memset(file, 0, sizeof(FILE));
+#ifdef __WINDOWS__
+        file->_file = fd;
+#else
+        file->_fileno = fd;
+#endif
+        return file;
+    }
+
+    return fopen_func(filename, mode);
+}
+
+static size_t (*fread_func)(void *buffer, size_t blocSize, size_t blocCount, FILE *stream);
+
+static size_t fread_hook(void *buffer, size_t blocSize, size_t blocCount, FILE *stream) {
+#ifdef __WINDOWS__
+    int fd = stream->_file;
+#else
+    int fd = stream->_fileno;
+#endif
+    PhysPtr *fsPtr = physGet(fd);
+    if (fsPtr) {
+        printf("OK: fread_hook(%i, %lu, %lu)\n", fd, blocSize, blocCount);
+        return read_hook(fd, buffer, blocSize * blocCount);
+    }
+
+    return fread_func(buffer, blocSize, blocCount, stream);
+}
+
+static int (*fseek_func)(FILE *stream, long offset, int whence);
+
+static int fseek_hook(FILE *stream, long offset, int whence) {
+#ifdef __WINDOWS__
+    int fd = stream->_file;
+#else
+    int fd = stream->_fileno;
+#endif
+    PhysPtr *fsPtr = physGet(fd);
+    if (fsPtr) {
+        printf("OK: fseek_hook(%i, %lu, %i)\n", fd, offset, whence);
+        return lseek_hook(fd, offset, whence);
+    }
+
+    return fseek_func(stream, offset, whence);
+}
+
+static int (*fclose_func)(FILE *stream);
+
+static int fclose_hook(FILE *stream) {
+#ifdef __WINDOWS__
+    int fd = stream->_file;
+#else
+    int fd = stream->_fileno;
+#endif
+    PhysPtr *fsPtr = physGet(fd);
+    if (fsPtr) {
+        printf("OK: fclose_hook(%i)\n", fd);
+        PHYSFS_close(fsPtr->file);
+        physDel(fsPtr->fd);
+        free(stream);
+        return 0;
+    }
+
+    return fclose_func(stream);
+}
+
+int (*fstat_func)(int fd, struct stat *buf);
+
+int fstat_hook(int fd, struct stat *buf) {
+
+    PhysPtr *fsPtr = physGet(fd);
+    if (fsPtr) {
+        printf("OK: fstat_hook(%i)\n", fd);
+        return 0;
+        //return stat_hook(fsPtr->path.c_str(), buf);
+    }
+
+    return fstat_func(fd, buf);
+}
+
 int romfsInit() {
 
     int ret;
@@ -270,7 +288,7 @@ int romfsInit() {
     PHYSFS_mountMemory(_binary_romfs_zip_start, size,
                        nullptr, "romfs.zip", "/romfs", 1);
 
-    physfsPtrList = new std::vector<physfsPtr>();
+    physPtrList = new std::vector<PhysPtr>();
 
     funchook = funchook_create();
 
@@ -298,6 +316,12 @@ int romfsInit() {
         printf("romfsInit: close_hook failed\n");
     }
 
+    stat_func = (int (*)(const char *, struct stat *)) stat;
+    ret = funchook_prepare(funchook, (void **) &stat_func, (void *) stat_hook);
+    if (ret != 0) {
+        printf("romfsInit: stat_hook failed\n");
+    }
+
     fopen_func = (FILE *(*)(const char *, const char *)) fopen;
     ret = funchook_prepare(funchook, (void **) &fopen_func, (void *) fopen_hook);
     if (ret != 0) {
@@ -322,10 +346,10 @@ int romfsInit() {
         printf("romfsInit: fclose_hook failed\n");
     }
 
-    stat_func = (int (*)(const char *, struct stat *)) stat;
-    ret = funchook_prepare(funchook, (void **) &stat_func, (void *) stat_hook);
+    fstat_func = (int (*)(int, struct stat *)) fstat;
+    ret = funchook_prepare(funchook, (void **) &fstat_func, (void *) fstat_hook);
     if (ret != 0) {
-        printf("romfsInit: stat_hook failed\n");
+        printf("romfsInit: fstat_hook failed\n");
     }
 
     ret = funchook_install(funchook, 0);
@@ -346,8 +370,7 @@ int romfsExit() {
     funchook_destroy(funchook);
 
     PHYSFS_deinit();
-    delete (physfsPtrList);
-    physfsPtrList = nullptr;
+    delete (physPtrList);
 
     initialised = 0;
 

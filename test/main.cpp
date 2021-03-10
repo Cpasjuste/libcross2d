@@ -4,6 +4,12 @@
 
 #include "cross2d/c2d.h"
 
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 using namespace c2d;
 
 int main(int argc, char *argv[]) {
@@ -13,6 +19,16 @@ int main(int argc, char *argv[]) {
     renderer->setPrintStats(true);
     renderer->setClearColor(Color::Black);
 
+    int fd = open((renderer->getIo()->getRomFsPath() + "comicate.ttf").c_str(), O_RDONLY);
+    struct stat st{};
+    if (fstat(fd, &st) != 0) {
+        printf("fstat failed...\n");
+    } else {
+        printf("file size: %li\n", st.st_size);
+    }
+    close(fd);
+
+#if 0
     auto *border = new C2DRectangle({2, 2,
                                      renderer->getSize().x - 4, renderer->getSize().y - 4});
     border->setFillColor(Color::Transparent);
@@ -48,8 +64,10 @@ int main(int argc, char *argv[]) {
         rect->add(tex);
     }
 
-    // create a font
-    auto *text = new C2DText("libcross2d @ Cpasjuste");
+    // create a text
+    auto *font = new Font();
+    font->loadFromFile(renderer->getIo()->getRomFsPath() + "comicate.ttf");
+    auto *text = new Text("libcross2d @ Cpasjuste", C2D_DEFAULT_CHAR_SIZE, font);
     text->setOutlineThickness(2);
     text->setPosition(rect->getSize().x - 16 * scaling, rect->getSize().y - 16 * scaling);
     text->setOrigin(Origin::BottomRight);
@@ -92,6 +110,6 @@ int main(int argc, char *argv[]) {
 
     // will delete child's (textures, shapes, text..)
     delete (renderer);
-
+#endif
     return 0;
 }
