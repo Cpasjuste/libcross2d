@@ -6,8 +6,6 @@
 
 using namespace c2d;
 
-extern int32_t romfsInit();
-
 int main(int argc, char *argv[]) {
 
     // create main renderer

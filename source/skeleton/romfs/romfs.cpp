@@ -11,6 +11,11 @@
 #include <algorithm>
 #include <climits>
 
+#ifdef NDEBUG
+#pragma GCC diagnostic ignored "-Wunused-value"
+#define printf(fmt, ...) (0)
+#endif
+
 extern "C" char _binary_romfs_zip_start[];
 extern "C" char _binary_romfs_zip_end[];
 
@@ -97,6 +102,33 @@ static ssize_t read_hook(int fd, void *buf, size_t count) {
     return read_func(fd, buf, count);
 }
 
+static off_t (*lseek_func)(int fd, off_t offset, int whence);
+
+static off_t lseek_hook(int fd, off_t offset, int whence) {
+
+    physfsPtr *fsPtr = physfsGet(fd);
+    if (fsPtr) {
+        off_t cur = PHYSFS_tell(fsPtr->file);
+        if (whence == SEEK_SET) {
+            cur = offset;
+        } else if (whence == SEEK_CUR) {
+            cur += offset;
+        } else if (whence == SEEK_END) {
+            cur = fsPtr->size + offset;
+        }
+
+        if (PHYSFS_seek(fsPtr->file, cur) == 0) {
+            printf("NOK: lseek_hook:(%i, %li, %i)\n", fd, offset, whence);
+            return -1;
+        }
+
+        printf("OK: lseek_hook:(%i, %li, %i)\n", fd, offset, whence);
+        return cur;
+    }
+
+    return lseek_func(fd, offset, whence);
+}
+
 static int (*close_func)(int fd);
 
 static int close_hook(int fd) {
@@ -127,6 +159,30 @@ static FILE *fopen_hook(const char *filename, const char *mode) {
     return fopen_func(filename, mode);
 }
 
+static size_t (*fread_func)(void *buffer, size_t blocSize, size_t blocCount, FILE *stream);
+
+static size_t fread_hook(void *buffer, size_t blocSize, size_t blocCount, FILE *stream) {
+    physfsPtr *fsPtr = physfsGet(stream->_file);
+    if (fsPtr) {
+        printf("OK: fread_hook:(%i, %llu, %llu)\n", stream->_file, blocSize, blocCount);
+        return read_hook(stream->_file, buffer, blocSize * blocCount);
+    }
+
+    return fread_func(buffer, blocSize, blocCount, stream);
+}
+
+static int (*fseek_func)(FILE *stream, long offset, int whence);
+
+static int fseek_hook(FILE *stream, long offset, int whence) {
+    physfsPtr *fsPtr = physfsGet(stream->_file);
+    if (fsPtr) {
+        printf("OK: fseek_hook:(%i, %lu, %i)\n", stream->_file, offset, whence);
+        return lseek_hook(stream->_file, offset, whence);
+    }
+
+    return fseek_func(stream, offset, whence);
+}
+
 static int (*fclose_func)(FILE *stream);
 
 static int fclose_hook(FILE *stream) {
@@ -143,33 +199,6 @@ static int fclose_hook(FILE *stream) {
     }
 
     return fclose_func(stream);
-}
-
-static off_t (*lseek_func)(int fd, off_t offset, int whence);
-
-static off_t lseek_hook(int fd, off_t offset, int whence) {
-
-    physfsPtr *fsPtr = physfsGet(fd);
-    if (fsPtr) {
-        off_t cur = PHYSFS_tell(fsPtr->file);
-        if (whence == SEEK_SET) {
-            cur = offset;
-        } else if (whence == SEEK_CUR) {
-            cur += offset;
-        } else if (whence == SEEK_END) {
-            cur = fsPtr->size + offset;
-        }
-
-        if (PHYSFS_seek(fsPtr->file, cur) == 0) {
-            printf("NOK: lseek_hook:(%i, %li, %i)\n", fd, offset, whence);
-            return -1;
-        }
-
-        printf("OK: lseek_hook:(%i, %li, %i)\n", fd, offset, whence);
-        return cur;
-    }
-
-    return lseek_func(fd, offset, whence);
 }
 
 int (*stat_func)(const char *pathname, struct stat *buf);
@@ -238,6 +267,12 @@ int romfsInit() {
         printf("romfsInit: read_hook failed\n");
     }
 
+    lseek_func = (off_t (*)(int, off_t, int)) lseek;
+    ret = funchook_prepare(funchook, (void **) &lseek_func, (void *) lseek_hook);
+    if (ret != 0) {
+        printf("romfsInit: lseek_hook failed\n");
+    }
+
     close_func = (int (*)(int)) close;
     ret = funchook_prepare(funchook, (void **) &close_func, (void *) close_hook);
     if (ret != 0) {
@@ -250,16 +285,22 @@ int romfsInit() {
         printf("romfsInit: fopen_hook failed\n");
     }
 
+    fread_func = (size_t (*)(void *, size_t, size_t, FILE *)) fread;
+    ret = funchook_prepare(funchook, (void **) &fread_func, (void *) fread_hook);
+    if (ret != 0) {
+        printf("romfsInit: fread_hook failed\n");
+    }
+
+    fseek_func = (int (*)(FILE *, long, int)) fseek;
+    ret = funchook_prepare(funchook, (void **) &fseek_func, (void *) fseek_hook);
+    if (ret != 0) {
+        printf("romfsInit: fseek_hook failed\n");
+    }
+
     fclose_func = (int (*)(FILE *)) fclose;
     ret = funchook_prepare(funchook, (void **) &fclose_func, (void *) fclose_hook);
     if (ret != 0) {
         printf("romfsInit: fclose_hook failed\n");
-    }
-
-    lseek_func = (off_t (*)(int, off_t, int)) lseek;
-    ret = funchook_prepare(funchook, (void **) &lseek_func, (void *) lseek_hook);
-    if (ret != 0) {
-        printf("romfsInit: lseek_hook failed\n");
     }
 
     stat_func = (int (*)(const char *, struct stat *)) stat;
