@@ -52,39 +52,41 @@ namespace c2d {
 
         Time getDeltaTime() const;
 
+        Time getElapsedTime() const;
+
         float getFps() const;
 
-        virtual Io *getIo() { return io; };
+        virtual Io *getIo() { return m_io; };
 
-        virtual void setIo(Io *_io) {
-            if (io != nullptr) { delete (io); }
-            io = _io;
+        virtual void setIo(Io *io) {
+            if (m_io) { delete (m_io); }
+            m_io = io;
         };
 
-        virtual Font *getFont() { return font; };
+        virtual Font *getFont() { return m_font; };
 
-        virtual void setFont(Font *_font) {
-            if (font != nullptr) { delete (font); }
-            font = _font;
+        virtual void setFont(Font *font) {
+            if (m_font) { delete (m_font); }
+            m_font = font;
         };
 
-        virtual Input *getInput() { return input; };
+        virtual Input *getInput() { return m_input; };
 
-        virtual void setInput(Input *_input) {
-            if (input != nullptr) { delete (input); }
-            input = _input;
+        virtual void setInput(Input *input) {
+            if (m_input) { delete (m_input); }
+            m_input = input;
         };
+
+        virtual void setPrintStats(bool enable) {
+            m_stats_print = enable;
+        }
 
         virtual int getDrawCalls() {
-            return draw_calls;
+            return m_draw_calls;
         }
 
         virtual int getDrawCallsBatched() {
-            return draw_calls_batched;
-        }
-
-        virtual float getDrawTime() {
-            return draw_time;
+            return m_draw_calls_batched;
         }
 
     protected:
@@ -92,19 +94,18 @@ namespace c2d {
         void onUpdate() override;
 
         Color m_clearColor = Color::Black;
-        bool process_inputs = true;
-        Input *input = nullptr;
-        Io *io = nullptr;
-        Font *font = nullptr;
-        ShaderList *shaderList = nullptr;
-        Clock *deltaClock = nullptr, *fpsClock = nullptr;
-        Time deltaTime;
-        float time_now = 0, time_last = 0, fps = 0;
-        int frames = 0;
-        Clock *drawTimer;
-        int draw_calls;
-        int draw_calls_batched;
-        float draw_time;
+        bool m_process_inputs = true;
+        Input *m_input = nullptr;
+        Io *m_io = nullptr;
+        Font *m_font = nullptr;
+        ShaderList *m_shaderList = nullptr;
+        Clock *m_elapsedClock, *m_deltaClock;
+        Time m_deltaTime, m_statsTime;
+        float m_fps = 0, m_fpsStats = 0;
+        int m_frames = 0;
+        int m_draw_calls;
+        int m_draw_calls_batched;
+        bool m_stats_print = false;
     };
 }
 

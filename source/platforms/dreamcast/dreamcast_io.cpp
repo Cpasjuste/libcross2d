@@ -79,6 +79,28 @@ Io::Type DCIo::getType(const std::string &file) {
     return type;
 }
 
+bool DCIo::existsFile(const std::string &path) {
+
+    file_t f = fs_open(path.c_str(), O_RDONLY);
+    if (f != FILEHND_INVALID) {
+        fs_close(f);
+        return true;
+    }
+
+    return false;
+}
+
+bool DCIo::existsDir(const std::string &path) {
+
+    file_t f = fs_open(path.c_str(), O_DIR | O_RDONLY);
+    if (f != FILEHND_INVALID) {
+        fs_close(f);
+        return true;
+    }
+
+    return false;
+}
+
 bool DCIo::exist(const std::string &path) {
 
     file_t f = fs_open(path.c_str(), O_RDONLY);
@@ -143,16 +165,16 @@ bool DCIo::removeDir(const std::string &path) {
     return fs_rmdir(path.c_str()) == 0;
 }
 
-char *DCIo::read(const std::string &file, size_t offset, size_t size) {
+size_t DCIo::read(const std::string &file, char **out, size_t size, size_t offset) {
 
     file_t fd;
     size_t file_size;
-    char *buffer = nullptr;
+    size_t read_size;
 
     fd = fs_open(file.c_str(), O_RDONLY);
     if (fd == FILEHND_INVALID) {
         printf("DCIo::read: can't open %s\n", file.c_str());
-        return nullptr;
+        return -1;
     }
 
     file_size = fs_total(fd);
@@ -169,17 +191,18 @@ char *DCIo::read(const std::string &file, size_t offset, size_t size) {
         fs_seek(fd, offset, SEEK_SET);
     }
 
-    buffer = (char *) malloc(size);
-    if (fs_read(fd, buffer, size) != (ssize_t) size) {
+    *out = (char *) malloc(size);
+    read_size = fs_read(fd, *out, size);
+    if (read_size != size) {
         fs_close(fd);
-        free(buffer);
+        free(*out);
         printf("DCIo::read: can't read %s\n", file.c_str());
-        return nullptr;
+        return -1;
     }
 
     fs_close(fd);
 
-    return buffer;
+    return read_size;
 }
 
 bool DCIo::write(const std::string &file, const char *data, size_t size) {
@@ -235,11 +258,10 @@ std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool 
         }
 
         // skip some stuff
-        if (std::string(ent->name) == "ram" || std::string(ent->name) == "pty"
-            || std::string(ent->name) == "rd" || std::string(ent->name) == "pc"
-            || Utility::toLower(ent->name) == "recycler"
-            || Utility::toLower(ent->name) == "$recycle.bin"
-            || (Utility::toLower(ent->name) == "system volume information")) {
+        std::string lower = Utility::toLower(ent->name);
+        if (strcmp(ent->name, "ram") == 0 || strcmp(ent->name, "pty") == 0
+            || strcmp(ent->name, "rd") == 0 || strcmp(ent->name, "pc") == 0
+            || lower == "recycler" || lower == "$recycle.bin" || lower == "system volume information") {
             continue;
         }
 
@@ -248,7 +270,6 @@ std::vector<Io::File> DCIo::getDirList(const std::string &path, bool sort, bool 
         file.path = Utility::removeLastSlash(path) + "/" + file.name;
         file.type = ent->attr == O_DIR ? Type::Directory : Type::File;
         file.size = ent->size;
-        file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
         files.push_back(file);
     }
 
@@ -282,7 +303,7 @@ Io::File DCIo::findFile(const std::string &path,
                     file.name = ent->name;
                     file.path = Utility::removeLastSlash(path) + "/" + file.name;
                     file.type = ent->attr == O_DIR ? Type::Directory : Type::File;
-                    file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
+                    file.size = ent->size;
                     break;
                 }
             }

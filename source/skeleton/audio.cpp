@@ -19,7 +19,7 @@ Audio::Audio(int rate, int samples, C2DAudioCallback cb) {
     m_samples_size = m_samples * channels * (int) sizeof(int16_t);
 
     m_buffer = new SampleBuffer();
-    m_buffer->resize(samples * 5);
+    m_buffer->resize(m_samples * 5);
 
     callback = cb;
     available = true;
@@ -29,6 +29,7 @@ Audio::Audio(int rate, int samples, C2DAudioCallback cb) {
 }
 
 void Audio::play(const void *data, int samples, bool sync) {
+
     if (available) {
         if (paused) {
             pause(0);
@@ -38,15 +39,15 @@ void Audio::play(const void *data, int samples, bool sync) {
             return;
         }
 
-        int size = samples * channels * (int) sizeof(int16_t);
+        int size = samples * channels * (int) sizeof(int16_t) >> 1;
         if (sync) {
-            while (getSampleBufferQueued() > size >> 1) {
+            while (getSampleBufferQueued() > size) {
                 c2d_renderer->delay(1);
             }
         }
 
         lock();
-        m_buffer->push((int16_t *) data, size >> 1);
+        m_buffer->push((int16_t *) data, size);
         unlock();
     }
 }
@@ -67,19 +68,19 @@ void Audio::pause(int pause) {
     }
 }
 
-int Audio::getSampleRate() const {
+int Audio::getSampleRate() {
     return m_sample_rate;
 }
 
-int Audio::getChannels() const {
+int Audio::getChannels() {
     return channels;
 }
 
-int Audio::getSamples() const {
+int Audio::getSamples() {
     return m_samples;
 }
 
-int Audio::getSamplesSize() const {
+int Audio::getSamplesSize() {
     return m_samples_size;
 }
 
@@ -87,19 +88,23 @@ SampleBuffer *Audio::getSampleBuffer() {
     return m_buffer;
 }
 
-int Audio::getSampleBufferQueued() const {
+int Audio::getSampleBufferQueued() {
     return m_buffer->space_filled();
 }
 
-int Audio::getSampleBufferCapacity() const {
+int Audio::getSampleBufferCapacity() {
     return m_buffer->space();
 }
 
-int Audio::getSampleBufferAvailable() const {
+int Audio::getSampleBufferAvailable() {
     return m_buffer->space_empty();
 }
 
-bool Audio::isAvailable() const {
+int Audio::toSamples(int rate, float fps) {
+    return (int) ((float) rate / fps);
+}
+
+bool Audio::isAvailable() {
     return available;
 }
 
@@ -119,5 +124,3 @@ Audio::~Audio() {
         delete (mutex);
     }
 }
-
-

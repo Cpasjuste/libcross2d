@@ -13,6 +13,8 @@ int SwitchSys::stock_emc_clock = 0;
 int SwitchSys::getClock(const SwitchSys::Module &module, bool stockClocks) {
 
     u32 hz = 0;
+
+#ifdef NDEBUG
     int bus_id = 0;
     bool is_old = hosversionBefore(8, 0, 0);
 
@@ -51,12 +53,14 @@ int SwitchSys::getClock(const SwitchSys::Module &module, bool stockClocks) {
         clkrstGetClockRate(&session, &hz);
         clkrstCloseSession(&session);
     }
+#endif
 
     return (int) hz;
 }
 
 bool SwitchSys::setClock(const SwitchSys::Module &module, int hz) {
 
+#ifdef NDEBUG
     int new_hz = hz;
     int bus_id = (int) module;
     bool is_old = hosversionBefore(8, 0, 0);
@@ -88,6 +92,7 @@ bool SwitchSys::setClock(const SwitchSys::Module &module, int hz) {
         clkrstSetClockRate(&session, hz);
         clkrstCloseSession(&session);
     }
+#endif
 
     return false;
 }

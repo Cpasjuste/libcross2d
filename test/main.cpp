@@ -12,6 +12,7 @@ int main(int argc, char *argv[]) {
 
     // create main renderer
     auto *renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
+    renderer->setPrintStats(true);
     renderer->setClearColor(Color::Black);
 
     auto *border = new C2DRectangle({2, 2,
@@ -86,11 +87,6 @@ int main(int argc, char *argv[]) {
         if (renderer->getInput()->getKeys() != 0) {
             break;
         }
-
-        // time / delta time
-        //float delta = renderer->getDeltaTime().asSeconds();
-        //printf("Time: %f (delta: %f), fps: %2g\n",
-        //       renderer->getElapsedTime().asSeconds(), delta, renderer->getFps());
 
         // renderer everything
         renderer->flip();

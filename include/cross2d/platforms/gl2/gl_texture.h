@@ -30,8 +30,6 @@ namespace c2d {
 
         void setFilter(Filter filter) override;
 
-        void setShader(int shaderIndex) override;
-
         unsigned int texID = 0;
 
         unsigned char *pixels = nullptr;

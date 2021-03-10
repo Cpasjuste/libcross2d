@@ -161,16 +161,16 @@ Io::Type POSIXIo::getType(const std::string &file) {
     return S_ISDIR(st.st_mode) ? Type::Directory : Type::File;
 }
 
-char *POSIXIo::read(const std::string &file, size_t offset, size_t size) {
+size_t POSIXIo::read(const std::string &file, char **out, size_t size, size_t offset) {
 
-    FILE *fp = nullptr;
+    FILE *fp;
     size_t file_size;
-    char *buffer = nullptr;
+    size_t read_size;
 
     fp = fopen(file.c_str(), "rb");
     if (fp == nullptr) {
         printf("POSIXIo::read: can't open %s\n", file.c_str());
-        return nullptr;
+        return -1;
     }
 
     fseek(fp, 0L, SEEK_END);
@@ -189,18 +189,18 @@ char *POSIXIo::read(const std::string &file, size_t offset, size_t size) {
         fseek(fp, offset, SEEK_SET);
     }
 
-    buffer = (char *) malloc(size);
-
-    if (fread(buffer, 1, size, fp) != size) {
+    *out = (char *) malloc(size);
+    read_size = fread(*out, 1, size, fp);
+    if (read_size != size) {
         fclose(fp);
-        free(buffer);
+        free(*out);
         printf("POSIXIo::read: can't read %s\n", file.c_str());
-        return nullptr;
+        return -1;
     }
 
     fclose(fp);
 
-    return buffer;
+    return read_size;
 }
 
 bool POSIXIo::write(const std::string &file, const char *data, size_t size) {
@@ -256,7 +256,6 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bo
                     file.type = S_ISDIR(st.st_mode) ? Type::Directory : Type::File;
                 }
 #endif
-                file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
                 files.push_back(file);
             }
             closedir(dir);
@@ -302,7 +301,6 @@ Io::File POSIXIo::findFile(const std::string &path,
                         file.type = S_ISDIR(st.st_mode) ? Type::Directory : Type::File;
                     }
 #endif
-                    file.color = file.type == Type::Directory ? Color::Yellow : Color::White;
                     break;
                 }
             }

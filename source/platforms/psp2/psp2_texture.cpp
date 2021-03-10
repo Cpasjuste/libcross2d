@@ -29,7 +29,8 @@ PSP2Texture::PSP2Texture(const std::string &p) : Texture(p) {
         return;
     }
 
-    PSP2Texture::setSize((float) vita2d_texture_get_width(tex), (float) vita2d_texture_get_height(tex));
+    tex_size = {vita2d_texture_get_width(tex), vita2d_texture_get_height(tex)};
+    PSP2Texture::setSize((float) tex_size.x, (float) tex_size.y);
     setTexture(this, true);
     pitch = (int) vita2d_texture_get_stride(tex);
     PSP2Texture::setFilter(filter);
@@ -50,6 +51,7 @@ PSP2Texture::PSP2Texture(const Vector2f &size, Format fmt) : Texture(size, fmt) 
         return;
     }
 
+    tex_size = {size.x, size.y};
     PSP2Texture::setSize(size.x, size.y);
     setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     setTexture(this, true);
@@ -69,7 +71,8 @@ PSP2Texture::PSP2Texture(const unsigned char *buffer, int bufferSize) : Texture(
         return;
     }
 
-    PSP2Texture::setSize((float) vita2d_texture_get_width(tex), (float) vita2d_texture_get_height(tex));
+    tex_size = {vita2d_texture_get_width(tex), vita2d_texture_get_height(tex)};
+    PSP2Texture::setSize((float) tex_size.x, (float) tex_size.y);
     setTexture(this, true);
     pitch = (int) vita2d_texture_get_stride(tex);
     PSP2Texture::setFilter(filter);
@@ -112,6 +115,7 @@ int PSP2Texture::resize(const Vector2f &size, bool copyPixels) {
     vita2d_free_texture(tex);
     tex = tex_new;
     pitch = (int) size.x * bpp;
+    tex_size = {(int) size.x, (int) size.y)};
     setSize(size);
     setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     setFilter(filter);

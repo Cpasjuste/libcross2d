@@ -30,21 +30,21 @@ namespace c2d {
             File() = default;
 
             File(const std::string &name, const std::string &path,
-                 Type type = Type::File, const size_t &size = 0, const Color &color = Color::White) {
+                 Type type = Type::File, const size_t &size = 0) {
                 this->name = name;
                 this->path = path;
                 this->type = type;
                 this->size = size;
-                this->color = color;
+            }
+
+            bool isFile() const {
+                return type == Type::File;
             }
 
             std::string name;
             std::string path;
             size_t size = 0;
             Type type = Type::Unknown;
-            // for ui
-            Color color = Color::White;
-            Texture *icon = nullptr;
         };
 
         Io() = default;
@@ -111,8 +111,8 @@ namespace c2d {
             return File();
         }
 
-        virtual char *read(const std::string &file, size_t offset = 0, size_t size = 0) {
-            return nullptr;
+        virtual size_t read(const std::string &file, char **out, size_t size = 0, size_t offset = 0) {
+            return -1;
         }
 
         virtual bool write(const std::string &file, const char *data, size_t size) {

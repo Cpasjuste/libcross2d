@@ -22,7 +22,7 @@ namespace c2d {
 
         void reset() override;
 
-        SDL_AudioDeviceID getDeviceID() const;
+        SDL_AudioDeviceID getDeviceID();
 
     private:
 

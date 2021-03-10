@@ -37,7 +37,7 @@
 #include <cstdlib>
 #include <cstring>
 
-c2d::Vector2f c2d_default_font_texture_size = {128, 128};
+//c2d::Vector2f c2d_default_font_texture_size = {128, 128};
 extern unsigned char c2d_font_default[];
 extern int c2d_font_default_length;
 
@@ -52,31 +52,10 @@ namespace c2d {
             m_info() {
     }
 
-
-////////////////////////////////////////////////////////////
-    Font::Font(const Font &copy) :
-            m_library(copy.m_library),
-            m_face(copy.m_face),
-            m_streamRec(copy.m_streamRec),
-            m_stroker(copy.m_stroker),
-            m_refCount(copy.m_refCount),
-            m_info(copy.m_info),
-            m_pages(copy.m_pages),
-            m_pixelBuffer(copy.m_pixelBuffer) {
-
-        // Note: as FreeType doesn't provide functions for copying/cloning,
-        // we must share all the FreeType pointers
-
-        if (m_refCount)
-            (*m_refCount)++;
-    }
-
-
 ////////////////////////////////////////////////////////////
     Font::~Font() {
-        cleanup();
+        Font::cleanup();
     }
-
 
 ////////////////////////////////////////////////////////////
     bool Font::loadFromFile(const std::string &filename) {
@@ -198,8 +177,7 @@ namespace c2d {
 
 
 ////////////////////////////////////////////////////////////
-    const Glyph &
-    Font::getGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const {
+    Glyph Font::getGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) {
         // Get the page corresponding to the character size
         GlyphTable &glyphs = m_pages[characterSize].glyphs;
         if (m_pages[characterSize].texture != nullptr) {
@@ -211,7 +189,7 @@ namespace c2d {
                        | static_cast<uint64_t>(codePoint);
 
         // Search the glyph into the cache
-        GlyphTable::const_iterator it = glyphs.find(key);
+        auto it = glyphs.find(key);
         if (it != glyphs.end()) {
             // Found: just return it
             return it->second;
@@ -314,29 +292,12 @@ namespace c2d {
     }
 
     void Font::setOffset(Vector2f off) {
-        offset = off;
+        m_offset = off;
     }
 
     Vector2f Font::getOffset() const {
-        return offset;
+        return m_offset;
     }
-
-////////////////////////////////////////////////////////////
-    Font &Font::operator=(const Font &right) {
-        Font temp(right);
-
-        std::swap(m_library, temp.m_library);
-        std::swap(m_face, temp.m_face);
-        std::swap(m_streamRec, temp.m_streamRec);
-        std::swap(m_stroker, temp.m_stroker);
-        std::swap(m_refCount, temp.m_refCount);
-        std::swap(m_info, temp.m_info);
-        std::swap(m_pages, temp.m_pages);
-        std::swap(m_pixelBuffer, temp.m_pixelBuffer);
-
-        return *this;
-    }
-
 
 ////////////////////////////////////////////////////////////
     void Font::cleanup() {
@@ -709,7 +670,7 @@ namespace c2d {
         }
 
         //printf("Font:: create new tex\n");
-        texture = new C2DTexture(c2d_default_font_texture_size, Texture::Format::RGBA8);
+        texture = new C2DTexture({128, 128}, Texture::Format::RGBA8);
 
         // Reserve a 2x2 white square for texturing underlines
         uint8_t *buffer;

@@ -27,6 +27,11 @@ namespace c2d {
         void flip(bool draw = true, bool inputs = true) override;
 
         unsigned int vao = 0;
+
+    private:
+
+        const GLenum modes[7] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
+                                 GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
     };
 
     void CheckOpenGLError(const char *stmt, const char *fname, int line);

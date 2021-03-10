@@ -276,17 +276,6 @@ void GLTexture::setFilter(Filter f) {
                     filter == Filter::Linear ? GL_LINEAR : GL_NEAREST);
 }
 
-void GLTexture::setShader(int shaderIndex) {
-
-    ShaderList *shaderList = c2d_renderer->getShaderList();
-    if (shaderIndex >= shaderList->getCount()) {
-        shader = shaderList->get(0);
-        return;
-    }
-
-    shader = shaderList->get(shaderIndex);
-}
-
 GLTexture::~GLTexture() {
 
     //printf("~GLTexture(%p)\n", this);

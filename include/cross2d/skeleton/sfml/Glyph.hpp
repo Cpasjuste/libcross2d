@@ -28,9 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-//#include <SFML/Graphics/Export.hpp>
 #include "Rect.hpp"
-
 
 namespace c2d {
 ////////////////////////////////////////////////////////////
@@ -46,6 +44,12 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         Glyph() : advance(0) {}
 
+        Glyph(float advance, FloatRect bounds, IntRect textureRect) {
+            this->advance = advance;
+            this->bounds = bounds;
+            this->textureRect = textureRect;
+        }
+
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
@@ -54,7 +58,7 @@ namespace c2d {
         IntRect textureRect; ///< Texture coordinates of the glyph inside the font's texture
     };
 
-} // namespace sf
+} // namespace c2d
 
 
 #endif // SFML_GLYPH_HPP

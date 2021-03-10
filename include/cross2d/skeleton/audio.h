@@ -35,23 +35,25 @@ namespace c2d {
 
         bool unlock();
 
-        bool isAvailable() const;
+        bool isAvailable();
 
-        int getChannels() const;
+        int getChannels();
 
-        int getSampleRate() const;
+        int getSampleRate();
 
-        int getSamples() const;
+        int getSamples();
 
-        int getSamplesSize() const;
+        int getSamplesSize();
 
         SampleBuffer *getSampleBuffer();
 
-        int getSampleBufferQueued() const;
+        int getSampleBufferQueued();
 
-        int getSampleBufferCapacity() const;
+        int getSampleBufferCapacity();
 
-        int getSampleBufferAvailable() const;
+        int getSampleBufferAvailable();
+
+        static int toSamples(int rate, float fps);
 
     protected:
 

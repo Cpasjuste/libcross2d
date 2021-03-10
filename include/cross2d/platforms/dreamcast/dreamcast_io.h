@@ -17,6 +17,10 @@ namespace c2d {
 
         bool exist(const std::string &path) override;
 
+        static bool existsFile(const std::string &path);
+
+        static bool existsDir(const std::string &path);
+
         size_t getSize(const std::string &file) override;
 
         Type getType(const std::string &file) override;
@@ -35,7 +39,7 @@ namespace c2d {
         File findFile(const std::string &path,
                       const std::vector<std::string> &whitelist, const std::string &blacklist) override;
 
-        char *read(const std::string &file, size_t offset = 0, size_t size = 0) override;
+        size_t read(const std::string &file, char **out, size_t size = 0, size_t offset = 0) override;
 
         bool write(const std::string &file, const char *data, size_t size) override;
 

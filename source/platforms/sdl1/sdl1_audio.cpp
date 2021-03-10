@@ -19,8 +19,6 @@ static void audioThread(void *data, Uint8 *stream, int size) {
         audio->lock();
         audio->getSampleBuffer()->pull((int16_t *) stream, size >> 1);
         audio->unlock();
-    } else {
-        SDL_Delay(1);
     }
 }
 

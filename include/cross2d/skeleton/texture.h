@@ -46,7 +46,7 @@ namespace c2d {
 
         virtual void setFilter(Filter filter) { this->filter = filter; };
 
-        virtual void setShader(int shaderIndex) {};
+        virtual void setShader(int shaderIndex);
 
         virtual void applyShader() {};
         // END - to implement, device specific code

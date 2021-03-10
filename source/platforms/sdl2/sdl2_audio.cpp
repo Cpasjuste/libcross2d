@@ -12,7 +12,7 @@ static void audioThread(void *data, Uint8 *stream, int size) {
     auto audio = (SDL2Audio *) data;
 
     //printf("c2d::sdl2audio::thread: want: %i, filled: %i\n",
-    //     len >> 1, audio->getAudioBufferQueued());
+    //       size, audio->getSampleBufferQueued());
 
     if (audio->getSampleBufferQueued() >= size >> 1) {
         audio->lock();
@@ -60,6 +60,7 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
     printf("SDL2Audio: channels %d (wanted: %d)\n", wanted.channels, obtained.channels);
 
     SDL_PauseAudioDevice(deviceID, 1);
+    available = true;
 }
 
 SDL2Audio::~SDL2Audio() {
@@ -92,6 +93,6 @@ void SDL2Audio::reset() {
     Audio::reset();
 }
 
-SDL_AudioDeviceID SDL2Audio::getDeviceID() const {
+SDL_AudioDeviceID SDL2Audio::getDeviceID() {
     return deviceID;
 }

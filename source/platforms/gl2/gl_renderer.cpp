@@ -33,7 +33,7 @@ void GLRenderer::initGL() {
     GL_CHECK(glDepthMask(GL_FALSE));
 
     // init shaders
-    shaderList = (ShaderList *) new GLShaderList();
+    m_shaderList = (ShaderList *) new GLShaderList();
 }
 
 void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture, Sprite *sprite) {
@@ -43,7 +43,6 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     GLTexture *tex;
     GLShader *shader;
     Vector2f inputSize, textureSize, outputSize;
-    GLint texId = 0;
 
     if (vertexArray == nullptr || vertexArray->getVertexCount() < 1) {
         //printf("gl_render::draw: no vertices\n");
@@ -53,8 +52,8 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     vertices = vertexArray->getVertices()->data();
     vertexCount = vertexArray->getVertexCount();
     tex = sprite ? (GLTexture *) sprite->getTexture() : (GLTexture *) texture;
-    shader = tex && tex->available ? (GLShader *) shaderList->get(0)->data :
-             (GLShader *) ((GLShaderList *) shaderList)->color->data;
+    shader = tex && tex->available ? (GLShader *) m_shaderList->get(0)->data :
+             (GLShader *) ((GLShaderList *) m_shaderList)->color->data;
     if (tex && tex->shader) {
         shader = (GLShader *) tex->shader->data;
     }
@@ -80,19 +79,13 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     if (tex && tex->available) {
         // bind texture
-        glGetIntegerv(GL_TEXTURE_BINDING_2D, &texId);
-        if (texId != (GLint) tex->texID) {
-            GL_CHECK(glBindTexture(GL_TEXTURE_2D, tex->texID));
-        } else {
-            //printf("glBindTexture: skipping: %i\n", texId);
-            draw_calls_batched++;
-        }
+        GL_CHECK(glBindTexture(GL_TEXTURE_2D, tex->texID));
         // set tex coords
         GL_CHECK(glEnableVertexAttribArray(2));
         GL_CHECK(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                                        (void *) offsetof(Vertex, texCoords)));
         // set retroarch shader params
-        if (sprite != nullptr) {
+        if (sprite) {
             inputSize = {sprite->getTextureRect().width, sprite->getTextureRect().height};
             textureSize = {sprite->getTexture()->getSize().x, sprite->getTexture()->getSize().y};
             outputSize = {inputSize.x * sprite->getScale().x, inputSize.y * sprite->getScale().y};
@@ -114,7 +107,6 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 #endif
     }
 
-    // projection
 #ifdef __SDL1__
     int w = getSize().x, h = getSize().y;
 #else
@@ -122,7 +114,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     SDL_Window *window = ((SDL2Renderer *) this)->getWindow();
     SDL_GL_GetDrawableSize(window, &w, &h);
 #endif
-
+    // projection
     auto projectionMatrix = glm::orthoLH(0.0f, (float) w, (float) h, 0.0f, 0.0f, 1.0f);
     // view
     auto viewMatrix = glm::make_mat4(transform.getMatrix());
@@ -138,8 +130,6 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     }
 
     // draw
-    const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
-                            GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
     GLenum mode = modes[vertexArray->getPrimitiveType()];
     GL_CHECK(glDrawArrays(mode, 0, (GLsizei) vertexCount));
 
@@ -149,7 +139,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     if (tex || vertices[0].color.a < 255) {
         GL_CHECK(glDisable(GL_BLEND));
         if (tex && tex->available) {
-            //GL_CHECK(glBindTexture(GL_TEXTURE_2D, 0));
+            GL_CHECK(glBindTexture(GL_TEXTURE_2D, 0));
             GL_CHECK(glDisableVertexAttribArray(2));
         }
     }
@@ -162,8 +152,6 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 #endif
 
     GL_CHECK(glUseProgram(0));
-
-    draw_calls++;
 }
 
 void GLRenderer::clear() {

@@ -27,10 +27,10 @@ static int audioThread(void *data) {
     snd_stream_init();
     stream_hnd = snd_stream_alloc(audioCb, audio->getSamplesSize());
     snd_stream_set_userdata(stream_hnd, audio);
-    snd_stream_start(stream_hnd, audio->getSampleRate(), audio->getChannels() - 1);
 
     while (audio->isAvailable()) {
-        while (audio->isAvailable() && audio->getSampleBufferQueued() < audio->getSamplesSize() >> 1) {
+        while (audio->isAvailable() &&
+               (audio->isPaused() || audio->getSampleBufferQueued() < audio->getSamplesSize() >> 1)) {
             //printf("audioCb: req: %i, filled: %i\n", smp_req, filled);
             thd_pass();
         }
@@ -71,11 +71,17 @@ DCAudio::~DCAudio() {
 }
 
 void DCAudio::pause(int pause) {
-    snd_stream_volume(stream_hnd, pause ? 0 : 255);
     Audio::pause(pause);
+    if (pause) {
+        snd_stream_stop(stream_hnd);
+        lock();
+        memset(dc_buf, 0, getSamplesSize());
+        unlock();
+    } else {
+        snd_stream_start(stream_hnd, getSampleRate(), getChannels() - 1);
+    }
 }
 
 void DCAudio::reset() {
     Audio::reset();
 }
-
