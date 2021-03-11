@@ -23,19 +23,18 @@ struct PhysPtr {
     size_t size = 0;
 };
 
-static std::vector<PhysPtr> *physPtrList = nullptr;
+static std::vector<PhysPtr> physPtrList;
 static int32_t initialised = 0;
 static funchook_t *funchook;
 static int fdcount = INT_MAX;
 
-
 static PhysPtr *physGet(int fd) {
 
-    if (!physPtrList) {
+    if (physPtrList.empty()) {
         return nullptr;
     }
 
-    for (auto &ptr : *physPtrList) {
+    for (auto &ptr : physPtrList) {
         if (ptr.fd == fd) {
             return &ptr;
         }
@@ -46,13 +45,13 @@ static PhysPtr *physGet(int fd) {
 
 static int physDel(int fd) {
 
-    if (!physPtrList) {
+    if (physPtrList.empty()) {
         return -1;
     }
 
-    for (size_t i = 0; i < physPtrList->size(); i++) {
-        if (physPtrList->at(i).fd == fd) {
-            physPtrList->erase(physPtrList->begin() + i);
+    for (size_t i = 0; i < physPtrList.size(); i++) {
+        if (physPtrList.at(i).fd == fd) {
+            physPtrList.erase(physPtrList.begin() + i);
         }
     }
 
@@ -70,17 +69,18 @@ static int open_hook(const char *pathname, int flags, mode_t mode) {
     if (isRomFs(pathname)) {
         std::string path = std::string(pathname).replace(0, 6, "/romfs");
         PHYSFS_File *file;
-        if (!flags || flags & O_RDONLY) {
-            file = PHYSFS_openRead(path.c_str());
+        if (flags & O_WRONLY) {
+            file = PHYSFS_openWrite(path.c_str());
         } else if (flags & O_APPEND) {
             file = PHYSFS_openAppend(path.c_str());
         } else {
-            file = PHYSFS_openWrite(path.c_str());
+            file = PHYSFS_openRead(path.c_str());
         }
+
         if (file) {
             fdcount--;
             int size = PHYSFS_fileLength(file);
-            physPtrList->push_back({pathname, file, fdcount, size});
+            physPtrList.push_back({pathname, file, fdcount, size});
             printf("OK: open_hook(%i, %s, %i, %i)\n", fdcount, path.c_str(), flags, mode);
             return fdcount;
         } else {
@@ -98,10 +98,7 @@ static ssize_t read_hook(int fd, void *buf, size_t count) {
 
     PhysPtr *fsPtr = physGet(fd);
     if (fsPtr) {
-        size_t len = 0;
-        if (buf) {
-            len = PHYSFS_readBytes(fsPtr->file, buf, count);
-        }
+        size_t len = buf ? PHYSFS_readBytes(fsPtr->file, buf, count) : 0;
         printf("OK: read_hook(%i, %p, %zu), read = %zu\n", fd, buf, count, len);
         return len;
     }
@@ -182,14 +179,14 @@ int stat_hook(int ver, const char *pathname, struct stat *buf) {
         buf->st_atime = st.accesstime;
         buf->st_mtime = st.modtime;
         buf->st_ctime = st.createtime;
-        if (st.filetype == PHYSFS_FILETYPE_REGULAR) {
-            buf->st_mode = S_IFREG;
-        } else if (st.filetype == PHYSFS_FILETYPE_DIRECTORY) {
+        if (st.filetype == PHYSFS_FILETYPE_DIRECTORY) {
             buf->st_mode = S_IFDIR;
         } else if (st.filetype == PHYSFS_FILETYPE_SYMLINK) {
 #ifndef __WINDOWS__
             buf->st_mode = S_IFLNK;
 #endif
+        } else {
+            buf->st_mode = S_IFREG;
         }
         buf->st_nlink = 1;
 #ifdef __WINDOWS__
@@ -217,14 +214,19 @@ static FILE *fopen_hook(const char *filename, const char *mode) {
     if (isRomFs(filename)) {
         printf("OK: fopen_hook(%s, %s)\n", filename, mode);
         int fd = open_hook(filename, O_RDONLY, 0);
-        FILE *file = (FILE *) malloc(sizeof(FILE));
-        memset(file, 0, sizeof(FILE));
+        if (fd > 0) {
+            printf("OK: fopen_hook(%s, %s): FD OK (%i)\n", filename, mode, fd);
+            FILE *file = (FILE *) malloc(sizeof(FILE));
+            memset(file, 0, sizeof(FILE));
 #ifdef __WINDOWS__
-        file->_file = fd;
+            file->_file = fd;
 #else
-        file->_fileno = fd;
+            file->_fileno = fd;
 #endif
-        return file;
+            return file;
+        } else {
+            return nullptr;
+        }
     }
 
     return fopen_func(filename, mode);
@@ -325,8 +327,6 @@ int romfsInit() {
     PHYSFS_mountMemory(_binary_romfs_zip_start, size,
                        nullptr, "romfs.zip", "/romfs", 1);
 
-    physPtrList = new std::vector<PhysPtr>();
-
     funchook = funchook_create();
 
     open_func = (int (*)(const char *, int, mode_t)) open;
@@ -424,10 +424,7 @@ int romfsExit() {
 
     funchook_uninstall(funchook, 0);
     funchook_destroy(funchook);
-
     PHYSFS_deinit();
-    delete (physPtrList);
-
     initialised = 0;
 
     return 0;
