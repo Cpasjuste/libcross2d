@@ -161,9 +161,9 @@ static int close_hook(int fd) {
     return close_func(fd);
 }
 
-int (*stat_func)(int, const char *pathname, struct stat *buf);
+int (*stat_func)(const char *pathname, struct stat *buf);
 
-int stat_hook(int ver, const char *pathname, struct stat *buf) {
+int stat_hook(const char *pathname, struct stat *buf) {
 
     if (isRomFs(pathname)) {
         std::string path = std::string(pathname).replace(0, 6, "/romfs");
@@ -198,14 +198,16 @@ int stat_hook(int ver, const char *pathname, struct stat *buf) {
         return 0;
     }
 
-    return stat_func(ver, pathname, buf);
+    return stat_func(pathname, buf);
 }
 
-int (*lstat_func)(int ver, const char *pathname, struct stat *buf);
+#ifdef __LINUX__
+int (*lstat_func)(const char *pathname, struct stat *buf);
 
-int lstat_hook(int ver, const char *pathname, struct stat *buf) {
-    return stat_hook(_STAT_VER, pathname, buf);
+int lstat_hook(const char *pathname, struct stat *buf) {
+    return stat_hook(pathname, buf);
 }
+#endif
 
 static FILE *(*fopen_func)(const char *filename, const char *mode);
 
@@ -301,17 +303,17 @@ static int fclose_hook(FILE *stream) {
     return fclose_func(stream);
 }
 
-int (*fstat_func)(int ver, int fd, struct stat *buf);
+int (*fstat_func)(int fd, struct stat *buf);
 
-int fstat_hook(int ver, int fd, struct stat *buf) {
+int fstat_hook(int fd, struct stat *buf) {
 
     PhysPtr *fsPtr = physGet(fd);
     if (fsPtr) {
         printf("OK: fstat_hook(%i)\n", fd);
-        return stat_hook(ver, fsPtr->path.c_str(), buf);
+        return stat_hook(fsPtr->path.c_str(), buf);
     }
 
-    return fstat_func(ver, fd, buf);
+    return fstat_func(fd, buf);
 }
 
 int romfsInit() {
@@ -352,17 +354,31 @@ int romfsInit() {
         printf("romfsInit: lseek64_hook failed\n");
     }
 
-    stat_func = (int (*)(int, const char *, struct stat *)) __xstat;
+    stat_func = (int (*)(const char *, struct stat *)) stat;
     ret = funchook_prepare(funchook, (void **) &stat_func, (void *) stat_hook);
     if (ret != 0) {
         printf("romfsInit: stat_hook failed\n");
     }
 
-    lstat_func = (int (*)(int, const char *, struct stat *)) __lxstat;
+#ifdef __LINUX__
+    lstat_func = (int (*)(const char *, struct stat *)) lstat;
     ret = funchook_prepare(funchook, (void **) &lstat_func, (void *) lstat_hook);
     if (ret != 0) {
         printf("romfsInit: lstat_hook failed\n");
     }
+
+    xstat_func = (int (*)(int, const char *, struct stat *)) __xstat;
+    ret = funchook_prepare(funchook, (void **) &xstat_func, (void *) xstat_hook);
+    if (ret != 0) {
+        printf("romfsInit: xstat_hook failed\n");
+    }
+
+    lxstat_func = (int (*)(int, const char *, struct stat *)) __lxstat;
+    ret = funchook_prepare(funchook, (void **) &lxstat_func, (void *) lxstat_hook);
+    if (ret != 0) {
+        printf("romfsInit: lxstat_hook failed\n");
+    }
+#endif
 
     close_func = (int (*)(int)) close;
     ret = funchook_prepare(funchook, (void **) &close_func, (void *) close_hook);
@@ -394,11 +410,19 @@ int romfsInit() {
         printf("romfsInit: ftell_hook failed\n");
     }
 
-    fstat_func = (int (*)(int, int, struct stat *)) __fxstat;
+    fstat_func = (int (*)(int, struct stat *)) fstat;
     ret = funchook_prepare(funchook, (void **) &fstat_func, (void *) fstat_hook);
     if (ret != 0) {
         printf("romfsInit: fstat_hook failed\n");
     }
+
+#ifdef __LINUX__
+    fxstat_func = (int (*)(int, int, struct stat *)) __fxstat;
+    ret = funchook_prepare(funchook, (void **) &fxstat_func, (void *) fxstat_hook);
+    if (ret != 0) {
+        printf("romfsInit: fxstat_hook failed\n");
+    }
+#endif
 
     fclose_func = (int (*)(FILE *)) fclose;
     ret = funchook_prepare(funchook, (void **) &fclose_func, (void *) fclose_hook);
