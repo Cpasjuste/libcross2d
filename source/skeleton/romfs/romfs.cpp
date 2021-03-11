@@ -202,11 +202,41 @@ int stat_hook(const char *pathname, struct stat *buf) {
 }
 
 #ifdef __LINUX__
+
 int (*lstat_func)(const char *pathname, struct stat *buf);
 
 int lstat_hook(const char *pathname, struct stat *buf) {
-    return stat_hook(pathname, buf);
+    if (isRomFs(pathname)) {
+        printf("OK: lstat_hook(%s)\n", pathname);
+        return stat_hook(pathname, buf);
+    }
+    return lstat_func(pathname, buf);
 }
+
+int (*xstat_func)(int ver, const char *pathname, struct stat *buf);
+
+int xstat_hook(int ver, const char *pathname, struct stat *buf) {
+
+    if (isRomFs(pathname)) {
+        printf("OK: xstat_hook(%s)\n", pathname);
+        return stat_hook(pathname, buf);
+    }
+
+    return xstat_func(ver, pathname, buf);
+}
+
+int (*lxstat_func)(int ver, const char *pathname, struct stat *buf);
+
+int lxstat_hook(int ver, const char *pathname, struct stat *buf) {
+
+    if (isRomFs(pathname)) {
+        printf("OK: lxstat_hook(%s)\n", pathname);
+        return stat_hook(pathname, buf);
+    }
+
+    return lxstat_func(ver, pathname, buf);
+}
+
 #endif
 
 static FILE *(*fopen_func)(const char *filename, const char *mode);
@@ -315,6 +345,23 @@ int fstat_hook(int fd, struct stat *buf) {
 
     return fstat_func(fd, buf);
 }
+
+#ifdef __LINUX__
+
+int (*fxstat_func)(int rev, int fd, struct stat *buf);
+
+int fxstat_hook(int rev, int fd, struct stat *buf) {
+
+    PhysPtr *fsPtr = physGet(fd);
+    if (fsPtr) {
+        printf("OK: fxstat_hook(%i)\n", fd);
+        return fstat_hook(fd, buf);
+    }
+
+    return fxstat_func(rev, fd, buf);
+}
+
+#endif
 
 int romfsInit() {
 

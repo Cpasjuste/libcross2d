@@ -246,6 +246,10 @@ elseif (PLATFORM_LINUX)
     list(APPEND C2D_LDFLAGS ${PHYSFS_LIBRARIES})
     set(PHYSFS_HOOKS ON CACHE BOOL "" FORCE)
 
+    if (NOT PLATFORM_WINDOWS)
+        list(APPEND C2D_CFLAGS -D__LINUX__)
+    endif ()
+
     if (PLATFORM_WINDOWS)
         # hum... static linking, not easy on mingw64 :)
         list(APPEND C2D_LDFLAGS freetype brotlidec-static brotlicommon-static
