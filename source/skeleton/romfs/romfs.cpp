@@ -1,15 +1,12 @@
 #include <string>
-#include <cstdlib>
 #include <cstring>
-#include <cstdio>
 #include <unistd.h>
 #include <vector>
 #include <sys/fcntl.h>
 #include <sys/stat.h>
 #include <physfs.h>
-#include <funchook.h>
-#include <algorithm>
 #include <climits>
+#include <funchook.h>
 
 #ifdef NDEBUG
 #pragma GCC diagnostic ignored "-Wunused-value"
@@ -30,6 +27,7 @@ static std::vector<PhysPtr> *physPtrList = nullptr;
 static int32_t initialised = 0;
 static funchook_t *funchook;
 static int fdcount = INT_MAX;
+
 
 static PhysPtr *physGet(int fd) {
 
@@ -166,17 +164,19 @@ static int close_hook(int fd) {
     return close_func(fd);
 }
 
-int (*stat_func)(const char *pathname, struct stat *buf);
+int (*stat_func)(int, const char *pathname, struct stat *buf);
 
-int stat_hook(const char *pathname, struct stat *buf) {
+int stat_hook(int ver, const char *pathname, struct stat *buf) {
 
     if (isRomFs(pathname)) {
         std::string path = std::string(pathname).replace(0, 6, "/romfs");
         PHYSFS_Stat st{};
         if (PHYSFS_stat(path.c_str(), &st) == 0) {
+            printf("NOK: stat_hook(%s)\n", path.c_str());
             return -1;
         }
 
+        printf("OK: stat_hook(%s)\n", path.c_str());
         memset(buf, 0, sizeof(struct stat));
         buf->st_size = st.filesize;
         buf->st_atime = st.accesstime;
@@ -201,7 +201,13 @@ int stat_hook(const char *pathname, struct stat *buf) {
         return 0;
     }
 
-    return stat_func(pathname, buf);
+    return stat_func(ver, pathname, buf);
+}
+
+int (*lstat_func)(int ver, const char *pathname, struct stat *buf);
+
+int lstat_hook(int ver, const char *pathname, struct stat *buf) {
+    return stat_hook(_STAT_VER, pathname, buf);
 }
 
 static FILE *(*fopen_func)(const char *filename, const char *mode);
@@ -286,8 +292,7 @@ static int fclose_hook(FILE *stream) {
     PhysPtr *fsPtr = physGet(fd);
     if (fsPtr) {
         printf("OK: fclose_hook(%i)\n", fd);
-        PHYSFS_close(fsPtr->file);
-        physDel(fsPtr->fd);
+        close_hook(fd);
         free(stream);
         return 0;
     }
@@ -295,17 +300,17 @@ static int fclose_hook(FILE *stream) {
     return fclose_func(stream);
 }
 
-int (*fstat_func)(int fd, struct stat *buf);
+int (*fstat_func)(int ver, int fd, struct stat *buf);
 
-int fstat_hook(int fd, struct stat *buf) {
+int fstat_hook(int ver, int fd, struct stat *buf) {
 
     PhysPtr *fsPtr = physGet(fd);
     if (fsPtr) {
         printf("OK: fstat_hook(%i)\n", fd);
-        return stat_hook(fsPtr->path.c_str(), buf);
+        return stat_hook(ver, fsPtr->path.c_str(), buf);
     }
 
-    return fstat_func(fd, buf);
+    return fstat_func(ver, fd, buf);
 }
 
 int romfsInit() {
@@ -348,10 +353,16 @@ int romfsInit() {
         printf("romfsInit: lseek64_hook failed\n");
     }
 
-    stat_func = (int (*)(const char *, struct stat *)) stat;
+    stat_func = (int (*)(int, const char *, struct stat *)) __xstat;
     ret = funchook_prepare(funchook, (void **) &stat_func, (void *) stat_hook);
     if (ret != 0) {
         printf("romfsInit: stat_hook failed\n");
+    }
+
+    lstat_func = (int (*)(int, const char *, struct stat *)) __lxstat;
+    ret = funchook_prepare(funchook, (void **) &lstat_func, (void *) lstat_hook);
+    if (ret != 0) {
+        printf("romfsInit: lstat_hook failed\n");
     }
 
     close_func = (int (*)(int)) close;
@@ -384,7 +395,7 @@ int romfsInit() {
         printf("romfsInit: ftell_hook failed\n");
     }
 
-    fstat_func = (int (*)(int, struct stat *)) fstat;
+    fstat_func = (int (*)(int, int, struct stat *)) __fxstat;
     ret = funchook_prepare(funchook, (void **) &fstat_func, (void *) fstat_hook);
     if (ret != 0) {
         printf("romfsInit: fstat_hook failed\n");

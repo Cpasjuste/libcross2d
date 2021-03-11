@@ -71,16 +71,6 @@ set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${ZLIB_INC
 set(C2D_LDFLAGS ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
 set(CMAKE_CXX_STANDARD 17)
 
-#[[
-set(FT_WITH_ZLIB ON CACHE BOOL "" FORCE)
-set(FT_WITH_BZIP2 ON CACHE BOOL "" FORCE)
-set(FT_WITH_PNG ON CACHE BOOL "" FORCE)
-set(FT_WITH_HARFBUZZ ON CACHE BOOL "" FORCE)
-add_subdirectory(freetype-2.10.1)
-list(APPEND C2D_LDFLAGS freetype)
-list(APPEND C2D_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}}/freetype-2.10.1/include)
-]]
-
 if (OPTION_BUILTIN_LIBCONFIG)
     list(APPEND LIBCONFIG_INCLUDES source/skeleton/libconfig)
     file(GLOB LIBCONFIG_SOURCES source/skeleton/libconfig/*.c)
@@ -242,17 +232,20 @@ elseif (PLATFORM_DREAMCAST)
     ########################
 elseif (PLATFORM_LINUX)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
+
     # romfs: physfs
     pkg_search_module(PHYSFS REQUIRED physfs)
     # romfs: funchook
     set(FUNCHOOK_CPU x86 CACHE STRING "" FORCE)
     add_subdirectory(source/skeleton/romfs/funchook)
+    list(APPEND C2D_LDFLAGS funchook-static)
     # romfs: physfs wrapper
     list(APPEND PLATFORM_SOURCES source/skeleton/romfs/romfs.cpp)
     list(APPEND C2D_INCLUDES ${PHYSFS_INCLUDE_DIRS})
     list(APPEND C2D_CFLAGS -D__PHYSFS_HOOKS__)
-    list(APPEND C2D_LDFLAGS ${PHYSFS_LIBRARIES} funchook-static)
+    list(APPEND C2D_LDFLAGS ${PHYSFS_LIBRARIES})
     set(PHYSFS_HOOKS ON CACHE BOOL "" FORCE)
+
     if (PLATFORM_WINDOWS)
         # hum... static linking, not easy on mingw64 :)
         list(APPEND C2D_LDFLAGS freetype brotlidec-static brotlicommon-static
