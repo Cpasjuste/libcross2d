@@ -56,16 +56,6 @@ namespace c2d {
         Font::cleanup();
     }
 
-    const char *getErrorMessage(FT_Error err) {
-#undef FTERRORS_H_
-#define FT_ERRORDEF(e, v, s)  case e: return s;
-#define FT_ERROR_START_LIST     switch (err) {
-#define FT_ERROR_END_LIST       }
-
-#include FT_ERRORS_H
-        return "(unknown error)";
-    }
-
 ////////////////////////////////////////////////////////////
     bool Font::loadFromFile(const std::string &filename) {
 
@@ -85,10 +75,8 @@ namespace c2d {
 
         // Load the new font face from the specified file
         FT_Face face;
-        int ret = FT_New_Face(static_cast<FT_Library>(m_library), filename.c_str(), 0, &face);
-        if (ret != 0) {
-            printf("Failed to load font %s (failed to create the font face: %s)\n",
-                   filename.c_str(), getErrorMessage(ret));
+        if (FT_New_Face(static_cast<FT_Library>(m_library), filename.c_str(), 0, &face) != 0) {
+            printf("Failed to load font %s (failed to create the font face)\n", filename.c_str());
             return false;
         }
 
