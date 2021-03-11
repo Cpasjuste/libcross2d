@@ -215,7 +215,6 @@ static FILE *fopen_hook(const char *filename, const char *mode) {
         printf("OK: fopen_hook(%s, %s)\n", filename, mode);
         int fd = open_hook(filename, O_RDONLY, 0);
         if (fd > 0) {
-            printf("OK: fopen_hook(%s, %s): FD OK (%i)\n", filename, mode, fd);
             FILE *file = (FILE *) malloc(sizeof(FILE));
             memset(file, 0, sizeof(FILE));
 #ifdef __WINDOWS__
