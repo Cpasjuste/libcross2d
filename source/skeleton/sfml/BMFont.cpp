@@ -50,7 +50,7 @@ namespace c2d {
         char *fileData = nullptr;
 
         size_t size = c2d_renderer->getIo()->read(fntPath, &fileData);
-        if (size < 4) {
+        if (!fileData || size < 4) {
             printf("BMFont::loadFromFile(%s): could not read file...\n", fntPath.c_str());
             if (fileData) {
                 free(fileData);
