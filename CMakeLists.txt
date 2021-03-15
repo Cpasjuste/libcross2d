@@ -225,7 +225,7 @@ elseif (PLATFORM_DREAMCAST)
             source/platforms/dreamcast
             $ENV{KOS_BASE}/../kos-ports/include/freetype
             $ENV{KOS_BASE}/../kos-ports/include/libconfig)
-    list(APPEND C2D_CFLAGS -D__DREAMCAST__ -DNO_KEYBOARD)
+    list(APPEND C2D_CFLAGS -D__DREAMCAST__ -D__GL1_IMMEDIATE__ -DNO_KEYBOARD)
     list(APPEND C2D_LDFLAGS c kallisti kosutils kosext2fs GLdc c freetype z m) # kosfat
     ########################
     # LINUX PLATORM

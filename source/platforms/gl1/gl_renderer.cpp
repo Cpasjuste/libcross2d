@@ -6,7 +6,7 @@
 
 // GLdc doesn't like mixing blend and non blend textures
 //#define BLEND_TEST 1
-//#define GL1_IMMEDIATE 1
+//#define __GL1_IMMEDIATE__ 1
 
 #include "cross2d/c2d.h"
 
@@ -43,7 +43,6 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     Vertex *vertices;
     size_t vertexCount;
-    GLint texId = 0;
 
     if (vertexArray == nullptr || vertexArray->getVertexCount() < 1) {
         //printf("GLRenderer::draw: no vertices\n");
@@ -62,11 +61,8 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     GLTexture *tex = sprite != nullptr ? (GLTexture *) sprite->getTexture() : (GLTexture *) texture;
     if (tex && tex->available) {
         glEnable(GL_TEXTURE_2D);
-        glGetIntegerv(GL_TEXTURE_BINDING_2D, &texId);
-        if (texId != (GLint) tex->texID) {
-            glBindTexture(GL_TEXTURE_2D, tex->texID);
-        }
-#ifndef GL1_IMMEDIATE
+        glBindTexture(GL_TEXTURE_2D, tex->texID);
+#ifndef __GL1_IMMEDIATE__
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif
 #if BLEND_TEST
@@ -83,7 +79,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     GLenum mode = modes[vertexArray->getPrimitiveType()];
 
-#ifdef GL1_IMMEDIATE
+#ifdef __GL1_IMMEDIATE__
     glBegin(mode);
     for (unsigned int i = 0; i < vertexCount; i++) {
         if (tex && tex->available) {
@@ -113,7 +109,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 #endif
 
     if (tex && tex->available) {
-#ifndef GL1_IMMEDIATE
+#ifndef __GL1_IMMEDIATE__
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif
 #if BLEND_TEST
