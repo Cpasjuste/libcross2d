@@ -174,6 +174,7 @@ size_t DCIo::read(const std::string &file, char **out, size_t size, size_t offse
     fd = fs_open(file.c_str(), O_RDONLY);
     if (fd == FILEHND_INVALID) {
         printf("DCIo::read: can't open %s\n", file.c_str());
+        *out = nullptr;
         return -1;
     }
 
@@ -196,6 +197,7 @@ size_t DCIo::read(const std::string &file, char **out, size_t size, size_t offse
     if (read_size != size) {
         fs_close(fd);
         free(*out);
+        *out = nullptr;
         printf("DCIo::read: can't read %s\n", file.c_str());
         return -1;
     }

@@ -150,6 +150,7 @@ size_t POSIXIo::read(const std::string &file, char **out, size_t size, size_t of
     fp = fopen(file.c_str(), "rb");
     if (fp == nullptr) {
         printf("POSIXIo::read: can't open %s\n", file.c_str());
+        *out = nullptr;
         return -1;
     }
 
@@ -174,6 +175,7 @@ size_t POSIXIo::read(const std::string &file, char **out, size_t size, size_t of
     if (read_size != size) {
         fclose(fp);
         free(*out);
+        *out = nullptr;
         printf("POSIXIo::read: can't read %s\n", file.c_str());
         return -1;
     }
@@ -187,7 +189,7 @@ bool POSIXIo::write(const std::string &file, const char *data, size_t size) {
 
     FILE *fp;
 
-    fp = fopen(file.c_str(), "w");
+    fp = fopen(file.c_str(), "wb+");
     if (fp == nullptr) {
         return false;
     }
