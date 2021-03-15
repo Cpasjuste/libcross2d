@@ -9,14 +9,6 @@
 
 #include "cross2d/c2d.h"
 
-#ifdef __PHYSFS_HOOKS__
-
-extern int romfsInit();
-
-extern int romfsExit();
-
-#endif
-
 #ifdef __WINDOWS__
 #define mkdir(x, y) mkdir(x)
 #elif __PSP2__
@@ -25,18 +17,6 @@ extern int romfsExit();
 #endif
 
 using namespace c2d;
-
-POSIXIo::POSIXIo() : Io() {
-#ifdef __PHYSFS_HOOKS__
-    romfsInit();
-#endif
-}
-
-POSIXIo::~POSIXIo() {
-#ifdef __PHYSFS_HOOKS__
-    romfsExit();
-#endif
-}
 
 std::string POSIXIo::getRomFsPath() {
 #ifdef __PHYSFS_HOOKS__

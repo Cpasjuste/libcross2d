@@ -47,26 +47,54 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     bool BMFont::loadFromFile(const std::string &fntPath) {
 
-        char *fileData = nullptr;
-
-        size_t size = c2d_renderer->getIo()->read(fntPath, &fileData);
-        if (!fileData || size < 4) {
-            printf("BMFont::loadFromFile(%s): could not read file...\n", fntPath.c_str());
-            if (fileData) {
-                free(fileData);
-                fileData = nullptr;
+        char *fontData = nullptr;
+        size_t fontSize = c2d_renderer->getIo()->read(fntPath, &fontData);
+        if (!fontData || fontSize < 4) {
+            printf("BMFont::loadFromFile(%s): could not read font file...\n", fntPath.c_str());
+            if (fontData) {
+                free(fontData);
             }
             return false;
         }
 
-        if (!((fileData[0] == 'B' && fileData[1] == 'M' && fileData[2] == 'F' && fileData[3] == 3))) {
-            printf("BMFont::loadFromFile(%s): BMF header not found...\n", fntPath.c_str());
-            free(fileData);
-            fileData = nullptr;
+        char *texData = nullptr;
+        std::string texPath = Utility::removeExt(fntPath) + "_0.png";
+        size_t texSize = c2d_renderer->getIo()->read(texPath, &texData);
+        if (!texData || texSize < 4) {
+            printf("BMFont::loadFromFile(%s): could not read texture file...\n", texPath.c_str());
+            free(fontData);
+            if (texData) {
+                free(texData);
+            }
             return false;
         }
 
-        bmfont_stream stream((uint8_t *) fileData, size);
+        bool ret = loadFromMemory(fontData, fontSize, texData, texSize);
+        free(fontData);
+        free(texData);
+        return ret;
+    }
+
+////////////////////////////////////////////////////////////
+    bool BMFont::loadFromMemory(const char *fontData, size_t fontDataSize,
+                                const char *texData, size_t texDataSize) {
+
+        if (!fontData || fontDataSize < 4) {
+            printf("BMFont::loadFromMemory: invalid font data...\n");
+            return false;
+        }
+
+        if (!texData || texDataSize < 4) {
+            printf("BMFont::loadFromMemory: invalid texture data...\n");
+            return false;
+        }
+
+        if (!((fontData[0] == 'B' && fontData[1] == 'M' && fontData[2] == 'F' && fontData[3] == 3))) {
+            printf("BMFont::loadFromMemory: BMF header not found...\n");
+            return false;
+        }
+
+        bmfont_stream stream((uint8_t *) fontData, fontDataSize);
         stream.offsetBy(4);
         while (!stream.isEOF()) {
             uint8_t blockID = stream.getU8();
@@ -156,34 +184,16 @@ namespace c2d {
             }
         }
 
-        // cleanup
-        free(fileData);
-        fileData = nullptr;
-
-        std::string texPath = Utility::remove(fntPath, Utility::baseName(fntPath));
-        m_texture = new C2DTexture(texPath + m_bmfont.pages[0].name);
+        m_texture = new C2DTexture((const unsigned char *) texData, texDataSize);
         if (!m_texture || !m_texture->available) {
-            printf("BMFont::loadFromFile(%s%s): could not create texture...\n",
-                   texPath.c_str(), m_bmfont.pages[0].name);
+            printf("BMFont::loadFromMemory: could not create texture (%s)...\n", m_bmfont.pages[0].name);
             return false;
         }
 
-        printf("BMFont::loadFromFile(%s): loaded %lu chars (font size: %i, outline size: %i)\n",
-               fntPath.c_str(), m_bmfont.glyphs.size(), m_bmfont.info.fontSize, m_bmfont.info.outline);
+        printf("BMFont::loadFromMemory: loaded %lu chars (font size: %i, outline size: %i)\n",
+               m_bmfont.glyphs.size(), m_bmfont.info.fontSize, m_bmfont.info.outline);
 
         return true;
-    }
-
-////////////////////////////////////////////////////////////
-    bool BMFont::loadFromMemory(const void *data, std::size_t sizeInBytes) {
-        // TODO
-        printf("BMFont::loadFromMemory: not implemented\n");
-        return false;
-    }
-
-    bool BMFont::loadDefault() {
-        printf("BMFont::loadDefault: not implemented\n");
-        return false;
     }
 
 ////////////////////////////////////////////////////////////

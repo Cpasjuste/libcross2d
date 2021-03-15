@@ -24,7 +24,7 @@ struct PhysPtr {
 };
 
 static std::vector<PhysPtr> physPtrList;
-static int32_t initialised = 0;
+static bool initialised = false;
 static funchook_t *funchook;
 static int fdcount = INT_MAX;
 
@@ -363,13 +363,30 @@ int fxstat_hook(int rev, int fd, struct stat *buf) {
 
 #endif
 
+int romfsExit() {
+
+    if (!initialised)
+        return -1;
+
+    funchook_uninstall(funchook, 0);
+    funchook_destroy(funchook);
+    PHYSFS_deinit();
+    physPtrList.clear();
+    fdcount = INT_MAX;
+    initialised = false;
+
+    return 0;
+}
+
 int romfsInit() {
 
     int ret;
 
-    if (initialised)
-        return 0;
+    if (initialised) {
+        return -1;
+    }
 
+    printf("romfsInit... ");
     PHYSFS_init(nullptr);
     PHYSFS_uint64 size = _binary_romfs_zip_end - _binary_romfs_zip_start;
     PHYSFS_mountMemory(_binary_romfs_zip_start, size,
@@ -482,20 +499,8 @@ int romfsInit() {
         printf("romfsInit: funchook_install failed\n");
     }
 
-    initialised = 1;
-
-    return 0;
-}
-
-int romfsExit() {
-
-    if (!initialised)
-        return -1;
-
-    funchook_uninstall(funchook, 0);
-    funchook_destroy(funchook);
-    PHYSFS_deinit();
-    initialised = 0;
+    initialised = true;
+    printf("romfsInit: done\n");
 
     return 0;
 }

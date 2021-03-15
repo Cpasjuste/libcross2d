@@ -54,9 +54,18 @@ namespace c2d {
 
         bool loadFromFile(const std::string &fntPath) override;
 
-        bool loadDefault() override;
+        bool loadDefault() override {
+            printf("BMFont::loadDefault: not implemented...\n");
+            return false;
+        }
 
-        bool loadFromMemory(const void *data, std::size_t size) override;
+        bool loadFromMemory(const void *data, std::size_t size) override {
+            printf("BMFont::loadFromMemory: not implemented...\n");
+            return false;
+        }
+
+        bool loadFromMemory(const char *fontData, size_t fontDataSize,
+                            const char *texData, size_t texDataSize);
 
         Glyph getGlyph(uint32_t codePoint, unsigned int characterSize,
                        bool bold, float outlineThickness = 0) override;

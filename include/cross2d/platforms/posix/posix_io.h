@@ -13,10 +13,6 @@ namespace c2d {
 
     public:
 
-        POSIXIo();
-
-        ~POSIXIo() override;
-
         File getFile(const std::string &path) override;
 
         bool exist(const std::string &path) override;
