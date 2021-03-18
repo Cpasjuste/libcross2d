@@ -61,13 +61,13 @@ DCAudio::~DCAudio() {
         return;
     }
 
-    snd_stream_stop(stream_hnd);
-    snd_stream_destroy(stream_hnd);
-    snd_stream_shutdown();
-
     available = false;
     thread->join();
     delete (thread);
+
+    snd_stream_stop(stream_hnd);
+    snd_stream_destroy(stream_hnd);
+    snd_stream_shutdown();
 }
 
 void DCAudio::pause(int pause) {
