@@ -5,6 +5,8 @@
 #ifndef CROSS2D_MUTEX_H
 #define CROSS2D_MUTEX_H
 
+#include <cstdio>
+
 namespace c2d {
 
     class Mutex {

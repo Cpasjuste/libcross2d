@@ -20,6 +20,11 @@ KOS_INIT_FLAGS(INIT_DEFAULT | INIT_QUIET | INIT_NO_DCLOAD);
 KOS_INIT_FLAGS(INIT_DEFAULT);
 #endif
 
+#if __GNUC__ < 6
+// OLD KOS (https://github.com/Cpasjuste/kos/tree/gcc-5.2.0)
+extern "C" void pvr_set_zclip(float zc);
+#endif
+
 extern uint8 romdisk[];
 KOS_INIT_ROMDISK(romdisk);
 
@@ -34,6 +39,11 @@ DCRenderer::DCRenderer(const Vector2f &s) : GLRenderer(s) {
     mount(Device::Type::Sd, Device::Flag::ReadOnly);
     //devices[1].inited = g1_ata_init() == 0;
     //mount(Device::Type::Hdd, Device::Flag::ReadOnly);
+#endif
+
+#if __GNUC__ < 6
+// OLD KOS (https://github.com/Cpasjuste/kos/tree/gcc-5.2.0)
+    pvr_set_zclip(0);
 #endif
 
     glKosInit();
@@ -143,3 +153,27 @@ DCRenderer::~DCRenderer() {
     fs_ext2_shutdown();
 #endif
 }
+
+#if __GNUC__ < 6
+// OLD KOS (https://github.com/Cpasjuste/kos/tree/gcc-5.2.0)
+/// crap
+namespace {
+    __gnu_cxx::__mutex atomic_mutex;
+} // anonymous namespace
+
+_Atomic_word __attribute__ ((__unused__))
+__gnu_cxx::__exchange_and_add(volatile _Atomic_word *mem, int val) throw() {
+    //printf("__exchange_and_add\n");
+    __gnu_cxx::__scoped_lock sentry(atomic_mutex);
+    _Atomic_word __result;
+    __result = *mem;
+    *mem += val;
+    return __result;
+}
+
+void __attribute__ ((__unused__))
+__gnu_cxx::__atomic_add(volatile _Atomic_word *mem, int val) throw() {
+    __exchange_and_add(mem, val);
+}
+
+#endif

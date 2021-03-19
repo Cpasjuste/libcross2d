@@ -9,9 +9,19 @@ using namespace c2d;
 static int16_t *dc_buf = nullptr;
 static snd_stream_hnd_t stream_hnd;
 
+#if __GNUC__ < 6
+// OLD KOS (https://github.com/Cpasjuste/kos/tree/gcc-5.2.0)
+static DCAudio *dcAudio;
+#endif
+
 static void *audioCb(snd_stream_hnd_t hnd, int smp_req, int *smp_recv) {
 
+#if __GNUC__ < 6
+// OLD KOS (https://github.com/Cpasjuste/kos/tree/gcc-5.2.0)
+    auto *audio = dcAudio;
+#else
     auto *audio = (DCAudio *) snd_stream_get_userdata(hnd);
+#endif
     audio->lock();
     audio->getSampleBuffer()->pull(dc_buf, smp_req >> 1);
     audio->unlock();
@@ -26,7 +36,12 @@ static int audioThread(void *data) {
 
     snd_stream_init();
     stream_hnd = snd_stream_alloc(audioCb, audio->getSamplesSize());
+#if __GNUC__ < 6
+// OLD KOS (https://github.com/Cpasjuste/kos/tree/gcc-5.2.0)
+    dcAudio = audio;
+#else
     snd_stream_set_userdata(stream_hnd, audio);
+#endif
 
     while (audio->isAvailable()) {
         while (audio->isAvailable() &&
