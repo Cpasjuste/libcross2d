@@ -23,6 +23,7 @@ option(OPTION_LOADER_GLEW "Glew OpenGL loader" OFF)
 option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
 option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
+option(OPTION_FREETYPE "Build with freetype support" ON)
 set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width")
 set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
 
@@ -59,9 +60,11 @@ file(GLOB C2D_SOURCES
         source/skeleton/sfml/*.c*)
 
 # deps
-if (NOT PLATFORM_DREAMCAST)
-    include(FindPkgConfig)
+include(FindPkgConfig)
+if (OPTION_FREETYPE)
     pkg_search_module(FREETYPE REQUIRED freetype2)
+endif ()
+if (NOT PLATFORM_DREAMCAST)
     pkg_search_module(PNG REQUIRED libpng)
     pkg_search_module(ZLIB REQUIRED zlib)
 endif ()
@@ -70,6 +73,10 @@ set(C2D_CFLAGS -Wall -Wno-narrowing -DLIBCONFIG_STATIC)
 set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
 set(C2D_LDFLAGS ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
 set(CMAKE_CXX_STANDARD 17)
+
+if (NOT OPTION_FREETYPE)
+    list(APPEND C2D_CFLAGS -D__NO_FREETYPE__)
+endif ()
 
 if (OPTION_BUILTIN_LIBCONFIG)
     list(APPEND LIBCONFIG_INCLUDES source/skeleton/libconfig)
@@ -223,10 +230,13 @@ elseif (PLATFORM_DREAMCAST)
     file(GLOB_RECURSE PLATFORM_SOURCES source/platforms/dreamcast/*.c*)
     set(PLATFORM_INCLUDES
             source/platforms/dreamcast
-            $ENV{KOS_BASE}/../kos-ports/include/freetype
             $ENV{KOS_BASE}/../kos-ports/include/libconfig)
     list(APPEND C2D_CFLAGS -D__DREAMCAST__ -D__GL1_IMMEDIATE__ -DNO_KEYBOARD)
-    list(APPEND C2D_LDFLAGS c kallisti kosutils kosext2fs GLdc c freetype z m) # kosfat
+    list(APPEND C2D_LDFLAGS c kallisti kosutils kosext2fs GLdc c z m) # kosfat
+    if (OPTION_FREETYPE)
+        list(APPEND PLATFORM_INCLUDES $ENV{KOS_BASE}/../kos-ports/include/freetype)
+        list(APPEND C2D_LDFLAGS freetype)
+    endif ()
     ########################
     # LINUX PLATORM
     ########################

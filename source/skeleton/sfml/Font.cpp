@@ -28,12 +28,15 @@
 #include "cross2d/c2d.h"
 #include "cross2d/skeleton/sfml/Font.hpp"
 
+#ifndef __NO_FREETYPE__
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
 #include FT_BITMAP_H
 #include FT_STROKER_H
+#endif
+
 #include <cstdlib>
 #include <cstring>
 
@@ -58,7 +61,7 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     bool Font::loadFromFile(const std::string &filename) {
-
+#ifndef __NO_FREETYPE__
         // Cleanup the previous resources
         cleanup();
         m_refCount = new int(1);
@@ -105,6 +108,9 @@ namespace c2d {
         m_font_path = filename;
 
         return true;
+#else
+        return false;
+#endif
     }
 
 ////////////////////////////////////////////////////////////
@@ -121,6 +127,7 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     bool Font::loadFromMemory(const void *data, std::size_t sizeInBytes) {
+#ifndef __NO_FREETYPE__
         // Cleanup the previous resources
         cleanup();
         m_refCount = new int(1);
@@ -167,6 +174,9 @@ namespace c2d {
         m_info.family = face->family_name ? face->family_name : std::string();
 
         return true;
+#else
+        return false;
+#endif
     }
 
 ////////////////////////////////////////////////////////////
@@ -203,6 +213,7 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     float Font::getKerning(uint32_t first, uint32_t second, unsigned int characterSize) const {
+#ifndef __NO_FREETYPE__
         // Special case where first or second is 0 (null character)
         if (first == 0 || second == 0)
             return 0.f;
@@ -228,11 +239,15 @@ namespace c2d {
             // Invalid font, or no kerning
             return 0.f;
         }
+#else
+        return 0;
+#endif
     }
 
 
 ////////////////////////////////////////////////////////////
     float Font::getLineSpacing(unsigned int characterSize) const {
+#ifndef __NO_FREETYPE__
         FT_Face face = static_cast<FT_Face>(m_face);
 
         if (face && setCurrentSize(characterSize)) {
@@ -240,11 +255,15 @@ namespace c2d {
         } else {
             return 0.f;
         }
+#else
+        return 0;
+#endif
     }
 
 
 ////////////////////////////////////////////////////////////
     float Font::getUnderlinePosition(unsigned int characterSize) const {
+#ifndef __NO_FREETYPE__
         FT_Face face = static_cast<FT_Face>(m_face);
 
         if (face && setCurrentSize(characterSize)) {
@@ -257,11 +276,15 @@ namespace c2d {
         } else {
             return 0.f;
         }
+#else
+        return 0;
+#endif
     }
 
 
 ////////////////////////////////////////////////////////////
     float Font::getUnderlineThickness(unsigned int characterSize) const {
+#ifndef __NO_FREETYPE__
         FT_Face face = static_cast<FT_Face>(m_face);
 
         if (face && setCurrentSize(characterSize)) {
@@ -274,6 +297,9 @@ namespace c2d {
         } else {
             return 0.f;
         }
+#else
+        return 0;
+#endif
     }
 
 
@@ -300,6 +326,7 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Font::cleanup() {
+#ifndef __NO_FREETYPE__
         // Check if we must destroy the FreeType pointers
         if (m_refCount) {
             // Decrease the reference counter
@@ -336,11 +363,13 @@ namespace c2d {
         m_refCount = nullptr;
         m_pages.clear();
         std::vector<uint8_t>().swap(m_pixelBuffer);
+#endif
     }
 
 
 ////////////////////////////////////////////////////////////
     Glyph Font::loadGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const {
+#ifndef __NO_FREETYPE__
         // The glyph to return
         Glyph glyph;
 
@@ -398,7 +427,7 @@ namespace c2d {
             return glyph;
         }
 
-        FT_Bitmap *bitmap = &((FT_BitmapGlyph) (glyphDesc))->bitmap;
+        FT_Bitmap *bitmap = &((FT_BitmapGlyph)(glyphDesc))->bitmap;
 
         // Apply bold if necessary -- fallback technique using bitmap (lower quality)
         if (!outline) {
@@ -534,6 +563,9 @@ namespace c2d {
 
         // Done :)
         return glyph;
+#else
+        return {};
+#endif
     }
 
 
@@ -627,6 +659,7 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     bool Font::setCurrentSize(unsigned int characterSize) const {
+#ifndef __NO_FREETYPE__
         // FT_Set_Pixel_Sizes is an expensive function, so we must call it
         // only when necessary to avoid killing performances
 
@@ -652,6 +685,9 @@ namespace c2d {
         } else {
             return true;
         }
+#else
+        return false;
+#endif
     }
 
     const std::string &Font::getPath() const {
