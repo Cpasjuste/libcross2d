@@ -115,7 +115,7 @@ int PSP2Texture::resize(const Vector2f &size, bool copyPixels) {
     vita2d_free_texture(tex);
     tex = tex_new;
     pitch = (int) size.x * bpp;
-    tex_size = {(int) size.x, (int) size.y)};
+    tex_size = {(int) size.x, (int) size.y};
     setSize(size);
     setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     setFilter(filter);
