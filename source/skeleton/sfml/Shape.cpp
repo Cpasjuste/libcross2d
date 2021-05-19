@@ -384,24 +384,25 @@ namespace c2d {
             m_bodyDef.type = type;
             m_bodyDef.position.Set(getPosition().x / c2d_renderer->getPixelsPerMeter(),
                                    getPosition().y / c2d_renderer->getPixelsPerMeter());
-            m_body = m_world.CreateBody(&m_bodyDef);
+            m_body = c2d_renderer->getPhysicsWorld()->CreateBody(&m_bodyDef);
 
             Vector2f boxSize = {(getSize().x / c2d_renderer->getPixelsPerMeter()) / 2,
                                 (getSize().y / c2d_renderer->getPixelsPerMeter()) / 2};
 
             m_polyShape.m_type = b2Shape::Type::e_polygon;
             m_polyShape.m_centroid = {boxSize.x, boxSize.y};
+
             size_t count = getPointCount();
             auto vs = (b2Vec2 *) malloc(sizeof(b2Vec2) * count);
             for (size_t i = 0; i < count; i++) {
                 vs[i].Set(getPoint(i).x / c2d_renderer->getPixelsPerMeter(),
                           getPoint(i).y / c2d_renderer->getPixelsPerMeter());
             }
-            m_polyShape.Set(vs, count);
+            m_polyShape.Set(vs, (int32) count);
             free(vs);
 
             m_fixtureDef.shape = &m_polyShape;
-            m_fixtureDef.density = density;
+            m_fixtureDef.density =  density;
             m_fixtureDef.friction = friction;
             m_fixture = m_body->CreateFixture(&m_fixtureDef);
         }

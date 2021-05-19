@@ -201,6 +201,14 @@ namespace c2d {
 
         uint8_t getAlpha() override;
 
+#ifdef __BOX2D__
+
+        b2Body *addPhysicsBody(b2BodyType type = b2_dynamicBody, float density = 1, float friction = 0.3f);
+
+        b2Body *getPhysicsBody();
+
+#endif
+
     protected:
 
         void onDraw(Transform &transform, bool draw = true) override;
@@ -228,6 +236,14 @@ namespace c2d {
         IntRect m_textureRect; ///< Rectangle defining the area of the source texture to display
         c2d::Vector2f m_size; ///< Size of the rectangle
         Origin m_sprite_origin = Origin::TopLeft;
+
+#ifdef __BOX2D__
+        b2BodyDef m_bodyDef;
+        b2Body *m_body = nullptr;
+        b2FixtureDef m_fixtureDef;
+        b2Fixture *m_fixture = nullptr;
+        b2PolygonShape m_polyShape;
+#endif
     };
 
 } // namespace c2d

@@ -158,7 +158,11 @@ namespace c2d {
     }
 
     void Sprite::setOrigin(const Origin &origin) {
-
+#ifdef __BOX2D__ // TODO: fixme
+        if (m_body) {
+            return;
+        }
+#endif
         FloatRect m_bounds = getLocalBounds();
         m_sprite_origin = origin;
 
@@ -220,6 +224,15 @@ namespace c2d {
 
     ////////////////////////////////////////////////////////////
     void Sprite::onDraw(Transform &transform, bool draw) {
+
+#ifdef __BOX2D__
+        if (m_body) {
+            b2Vec2 pos = m_body->GetPosition();
+            setPosition(pos.x * c2d_renderer->getPixelsPerMeter(), pos.y * c2d_renderer->getPixelsPerMeter());
+            float32 angle = m_body->GetAngle();
+            setRotation(angle * 180 / M_PI);
+        }
+#endif
         if (draw) {
             Transform combined = transform * getTransform();
             c2d_renderer->draw(&m_vertices, combined, nullptr, this);
@@ -264,5 +277,44 @@ namespace c2d {
         m_vertices[3].texCoords = Vector2f(right / texSize.x, bottom / texSize.y);
         m_vertices.update();
     }
+
+#ifdef __BOX2D__
+
+    b2Body *Sprite::addPhysicsBody(b2BodyType type, float density, float friction) {
+        if (!m_body) {
+
+            m_bodyDef.type = type;
+            m_bodyDef.position.Set(getPosition().x / c2d_renderer->getPixelsPerMeter(),
+                                   getPosition().y / c2d_renderer->getPixelsPerMeter());
+            m_body = c2d_renderer->getPhysicsWorld()->CreateBody(&m_bodyDef);
+
+            Vector2f boxSize = {(getSize().x / c2d_renderer->getPixelsPerMeter()) / 2,
+                                (getSize().y / c2d_renderer->getPixelsPerMeter()) / 2};
+
+            m_polyShape.m_type = b2Shape::Type::e_polygon;
+            m_polyShape.m_centroid = {boxSize.x, boxSize.y};
+
+            auto vs = (b2Vec2 *) malloc(sizeof(b2Vec2) * 4);
+            vs[0].Set(0, 0);
+            vs[1].Set(m_size.x / c2d_renderer->getPixelsPerMeter(), 0);
+            vs[2].Set(m_size.x / c2d_renderer->getPixelsPerMeter(), m_size.y / c2d_renderer->getPixelsPerMeter());
+            vs[3].Set(0, m_size.y / c2d_renderer->getPixelsPerMeter());
+            m_polyShape.Set(vs, 4);
+            free(vs);
+
+            m_fixtureDef.shape = &m_polyShape;
+            m_fixtureDef.density = density;
+            m_fixtureDef.friction = friction;
+            m_fixture = m_body->CreateFixture(&m_fixtureDef);
+        }
+
+        return m_body;
+    }
+
+    b2Body *Sprite::getPhysicsBody() {
+        return m_body;
+    }
+
+#endif
 
 } // namespace c2d

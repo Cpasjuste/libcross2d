@@ -98,6 +98,10 @@ namespace c2d {
 
 #ifdef __BOX2D__
 
+        b2World *getPhysicsWorld() {
+            return &m_world;
+        }
+
         void setPixelsPerMeter(float ppm) {
             m_pixelsPerMeter = ppm;
         }

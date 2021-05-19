@@ -36,8 +36,6 @@
 
 #include <Box2D/Box2D.h>
 
-extern b2World m_world;
-
 #endif
 
 namespace c2d {
@@ -280,7 +278,7 @@ namespace c2d {
 
 #ifdef __BOX2D__
 
-        b2Body *addPhysicsBody(b2BodyType type, float density, float friction);
+        b2Body *addPhysicsBody(b2BodyType type = b2_dynamicBody, float density = 1, float friction = 0.3f);
 
         b2Body *getPhysicsBody();
 
@@ -354,7 +352,6 @@ namespace c2d {
         bool m_shape_dirty = false;
 
 #ifdef __BOX2D__
-        b2ChainShape m_chain;
         b2BodyDef m_bodyDef;
         b2Body *m_body = nullptr;
         b2FixtureDef m_fixtureDef;
