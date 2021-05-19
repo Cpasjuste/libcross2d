@@ -32,6 +32,14 @@
 #include "VertexArray.hpp"
 #include "Vector2.hpp"
 
+#ifdef __BOX2D__
+
+#include <Box2D/Box2D.h>
+
+extern b2World m_world;
+
+#endif
+
 namespace c2d {
 ////////////////////////////////////////////////////////////
 /// \brief Base class for textured shapes with outline
@@ -270,6 +278,14 @@ namespace c2d {
 
         virtual VertexArray *getVertexArray();
 
+#ifdef __BOX2D__
+
+        b2Body *addPhysicsBody(b2BodyType type, float density, float friction);
+
+        b2Body *getPhysicsBody();
+
+#endif
+
     protected:
 
         ////////////////////////////////////////////////////////////
@@ -336,6 +352,15 @@ namespace c2d {
         FloatRect m_bounds;           ///< Bounding rectangle of the whole shape (outline + fill)
         Origin m_shape_origin = Origin::TopLeft;
         bool m_shape_dirty = false;
+
+#ifdef __BOX2D__
+        b2ChainShape m_chain;
+        b2BodyDef m_bodyDef;
+        b2Body *m_body = nullptr;
+        b2FixtureDef m_fixtureDef;
+        b2Fixture *m_fixture = nullptr;
+        b2PolygonShape m_polyShape;
+#endif
     };
 
 } // namespace c2d

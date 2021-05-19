@@ -10,9 +10,10 @@ int main(int argc, char *argv[]) {
 
     // create main renderer
     auto renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
-    renderer->setPrintStats(true);
+    //renderer->setPrintStats(true);
     renderer->setClearColor(Color::Black);
 
+#if 0
     auto border = new C2DRectangle({2, 2,
                                     renderer->getSize().x - 4, renderer->getSize().y - 4});
     border->setFillColor(Color::Transparent);
@@ -72,12 +73,33 @@ int main(int argc, char *argv[]) {
     auto tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     tweenAlpha->play();
     rect->add(tweenAlpha);
+#endif
+
+    auto shape = new C2DTexture(renderer->getIo()->getRomFsPath() + "gbatemp.png");
+    shape->setPosition(155, 10);
+    shape->setSize(100, 100);
+    shape->addPhysicsBody(b2_dynamicBody, 1.0f, 0.3f);
+    renderer->add(shape);
+
+    auto shape2 = new RectangleShape({50, 400, 100, 100});
+    shape2->setFillColor(Color::Yellow);
+    shape2->addPhysicsBody(b2_staticBody, 1.0f, 0.3f);
+    renderer->add(shape2);
+
+    auto shape3 = new RectangleShape({250, 400, 100, 100});
+    shape3->setFillColor(Color::Yellow);
+    shape3->addPhysicsBody(b2_staticBody, 1.0f, 0.3f);
+    renderer->add(shape3);
 
     while (true) {
 
         // stop if any key is pressed
         if (renderer->getInput()->getKeys() != 0) {
-            break;
+            if (renderer->getInput()->getKeys() == 32768) {
+                shape->getPhysicsBody()->ApplyForce({0, -500}, shape->getPhysicsBody()->GetWorldCenter(), true);
+            } else {
+                break;
+            }
         }
 
         // renderer everything

@@ -24,6 +24,7 @@ option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
 option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
 option(OPTION_FREETYPE "Build with freetype support" ON)
+option(OPTION_BOX2D "Build with box2d support" OFF)
 set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width")
 set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
 
@@ -142,6 +143,13 @@ if (OPTION_RENDER_GL1 OR OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
         list(APPEND C2D_CFLAGS -D__GLAD__)
         list(APPEND C2D_LDFLAGS glad)
     endif ()
+endif ()
+
+if (OPTION_BOX2D)
+    pkg_search_module(BOX2D REQUIRED box2d)
+    list(APPEND C2D_INCLUDES ${BOX2D_INCLUDE_DIRS})
+    list(APPEND C2D_LDFLAGS ${BOX2D_LIBRARIES})
+    list(APPEND C2D_CFLAGS -D__BOX2D__)
 endif ()
 
 # export tools

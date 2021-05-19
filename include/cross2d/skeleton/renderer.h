@@ -19,6 +19,13 @@
 #include "cross2d/skeleton/input.h"
 #include "cross2d/skeleton/io.h"
 
+#ifdef __BOX2D__
+
+#include <Box2D/Box2D.h>
+
+extern b2World m_world;
+#endif
+
 #ifndef MAX_PATH
 #define MAX_PATH 512
 #endif
@@ -89,6 +96,18 @@ namespace c2d {
             return m_draw_calls_batched;
         }
 
+#ifdef __BOX2D__
+
+        void setPixelsPerMeter(float ppm) {
+            m_pixelsPerMeter = ppm;
+        }
+
+        float getPixelsPerMeter() {
+            return m_pixelsPerMeter;
+        }
+
+#endif
+
     protected:
 
         void onUpdate() override;
@@ -106,6 +125,12 @@ namespace c2d {
         int m_draw_calls;
         int m_draw_calls_batched;
         bool m_stats_print = false;
+
+#ifdef __BOX2D__
+        int32 m_velocityIterations = 6;
+        int32 m_positionIterations = 2;
+        float m_pixelsPerMeter = 32;
+#endif
     };
 }
 

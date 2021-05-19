@@ -16,6 +16,11 @@ extern int romfsExit();
 
 #endif
 
+#ifdef __BOX2D__
+b2Vec2 m_gravity(0.0f, 10.0f);
+b2World m_world(m_gravity);
+#endif
+
 Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 
     printf("Renderer(%p)\n", this);
@@ -69,6 +74,10 @@ void Renderer::onUpdate() {
             }
         }
     }
+
+#ifdef __BOX2D__
+    m_world.Step(m_deltaTime.asSeconds(), m_velocityIterations, m_positionIterations);
+#endif
 
     Rectangle::onUpdate();
 }
