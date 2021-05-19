@@ -35,7 +35,7 @@ PSP2Renderer::PSP2Renderer(const Vector2f &size) : Renderer(size) {
     vita2d_init();
     vita2d_set_vblank_wait(1);
 
-    shaderList = (ShaderList *) new PSP2ShaderList("");
+    m_shaderList = (ShaderList *) new PSP2ShaderList("");
 }
 
 void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture, Sprite *sprite) {
@@ -161,7 +161,7 @@ void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
 
 void PSP2Renderer::flip(bool draw, bool inputs) {
 
-    process_inputs = inputs;
+    m_process_inputs = inputs;
     Renderer::onUpdate();
 
     if (draw) {
