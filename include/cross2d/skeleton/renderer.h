@@ -102,6 +102,10 @@ namespace c2d {
             return &m_world;
         }
 
+        void setPhysicsPaused(bool paused) {
+            physicsPaused = paused;
+        }
+
         void setPixelsPerMeter(float ppm) {
             m_pixelsPerMeter = ppm;
         }
@@ -134,6 +138,7 @@ namespace c2d {
         int32 m_velocityIterations = 6;
         int32 m_positionIterations = 2;
         float m_pixelsPerMeter = 32;
+        bool physicsPaused = false;
 #endif
     };
 }

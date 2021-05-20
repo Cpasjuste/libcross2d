@@ -76,7 +76,9 @@ void Renderer::onUpdate() {
     }
 
 #ifdef __BOX2D__
-    m_world.Step(m_deltaTime.asSeconds(), m_velocityIterations, m_positionIterations);
+    if (!physicsPaused) {
+        m_world.Step(m_deltaTime.asSeconds(), m_velocityIterations, m_positionIterations);
+    }
 #endif
 
     Rectangle::onUpdate();
