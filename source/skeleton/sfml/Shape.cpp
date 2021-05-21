@@ -275,7 +275,7 @@ namespace c2d {
         if (m_body) {
             b2Vec2 pos = m_body->GetPosition();
             setPosition(pos.x * c2d_renderer->getPixelsPerMeter(), pos.y * c2d_renderer->getPixelsPerMeter());
-            float32 angle = m_body->GetAngle();
+            float angle = m_body->GetAngle();
             setRotation(angle * 180 / M_PI);
         }
 #endif

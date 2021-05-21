@@ -33,9 +33,11 @@
 #include "Vector2.hpp"
 
 #ifdef __BOX2D__
-
+#ifdef __PSP2__
+#include <box2d/box2d.h>
+#else
 #include <Box2D/Box2D.h>
-
+#endif
 #endif
 
 namespace c2d {

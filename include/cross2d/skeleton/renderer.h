@@ -20,8 +20,11 @@
 #include "cross2d/skeleton/io.h"
 
 #ifdef __BOX2D__
-
+#ifdef __PSP2__
+#include <box2d/box2d.h>
+#else
 #include <Box2D/Box2D.h>
+#endif
 
 extern b2World m_world;
 #endif

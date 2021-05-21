@@ -146,9 +146,11 @@ if (OPTION_RENDER_GL1 OR OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
 endif ()
 
 if (OPTION_BOX2D)
-    pkg_search_module(BOX2D REQUIRED box2d)
-    list(APPEND C2D_INCLUDES ${BOX2D_INCLUDE_DIRS})
-    list(APPEND C2D_LDFLAGS ${BOX2D_LIBRARIES})
+    if (NOT PLATFORM_VITA)
+        pkg_search_module(BOX2D REQUIRED box2d)
+        list(APPEND C2D_INCLUDES ${BOX2D_INCLUDE_DIRS})
+        list(APPEND C2D_LDFLAGS ${BOX2D_LIBRARIES})
+    endif ()
     list(APPEND C2D_CFLAGS -D__BOX2D__)
 endif ()
 
@@ -180,7 +182,7 @@ if (PLATFORM_VITA)
             source/platforms/psp2/vita-shader-collection/lib/*.o
             )
     list(APPEND C2D_LDFLAGS
-            SDL2 vita2d jpeg png
+            SDL2 vita2d jpeg png box2d
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceAppMgr_stub SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub SceMotion_stub
