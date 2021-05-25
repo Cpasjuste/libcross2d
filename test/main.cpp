@@ -75,20 +75,23 @@ int main(int argc, char *argv[]) {
     rect->add(tweenAlpha);
 #endif
 
+    auto *world = new PhysicsWorld();
+    renderer->add(world);
+
     auto shape = new C2DTexture(renderer->getIo()->getRomFsPath() + "gbatemp.png");
     shape->setPosition(155, 10);
     shape->setSize(100, 100);
-    shape->addPhysicsBody(b2_dynamicBody, 1.0f, 0.3f);
+    shape->addPhysicsBody(world, b2_dynamicBody, 1.0f, 0.3f);
     renderer->add(shape);
 
     auto shape2 = new RectangleShape({50, 400, 100, 100});
     shape2->setFillColor(Color::Yellow);
-    shape2->addPhysicsBody(b2_staticBody, 1.0f, 0.3f);
+    shape2->addPhysicsBody(world, b2_staticBody, 1.0f, 0.3f);
     renderer->add(shape2);
 
     auto shape3 = new RectangleShape({250, 400, 100, 100});
     shape3->setFillColor(Color::Yellow);
-    shape3->addPhysicsBody(b2_staticBody, 1.0f, 0.3f);
+    shape3->addPhysicsBody(world, b2_staticBody, 1.0f, 0.3f);
     renderer->add(shape3);
 
     while (true) {

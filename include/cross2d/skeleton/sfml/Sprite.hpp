@@ -207,7 +207,8 @@ namespace c2d {
 
 #ifdef __BOX2D__
 
-        b2Body *addPhysicsBody(b2BodyType type = b2_dynamicBody, float density = 1, float friction = 0.3f);
+        b2Body *addPhysicsBody(PhysicsWorld *world, b2BodyType type = b2_dynamicBody,
+                               float density = 1, float friction = 0.3f);
 
         b2Body *getPhysicsBody();
 
@@ -242,6 +243,7 @@ namespace c2d {
         Origin m_sprite_origin = Origin::TopLeft;
 
 #ifdef __BOX2D__
+        PhysicsWorld *m_world = nullptr;
         b2BodyDef m_bodyDef;
         b2Body *m_body = nullptr;
         b2FixtureDef m_fixtureDef;

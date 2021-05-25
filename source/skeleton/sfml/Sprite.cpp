@@ -228,7 +228,7 @@ namespace c2d {
 #ifdef __BOX2D__
         if (m_body) {
             b2Vec2 pos = m_body->GetPosition();
-            setPosition(pos.x * c2d_renderer->getPixelsPerMeter(), pos.y * c2d_renderer->getPixelsPerMeter());
+            setPosition(pos.x * m_world->getPixelsPerMeter(), pos.y * m_world->getPixelsPerMeter());
             float angle = m_body->GetAngle();
             setRotation(angle * 180 / M_PI);
         }
@@ -280,25 +280,26 @@ namespace c2d {
 
 #ifdef __BOX2D__
 
-    b2Body *Sprite::addPhysicsBody(b2BodyType type, float density, float friction) {
+    b2Body *Sprite::addPhysicsBody(PhysicsWorld *world, b2BodyType type, float density, float friction) {
         if (!m_body) {
 
+            m_world = world;
             m_bodyDef.type = type;
-            m_bodyDef.position.Set(getPosition().x / c2d_renderer->getPixelsPerMeter(),
-                                   getPosition().y / c2d_renderer->getPixelsPerMeter());
-            m_body = c2d_renderer->getPhysicsWorld()->CreateBody(&m_bodyDef);
+            m_bodyDef.position.Set(getPosition().x / m_world->getPixelsPerMeter(),
+                                   getPosition().y / m_world->getPixelsPerMeter());
+            m_body = m_world->getPhysics()->CreateBody(&m_bodyDef);
 
-            Vector2f boxSize = {(getSize().x / c2d_renderer->getPixelsPerMeter()) / 2,
-                                (getSize().y / c2d_renderer->getPixelsPerMeter()) / 2};
+            Vector2f boxSize = {(getSize().x / m_world->getPixelsPerMeter()) / 2,
+                                (getSize().y / m_world->getPixelsPerMeter()) / 2};
 
             m_polyShape.m_type = b2Shape::Type::e_polygon;
             m_polyShape.m_centroid = {boxSize.x, boxSize.y};
 
             auto vs = (b2Vec2 *) malloc(sizeof(b2Vec2) * 4);
             vs[0].Set(0, 0);
-            vs[1].Set(m_size.x / c2d_renderer->getPixelsPerMeter(), 0);
-            vs[2].Set(m_size.x / c2d_renderer->getPixelsPerMeter(), m_size.y / c2d_renderer->getPixelsPerMeter());
-            vs[3].Set(0, m_size.y / c2d_renderer->getPixelsPerMeter());
+            vs[1].Set(m_size.x / m_world->getPixelsPerMeter(), 0);
+            vs[2].Set(m_size.x / m_world->getPixelsPerMeter(), m_size.y / m_world->getPixelsPerMeter());
+            vs[3].Set(0, m_size.y / m_world->getPixelsPerMeter());
             m_polyShape.Set(vs, 4);
             free(vs);
 
@@ -317,7 +318,7 @@ namespace c2d {
 
     Sprite::~Sprite() {
         if (m_body) {
-            c2d_renderer->getPhysicsWorld()->DestroyBody(m_body);
+            m_world->getPhysics()->DestroyBody(m_body);
         }
     }
 

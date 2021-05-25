@@ -16,11 +16,6 @@ extern int romfsExit();
 
 #endif
 
-#ifdef __BOX2D__
-b2Vec2 m_gravity(0.0f, 10.0f);
-b2World m_world(m_gravity);
-#endif
-
 Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 
     printf("Renderer(%p)\n", this);
@@ -42,11 +37,6 @@ Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 
     m_elapsedClock = new C2DClock();
     m_deltaClock = new C2DClock();
-
-#ifdef __BOX2D__
-    //Renderer::setOrigin(Origin::BottomLeft);
-    //Renderer::setScale(1.0f, -1.0f);
-#endif
 }
 
 void Renderer::onUpdate() {
@@ -79,12 +69,6 @@ void Renderer::onUpdate() {
             }
         }
     }
-
-#ifdef __BOX2D__
-    if (!physicsPaused) {
-        m_world.Step(m_deltaTime.asSeconds(), m_velocityIterations, m_positionIterations);
-    }
-#endif
 
     Rectangle::onUpdate();
 }
