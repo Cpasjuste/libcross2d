@@ -48,6 +48,11 @@ namespace {
 namespace c2d {
 ////////////////////////////////////////////////////////////
     Shape::~Shape() {
+#ifdef __BOX2D__
+        if (m_body) {
+            c2d_renderer->getPhysicsWorld()->DestroyBody(m_body);
+        }
+#endif
     }
 
     ////////////////////////////////////////////////////////////
@@ -402,7 +407,7 @@ namespace c2d {
             free(vs);
 
             m_fixtureDef.shape = &m_polyShape;
-            m_fixtureDef.density =  density;
+            m_fixtureDef.density = density;
             m_fixtureDef.friction = friction;
             m_fixture = m_body->CreateFixture(&m_fixtureDef);
         }

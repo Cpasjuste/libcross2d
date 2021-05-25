@@ -315,6 +315,12 @@ namespace c2d {
         return m_body;
     }
 
+    Sprite::~Sprite() {
+        if (m_body) {
+            c2d_renderer->getPhysicsWorld()->DestroyBody(m_body);
+        }
+    }
+
 #endif
 
 } // namespace c2d

@@ -42,6 +42,11 @@ Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 
     m_elapsedClock = new C2DClock();
     m_deltaClock = new C2DClock();
+
+#ifdef __BOX2D__
+    //Renderer::setOrigin(Origin::BottomLeft);
+    //Renderer::setScale(1.0f, -1.0f);
+#endif
 }
 
 void Renderer::onUpdate() {

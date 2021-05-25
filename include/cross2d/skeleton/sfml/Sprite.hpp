@@ -73,6 +73,10 @@ namespace c2d {
         ////////////////////////////////////////////////////////////
         Sprite(Texture *texture, const IntRect &rectangle);
 
+#ifdef __BOX2D__
+        ~Sprite() override;
+#endif
+
         ////////////////////////////////////////////////////////////
         /// \brief Change the source texture of the sprite
         ///
