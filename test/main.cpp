@@ -82,17 +82,17 @@ int main(int argc, char *argv[]) {
     shape->setPosition(155, 10);
     shape->setSize(100, 100);
     shape->addPhysicsBody(world, b2_dynamicBody, 1.0f, 0.3f);
-    renderer->add(shape);
+    world->add(shape);
 
     auto shape2 = new RectangleShape({50, 400, 100, 100});
     shape2->setFillColor(Color::Yellow);
     shape2->addPhysicsBody(world, b2_staticBody, 1.0f, 0.3f);
-    renderer->add(shape2);
+    world->add(shape2);
 
     auto shape3 = new RectangleShape({250, 400, 100, 100});
     shape3->setFillColor(Color::Yellow);
     shape3->addPhysicsBody(world, b2_staticBody, 1.0f, 0.3f);
-    renderer->add(shape3);
+    world->add(shape3);
 
     while (true) {
 

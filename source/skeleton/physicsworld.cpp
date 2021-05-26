@@ -28,5 +28,15 @@ void PhysicsWorld::onUpdate() {
 }
 
 PhysicsWorld::~PhysicsWorld() {
-    delete (m_world);
+
+    if (m_world) {
+        b2Body *b = m_world->GetBodyList();
+        while (b) {
+            b2Body *bNext = b->GetNext();
+            m_world->DestroyBody(b);
+            b = bNext;
+        }
+        delete (m_world);
+        m_world = nullptr;
+    }
 }

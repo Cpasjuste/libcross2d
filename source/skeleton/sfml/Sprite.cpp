@@ -317,8 +317,9 @@ namespace c2d {
     }
 
     Sprite::~Sprite() {
-        if (m_body) {
+        if (m_world->getPhysics() && m_body) {
             m_world->getPhysics()->DestroyBody(m_body);
+            m_body = nullptr;
         }
     }
 
