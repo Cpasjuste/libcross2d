@@ -8,9 +8,10 @@
 using namespace c2d;
 
 PhysicsWorld::PhysicsWorld(const c2d::Vector2f &gravity, const c2d::Vector2i &iterations, float pixelsPerMeter)
-        : Rectangle({1000, 1000}) {
+        : Rectangle({10000, 10000}) {
 
     Rectangle::setOrigin(Origin::BottomLeft);
+    Rectangle::setPosition(0, c2d_renderer->getSize().y - 10000);
     Rectangle::setScale(1.0f, -1.0f);
 
     m_world = new b2World({gravity.x, gravity.y});
@@ -40,3 +41,4 @@ PhysicsWorld::~PhysicsWorld() {
         m_world = nullptr;
     }
 }
+

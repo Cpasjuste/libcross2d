@@ -49,7 +49,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     Shape::~Shape() {
 #ifdef __BOX2D__
-        if (m_world->getPhysics() && m_body) {
+        if (m_world && m_world->getPhysics() && m_body) {
             m_world->getPhysics()->DestroyBody(m_body);
             m_body = nullptr;
         }
@@ -324,6 +324,11 @@ namespace c2d {
                     (m_textureRect.left + m_textureRect.width * xratio) / m_texture->getTextureSize().x;
             m_vertices[i].texCoords.y =
                     (m_textureRect.top + m_textureRect.height * yratio) / m_texture->getTextureSize().y;
+#ifdef __BOX2D__
+            if (m_body) {
+                m_vertices[i].texCoords.y *= -1;
+            }
+#endif
         }
 
         m_vertices.update();
@@ -412,6 +417,8 @@ namespace c2d {
             m_fixtureDef.density = density;
             m_fixtureDef.friction = friction;
             m_fixture = m_body->CreateFixture(&m_fixtureDef);
+
+            updateTexCoords();
         }
 
         return m_body;

@@ -75,26 +75,34 @@ int main(int argc, char *argv[]) {
     rect->add(tweenAlpha);
 #endif
 
+    auto *view = new Rectangle(renderer->getSize());
+    view->setOrigin(Origin::BottomLeft);
+    view->setPosition(0, renderer->getSize().y);
+    view->setScale(0.5f, 0.5f);
+    renderer->add(view);
+
     auto *world = new PhysicsWorld();
-    renderer->add(world);
+    view->add(world);
 
     auto shape = new C2DTexture(renderer->getIo()->getRomFsPath() + "gbatemp.png");
-    shape->setPosition(155, 10);
+    shape->setPosition(55, 200);
     shape->setSize(100, 100);
     shape->addPhysicsBody(world, b2_dynamicBody, 1.0f, 0.3f);
     world->add(shape);
 
-    auto shape2 = new RectangleShape({50, 400, 100, 100});
+    auto shape2 = new RectangleShape({0, 0, 100, 100});
     shape2->setFillColor(Color::Yellow);
     shape2->addPhysicsBody(world, b2_staticBody, 1.0f, 0.3f);
     world->add(shape2);
 
-    auto shape3 = new RectangleShape({250, 400, 100, 100});
+    auto shape3 = new RectangleShape({170, 0, 100, 100});
     shape3->setFillColor(Color::Yellow);
     shape3->addPhysicsBody(world, b2_staticBody, 1.0f, 0.3f);
     world->add(shape3);
 
     while (true) {
+
+        printf("%f x %f\n", shape->getPosition().x, shape->getPosition().y);
 
         // stop if any key is pressed
         if (renderer->getInput()->getKeys() != 0) {

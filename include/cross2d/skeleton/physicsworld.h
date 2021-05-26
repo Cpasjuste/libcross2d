@@ -33,12 +33,44 @@ public:
         physicsPaused = paused;
     }
 
+    bool isPaused() const {
+        return physicsPaused;
+    }
+
     void setPixelsPerMeter(float ppm) {
         m_pixelsPerMeter = ppm;
     }
 
     float getPixelsPerMeter() {
         return m_pixelsPerMeter;
+    }
+
+    void setScale(float factorX, float factorY) override {
+        printf("PhysicsWorld::setScale: not implemented\n");
+    }
+
+    void setScale(const c2d::Vector2f &factors) override {
+        printf("PhysicsWorld::setScale: not implemented\n");
+    }
+
+    void setSize(const c2d::Vector2f &size) override {
+        printf("PhysicsWorld::setSize: not implemented\n");
+    }
+
+    void setSize(float width, float height) override {
+        printf("PhysicsWorld::setSize: not implemented\n");
+    }
+
+    void setOrigin(const c2d::Origin &origin) override {
+        printf("PhysicsWorld::setOrigin: not implemented\n");
+    }
+
+    void setOriginVector(float x, float y) override {
+        printf("PhysicsWorld::setOriginVector: not implemented\n");
+    }
+
+    void setOriginVector(const c2d::Vector2f &origin) override {
+        printf("PhysicsWorld::setOriginVector: not implemented\n");
     }
 
 protected:
