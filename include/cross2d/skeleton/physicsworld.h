@@ -2,19 +2,12 @@
 // Created by cpasjuste on 25/05/2021.
 //
 
-#ifndef SILLYTOWER_PHYSICSWORLD_H
-#define SILLYTOWER_PHYSICSWORLD_H
+#ifndef C2D_PHYSICSWORLD_H
+#define C2D_PHYSICSWORLD_H
 
 #ifdef __BOX2D__
 
-#ifdef __PSP2__
 #include <box2d/box2d.h>
-#else
-
-#include <Box2D/Box2D.h>
-
-#endif
-
 #include "cross2d/skeleton/sfml/Rectangle.hpp"
 
 class PhysicsWorld : public c2d::Rectangle {
@@ -85,4 +78,4 @@ private:
 
 #endif //__BOX2D__
 
-#endif //SILLYTOWER_PHYSICSWORLD_H
+#endif //C2D_PHYSICSWORLD_H
