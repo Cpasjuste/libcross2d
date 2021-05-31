@@ -7,6 +7,7 @@
 
 #ifdef __BOX2D__
 
+#include <cstdio>
 #include <box2d/box2d.h>
 #include "cross2d/skeleton/sfml/Rectangle.hpp"
 

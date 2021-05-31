@@ -161,9 +161,6 @@ void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
 
 void PSP2Renderer::flip(bool draw, bool inputs) {
 
-    m_process_inputs = inputs;
-    Renderer::onUpdate();
-
     if (draw) {
         vita2d_start_drawing();
         // clear screen
@@ -173,11 +170,12 @@ void PSP2Renderer::flip(bool draw, bool inputs) {
                       (unsigned int) m_clearColor.b,
                       (unsigned int) m_clearColor.a));
         vita2d_clear_screen();
+    }
 
-        // call base class (draw childs)
-        Transform trans = Transform::Identity;
-        Rectangle::onDraw(trans, draw);
+    // call base class (draw childs)
+    Renderer::flip(draw, inputs);
 
+    if (draw) {
         vita2d_end_drawing();
         vita2d_wait_rendering_done();
         vita2d_swap_buffers();
