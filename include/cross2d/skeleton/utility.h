@@ -7,12 +7,17 @@
 
 #include <string>
 #include <vector>
+#include <random>
+#include <ctime>
 
 namespace c2d {
 
     class Utility {
 
     public:
+        static int random(int min, int max);
+
+        static float random(float min, float max);
 
         static int parseInt(const std::string &str, int defValue = 0);
 

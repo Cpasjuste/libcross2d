@@ -3,10 +3,22 @@
 //
 
 #include <algorithm>
-
 #include "cross2d/c2d.h"
 
 using namespace c2d;
+
+typedef std::mt19937 RandomEngine;
+static RandomEngine randomEngine = RandomEngine(static_cast<unsigned long>(std::time(nullptr)));
+
+int Utility::random(int min, int max) {
+    std::uniform_int_distribution<int> distribution(min, max);
+    return distribution(randomEngine);
+}
+
+float Utility::random(float min, float max) {
+    std::uniform_real_distribution<float> distribution(min, max);
+    return distribution(randomEngine);
+}
 
 std::string Utility::toLower(const std::string &str) {
     std::string ret = str;
