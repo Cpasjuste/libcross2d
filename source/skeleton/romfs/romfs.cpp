@@ -98,7 +98,7 @@ static ssize_t read_hook(int fd, void *buf, size_t count) {
 
     PhysPtr *fsPtr = physGet(fd);
     if (fsPtr) {
-        size_t len = buf ? PHYSFS_readBytes(fsPtr->file, buf, count) : 0;
+        ssize_t len = buf ? PHYSFS_readBytes(fsPtr->file, buf, count) : 0;
         printf("OK: read_hook(%i, %p, %zu), read = %zu\n", fd, buf, count, len);
         return len;
     }
@@ -118,7 +118,7 @@ static off_t lseek_hook(int fd, off_t offset, int whence) {
         } else if (whence == SEEK_CUR) {
             cur += offset;
         } else if (whence == SEEK_END) {
-            cur = fsPtr->size + offset;
+            cur = (off_t) fsPtr->size + offset;
         }
 
         if (PHYSFS_seek(fsPtr->file, cur) == 0) {
@@ -126,7 +126,7 @@ static off_t lseek_hook(int fd, off_t offset, int whence) {
             return -1;
         }
 
-        printf("OK: lseek_hook(%i, %li, %i)\n", fd, offset, whence);
+        printf("OK: lseek_hook(%i, %li, %i), ret = %li\n", fd, offset, whence, cur);
         return cur;
     }
 
@@ -291,10 +291,27 @@ static int fseek_hook(FILE *stream, long offset, int whence) {
     PhysPtr *fsPtr = physGet(fd);
     if (fsPtr) {
         printf("OK: fseek_hook(%i, %lu, %i)\n", fd, offset, whence);
-        return lseek_hook(fd, offset, whence);
+        return (int) lseek_hook(fd, offset, whence);
     }
 
     return fseek_func(stream, offset, whence);
+}
+
+static int (*fseeko_func)(FILE *stream, off_t offset, int whence);
+
+static int fseeko_hook(FILE *stream, off_t offset, int whence) {
+#ifdef __WINDOWS__
+    int fd = stream->_file;
+#else
+    int fd = stream->_fileno;
+#endif
+    PhysPtr *fsPtr = physGet(fd);
+    if (fsPtr) {
+        printf("OK: fseeko_hook(%i, %lu, %i)\n", fd, offset, whence);
+        return (int) lseek_hook(fd, offset, whence);
+    }
+
+    return fseeko_func(stream, offset, whence);
 }
 
 static long (*ftell_func)(FILE *stream);
@@ -312,6 +329,23 @@ static long int ftell_hook(FILE *stream) {
     }
 
     return ftell_func(stream);
+}
+
+static off_t (*ftello_func)(FILE *stream);
+
+static off_t ftello_hook(FILE *stream) {
+#ifdef __WINDOWS__
+    int fd = stream->_file;
+#else
+    int fd = stream->_fileno;
+#endif
+    PhysPtr *fsPtr = physGet(fd);
+    if (fsPtr) {
+        printf("OK: ftell_hook(%i)\n", fd);
+        return (off_t) PHYSFS_tell(fsPtr->file);
+    }
+
+    return ftello_func(stream);
 }
 
 static int (*fclose_func)(FILE *stream);
@@ -468,10 +502,22 @@ int romfsInit() {
         printf("romfsInit: fseek_hook failed\n");
     }
 
+    fseeko_func = (int (*)(FILE *, off_t, int)) fseeko;
+    ret = funchook_prepare(funchook, (void **) &fseeko_func, (void *) fseeko_hook);
+    if (ret != 0) {
+        printf("romfsInit: fseeko_hook failed\n");
+    }
+
     ftell_func = (long int (*)(FILE *)) ftell;
     ret = funchook_prepare(funchook, (void **) &ftell_func, (void *) ftell_hook);
     if (ret != 0) {
         printf("romfsInit: ftell_hook failed\n");
+    }
+
+    ftello_func = (off_t (*)(FILE *)) ftello;
+    ret = funchook_prepare(funchook, (void **) &ftello_func, (void *) ftello_hook);
+    if (ret != 0) {
+        printf("romfsInit: ftello_hook failed\n");
     }
 
     fstat_func = (int (*)(int, struct stat *)) fstat;
