@@ -9,7 +9,7 @@ namespace c2d {
 
     class AnimatedSprite : public Sprite {
     public:
-        AnimatedSprite(Texture *texture, const Vector2i &frameSize, int framePerX, int frameCount, float duration);
+        AnimatedSprite(Texture *texture, const Vector2i &frameSize, int rows, int frameCount, float duration);
 
         ~AnimatedSprite() override;
 

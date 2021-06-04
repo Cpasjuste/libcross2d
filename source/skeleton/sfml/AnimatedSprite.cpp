@@ -7,7 +7,7 @@
 using namespace c2d;
 
 AnimatedSprite::AnimatedSprite(Texture *texture, const Vector2i &frameSize,
-                               int framePerX, int frameCount, float speed) : Sprite(texture) {
+                               int rows, int frameCount, float speed) : Sprite(texture) {
     m_clock = new C2DClock;
     m_frameCount = frameCount;
     m_duration = speed;
@@ -21,7 +21,7 @@ AnimatedSprite::AnimatedSprite(Texture *texture, const Vector2i &frameSize,
         int y1 = frameSize.y * y_advance;
         m_textureRects.emplace_back(x1, y1, frameSize.x, frameSize.y);
         x_advance++;
-        if (x_advance == framePerX) {
+        if (x_advance == rows) {
             x_advance = 0;
             y_advance++;
         }
