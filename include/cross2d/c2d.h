@@ -16,6 +16,7 @@
 #include "cross2d/skeleton/sfml/BMFont.hpp"
 #include "cross2d/skeleton/sfml/Text.hpp"
 #include "cross2d/skeleton/sfml/Sprite.hpp"
+#include "cross2d/skeleton/sfml/AnimatedSprite.h"
 #include "cross2d/skeleton/renderer.h"
 #include "cross2d/skeleton/texture.h"
 #include "cross2d/skeleton/utility.h"

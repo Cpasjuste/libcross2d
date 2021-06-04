@@ -14,6 +14,12 @@ int main(int argc, char *argv[]) {
     renderer->setClearColor(Color::Black);
 
 #if 0
+    Texture *tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "bird.png");
+    AnimatedSprite *sprite = new AnimatedSprite(tex, {128, 128}, 4, 8, 1.5f);
+    renderer->add(sprite);
+#endif
+
+#if 0
     auto border = new C2DRectangle({2, 2,
                                     renderer->getSize().x - 4, renderer->getSize().y - 4});
     border->setFillColor(Color::Transparent);
@@ -75,6 +81,7 @@ int main(int argc, char *argv[]) {
     rect->add(tweenAlpha);
 #endif
 
+#if 0
     auto *view = new Rectangle(renderer->getSize());
     view->setOrigin(Origin::BottomLeft);
     view->setPosition(0, renderer->getSize().y);
@@ -99,15 +106,16 @@ int main(int argc, char *argv[]) {
     shape3->setFillColor(Color::Yellow);
     shape3->addPhysicsBody(world, b2_staticBody, 1.0f, 0.3f);
     world->add(shape3);
+#endif
 
     while (true) {
 
-        printf("%f x %f\n", shape->getPosition().x, shape->getPosition().y);
+        //printf("%f x %f\n", shape->getPosition().x, shape->getPosition().y);
 
         // stop if any key is pressed
         if (renderer->getInput()->getKeys() != 0) {
             if (renderer->getInput()->getKeys() == 32768) {
-                shape->getPhysicsBody()->ApplyForce({0, -500}, shape->getPhysicsBody()->GetWorldCenter(), true);
+                //shape->getPhysicsBody()->ApplyForce({0, -500}, shape->getPhysicsBody()->GetWorldCenter(), true);
             } else {
                 break;
             }
