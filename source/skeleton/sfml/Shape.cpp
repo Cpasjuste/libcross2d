@@ -325,9 +325,11 @@ namespace c2d {
             m_vertices[i].texCoords.y =
                     (m_textureRect.top + m_textureRect.height * yratio) / m_texture->getTextureSize().y;
 #ifdef __BOX2D__
+#ifndef __PSP2__ // TODO: fixme
             if (m_body) {
                 m_vertices[i].texCoords.y *= -1;
             }
+#endif
 #endif
         }
 

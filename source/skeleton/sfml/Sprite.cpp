@@ -276,12 +276,14 @@ namespace c2d {
         m_vertices[2].texCoords = Vector2f(right / texSize.x, top / texSize.y);
         m_vertices[3].texCoords = Vector2f(right / texSize.x, bottom / texSize.y);
 #ifdef __BOX2D__
+#ifndef __PSP2__ // TODO: fixme
         if (m_body) {
             m_vertices[0].texCoords.y *= -1;
             m_vertices[1].texCoords.y *= -1;
             m_vertices[2].texCoords.y *= -1;
             m_vertices[3].texCoords.y *= -1;
         }
+#endif
 #endif
         m_vertices.update();
     }
