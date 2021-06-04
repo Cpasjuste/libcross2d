@@ -424,8 +424,20 @@ namespace c2d {
         return m_body;
     }
 
+    void Shape::removePhysicsBody() {
+        if (m_world && m_world->getPhysics() && m_body) {
+            m_world->getPhysics()->DestroyBody(m_body);
+            m_body = nullptr;
+            m_fixture = nullptr;
+        }
+    }
+
     b2Body *Shape::getPhysicsBody() {
         return m_body;
+    }
+
+    b2Fixture *Shape::getPhysicsBodyFixture() {
+        return m_fixture;
     }
 
 #endif

@@ -320,6 +320,14 @@ namespace c2d {
         return m_body;
     }
 
+    void Sprite::removePhysicsBody() {
+        if (m_world && m_world->getPhysics() && m_body) {
+            m_world->getPhysics()->DestroyBody(m_body);
+            m_body = nullptr;
+            m_fixture = nullptr;
+        }
+    }
+
     b2Body *Sprite::getPhysicsBody() {
         return m_body;
     }
@@ -328,7 +336,12 @@ namespace c2d {
         if (m_world && m_world->getPhysics() && m_body) {
             m_world->getPhysics()->DestroyBody(m_body);
             m_body = nullptr;
+            m_fixture = nullptr;
         }
+    }
+
+    b2Fixture *Sprite::getPhysicsBodyFixture() {
+        return m_fixture;
     }
 
 #endif

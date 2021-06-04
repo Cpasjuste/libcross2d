@@ -281,7 +281,11 @@ namespace c2d {
         b2Body *addPhysicsBody(PhysicsWorld *world, b2BodyType type = b2_dynamicBody,
                                float density = 1, float friction = 0.3f);
 
+        void removePhysicsBody();
+
         b2Body *getPhysicsBody();
+
+        b2Fixture *getPhysicsBodyFixture();
 
 #endif
 
