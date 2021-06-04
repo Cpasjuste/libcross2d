@@ -59,23 +59,18 @@ void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
 
     SceGxmPrimitiveType type;
     switch (vertexArray->getPrimitiveType()) {
-
         case PrimitiveType::Triangles:
             type = SCE_GXM_PRIMITIVE_TRIANGLES;
             break;
-
         case PrimitiveType::Lines:
             type = SCE_GXM_PRIMITIVE_LINES;
             break;
-
         case PrimitiveType::TriangleStrip:
             type = SCE_GXM_PRIMITIVE_TRIANGLE_STRIP;
             break;
-
         case PrimitiveType::TriangleFan:
             type = SCE_GXM_PRIMITIVE_TRIANGLE_FAN;
             break;
-
         default:
             printf("PSP2Render::draw: unsupported primitive type\n");
             return;
@@ -108,13 +103,11 @@ void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
 
         for (unsigned int i = 0; i < vertexCount; i++) {
             Vector2f v = transform.transformPoint(vertices[i].position);
-
             v2d_vertices[i].x = v.x;
             v2d_vertices[i].y = v.y;
-            v2d_vertices[i].z = +0.5f;
+            v2d_vertices[i].z = 0.5f;
             v2d_vertices[i].u = vertices[i].texCoords.x;
             v2d_vertices[i].v = vertices[i].texCoords.y;
-
             v2d_indices[i] = (uint16_t) i;
         }
 

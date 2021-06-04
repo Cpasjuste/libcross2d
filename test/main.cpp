@@ -14,8 +14,8 @@ int main(int argc, char *argv[]) {
     renderer->setClearColor(Color::Black);
 
 #if 0
-    Texture *tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "bird.png");
-    AnimatedSprite *sprite = new AnimatedSprite(tex, {128, 128}, 4, 8, 1.5f);
+    auto *tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "bird.png");
+    auto *sprite = new AnimatedSprite(tex, {128, 128}, 4, 8, 1.5f);
     renderer->add(sprite);
 #endif
 
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
     rect->add(tweenAlpha);
 #endif
 
-#if 0
+#if 1
     auto *view = new Rectangle(renderer->getSize());
     view->setOrigin(Origin::BottomLeft);
     view->setPosition(0, renderer->getSize().y);
