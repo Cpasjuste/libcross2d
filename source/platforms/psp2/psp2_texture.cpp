@@ -2,6 +2,8 @@
 // Created by cpasjuste on 01/12/16.
 //
 
+#if __VITA2D__
+
 #include <cstring>
 #include <cstdio>
 
@@ -237,3 +239,4 @@ PSP2Texture::~PSP2Texture() {
         tex = nullptr;
     }
 }
+#endif

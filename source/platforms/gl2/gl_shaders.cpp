@@ -5,14 +5,21 @@
 #ifdef __GL2__
 
 #include "cross2d/c2d.h"
-#include "shaders/shaders.h"
 
+#ifdef __PSP2__
+
+#include "shaders/color_f.h"
+#include "shaders/color_v.h"
+#include "shaders/texture_f.h"
+#include "shaders/texture_v.h"
+
+#else
+#include "shaders/shaders.h"
+#endif
 using namespace c2d;
 
-static GLuint createAndCompileShader(GLenum type, const char *source) {
+static GLuint createAndCompileShader(GLenum type, const char *source, int size = 0) {
 
-    GLint success;
-    GLchar msg[512];
     GLuint handle;
 
     GL_CHECK(handle = glCreateShader(type));
@@ -21,26 +28,35 @@ static GLuint createAndCompileShader(GLenum type, const char *source) {
         return 0;
     }
 
+#ifdef __PSP2__
+    glShaderBinary(1, &handle, 0, source, size);
+#else
+    GLint success;
+    GLchar msg[512];
     GL_CHECK(glShaderSource(handle, 1, &source, nullptr));
     GL_CHECK(glCompileShader(handle));
     GL_CHECK(glGetShaderiv(handle, GL_COMPILE_STATUS, &success));
-
     if (!success) {
         glGetShaderInfoLog(handle, sizeof(msg), nullptr, msg);
-        printf("%u: %s\n", type, msg);
+        printf("createAndCompileShader: %u: %s\n", type, msg);
         glDeleteShader(handle);
         return 0;
     }
+#endif
 
     return handle;
 }
 
-GLShader::GLShader(const char *vertex, const char *fragment, int type) {
+GLShader::GLShader(const char *vertex, const char *fragment, int type, int vsize, int fsize) {
 
     GLuint vsh, fsh;
     std::string v, f;
 
-#ifdef __GLES2__
+#ifdef __PSP2__
+    vsh = createAndCompileShader(GL_VERTEX_SHADER, vertex, vsize);
+    fsh = createAndCompileShader(GL_FRAGMENT_SHADER, fragment, fsize);
+#else
+#if __GLES2__
     v = std::string("#version 100\n") + vertex;
     f = std::string("#version 100\n") + fragment;
 #else
@@ -48,23 +64,25 @@ GLShader::GLShader(const char *vertex, const char *fragment, int type) {
     f = std::string("#version 330\n") + fragment;
 #endif
 
-    GL_CHECK(vsh = createAndCompileShader(GL_VERTEX_SHADER, v.c_str()));
+    GL_CHECK(vsh = createAndCompileShader(GL_VERTEX_SHADER, v.c_str(), vsize));
     if (!vsh) {
+        printf("GLShader: vsh compilation failed\n");
         return;
     }
 
-    GL_CHECK(fsh = createAndCompileShader(GL_FRAGMENT_SHADER, f.c_str()));
+    GL_CHECK(fsh = createAndCompileShader(GL_FRAGMENT_SHADER, f.c_str(), fsize));
     if (!fsh) {
         glDeleteShader(vsh);
+        printf("GLShader: fsh compilation failed\n");
         return;
     }
-
+#endif
     GL_CHECK(program = glCreateProgram());
     GL_CHECK(glAttachShader(program, vsh));
     GL_CHECK(glAttachShader(program, fsh));
-    GL_CHECK(glBindAttribLocation(program, 0, "positionAttribute"));
-    GL_CHECK(glBindAttribLocation(program, 1, "colorAttribute"));
-    GL_CHECK(glBindAttribLocation(program, 2, "texCoordAttribute"));
+    GL_CHECK(glBindAttribLocation(program, 0, "a_Position"));
+    GL_CHECK(glBindAttribLocation(program, 1, "a_Color"));
+    //GL_CHECK(glBindAttribLocation(program, 2, "a_Texcoord0"));
     GL_CHECK(glLinkProgram(program));
 
     GLint success;
@@ -72,7 +90,7 @@ GLShader::GLShader(const char *vertex, const char *fragment, int type) {
     if (!success) {
         char buf[512];
         glGetProgramInfoLog(program, sizeof(buf), nullptr, buf);
-        printf("Link error: %s\n", buf);
+        printf("GLShader: Link error: %s\n", buf);
     }
 
     GL_CHECK(glDeleteShader(vsh));
@@ -129,6 +147,16 @@ GLShader::~GLShader() {
 }
 
 GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersPath) {
+#ifdef __PSP2__
+    // add color shader
+    auto *colorShader = new GLShader((const char *) color_v_data, (const char *) color_f_data,
+                                     GLShader::SCALE_TYPE_SOURCE, color_v_size, color_f_size);
+    color = new Shader("color", colorShader);
+    /*
+    GLShaderList::get(0)->data = new GLShader((const char *) texture_v_data, (const char *) texture_f_data,
+                                              GLShader::SCALE_TYPE_SOURCE, texture_v_size, texture_f_size);
+    */
+#else
     // add color shader
     auto *colorShader = new GLShader(color_v, color_f);
     color = new Shader("color", colorShader);
@@ -159,7 +187,7 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
 #else
     add("sharp bilinear", new GLShader(sharp_bilinear_v, sharp_bilinear_f));
 #endif
-
+#endif
 }
 
 GLShaderList::~GLShaderList() {
@@ -171,9 +199,9 @@ GLShaderList::~GLShaderList() {
         delete (color);
     }
 
-    for (int i = 0; i < getCount(); i++) {
-        if (get(i)->data != nullptr) {
-            delete ((GLShader *) get(i)->data);
+    for (int i = 0; i < GLShaderList::getCount(); i++) {
+        if (GLShaderList::get(i)->data != nullptr) {
+            delete ((GLShader *) GLShaderList::get(i)->data);
         }
     }
 }

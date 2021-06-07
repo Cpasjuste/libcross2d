@@ -92,16 +92,24 @@ void GLTextureBuffer::setShader(int shaderIndex) {
 GLTextureBuffer::~GLTextureBuffer() {
 
     //printf("~GLTextureBuffer(%p)\n", this);
+#ifndef __PSP2__
     if (glIsFramebuffer(fbo) == GL_TRUE) {
+#endif
         glDeleteFramebuffers(1, &fbo);
         fbo = 0;
+#ifndef __PSP2__
     }
+#endif
 
+#ifndef __PSP2__
     if (glIsTexture(texID) == GL_TRUE) {
+#endif
         //printf("glDeleteTextures(%i)\n", texID);
         glDeleteTextures(1, &texID);
         texID = 0;
+#ifndef __PSP2__
     }
+#endif
 }
 
 #endif // __GL2__

@@ -47,7 +47,10 @@ extern c2d::Renderer *c2d_renderer;
 #endif
 
 #include "platforms/psp2/psp2_renderer.h"
-#include "platforms/psp2/psp2_texture.h"
+#include "platforms/gl2/gl_shaders.h"
+#include "platforms/gl2/gl_texture.h"
+#include "platforms/gl2/gl_texture_buffer.h"
+//#include "platforms/psp2/psp2_texture.h"
 #include "platforms/psp2/psp2_io.h"
 #include "platforms/psp2/psp2_clock.h"
 #include "platforms/sdl2/sdl2_input.h"
@@ -56,7 +59,8 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/sdl2/sdl2_mutex.h"
 
 #define C2DRenderer PSP2Renderer
-#define C2DTexture PSP2Texture
+//#define C2DTexture PSP2Texture
+#define C2DTexture GLTexture
 #define C2DInput SDL2Input
 #define C2DAudio SDL2Audio
 #define C2DIo PSP2Io

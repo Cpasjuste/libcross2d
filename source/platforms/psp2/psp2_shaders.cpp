@@ -2,6 +2,8 @@
 // Created by cpasjuste on 27/01/17.
 //
 
+#if __VITA2D__
+
 #include <vita2d.h>
 #include "cross2d/platforms/psp2/psp2_shaders.h"
 
@@ -175,3 +177,4 @@ void PSP2ShaderList::setFragmentUniform(
     sceGxmReserveFragmentDefaultUniformBuffer(vita2d_get_context(), &fragment_wvp_buffer);
     sceGxmSetUniformDataF(fragment_wvp_buffer, program_parameter, 0, length, value);
 }
+#endif

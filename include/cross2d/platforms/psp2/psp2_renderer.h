@@ -2,14 +2,20 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#ifndef _PSP2_RENDERER_H_
-#define _PSP2_RENDERER_H_
+#ifndef PSP2_RENDERER_H
+#define PSP2_RENDERER_H
 
-#include "cross2d/skeleton/renderer.h"
+#include <vitaGL.h>
+#define GL_RGBA8 GL_RGBA
+#define GL_RGB565 GL_RGB
+#include "cross2d/platforms/gl2/gl_renderer.h"
+#include "cross2d/platforms/gl2/gl_shaders.h"
+#include "cross2d/platforms/gl2/gl_texture.h"
+#include "cross2d/platforms/gl2/gl_texture_buffer.h"
 
 namespace c2d {
 
-    class PSP2Renderer : public Renderer {
+    class PSP2Renderer : public GLRenderer {
 
     public:
 
@@ -17,13 +23,10 @@ namespace c2d {
 
         ~PSP2Renderer() override;
 
-        void draw(VertexArray *vertexArray, const Transform &transform,
-                  Texture *texture, Sprite *sprite = nullptr) override;
-
         void flip(bool draw = true, bool inputs = true) override;
 
         void delay(unsigned int ms) override;
     };
 }
 
-#endif //_PSP2_RENDERER_H_
+#endif // PSP2_RENDERER_H

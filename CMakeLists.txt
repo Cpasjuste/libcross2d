@@ -21,7 +21,6 @@ option(OPTION_RENDER_GL2 "OpenGL 3.3 rendering" OFF)
 option(OPTION_LOADER_GLAD "Glad OpenGL loader" ON)
 option(OPTION_LOADER_GLEW "Glew OpenGL loader" OFF)
 option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
-option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
 option(OPTION_FREETYPE "Build with freetype support" ON)
 option(OPTION_BOX2D "Build with box2d support" OFF)
@@ -112,9 +111,11 @@ if (OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
     list(APPEND C2D_CFLAGS -D__GL2__)
     if (OPTION_RENDER_GLES2)
         list(APPEND C2D_CFLAGS -D__GLES2__)
-        list(APPEND C2D_LDFLAGS GLESv2)
+        if (NOT PLATFORM_VITA)
+            list(APPEND C2D_LDFLAGS GLESv2)
+        endif ()
     endif ()
-    if (NOT PLATFORM_SWITCH)
+    if (NOT PLATFORM_SWITCH AND NOT PLATFORM_VITA)
         set(OpenGL_GL_PREFERENCE GLVND)
         find_package(OpenGL REQUIRED)
         list(APPEND C2D_INCLUDES ${OPENGL_INCLUDE_DIRS})
@@ -169,7 +170,8 @@ if (PLATFORM_VITA)
     set(PLATFORM_INCLUDES
             source/platforms/posix
             source/platforms/psp2
-            source/platforms/psp2/vita-shader-collection/includes
+            source/platforms/psp2/shaders
+            #source/platforms/psp2/vita-shader-collection/includes
             )
     file(GLOB PLATFORM_SOURCES
             source/platforms/posix/posix_io.cpp
@@ -181,7 +183,9 @@ if (PLATFORM_VITA)
             source/platforms/psp2/vita-shader-collection/lib/*.o
             )
     list(APPEND C2D_LDFLAGS
-            SDL2 vita2d jpeg png box2d
+            #vita2d
+            SDL2 jpeg png box2d
+            vitaGL mathneon vitashark SceShaccCg_stub
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceAppMgr_stub SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub SceMotion_stub

@@ -40,7 +40,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     Vertex *vertices;
     size_t vertexCount;
-    GLTexture *tex;
+    GLTexture *tex = nullptr;
     GLShader *shader;
     Vector2f inputSize, textureSize, outputSize;
 
@@ -60,6 +60,24 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     // set shader
     GL_CHECK(glUseProgram(shader->GetProgram()));
+
+    // set projection
+#if defined(__SDL1__) || defined(__PSP2__)
+    int w = (int) getSize().x, h = (int) getSize().y;
+#else
+    int w, h;
+    SDL_Window *window = ((SDL2Renderer *) this)->getWindow();
+    SDL_GL_GetDrawableSize(window, &w, &h);
+#endif
+    // projection
+    auto projectionMatrix = glm::orthoLH(0.0f, (float) w, (float) h, 0.0f, 0.0f, 1.0f);
+    // view
+    auto viewMatrix = glm::make_mat4(transform.getMatrix());
+    // mpv
+    auto mpvMatrix = projectionMatrix * viewMatrix;
+    // set mpv matrix uniform
+    shader->SetUniformMatrix("MVPMatrix", glm::value_ptr(mpvMatrix));
+
 #ifndef __GLES2__
     // bind vao
     GL_CHECK(glBindVertexArray(vao));
@@ -86,11 +104,11 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
                                        (void *) offsetof(Vertex, texCoords)));
         // set retroarch shader params
         if (sprite) {
-            inputSize = {sprite->getTextureRect().width, sprite->getTextureRect().height};
+            inputSize = {(float) sprite->getTextureRect().width, (float) sprite->getTextureRect().height};
             textureSize = {sprite->getTexture()->getSize().x, sprite->getTexture()->getSize().y};
             outputSize = {inputSize.x * sprite->getScale().x, inputSize.y * sprite->getScale().y};
         } else {
-            inputSize = {texture->getTextureRect().width, texture->getTextureRect().height};
+            inputSize = {(float) texture->getTextureRect().width, (float) texture->getTextureRect().height};
             textureSize = {texture->getSize().x, texture->getSize().y};
             outputSize = {inputSize.x * texture->getScale().x, inputSize.y * texture->getScale().y};
         }
@@ -106,22 +124,6 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
         }
 #endif
     }
-
-#ifdef __SDL1__
-    int w = getSize().x, h = getSize().y;
-#else
-    int w, h;
-    SDL_Window *window = ((SDL2Renderer *) this)->getWindow();
-    SDL_GL_GetDrawableSize(window, &w, &h);
-#endif
-    // projection
-    auto projectionMatrix = glm::orthoLH(0.0f, (float) w, (float) h, 0.0f, 0.0f, 1.0f);
-    // view
-    auto viewMatrix = glm::make_mat4(transform.getMatrix());
-    // mpv
-    auto mpvMatrix = projectionMatrix * viewMatrix;
-    // set mpv matrix uniform
-    shader->SetUniformMatrix("MVPMatrix", glm::value_ptr(mpvMatrix));
 
     // enable blending if needed
     if (tex || vertices[0].color.a < 255) {
@@ -150,7 +152,6 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     // unbind object vao
     glBindVertexArray(0);
 #endif
-
     GL_CHECK(glUseProgram(0));
 }
 
@@ -171,9 +172,7 @@ void GLRenderer::flip(bool draw, bool inputs) {
 }
 
 GLRenderer::~GLRenderer() {
-
     printf("~GL2Renderer\n");
-
 #ifndef __GLES2__
     if (glIsVertexArray(vao)) {
         GL_CHECK(glDeleteVertexArrays(1, &vao));
