@@ -10,16 +10,9 @@ int main(int argc, char *argv[]) {
 
     // create main renderer
     auto renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
-    //renderer->setPrintStats(true);
+    renderer->setPrintStats(true);
     renderer->setClearColor(Color::Black);
 
-#if 0
-    auto *tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "bird.png");
-    auto *sprite = new AnimatedSprite(tex, {128, 128}, 4, 8, 1.5f);
-    renderer->add(sprite);
-#endif
-
-#if 0
     auto border = new C2DRectangle({2, 2,
                                     renderer->getSize().x - 4, renderer->getSize().y - 4});
     border->setFillColor(Color::Transparent);
@@ -41,10 +34,10 @@ int main(int argc, char *argv[]) {
     rect->setOutlineThickness(8 * scaling);
 
     // create a texture and add it to the rect
-    auto tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "gbatemp.png");
+    auto tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "cpasjuste.png");
     if (tex->available) {
         tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
-        tex->setScale(0.5f * scaling, 0.5f * scaling);
+        tex->setScale(scaling, scaling);
         tex->setOrigin(Origin::Center);
         rect->add(tex);
     }
@@ -79,46 +72,12 @@ int main(int argc, char *argv[]) {
     auto tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     tweenAlpha->play();
     rect->add(tweenAlpha);
-#endif
-
-#if 1
-    auto *view = new Rectangle(renderer->getSize());
-    view->setOrigin(Origin::BottomLeft);
-    view->setPosition(0, renderer->getSize().y);
-    view->setScale(0.5f, 0.5f);
-    renderer->add(view);
-
-    auto *world = new PhysicsWorld();
-    view->add(world);
-
-    auto shape = new C2DTexture(renderer->getIo()->getRomFsPath() + "gbatemp.png");
-    shape->setPosition(55, 200);
-    shape->setSize(100, 100);
-    shape->addPhysicsBody(world, b2_dynamicBody, 1.0f, 0.3f);
-    world->add(shape);
-
-    auto shape2 = new RectangleShape({0, 0, 100, 100});
-    shape2->setFillColor(Color::Yellow);
-    shape2->addPhysicsBody(world, b2_staticBody, 1.0f, 0.3f);
-    world->add(shape2);
-
-    auto shape3 = new RectangleShape({170, 0, 100, 100});
-    shape3->setFillColor(Color::Yellow);
-    shape3->addPhysicsBody(world, b2_staticBody, 1.0f, 0.3f);
-    world->add(shape3);
-#endif
 
     while (true) {
 
-        //printf("%f x %f\n", shape->getPosition().x, shape->getPosition().y);
-
         // stop if any key is pressed
         if (renderer->getInput()->getKeys() != 0) {
-            if (renderer->getInput()->getKeys() == 32768) {
-                //shape->getPhysicsBody()->ApplyForce({0, -500}, shape->getPhysicsBody()->GetWorldCenter(), true);
-            } else {
-                break;
-            }
+            break;
         }
 
         // renderer everything
