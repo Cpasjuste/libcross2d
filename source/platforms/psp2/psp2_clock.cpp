@@ -8,7 +8,6 @@
 using namespace c2d;
 
 PSP2Clock::PSP2Clock() : Clock() {
-
     m_startTime = PSP2Clock::getCurrentTime();
 }
 

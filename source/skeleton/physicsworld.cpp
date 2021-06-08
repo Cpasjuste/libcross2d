@@ -2,6 +2,8 @@
 // Created by cpasjuste on 25/05/2021.
 //
 
+#ifdef __BOX2D__
+
 #include "cross2d/c2d.h"
 #include "cross2d/skeleton/physicsworld.h"
 
@@ -42,3 +44,4 @@ PhysicsWorld::~PhysicsWorld() {
     }
 }
 
+#endif

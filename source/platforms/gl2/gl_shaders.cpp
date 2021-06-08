@@ -12,6 +12,8 @@
 #include "shaders/color_v.h"
 #include "shaders/texture_f.h"
 #include "shaders/texture_v.h"
+#include "shaders/lcd3x_f.h"
+#include "shaders/lcd3x_v.h"
 
 #else
 #include "shaders/shaders.h"
@@ -82,7 +84,7 @@ GLShader::GLShader(const char *vertex, const char *fragment, int type, int vsize
     GL_CHECK(glAttachShader(program, fsh));
     GL_CHECK(glBindAttribLocation(program, 0, "a_Position"));
     GL_CHECK(glBindAttribLocation(program, 1, "a_Color"));
-    //GL_CHECK(glBindAttribLocation(program, 2, "a_Texcoord0"));
+    GL_CHECK(glBindAttribLocation(program, 2, "a_Texcoord0"));
     GL_CHECK(glLinkProgram(program));
 
     GLint success;
@@ -152,10 +154,10 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
     auto *colorShader = new GLShader((const char *) color_v_data, (const char *) color_f_data,
                                      GLShader::SCALE_TYPE_SOURCE, color_v_size, color_f_size);
     color = new Shader("color", colorShader);
-    /*
     GLShaderList::get(0)->data = new GLShader((const char *) texture_v_data, (const char *) texture_f_data,
                                               GLShader::SCALE_TYPE_SOURCE, texture_v_size, texture_f_size);
-    */
+    GLShaderList::add("lcd3x", new GLShader((const char *) lcd3x_v_data, (const char *) lcd3x_f_data,
+                                            GLShader::SCALE_TYPE_SOURCE, lcd3x_v_size, lcd3x_f_size));
 #else
     // add color shader
     auto *colorShader = new GLShader(color_v, color_f);

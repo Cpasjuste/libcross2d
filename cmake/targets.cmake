@@ -75,7 +75,7 @@ if (PLATFORM_VITA)
             DEPENDS ${PROJECT_NAME}.data
             # create eboot
             COMMAND ${VITASDK}/bin/vita-elf-create ${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.velf
-            COMMAND ${VITASDK}/bin/vita-make-fself -s -c ${PROJECT_NAME}.velf eboot.bin
+            COMMAND ${VITASDK}/bin/vita-make-fself -c ${PROJECT_NAME}.velf eboot.bin
             # create vpk
             COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/vpk
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/vpk

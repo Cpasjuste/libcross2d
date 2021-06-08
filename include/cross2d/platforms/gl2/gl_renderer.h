@@ -2,8 +2,8 @@
 // Created by cpasjuste on 06/01/18.
 //
 
-#ifndef CROSS2D_RENDERERGL_H
-#define CROSS2D_RENDERERGL_H
+#ifndef C2D_RENDERERGL_H
+#define C2D_RENDERERGL_H
 
 #include "cross2d/skeleton/renderer.h"
 
@@ -47,4 +47,4 @@ namespace c2d {
 
 }
 
-#endif //CROSS2D_RENDERERGL_H
+#endif //C2D_RENDERERGL_H

@@ -62,7 +62,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     GL_CHECK(glUseProgram(shader->GetProgram()));
 
     // set projection
-#if defined(__SDL1__) || defined(__PSP2__)
+#if defined(__SDL1__)
     int w = (int) getSize().x, h = (int) getSize().y;
 #else
     int w, h;

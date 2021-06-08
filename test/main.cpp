@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     // create main renderer
     auto renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
     renderer->setPrintStats(true);
-    renderer->setClearColor(Color::Yellow);
+    renderer->setClearColor(Color::Black);
 
     auto border = new C2DRectangle({2, 2,
                                     renderer->getSize().x - 4, renderer->getSize().y - 4});
@@ -32,9 +32,7 @@ int main(int argc, char *argv[]) {
     rect->setFillColor(Color::Gray);
     rect->setOutlineColor(Color::Orange);
     rect->setOutlineThickness(8 * scaling);
-    renderer->add(rect);
 
-    /*
     // create a texture and add it to the rect
     auto tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "cpasjuste.png");
     if (tex->available) {
@@ -54,9 +52,7 @@ int main(int argc, char *argv[]) {
 
     // add all this crap to the renderer
     renderer->add(rect);
-    */
 
-    /*
     // add some tweening :)
     auto tweenPos = new TweenPosition(
             {renderer->getSize().x / 2 - (256 * scaling), rect->getPosition().y},
@@ -76,7 +72,6 @@ int main(int argc, char *argv[]) {
     auto tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     tweenAlpha->play();
     rect->add(tweenAlpha);
-    */
 
     while (true) {
 

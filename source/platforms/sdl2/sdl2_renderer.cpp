@@ -9,6 +9,10 @@ using namespace c2d;
 static SDL_Window *window = nullptr;
 static SDL_GLContext context = nullptr;
 
+#ifdef __PSP2__
+unsigned int sceLibcHeapSize = 2 * 1024 * 1024;
+#endif
+
 SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
     SDL_ShowCursor(SDL_DISABLE);

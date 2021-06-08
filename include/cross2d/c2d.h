@@ -36,41 +36,29 @@
 
 #include "cross2d/widgets/messagebox.h"
 
+#define C2DRectangle RectangleShape
+#define C2DCircle CircleShape
+#define C2DFont Font
+#define C2DText Text
+
 // for internal usage
 extern c2d::Renderer *c2d_renderer;
 
 #ifdef __PSP2__
 #define NO_KEYBOARD 1
 #ifndef NDEBUG
+
 #include <psp2/kernel/clib.h>
+
 #define printf sceClibPrintf
 #endif
 
-#include "platforms/psp2/psp2_renderer.h"
-#include "platforms/gl2/gl_shaders.h"
-#include "platforms/gl2/gl_texture.h"
-#include "platforms/gl2/gl_texture_buffer.h"
-//#include "platforms/psp2/psp2_texture.h"
+#include "c2d_gl2.h"
+#include "c2d_sdl2.h"
 #include "platforms/psp2/psp2_io.h"
 #include "platforms/psp2/psp2_clock.h"
-#include "platforms/sdl2/sdl2_input.h"
-#include "platforms/sdl2/sdl2_audio.h"
-#include "platforms/sdl2/sdl2_thread.h"
-#include "platforms/sdl2/sdl2_mutex.h"
-
-#define C2DRenderer PSP2Renderer
-//#define C2DTexture PSP2Texture
-#define C2DTexture GLTexture
-#define C2DInput SDL2Input
-#define C2DAudio SDL2Audio
 #define C2DIo PSP2Io
 #define C2DClock PSP2Clock
-#define C2DThread SDL2Thread
-#define C2DMutex SDL2Mutex
-#define C2DRectangle RectangleShape
-#define C2DCircle CircleShape
-#define C2DFont Font
-#define C2DText Text
 
 #define KEY_JOY_UP_DEFAULT      8
 #define KEY_JOY_DOWN_DEFAULT    6
@@ -140,33 +128,25 @@ extern c2d::Renderer *c2d_renderer;
 #define GL_ABGR_EXT 0x8000
 
 #include <switch.h>
-#include <SDL2/SDL.h>
+
+#include "c2d_gl2.h"
+#include "c2d_sdl2.h"
+#include "cross2d/platforms/posix/posix_io.h"
+#include "cross2d/platforms/posix/posix_clock.h"
 
 #include "platforms/switch/switch_renderer.h"
-#include "platforms/gl2/gl_shaders.h"
-#include "platforms/gl2/gl_texture.h"
-#include "platforms/gl2/gl_texture_buffer.h"
-#include "platforms/sdl2/sdl2_input.h"
-#include "platforms/sdl2/sdl2_audio.h"
-#include "platforms/sdl2/sdl2_thread.h"
-#include "platforms/sdl2/sdl2_mutex.h"
 #include "platforms/switch/switch_io.h"
 #include "platforms/switch/switch_sys.h"
 #include "platforms/switch/switch_input.h"
-#include "platforms/posix/posix_clock.h"
 
-#define C2DRenderer SWITCHRenderer
-#define C2DTexture GLTexture
-#define C2DRectangle RectangleShape
-#define C2DCircle CircleShape
-#define C2DFont Font
-#define C2DText Text
-#define C2DInput SWITCHInput
-#define C2DAudio SDL2Audio
+#define C2DIo POSIXIo
 #define C2DClock POSIXClock
+#undef C2DRenderer
+#define C2DRenderer SWITCHRenderer
+#undef C2DInput
+#define C2DInput SWITCHInput
+#undef C2DIo
 #define C2DIo NXIo
-#define C2DThread SDL2Thread
-#define C2DMutex SDL2Mutex
 
 // https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
 #define KEY_JOY_UP_DEFAULT      13          // KEY_DUP
@@ -193,33 +173,17 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         3
 #elif __SDL2__
 
-#include <SDL2/SDL.h>
-
-#include "cross2d/platforms/sdl2/sdl2_renderer.h"
-#include "cross2d/platforms/sdl2/sdl2_input.h"
-#include "cross2d/platforms/sdl2/sdl2_audio.h"
-#include "cross2d/platforms/sdl2/sdl2_thread.h"
-#include "cross2d/platforms/sdl2/sdl2_mutex.h"
+#include "c2d_gl2.h"
+#include "c2d_sdl2.h"
 #include "cross2d/platforms/posix/posix_io.h"
 #include "cross2d/platforms/posix/posix_clock.h"
-
-#define C2DRenderer SDL2Renderer
-#define C2DTexture GLTexture
-#define C2DRectangle RectangleShape
-#define C2DCircle CircleShape
-#define C2DFont Font
-#define C2DText Text
-#define C2DInput SDL2Input
-#define C2DAudio SDL2Audio
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
-#define C2DThread SDL2Thread
-#define C2DMutex SDL2Mutex
 
-#define KEY_JOY_UP_DEFAULT      -1  // use hat
-#define KEY_JOY_DOWN_DEFAULT    -1  // use hat
-#define KEY_JOY_LEFT_DEFAULT    -1  // use hat
-#define KEY_JOY_RIGHT_DEFAULT   -1  // use hat
+#define KEY_JOY_UP_DEFAULT      (-1)  // use hat
+#define KEY_JOY_DOWN_DEFAULT    (-1)  // use hat
+#define KEY_JOY_LEFT_DEFAULT    (-1)  // use hat
+#define KEY_JOY_RIGHT_DEFAULT   (-1)  // use hat
 #define KEY_JOY_FIRE1_DEFAULT   0
 #define KEY_JOY_FIRE2_DEFAULT   1
 #define KEY_JOY_FIRE3_DEFAULT   2

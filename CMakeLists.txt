@@ -106,7 +106,9 @@ endif ()
 # gl2 / gles2
 if (OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
     file(GLOB GL_SRC source/platforms/gl2/*.c*)
-    file(GLOB GL_SHADERS_SRC source/platforms/gl2/shaders/*.c*)
+    if (NOT PLATFORM_VITA)
+        file(GLOB GL_SHADERS_SRC source/platforms/gl2/shaders/*.c*)
+    endif ()
     list(APPEND C2D_SOURCES ${GL_SRC} ${GL_SHADERS_SRC})
     list(APPEND C2D_CFLAGS -D__GL2__)
     if (OPTION_RENDER_GLES2)
@@ -171,21 +173,14 @@ if (PLATFORM_VITA)
             source/platforms/posix
             source/platforms/psp2
             source/platforms/psp2/shaders
-            #source/platforms/psp2/vita-shader-collection/includes
             )
     file(GLOB PLATFORM_SOURCES
             source/platforms/posix/posix_io.cpp
-            source/platforms/psp2/*.c*
-            source/platforms/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
-            source/platforms/sdl2/sdl2_input.cpp # TODO: get rid of sdl2, use sdl2 input for now
-            source/platforms/sdl2/sdl2_thread.cpp
-            source/platforms/sdl2/sdl2_mutex.cpp
-            source/platforms/psp2/vita-shader-collection/lib/*.o
+            source/platforms/psp2/psp2_clock.cpp
             )
     list(APPEND C2D_LDFLAGS
-            #vita2d
-            SDL2 jpeg png box2d
-            vitaGL mathneon vitashark SceShaccCg_stub
+            SDL2 pib
+            jpeg png box2d
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceAppMgr_stub SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub SceMotion_stub
