@@ -90,6 +90,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/3ds/ctr_io.h"
 #include "platforms/3ds/ctr_clock.h"
 #include "platforms/3ds/ctr_audio.h"
+#include "platforms/3ds/ctr_thread.h"
 //#include "platforms/sdl2/sdl2_audio.h"
 
 #define C2DRenderer CTRRenderer
