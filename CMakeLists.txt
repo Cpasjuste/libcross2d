@@ -149,10 +149,8 @@ if (OPTION_RENDER_GL1 OR OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
 endif ()
 
 if (OPTION_BOX2D)
-    if (NOT PLATFORM_VITA)
-        find_package(box2d REQUIRED)
-        list(APPEND C2D_LDFLAGS box2d)
-    endif ()
+    find_package(box2d REQUIRED)
+    list(APPEND C2D_LDFLAGS box2d)
     list(APPEND C2D_CFLAGS -D__BOX2D__)
 endif ()
 
@@ -185,12 +183,10 @@ if (PLATFORM_VITA)
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceAppMgr_stub SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub SceMotion_stub
+            ScePower_stub SceAppUtil_stub
             z c stdc++ pthread m
             )
-    list(APPEND C2D_CFLAGS
-            -D__PSP2__ -DNO_KEYBOARD
-            -ffast-math -mtune=cortex-a9 -mfpu=neon -flto -ftree-vectorize
-            )
+    list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD -g -ftree-vectorize)
 elseif (PLATFORM_3DS)
     #####################
     # 3DS PLATORM
@@ -229,8 +225,7 @@ elseif (PLATFORM_SWITCH)
             source/platforms/posix/posix_io.cpp
             source/platforms/posix/posix_clock.cpp
             source/platforms/switch/*.c*)
-    list(APPEND C2D_CFLAGS -D__SWITCH__ -DNO_KEYBOARD -Wno-int-in-bool-context)
-    #set(CMAKE_CXX_STANDARD 20 CACHE STRING "CMAKE_CXX_STANDARD" FORCE)
+    list(APPEND C2D_CFLAGS -D__SWITCH__ -DNO_KEYBOARD)
     ########################
     # DREAMCAST PLATORM
     ########################
