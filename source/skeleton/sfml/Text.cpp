@@ -389,6 +389,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
 
     Vector2f &Text::getSize() const {
+        ensureGeometryUpdate();
         return m_size;
     }
 
