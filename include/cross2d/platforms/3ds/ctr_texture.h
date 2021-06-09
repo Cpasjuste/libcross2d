@@ -35,6 +35,8 @@ namespace c2d {
 
         void uploadSoft();
 
+        unsigned char *getPixels(int *w, int *h, const unsigned char *buffer = nullptr, int bufferSize = 0);
+
         u8 *pixels = nullptr;
     };
 }

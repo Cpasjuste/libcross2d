@@ -17,15 +17,6 @@ using namespace c2d;
     GX_TRANSFER_IN_FORMAT(inFmt) | GX_TRANSFER_OUT_FORMAT(outFmt) | \
     GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 
-static u16 pow2(int w) {
-    if (w == 0)
-        return 0;
-    u16 n = 2;
-    while (w > n)
-        n <<= 1;
-    return n;
-}
-
 // Grabbed from Citra Emulator (citra/src/video_core/utils.h)
 static inline u32 morton_interleave(u32 x, u32 y) {
     u32 i = (x & 7) | ((y & 7) << 8); // ---- -210
@@ -41,106 +32,107 @@ static inline u32 get_morton_offset(u32 x, u32 y, u32 bytes_per_pixel) {
     return (i + offset) * bytes_per_pixel;
 }
 
+static int pow2(int w) {
+    if (w == 0)
+        return 0;
+    int n = 2;
+    while (w > n)
+        n <<= 1;
+    return n;
+}
+
+stbi_uc *CTRTexture::getPixels(int *w, int *h, const unsigned char *buffer, int bufferSize) {
+    int n = 0;
+    stbi_uc *img;
+
+    if (buffer) {
+        img = stbi_load_from_memory(buffer, bufferSize, w, h, &n, 4);
+    } else {
+        img = stbi_load(path.c_str(), w, h, &n, bpp);
+        if (img == nullptr) {
+            return nullptr;
+        }
+    }
+
+    // copy img to power of 2 pixel data
+    tex_size.x = pow2(*w), tex_size.y = pow2(*h);
+    pixels = (u8 *) linearAlloc((size_t) (tex_size.x * tex_size.y * bpp));
+    if (!pixels) {
+        free(img);
+        return nullptr;
+    }
+
+    memset(pixels, 0, tex_size.x * tex_size.y * bpp);
+    stbi_uc *dst = pixels;
+    int dst_pitch = tex_size.x * bpp;
+    stbi_uc *src = img;
+    int src_pitch = *w * bpp;
+    for (int i = 0; i < *h; i++) {
+        memcpy(dst, src, (size_t) *w * bpp);
+        dst += dst_pitch;
+        src += src_pitch;
+    }
+
+    free(img);
+    return pixels;
+}
+
 CTRTexture::CTRTexture(const std::string &path) : Texture(path) {
+    int w, h;
 
-    int img_w, img_h, n = 0;
-    int p2_w, p2_h;
-
-    u8 *img = stbi_load(path.c_str(), &img_w, &img_h, &n, bpp);
-    if (img == nullptr) {
+    pixels = getPixels(&w, &h);
+    if (!pixels) {
         printf("CTRTexture(%p): couldn't create texture (%s)\n", this, path.c_str());
         return;
     }
 
-    // copy img to power of 2 pixel data
-    p2_w = pow2(img_w), p2_h = pow2(img_h);
-    pixels = (u8 *) linearAlloc((size_t) (p2_w * p2_h * bpp));
-    if (pixels == nullptr) {
-        free(img);
-        return;
-    }
-
-    u8 *dst = pixels;
-    int dst_pitch = p2_w * bpp;
-    u8 *src = img;
-    int src_pitch = img_w * bpp;
-    for (int i = 0; i < img_h; i++) {
-        memcpy(dst, src, (size_t) img_w * bpp);
-        dst += dst_pitch;
-        src += src_pitch;
-    }
-    free(img);
-
-    if (!C3D_TexInit(&tex, (u16) p2_w, (u16) p2_h, GPU_RGBA8)) {
+    if (!C3D_TexInit(&tex, (u16) tex_size.x, (u16) tex_size.y, GPU_RGBA8)) {
         printf("CTRTexture: couldn't create texture (C3D_TexInit)\n");
         linearFree(pixels);
         pixels = nullptr;
         return;
     }
 
-    Texture::setSize((float) img_w, (float) img_h);
+    pitch = (int) tex_size.x * bpp;
+    Texture::setSize((float) w, (float) h);
     setTexture(this, true);
-    pitch = tex.width * bpp;
-    available = true;
     uploadSoft();
+    available = true;
 }
 
 CTRTexture::CTRTexture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
+    int w, h;
 
-    int img_w, img_h, n = 0;
-    int p2_w, p2_h;
-
-    u8 *img = stbi_load_from_memory(buffer, bufferSize, &img_w, &img_h, &n, bpp);
-    if (img == nullptr) {
-        printf("CTRTexture(%p): couldn't create texture from buffer\n", this);
+    pixels = getPixels(&w, &h, buffer, bufferSize);
+    if (!pixels) {
+        printf("CTRTexture(%p): couldn't create texture \n", this);
         return;
     }
 
-    // copy img to power of 2 pixel data
-    p2_w = pow2(img_w), p2_h = pow2(img_h);
-    pixels = (u8 *) linearAlloc((size_t) (p2_w * p2_h * bpp));
-    if (pixels == nullptr) {
-        free(img);
-        return;
-    }
-
-    u8 *dst = pixels;
-    int dst_pitch = p2_w * bpp;
-    u8 *src = img;
-    int src_pitch = img_w * bpp;
-    for (int i = 0; i < img_h; i++) {
-        memcpy(dst, src, (size_t) img_w * bpp);
-        dst += dst_pitch;
-        src += src_pitch;
-    }
-    free(img);
-
-    if (!C3D_TexInit(&tex, (u16) p2_w, (u16) p2_h, GPU_RGBA8)) {
+    if (!C3D_TexInit(&tex, (u16) tex_size.x, (u16) tex_size.y, GPU_RGBA8)) {
         printf("CTRTexture: couldn't create texture (C3D_TexInit)\n");
         linearFree(pixels);
         pixels = nullptr;
         return;
     }
 
-    Texture::setSize((float) img_w, (float) img_h);
+    pitch = (int) tex_size.x * bpp;
+    Texture::setSize((float) w, (float) h);
     setTexture(this, true);
-    pitch = tex.width * bpp;
-    available = true;
     uploadSoft();
+    available = true;
 }
 
 CTRTexture::CTRTexture(const Vector2f &size, Format format) : Texture(size, format) {
-
-    int p2_w = pow2((int) size.x), p2_h = pow2((int) size.y);
-
-    pixels = (u8 *) linearAlloc((size_t) p2_w * p2_h * bpp);
+    tex_size.x = pow2((int) size.x);
+    tex_size.y = pow2((int) size.y);
+    pixels = (u8 *) linearAlloc((size_t) tex_size.x * tex_size.y * bpp);
     if (pixels == nullptr) {
         return;
     }
 
     GPU_TEXCOLOR fmt = format == Format::RGB565 ? GPU_RGB565 : GPU_RGBA8;
-
-    bool res = C3D_TexInit(&tex, (u16) p2_w, (u16) p2_h, fmt);
+    bool res = C3D_TexInit(&tex, (u16) tex_size.x, (u16) tex_size.y, fmt);
     if (!res) {
         printf("CTRTexture: couldn't create texture (C3D_TexInit)\n");
         linearFree(pixels);
@@ -148,8 +140,9 @@ CTRTexture::CTRTexture(const Vector2f &size, Format format) : Texture(size, form
         return;
     }
 
+    pitch = (int) tex_size.x * bpp;
+    Texture::setSize(size);
     setTexture(this, true);
-    pitch = tex.width * bpp;
     available = true;
 }
 
