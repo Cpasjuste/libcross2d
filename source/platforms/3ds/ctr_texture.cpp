@@ -154,7 +154,6 @@ CTRTexture::CTRTexture(const Vector2f &size, Format format) : Texture(size, form
 }
 
 int CTRTexture::lock(FloatRect *rect, void **pix, int *p) {
-
     if (rect == nullptr) {
         *pix = pixels;
     } else {
@@ -168,8 +167,7 @@ int CTRTexture::lock(FloatRect *rect, void **pix, int *p) {
     return 0;
 }
 
-void CTRTexture::unlock() {
-
+void CTRTexture::unlock(void *data) {
     // tile buffer for 3ds...
     if (pixels != nullptr) {
         if (format == Format::RGB565) {
@@ -181,16 +179,13 @@ void CTRTexture::unlock() {
 }
 
 void CTRTexture::setFilter(Filter filter) {
-
     GPU_TEXTURE_FILTER_PARAM param =
             filter == Filter::Point ? GPU_NEAREST : GPU_LINEAR;
     C3D_TexSetFilter(&tex, GPU_LINEAR, param);
 }
 
 void CTRTexture::upload() {
-
     GX_TRANSFER_FORMAT fmt = format == Format::RGB565 ? GX_TRANSFER_FMT_RGB565 : GX_TRANSFER_FMT_RGBA8;
-
     GSPGPU_FlushDataCache(pixels, (u32) tex.height * pitch);
     C3D_SyncDisplayTransfer(
             (u32 *) pixels,
@@ -202,8 +197,7 @@ void CTRTexture::upload() {
 }
 
 void CTRTexture::uploadSoft() {
-
-    if (pixels != nullptr) {
+    if (pixels) {
         int i, j, w = tex.width, h = tex.height;
         for (j = 0; j < h; j++) {
             for (i = 0; i < w; i++) {
@@ -217,7 +211,6 @@ void CTRTexture::uploadSoft() {
 }
 
 CTRTexture::~CTRTexture() {
-
     if (tex.data != nullptr) {
         C3D_TexDelete(&tex);
     }

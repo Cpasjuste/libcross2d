@@ -36,8 +36,8 @@ static void audioCallback(void *const nul_) {
 // Audio thread
 // This handles calling the decoder function to fill NDSP buffers as necessary
 static void audioThread(void *data) {
-
-    CTRAudio *audio = (CTRAudio *) data;
+#if 0
+    auto *audio = (CTRAudio *) data;
 
     while (!s_quit) {  // Whilst the quit flag is unset,
         // search our waveBufs and fill any that aren't currently
@@ -67,9 +67,13 @@ static void audioThread(void *data) {
         // (Note that the 3DS uses cooperative threading)
         LightEvent_Wait(&s_event);
     }
+#endif
 }
 
 CTRAudio::CTRAudio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps, cb) {
+
+    available = false;
+#if 0
 
     // Setup LightEvent for synchronisation of audioThread
     LightEvent_Init(&s_event, RESET_ONESHOT);
@@ -118,11 +122,11 @@ CTRAudio::CTRAudio(int freq, float fps, C2DAudioCallback cb) : Audio(freq, fps, 
     threadId = threadCreate(audioThread, this,
                             THREAD_STACK_SZ, priority,
                             THREAD_AFFINITY, false);
-
+#endif
 }
 
 void CTRAudio::play(const void *data, int samples, bool sync) {
-
+#if 0
     if (available && !paused) {
 
         if (callback != nullptr) {
@@ -147,6 +151,7 @@ void CTRAudio::play(const void *data, int samples, bool sync) {
         audioBuffer->push((int16_t *) data, size);
         LightLock_Unlock(&lock);
     }
+#endif
 }
 
 void CTRAudio::reset() {
@@ -167,12 +172,8 @@ void CTRAudio::pause(int pause) {
     }
 }
 
-int CTRAudio::getQueuedSize() {
-    return audioBuffer->space_filled() << 1;
-}
-
 CTRAudio::~CTRAudio() {
-
+#if 0
     s_quit = true;
     LightEvent_Signal(&s_event);
     threadJoin(threadId, UINT64_MAX);
@@ -181,4 +182,5 @@ CTRAudio::~CTRAudio() {
     ndspChnReset(0);
     linearFree(s_audioBuffer);
     ndspExit();
+#endif
 }

@@ -20,6 +20,11 @@ int main(int argc, char *argv[]) {
     border->setOutlineThickness(2);
     renderer->add(border);
 
+    // create a texture and add it to the rect
+    auto tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "cpasjuste.png");
+    renderer->add(tex);
+
+#if 0
     // scale font and texture for different resolution (devices),
     // based on 720p resolution
     float scaling = renderer->getSize().y / 720.0f;
@@ -72,7 +77,7 @@ int main(int argc, char *argv[]) {
     auto tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     tweenAlpha->play();
     rect->add(tweenAlpha);
-
+#endif
     while (true) {
 
         // stop if any key is pressed

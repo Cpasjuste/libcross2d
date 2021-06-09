@@ -2,7 +2,6 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#include <cross2d/c2d.h>
 #include <citro2d.h>
 #include "cross2d/platforms/3ds/ctr_texture.h"
 #include "cross2d/platforms/3ds/ctr_renderer.h"
@@ -10,8 +9,8 @@
 using namespace c2d;
 
 extern "C" {
-C2Di_Context __C2Di_Context;
-void C2Di_AppendVtx(float x, float y, float z, float u, float v, float ptx, float pty, u32 color);
+extern C2Di_Context __C2Di_Context;
+extern void C2Di_AppendVtx(float x, float y, float z, float u, float v, float ptx, float pty, u32 color);
 }
 
 CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
@@ -20,12 +19,12 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
 
     gfxInitDefault();
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
-    C2D_Init(0x10000);
+    C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
     C2D_Prepare();
 
-    //consoleInit(GFX_BOTTOM, nullptr);
-    consoleDebugInit(debugDevice_SVC);
-    stdout = stderr;
+    consoleInit(GFX_BOTTOM, nullptr);
+    //consoleDebugInit(debugDevice_SVC);
+    //stdout = stderr;
 
     renderTarget = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     C3D_FrameEndHook(nullptr, nullptr);
@@ -57,7 +56,7 @@ void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
     Vertex *vertices = vertexArray->getVertices()->data();
     size_t vertexCount = vertexArray->getVertexCount();
     auto *tex = sprite != nullptr ? (CTRTexture *) sprite->getTexture() : (CTRTexture *) texture;
-    float blend = 0;
+    float blend;
 
     GPU_Primitive_t type;
     switch (vertexArray->getPrimitiveType()) {
@@ -79,39 +78,34 @@ void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
         C3D_TexBind(0, &tex->tex);
     }
 
-    C3D_TexEnvSrc(C3D_GetTexEnv(0), C3D_Both,
-                  tex != nullptr ? GPU_TEXTURE0 : GPU_CONSTANT, (GPU_TEVSRC) 0, (GPU_TEVSRC) 0);
+    C3D_TexEnvSrc(C3D_GetTexEnv(0), C3D_Both, tex ? GPU_TEXTURE0 : GPU_CONSTANT, (GPU_TEVSRC) 0, (GPU_TEVSRC) 0);
 
     for (unsigned int i = 0; i < vertexCount; i++) {
-
         Vertex v = vertices[i];
         Vector2f pos = transform.transformPoint(v.position);
         blend = v.color.r == 255 && v.color.g == 255 && v.color.b == 255 ? 0 : 1;
-
         C2Di_AppendVtx(pos.x, pos.y, 0.5f, v.texCoords.x, v.texCoords.y,
                        0, tex != nullptr ? blend : 1.0f, v.color.toABGR());
     }
 
     size_t len = __C2Di_Context.vtxBufPos - __C2Di_Context.vtxBufLastPos;
     if (len > 0) {
-        C3D_DrawArrays(type, __C2Di_Context.vtxBufLastPos, len);
+        C3D_DrawArrays(type, (int) __C2Di_Context.vtxBufLastPos, (int) len);
         __C2Di_Context.vtxBufLastPos = __C2Di_Context.vtxBufPos;
     }
 }
 
 void CTRRenderer::flip(bool draw, bool inputs) {
 
-    process_inputs = inputs;
-    Renderer::onUpdate();
-
     if (draw) {
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
         C2D_TargetClear(renderTarget, m_clearColor.toABGR());
         C2D_SceneBegin(renderTarget);
+    }
 
-        Transform trans = Transform::Identity;
-        Rectangle::onDraw(trans, draw);
+    Renderer::flip(draw, inputs);
 
+    if (draw) {
         __C2Di_Context.vtxBufPos = 0;
         __C2Di_Context.vtxBufLastPos = 0;
         C3D_FrameEnd(0);
@@ -119,13 +113,11 @@ void CTRRenderer::flip(bool draw, bool inputs) {
 }
 
 void CTRRenderer::delay(unsigned int ms) {
-
     s64 nano = ms * 1000000;
     svcSleepThread(nano);
 }
 
 CTRRenderer::~CTRRenderer() {
-
     C2D_Fini();
     C3D_Fini();
     gfxExit();

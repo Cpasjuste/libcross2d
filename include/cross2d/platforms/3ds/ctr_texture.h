@@ -24,7 +24,7 @@ namespace c2d {
 
         int lock(FloatRect *rect, void **pixels, int *pitch) override;
 
-        void unlock() override;
+        void unlock(void *data = nullptr) override;
 
         void setFilter(Filter filter) override;
 

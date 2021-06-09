@@ -12,8 +12,9 @@ using namespace c2d;
 
 Audio::Audio(int rate, int samples, C2DAudioCallback cb) {
 
+#ifndef __3DS__
     mutex = new C2DMutex();
-
+#endif
     m_sample_rate = rate;
     m_samples = samples;
     m_samples_size = m_samples * channels * (int) sizeof(int16_t);
