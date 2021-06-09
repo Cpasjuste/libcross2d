@@ -181,6 +181,7 @@ if (PLATFORM_VITA)
     list(APPEND C2D_LDFLAGS
             SDL2 pib
             jpeg png box2d
+            libScePiglet_stub SceShaccCg_stub taihen_stub
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceAppMgr_stub SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub SceMotion_stub
