@@ -389,7 +389,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
 
     Vector2f &Text::getSize() const {
-        return m_max_size;
+        return m_size;
     }
 
     void Text::setSize(const Vector2f &size) {
@@ -508,7 +508,6 @@ namespace c2d {
 
         std::vector<std::string> words = Utility::split(m_string, " ");
         for (size_t i = 0; i < words.size(); i++) {
-
             // handle maxSize.x in NewLine mode
             if (m_overflow == NewLine && m_max_size.x > 0) {
 #if 0
@@ -662,8 +661,9 @@ namespace c2d {
             // Update the bounding rectangle
             m_bounds.left = minX;
             m_bounds.top = minY;
-            m_bounds.width = maxX - minX;
-            m_bounds.height = maxY - minY;
+            m_bounds.width = (maxX - minX) + (2 * scale);
+            m_bounds.height = (maxY - minY) + (2 * scale);
+            m_size = {m_bounds.width, m_bounds.height};
 
             m_vertices.update();
 

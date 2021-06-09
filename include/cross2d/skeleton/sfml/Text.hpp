@@ -396,7 +396,8 @@ namespace c2d {
         mutable c2d::VertexArray m_vertices;           ///< Vertex array containing the fill geometry
         mutable c2d::FloatRect m_bounds;             ///< Bounding rectangle of the text (in local coordinates)
         mutable bool m_geometryNeedUpdate; ///< Does the geometry need to be recomputed?
-        mutable c2d::Vector2f m_max_size = {2048, 2048};
+        mutable c2d::Vector2f m_max_size = {4096, 4096};
+        mutable c2d::Vector2f m_size;
         int m_line_spacing = 0;
         Origin m_text_origin = Origin::TopLeft;
         mutable Vector2f m_textureSize = {128, 128};
