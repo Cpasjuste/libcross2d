@@ -70,21 +70,6 @@ DCAudio::DCAudio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, sampl
            available, m_samples, getSamplesSize(), thd_get_current()->tid);
 }
 
-DCAudio::~DCAudio() {
-
-    if (!available) {
-        return;
-    }
-
-    available = false;
-    thread->join();
-    delete (thread);
-
-    snd_stream_stop(stream_hnd);
-    snd_stream_destroy(stream_hnd);
-    snd_stream_shutdown();
-}
-
 void DCAudio::pause(int pause) {
     Audio::pause(pause);
     if (pause) {
@@ -99,4 +84,19 @@ void DCAudio::pause(int pause) {
 
 void DCAudio::reset() {
     Audio::reset();
+}
+
+DCAudio::~DCAudio() {
+
+    if (!available) {
+        return;
+    }
+
+    available = false;
+    thread->join();
+    delete (thread);
+
+    snd_stream_stop(stream_hnd);
+    snd_stream_destroy(stream_hnd);
+    snd_stream_shutdown();
 }

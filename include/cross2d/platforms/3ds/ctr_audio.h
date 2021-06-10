@@ -13,15 +13,17 @@ namespace c2d {
 
     public:
 
-        CTRAudio(int rate = 48000, float fps = 60, C2DAudioCallback cb = nullptr);
+        explicit CTRAudio(int rate = 48000, int samples = 2048, C2DAudioCallback cb = nullptr);
 
         ~CTRAudio() override;
-
-        void play(const void *data, int samples, bool sync = false) override;
 
         void pause(int pause) override;
 
         void reset() override;
+
+    private:
+        c2d::Thread *thread = nullptr;
+        bool running = true;
     };
 }
 
