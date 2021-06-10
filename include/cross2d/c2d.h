@@ -91,7 +91,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/3ds/ctr_clock.h"
 #include "platforms/3ds/ctr_audio.h"
 #include "platforms/3ds/ctr_thread.h"
-//#include "platforms/sdl2/sdl2_audio.h"
+#include "platforms/3ds/ctr_mutex.h"
 
 #define C2DRenderer CTRRenderer
 #define C2DTexture CTRTexture
@@ -99,10 +99,8 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DAudio CTRAudio
 #define C2DIo CTRIo
 #define C2DClock CTRClock
-#define C2DRectangle RectangleShape
-#define C2DCircle CircleShape
-#define C2DFont Font
-#define C2DText Text
+#define C2DThread CTRThread
+#define C2DMutex CTRMutex
 
 // from <3ds/services/hid.h>
 #define KEY_JOY_UP_DEFAULT      6

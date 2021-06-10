@@ -4,27 +4,38 @@
 
 #include "cross2d/c2d.h"
 
-using namespace c2d;
+#warning "svcExitThread must be called manually when exiting thread function"
 
-CTRThread::CTRThread(Function fn, void *data) : Thread(fn, data) {
-    s32 prio = 0;
-    svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-    thread = threadCreate(reinterpret_cast<ThreadFunc>(fn), data, STACKSIZE, prio - 1, -2, false);
-    //thread = thd_create(0, reinterpret_cast<void *(*)(void *)>(fn), data);
-}
-
-int CTRThread::join() {
-    int ret = -1;
-    if (thread) {
-        ret = thd_join(thread, nullptr);
-        thread = nullptr;
+c2d::CTRThread::CTRThread(Function fn, void *data) : c2d::Thread(fn, data) {
+    Result rc;
+    s32 priority = 0;
+    svcGetThreadPriority(&priority, CUR_THREAD_HANDLE);
+    stack = linearMemAlign(CTR_THREAD_STACK_SIZE, 8);
+    if (!stack) {
+        return;
     }
-
-    return ret;
+    rc = svcCreateThread(&handle, (ThreadFunc) fn, (u32) data,
+                         (uint32_t *) ((uint32_t) stack + CTR_THREAD_STACK_SIZE),
+                         priority - 1, -2);
+    if (R_FAILED(rc)) {
+        free(stack);
+        stack = nullptr;
+    }
 }
 
-CTRThread::~CTRThread() {
-    if (thread) {
-        thd_destroy(thread);
+int c2d::CTRThread::join() {
+    if (!stack) {
+        return -1;
+    }
+    Result rc = svcWaitSynchronization(handle, INT64_MAX);
+    svcCloseHandle(handle);
+    free(stack);
+    stack = nullptr;
+    return R_SUCCEEDED(rc);
+}
+
+c2d::CTRThread::~CTRThread() {
+    if (stack) {
+        c2d::CTRThread::join();
     }
 }

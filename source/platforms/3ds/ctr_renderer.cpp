@@ -22,9 +22,9 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
     C2D_Prepare();
 
-    consoleInit(GFX_BOTTOM, nullptr);
-    //consoleDebugInit(debugDevice_SVC);
-    //stdout = stderr;
+    //consoleInit(GFX_BOTTOM, nullptr);
+    consoleDebugInit(debugDevice_SVC);
+    stdout = stderr;
 
     renderTarget = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     C3D_FrameEndHook(nullptr, nullptr);
@@ -42,6 +42,8 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     C3D_TexEnvSrc(env, C3D_Alpha, GPU_PREVIOUS, GPU_PRIMARY_COLOR, (GPU_TEVSRC) 0);
     C3D_TexEnvFunc(env, C3D_RGB, GPU_INTERPOLATE);
     C3D_TexEnvFunc(env, C3D_Alpha, GPU_MODULATE);
+
+    printf("CTRRenderer(%ix%i)\n", (int) size.x, (int) size.y);
 
     available = true;
 }
