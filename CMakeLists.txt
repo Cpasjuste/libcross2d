@@ -193,27 +193,16 @@ elseif (PLATFORM_3DS)
     #####################
     set(OPTION_SCREEN_WIDTH 400 CACHE STRING "" FORCE)
     set(OPTION_SCREEN_HEIGHT 240 CACHE STRING "" FORCE)
-    # shader
-    #set(SHADER_AS picasso)
-    #add_shbin_library(shaders.3ds src/3ds/vshader.v.pica)
     set(PLATFORM_INCLUDES
             source/platforms/3ds
             source/platforms/posix
-            ${DEVKITPRO}/libctru/include
-            ${DEVKITPRO}/portlibs/3ds/include
-            #${DEVKITPRO}/portlibs/3ds/include/SDL2
             )
     file(GLOB PLATFORM_SOURCES
             source/platforms/3ds/*.c*
             source/platforms/posix/*.c*
-            #source/platforms/sdl2/sdl2_audio.cpp # TODO: get rid of sdl2, use sdl2 audio for now
-            # TODO: fix that crap...
-            #source/platforms/3ds/vshaders.v.o
-            #source/platforms/3ds/render2d.shbin.o
             )
     list(APPEND C2D_LDFLAGS citro2d citro3d ctru m)
-    list(APPEND C2D_CFLAGS -DARM11 -D_3DS -D__3DS__ -D__CITRO3D__ -Wno-pedantic)
-    #set(CMAKE_CXX_STANDARD 20 CACHE STRING "CMAKE_CXX_STANDARD" FORCE)
+    list(APPEND C2D_CFLAGS -DARM11 -D__3DS__ -D__CITRO3D__)
     #####################
     # SWITCH PLATORM
     #####################
