@@ -61,15 +61,14 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Sprite::setTexture(Texture *texture, bool resetRect) {
-
         m_texture = texture;
-        if (texture == nullptr) {
+        if (!texture || !texture->available) {
             m_size = {0, 0};
             setTextureRect({0, 0, 0, 0});
         } else {
             // Recompute the texture area if requested, or if there was no valid texture & rect before
             if (resetRect || m_textureRect == IntRect()) {
-                m_size = {(int) texture->getTextureRect().width, (int) texture->getTextureRect().height};
+                m_size = {(float) texture->getTextureRect().width, (float) texture->getTextureRect().height};
                 setTextureRect(IntRect(0, 0,
                                        (int) texture->getTextureRect().width, (int) texture->getTextureRect().height));
             } else if (m_textureRect != IntRect()) {
@@ -224,7 +223,9 @@ namespace c2d {
 
     ////////////////////////////////////////////////////////////
     void Sprite::onDraw(Transform &transform, bool draw) {
-
+        if (!m_texture || !m_texture->available) {
+            return;
+        }
 #ifdef __BOX2D__
         if (m_body) {
             b2Vec2 pos = m_body->GetPosition();

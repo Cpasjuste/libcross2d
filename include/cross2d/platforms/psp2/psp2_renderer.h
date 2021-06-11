@@ -17,6 +17,8 @@ namespace c2d {
 
         ~PSP2Renderer() override;
 
+        void setClearColor(const Color &color) override;
+
         void draw(VertexArray *vertexArray, const Transform &transform,
                   Texture *texture, Sprite *sprite = nullptr) override;
 

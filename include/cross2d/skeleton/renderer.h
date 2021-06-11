@@ -46,7 +46,7 @@ namespace c2d {
 
         virtual void setShaderList(ShaderList *list);
 
-        void setClearColor(const Color &color);
+        virtual void setClearColor(const Color &color);
 
         Color getClearColor() const;
 
