@@ -223,9 +223,6 @@ namespace c2d {
 
     ////////////////////////////////////////////////////////////
     void Sprite::onDraw(Transform &transform, bool draw) {
-        if (!m_texture || !m_texture->available) {
-            return;
-        }
 #ifdef __BOX2D__
         if (m_body) {
             b2Vec2 pos = m_body->GetPosition();

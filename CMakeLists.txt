@@ -186,7 +186,7 @@ if (PLATFORM_VITA)
             source/platforms/sdl2/sdl2_mutex.cpp
             )
     list(APPEND C2D_LDFLAGS
-            ${CMAKE_SOURCE_DIR}/source/platforms/psp2/vita-shader-collection/lib/libvitashaders.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/vita-shader-collection/lib/libvitashaders.a
             SDL2 vita2d jpeg png box2d
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceAppMgr_stub SceCtrl_stub SceCommonDialog_stub
