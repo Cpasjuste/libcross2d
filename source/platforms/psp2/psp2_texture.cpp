@@ -146,7 +146,6 @@ void PSP2Texture::setShader(int shaderIndex) {
     if (shaderIndex >= shaderList->getCount()) {
         shaderIndex = 0;
     }
-
     shader = shaderList->get(shaderIndex);
 }
 
@@ -167,22 +166,22 @@ void PSP2Texture::applyShader() {
     out_size[1] = (float) getTextureRect().height * getScale().y;
     //printf("out_size: %f %f\n", out_size[0], out_size[1]);
 
-    if (v2d_shader->vertexInput.texture_size != nullptr) {
+    if (v2d_shader->vertexInput.texture_size) {
         PSP2ShaderList::setVertexUniform(v2d_shader->vertexInput.texture_size, tex_size, 2);
     }
-    if (v2d_shader->vertexInput.output_size != nullptr) {
+    if (v2d_shader->vertexInput.output_size) {
         PSP2ShaderList::setVertexUniform(v2d_shader->vertexInput.output_size, out_size, 2);
     }
-    if (v2d_shader->vertexInput.video_size != nullptr) {
+    if (v2d_shader->vertexInput.video_size) {
         PSP2ShaderList::setVertexUniform(v2d_shader->vertexInput.video_size, tex_size, 2);
     }
-    if (v2d_shader->fragmentInput.texture_size != nullptr) {
+    if (v2d_shader->fragmentInput.texture_size) {
         PSP2ShaderList::setFragmentUniform(v2d_shader->fragmentInput.texture_size, tex_size, 2);
     }
-    if (v2d_shader->fragmentInput.output_size != nullptr) {
+    if (v2d_shader->fragmentInput.output_size) {
         PSP2ShaderList::setFragmentUniform(v2d_shader->fragmentInput.output_size, out_size, 2);
     }
-    if (v2d_shader->fragmentInput.video_size != nullptr) {
+    if (v2d_shader->fragmentInput.video_size) {
         PSP2ShaderList::setFragmentUniform(v2d_shader->fragmentInput.video_size, tex_size, 2);
     }
 }
