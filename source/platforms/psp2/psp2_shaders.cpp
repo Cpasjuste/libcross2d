@@ -9,46 +9,51 @@
 #include "lcd3x_f.h"
 #include "texture_v.h"
 #include "texture_f.h"
-//#include "advanced_aa_v.h"
-//#include "advanced_aa_f.h"
-//#include "scale2x_f.h"
-//#include "scale2x_v.h"
+#include "advanced_aa_v.h"
+#include "advanced_aa_f.h"
 #include "sharp_bilinear_f.h"
 #include "sharp_bilinear_v.h"
 #include "sharp_bilinear_simple_f.h"
 #include "sharp_bilinear_simple_v.h"
-//#include "xbr_2x_noblend_f.h"
-//#include "xbr_2x_noblend_v.h"
-//#include "fxaa_v.h"
-//#include "fxaa_f.h"
-//#include "crt_easymode_f.h"
-//#include "gtu_v.h"
-//#include "gtu_f.h"
-//#include "opaque_v.h"
-//#include "bicubic_f.h"
-//#include "xbr_2x_v.h"
-//#include "xbr_2x_f.h"
-//#include "xbr_2x_fast_v.h"
-//#include "xbr_2x_fast_f.h"
+
+/*
+Shaders performance (1 x 384x224 texture, scale x 2)
+    texture                 60
+    lcd3x                   60
+    crt_easymode            15
+    sharp_bilinear          60
+    sharp_bilinear_simple   60
+    advanced_aa             60
+    xbr_2x_fast             8
+Shaders performance (2 x 384x224 textures, scale x 2)
+    texture                 60
+    lcd3x                   47
+    crt_easymode            8
+    sharp_bilinear          55
+    sharp_bilinear_simple   60
+    advanced_aa             34
+    xbr_2x_fast             4
+*/
 
 using namespace c2d;
 
 PSP2ShaderList::PSP2ShaderList(const std::string &shadersPath) : ShaderList(shadersPath) {
     // parent class add a "NONE" shader, we set it to a simple texture shader
     PSP2ShaderList::get(0)->data = create((SceGxmProgram *) texture_v, (SceGxmProgram *) texture_f);
-
     PSP2ShaderList::add("lcd3x",
                         create((SceGxmProgram *) lcd3x_v, (SceGxmProgram *) lcd3x_f));
     PSP2ShaderList::add("sharp+scan",
                         create((SceGxmProgram *) sharp_bilinear_v, (SceGxmProgram *) sharp_bilinear_f));
     PSP2ShaderList::add("sharp",
                         create((SceGxmProgram *) sharp_bilinear_simple_v, (SceGxmProgram *) sharp_bilinear_simple_f));
+    PSP2ShaderList::add("advanced-aa",
+                        create((SceGxmProgram *) advanced_aa_v, (SceGxmProgram *) advanced_aa_f));
 }
 
 // from frangarcj
 vita2d_shader *
 PSP2ShaderList::create(const SceGxmProgram *vertexProgramGxp, const SceGxmProgram *fragmentProgramGxp) {
-    vita2d_shader *shader = (vita2d_shader *) malloc(sizeof(*shader));
+    auto *shader = (vita2d_shader *) malloc(sizeof(vita2d_shader));
     SceGxmShaderPatcher *shaderPatcher = vita2d_get_shader_patcher();
 
     sceGxmProgramCheck(vertexProgramGxp);
