@@ -102,6 +102,7 @@ namespace c2d {
             m_outlineColor(0, 0, 0),
             m_outlineThickness(0),
             m_vertices(Triangles),
+            m_outlineVertices(Triangles),
             m_bounds(),
             m_geometryNeedUpdate(false) {
         type = Type::Text;
@@ -118,6 +119,7 @@ namespace c2d {
             m_outlineColor(0, 0, 0),
             m_outlineThickness(0),
             m_vertices(Triangles),
+            m_outlineVertices(Triangles),
             m_bounds(),
             m_geometryNeedUpdate(true) {
         type = Type::Text;
@@ -444,6 +446,9 @@ namespace c2d {
 
         if (draw) {
             Transform combined = transform * getTransform();
+            if (getOutlineThickness() > 0) {
+                c2d_renderer->draw(&m_outlineVertices, combined, m_font->getTexture(m_characterSize));
+            }
             c2d_renderer->draw(&m_vertices, combined, m_font->getTexture(m_characterSize));
         }
         C2DObject::onDraw(transform, draw);
@@ -467,6 +472,7 @@ namespace c2d {
 
         // Clear the previous geometry
         m_vertices.clear();
+        m_outlineVertices.clear();
         m_bounds = FloatRect();
 
         // Compute values related to the text style
@@ -556,7 +562,7 @@ namespace c2d {
                     addLine(m_vertices, m_textureSize, x, y, m_fillColor, underlineOffset, underlineThickness);
 
                     if (m_outlineThickness != 0)
-                        addLine(m_vertices, m_textureSize, x, y, m_outlineColor, underlineOffset,
+                        addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, underlineOffset,
                                 underlineThickness,
                                 m_outlineThickness);
                 }
@@ -566,7 +572,7 @@ namespace c2d {
                     addLine(m_vertices, m_textureSize, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
                     if (m_outlineThickness != 0)
-                        addLine(m_vertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset,
+                        addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset,
                                 underlineThickness,
                                 m_outlineThickness);
                 }
@@ -608,7 +614,7 @@ namespace c2d {
                     float bottom = glyph.bounds.top + glyph.bounds.height;
 
                     // Add the outline glyph to the vertices
-                    addGlyphQuad(m_vertices, m_textureSize,
+                    addGlyphQuad(m_outlineVertices, m_textureSize,
                                  Vector2f(x, y), m_outlineColor, glyph, italic, m_outlineThickness);
 
                     // Update the current bounds with the outlined glyph bounds
@@ -646,7 +652,7 @@ namespace c2d {
             if (underlined && (x > 0)) {
                 addLine(m_vertices, m_textureSize, x, y, m_fillColor, underlineOffset, underlineThickness);
                 if (m_outlineThickness != 0)
-                    addLine(m_vertices, m_textureSize, x, y, m_outlineColor, underlineOffset, underlineThickness,
+                    addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, underlineOffset, underlineThickness,
                             m_outlineThickness);
             }
 
@@ -654,7 +660,7 @@ namespace c2d {
             if (strikeThrough && (x > 0)) {
                 addLine(m_vertices, m_textureSize, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
                 if (m_outlineThickness != 0)
-                    addLine(m_vertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset,
+                    addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset,
                             underlineThickness,
                             m_outlineThickness);
             }
@@ -667,6 +673,7 @@ namespace c2d {
             m_size = {m_bounds.width, m_bounds.height};
 
             m_vertices.update();
+            m_outlineVertices.update();
 
             if (!m_font->isBmFont() && m_font->isDirtyTex()) {
                 m_font->getTexture(m_characterSize)->unlock();
@@ -674,5 +681,4 @@ namespace c2d {
             }
         }
     }
-
 } // namespace sf
