@@ -187,14 +187,15 @@ if (PLATFORM_VITA)
             source/platforms/psp2/vita-shader-collection/lib/*.o
             )
     list(APPEND C2D_LDFLAGS
-            SDL2 pib vita2d jpeg png box2d
+            SDL2 vita2d jpeg png box2d
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceAppMgr_stub SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub SceMotion_stub
             ScePower_stub SceAppUtil_stub
             z c stdc++ pthread m
             )
-    list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD -g -ftree-vectorize)
+    list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
+            -g -ffast-math -mtune=cortex-a9 -mfpu=neon -ftree-vectorize)
 elseif (PLATFORM_3DS)
     #####################
     # 3DS PLATORM
