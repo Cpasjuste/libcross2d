@@ -45,6 +45,16 @@ if (PLATFORM_DREAMCAST)
     set(OPTION_SCREEN_HEIGHT 480 CACHE STRING "Custom screen height" FORCE)
 endif ()
 
+if (PLATFORM_VITA)
+    message(STATUS "C2D: PS VITA OpenGLES 2.0 support with pib enabled")
+    set(OPTION_SDL2 ON CACHE BOOL "SDL2 support" FORCE)
+    set(OPTION_RENDER_GLES2 ON CACHE BOOL "OpenGLES 2.0 rendering" FORCE)
+    set(OPTION_LOADER_GLAD OFF CACHE BOOL "Glad OpenGL loader" FORCE)
+    set(OPTION_BOX2D ON CACHE BOOL "Build with box2d support" FORCE)
+    set(OPTION_SCREEN_WIDTH 960 CACHE STRING "Custom screen width" FORCE)
+    set(OPTION_SCREEN_HEIGHT 544 CACHE STRING "Custom screen height" FORCE)
+endif ()
+
 ####################
 # COMMON STUFF
 ####################
@@ -164,8 +174,6 @@ if (PLATFORM_VITA)
     #####################
     # VITA PLATORM
     #####################
-    set(OPTION_SCREEN_WIDTH 960 CACHE STRING "" FORCE)
-    set(OPTION_SCREEN_HEIGHT 544 CACHE STRING "" FORCE)
     set(TITLE_ID CROSS0001)
     set(PLATFORM_INCLUDES
             source/platforms/posix
