@@ -47,9 +47,6 @@ endif ()
 
 if (PLATFORM_VITA)
     message(STATUS "C2D: PS VITA OpenGLES 2.0 support with pib enabled")
-    set(OPTION_SDL2 ON CACHE BOOL "SDL2 support" FORCE)
-    set(OPTION_RENDER_GLES2 ON CACHE BOOL "OpenGLES 2.0 rendering" FORCE)
-    set(OPTION_LOADER_GLAD OFF CACHE BOOL "Glad OpenGL loader" FORCE)
     set(OPTION_BOX2D ON CACHE BOOL "Build with box2d support" FORCE)
     set(OPTION_SCREEN_WIDTH 960 CACHE STRING "Custom screen width" FORCE)
     set(OPTION_SCREEN_HEIGHT 544 CACHE STRING "Custom screen height" FORCE)
@@ -178,16 +175,19 @@ if (PLATFORM_VITA)
     set(PLATFORM_INCLUDES
             source/platforms/posix
             source/platforms/psp2
-            source/platforms/psp2/shaders
+            source/platforms/psp2/vita-shader-collection/includes
             )
     file(GLOB PLATFORM_SOURCES
             source/platforms/posix/posix_io.cpp
-            source/platforms/psp2/psp2_clock.cpp
+            source/platforms/psp2/*.c*
+            source/platforms/sdl2/sdl2_audio.cpp
+            source/platforms/sdl2/sdl2_input.cpp
+            source/platforms/sdl2/sdl2_thread.cpp
+            source/platforms/sdl2/sdl2_mutex.cpp
+            source/platforms/psp2/vita-shader-collection/lib/*.o
             )
     list(APPEND C2D_LDFLAGS
-            SDL2 pib
-            jpeg png box2d
-            libScePiglet_stub SceShaccCg_stub taihen_stub
+            SDL2 pib vita2d jpeg png box2d
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceAppMgr_stub SceCtrl_stub SceCommonDialog_stub
             SceAudio_stub SceTouch_stub SceHid_stub SceMotion_stub
