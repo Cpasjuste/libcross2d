@@ -17,7 +17,9 @@
 #include "sharp_bilinear_simple_v.h"
 
 /*
-Shaders performance (1 x 384x224 texture, scale x 2)
+Shaders performance
+====================
+1 x 384x224 texture, scale x 2
     texture                 60
     lcd3x                   60
     crt_easymode            15
@@ -25,7 +27,7 @@ Shaders performance (1 x 384x224 texture, scale x 2)
     sharp_bilinear_simple   60
     advanced_aa             60
     xbr_2x_fast             8
-Shaders performance (2 x 384x224 textures, scale x 2)
+2 x 384x224 textures, scale x 2
     texture                 60
     lcd3x                   47
     crt_easymode            8
@@ -64,11 +66,9 @@ PSP2ShaderList::create(const SceGxmProgram *vertexProgramGxp, const SceGxmProgra
 
     shader->paramPositionAttribute = sceGxmProgramFindParameterByName(vertexProgramGxp, "aPosition");
     shader->paramTexcoordAttribute = sceGxmProgramFindParameterByName(vertexProgramGxp, "aTexcoord");
-
     shader->vertexInput.texture_size = sceGxmProgramFindParameterByName(vertexProgramGxp, "IN.texture_size");
     shader->vertexInput.output_size = sceGxmProgramFindParameterByName(vertexProgramGxp, "IN.output_size");
     shader->vertexInput.video_size = sceGxmProgramFindParameterByName(vertexProgramGxp, "IN.video_size");
-
     shader->fragmentInput.texture_size = sceGxmProgramFindParameterByName(fragmentProgramGxp, "IN.texture_size");
     shader->fragmentInput.output_size = sceGxmProgramFindParameterByName(fragmentProgramGxp, "IN.output_size");
     shader->fragmentInput.video_size = sceGxmProgramFindParameterByName(fragmentProgramGxp, "IN.video_size");
