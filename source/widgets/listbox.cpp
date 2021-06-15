@@ -327,17 +327,20 @@ std::vector<ListBoxLine *> ListBox::getLines() {
 void ListBox::setTextColor(const Color &fileColor, const Color &dirColor) {
     textFileColor = fileColor;
     textDirColor = dirColor;
+    updateLines();
 }
 
 void ListBox::setTextOutlineColor(const Color &fileColor, const Color &dirColor) {
     textFileColorOutline = fileColor;
     textDirColorOutline = dirColor;
+    updateLines();
 }
 
 void ListBox::setTextOutlineThickness(float thickness) {
     for (auto &line : lines) {
         line->getText()->setOutlineThickness(thickness);
     }
+    updateLines();
 }
 
 void ListBox::setHighlightEnabled(bool enable) {
