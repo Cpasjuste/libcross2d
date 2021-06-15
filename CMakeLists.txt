@@ -4,12 +4,15 @@ cmake_minimum_required(VERSION 3.0)
 ####################
 # TARGET PLATFORM
 ####################
-option(PLATFORM_LINUX "Linux platform target" OFF)
-option(PLATFORM_WINDOWS "Windows platform target (msys/mingw64)" OFF)
-option(PLATFORM_SWITCH "Nintendo Switch platform target" OFF)
-option(PLATFORM_3DS "Nintendo 3DS platform target" OFF)
-option(PLATFORM_VITA "Sony PS Vita platform target" OFF)
+option(PLATFORM_LINUX "Linux target platform" OFF)
+option(PLATFORM_WINDOWS "Windows target platform (msys/mingw64)" OFF)
+option(PLATFORM_SWITCH "Nintendo Switch target platform" OFF)
+option(PLATFORM_3DS "Nintendo 3DS target platform" OFF)
+option(PLATFORM_VITA "Sony PS Vita target platform" OFF)
 option(PLATFORM_DREAMCAST "Sega Dreamcast platform target" OFF)
+
+# setup target toolchain
+include(cmake/toolchain.cmake)
 
 ####################
 # BUILD OPTIONS
@@ -30,12 +33,28 @@ set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
 ####################
 # SANITY CHECKS
 ####################
-if (PLATFORM_LINUX OR PLATFORM_WINDOWS OR PLATFORM_SWITCH)
+if (PLATFORM_LINUX OR PLATFORM_WINDOWS)
     if (NOT (OPTION_SDL1 OR OPTION_RENDER_GL1 OR OPTION_RENDER_GLES2))
         message(STATUS "C2D: SDL2 OpenGL 3.3 support enabled")
         set(OPTION_SDL2 ON CACHE BOOL "SDL2 support" FORCE)
         set(OPTION_RENDER_GL2 ON CACHE BOOL "OpenGL 3.3 rendering" FORCE)
     endif ()
+endif ()
+
+if (PLATFORM_SWITCH)
+    message(STATUS "C2D: Nintendo Switch with OpenGL 3.3 support enabled")
+    set(OPTION_SDL2 ON CACHE BOOL "SDL2 support" FORCE)
+    set(OPTION_RENDER_GL2 ON CACHE BOOL "OpenGL 3.3 rendering" FORCE)
+    set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width" FORCE)
+    set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height" FORCE)
+    set(OPTION_BOX2D ON CACHE BOOL "Build with box2d support" FORCE)
+endif ()
+
+if (PLATFORM_VITA)
+    message(STATUS "C2D: Ps Vita with Gxm support enabled")
+    set(OPTION_BOX2D ON CACHE BOOL "Build with box2d support" FORCE)
+    set(OPTION_SCREEN_WIDTH 960 CACHE STRING "Custom screen width" FORCE)
+    set(OPTION_SCREEN_HEIGHT 544 CACHE STRING "Custom screen height" FORCE)
 endif ()
 
 if (PLATFORM_DREAMCAST)
@@ -45,19 +64,9 @@ if (PLATFORM_DREAMCAST)
     set(OPTION_SCREEN_HEIGHT 480 CACHE STRING "Custom screen height" FORCE)
 endif ()
 
-if (PLATFORM_VITA)
-    message(STATUS "C2D: PS VITA OpenGLES 2.0 support with pib enabled")
-    set(OPTION_BOX2D ON CACHE BOOL "Build with box2d support" FORCE)
-    set(OPTION_SCREEN_WIDTH 960 CACHE STRING "Custom screen width" FORCE)
-    set(OPTION_SCREEN_HEIGHT 544 CACHE STRING "Custom screen height" FORCE)
-endif ()
-
 ####################
 # COMMON STUFF
 ####################
-
-# setup target toolchain
-include(cmake/toolchain.cmake)
 
 project(cross2d)
 
