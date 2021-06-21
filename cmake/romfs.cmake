@@ -11,7 +11,7 @@
      # build tar object file from directory
      add_custom_command(
              OUTPUT app.romfs.o
-             COMMAND touch ${ROMFS_INPUT_DIR}/.keep
+             COMMAND ${CMAKE_COMMAND} -E touch ${ROMFS_INPUT_DIR}/.keep
              COMMAND cd ${ROMFS_INPUT_DIR} && ${ZIP} -r ${CMAKE_CURRENT_BINARY_DIR}/romfs.zip .
              COMMAND ${CMAKE_LINKER} --relocatable --format binary --output app.romfs.o romfs.zip
              COMMAND ${CMAKE_COMMAND} -E remove -f romfs.zip
