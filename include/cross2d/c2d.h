@@ -183,10 +183,20 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         3
 #elif __SDL2__
 
+#if __GL1__
+
+#include "c2d_gl1.h"
+
+#elif __GL2__
+
 #include "c2d_gl2.h"
+
+#endif
+
 #include "c2d_sdl2.h"
 #include "cross2d/platforms/posix/posix_io.h"
 #include "cross2d/platforms/posix/posix_clock.h"
+
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
 
@@ -211,28 +221,22 @@ extern c2d::Renderer *c2d_renderer;
 
 #elif __SDL1__
 
-#include <SDL/SDL.h>
+#if __GL1__
 
-#include "cross2d/platforms/sdl1/sdl1_renderer.h"
-#include "cross2d/platforms/sdl1/sdl1_input.h"
-#include "cross2d/platforms/sdl1/sdl1_audio.h"
-#include "cross2d/platforms/sdl1/sdl1_thread.h"
-#include "cross2d/platforms/sdl1/sdl1_mutex.h"
+#include "c2d_gl1.h"
+
+#elif __GL2__
+
+#include "c2d_gl2.h"
+
+#endif
+
+#include "c2d_sdl1.h"
 #include "cross2d/platforms/posix/posix_io.h"
 #include "cross2d/platforms/posix/posix_clock.h"
 
-#define C2DRenderer SDLRenderer
-#define C2DTexture GLTexture
-#define C2DRectangle RectangleShape
-#define C2DCircle CircleShape
-#define C2DFont Font
-#define C2DText Text
-#define C2DInput SDL1Input
-#define C2DAudio SDL1Audio
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
-#define C2DThread SDL1Thread
-#define C2DMutex SDL1Mutex
 
 #define KEY_JOY_UP_DEFAULT      -1  // use hat
 #define KEY_JOY_DOWN_DEFAULT    -1  // use hat

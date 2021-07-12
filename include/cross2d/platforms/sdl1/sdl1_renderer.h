@@ -27,11 +27,11 @@
 
 namespace c2d {
 
-    class SDLRenderer : public GLRenderer {
+    class SDL1Renderer : public GLRenderer {
 
     public:
 
-        explicit SDLRenderer(const Vector2f &size = Vector2f(0, 0));
+        explicit SDL1Renderer(const Vector2f &size = Vector2f(0, 0));
 
         void flip(bool draw = true, bool inputs = true) override;
 

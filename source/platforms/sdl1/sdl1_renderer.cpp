@@ -6,7 +6,7 @@
 
 using namespace c2d;
 
-SDLRenderer::SDLRenderer(const Vector2f &s) : GLRenderer(s) {
+SDL1Renderer::SDL1Renderer(const Vector2f &s) : GLRenderer(s) {
 
     SDL_ShowCursor(SDL_DISABLE);
 
@@ -37,7 +37,7 @@ SDLRenderer::SDLRenderer(const Vector2f &s) : GLRenderer(s) {
     printf("SDLRenderer(SDL1)(%p): %ix%i\n", this, (int) m_size.x, (int) m_size.y);
 }
 
-void SDLRenderer::flip(bool draw, bool inputs) {
+void SDL1Renderer::flip(bool draw, bool inputs) {
 
     // call base class (draw childs)
     GLRenderer::flip(draw, inputs);
@@ -47,11 +47,11 @@ void SDLRenderer::flip(bool draw, bool inputs) {
     SDL_GL_SwapBuffers();
 }
 
-void SDLRenderer::delay(unsigned int ms) {
+void SDL1Renderer::delay(unsigned int ms) {
 
     SDL_Delay(ms);
 }
 
-void SDLRenderer::exitCallback() {
+void SDL1Renderer::exitCallback() {
     SDL_Quit();
 }

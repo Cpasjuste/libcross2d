@@ -15,13 +15,6 @@
 
 #endif
 
-#if defined(__GL1__)
-
-#include "cross2d/platforms/gl1/gl_renderer.h"
-#include "cross2d/platforms/gl1/gl_texture.h"
-
-#else
-
 #if defined(__SDL2__) && defined(__GLES2__)
 #ifndef __GLAD__
 
@@ -37,8 +30,6 @@
 #ifndef GL_QUADS
 #define GL_QUADS 0x0006
 #endif
-#endif
-
 #endif
 
 #include "platforms/gl2/gl_renderer.h"
