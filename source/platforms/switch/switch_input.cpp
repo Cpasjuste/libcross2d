@@ -16,7 +16,13 @@ Input::Player *SWITCHInput::update(int rotate) {
     // handle joycon's states (@ rsn8887)
     static int previous_single_joycon_mode = -1;
     static int previous_handheld_mode = -1;
-    int handheld_mode = hidGetHandheldMode();
+
+    padConfigureInput(8, HidNpadStyleSet_NpadStandard);
+    PadState pad;
+    padInitializeAny(&pad);
+    padUpdate(&pad);
+    int handheld_mode = padIsHandheld(&pad);
+
     if ((single_joycon_mode != previous_single_joycon_mode) || (handheld_mode != previous_handheld_mode)) {
         previous_handheld_mode = handheld_mode;
         previous_single_joycon_mode = single_joycon_mode;
@@ -26,7 +32,7 @@ Input::Player *SWITCHInput::update(int rotate) {
                     hidSetNpadJoyAssignmentModeSingleByDefault((HidNpadIdType) id);
                 }
                 hidSetNpadJoyHoldType(HidNpadJoyHoldType_Horizontal);
-                hidScanInput();
+                //padUpdate(&pad);
             } else {
                 // find all left/right single JoyCon pairs and join them together
                 for (int id = 0; id < 8; id++) {
@@ -34,9 +40,9 @@ Input::Player *SWITCHInput::update(int rotate) {
                 }
                 int lastRightId = 8;
                 for (int id0 = 0; id0 < 8; id0++) {
-                    if (hidGetNpadDeviceType((HidNpadIdType) id0) & KEY_JOYCON_LEFT) {
+                    if (hidGetNpadDeviceType((HidNpadIdType) id0) & HidNpadButton_AnyLeft) {
                         for (int id1 = lastRightId - 1; id1 >= 0; id1--) {
-                            if (hidGetNpadDeviceType((HidNpadIdType) id1) & KEY_JOYCON_RIGHT) {
+                            if (hidGetNpadDeviceType((HidNpadIdType) id1) & HidNpadButton_AnyRight) {
                                 lastRightId = id1;
                                 // prevent missing player numbers
                                 if (id0 < id1) {
@@ -58,9 +64,9 @@ Input::Player *SWITCHInput::update(int rotate) {
             auto joystick = (SDL_Joystick *) players[i].data;
             if (SDL_JoystickGetButton(joystick, KEY_JOY_LSTICK_DEFAULT)) {
                 int index = (int) SDL_JoystickInstanceID(joystick);
-                if (hidGetNpadDeviceType((HidNpadIdType) index) & KEY_JOYCON_LEFT) {
+                if (hidGetNpadDeviceType((HidNpadIdType) index) & HidNpadButton_AnyLeft) {
                     players[i].keys |= Input::Key::Start;
-                } else if (hidGetNpadDeviceType((HidNpadIdType) index) & KEY_JOYCON_RIGHT) {
+                } else if (hidGetNpadDeviceType((HidNpadIdType) index) & HidNpadButton_AnyRight) {
                     players[i].keys |= Input::Key::Select;
                 }
             }
