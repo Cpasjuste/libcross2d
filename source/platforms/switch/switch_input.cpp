@@ -32,7 +32,6 @@ Input::Player *SWITCHInput::update(int rotate) {
                     hidSetNpadJoyAssignmentModeSingleByDefault((HidNpadIdType) id);
                 }
                 hidSetNpadJoyHoldType(HidNpadJoyHoldType_Horizontal);
-                //padUpdate(&pad);
             } else {
                 // find all left/right single JoyCon pairs and join them together
                 for (int id = 0; id < 8; id++) {
