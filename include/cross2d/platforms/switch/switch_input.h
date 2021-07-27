@@ -19,7 +19,13 @@ namespace c2d {
         void setSingleJoyconMode(bool enable);
 
     private:
+
+        void process_axis(Input::Player& player, int rotate);
+
         bool single_joycon_mode = false;
+
+        PadState pad;
+        int handheld_mode = 1;
     };
 }
 
