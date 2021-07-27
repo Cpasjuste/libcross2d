@@ -19,7 +19,6 @@ namespace c2d {
         void setSingleJoyconMode(bool enable);
 
     private:
-
         void process_axis(Input::Player& player, int rotate);
 
         bool single_joycon_mode = false;
