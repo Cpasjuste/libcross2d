@@ -7,6 +7,21 @@
 
 using namespace c2d;
 
+static int key_id[KEY_COUNT]{
+        Input::Key::Up,
+        Input::Key::Down,
+        Input::Key::Left,
+        Input::Key::Right,
+        Input::Key::Select,
+        Input::Key::Start,
+        Input::Key::Fire1,
+        Input::Key::Fire2,
+        Input::Key::Fire3,
+        Input::Key::Fire4,
+        Input::Key::Fire5,
+        Input::Key::Fire6
+};
+
 SWITCHInput::SWITCHInput() : SDL2Input() {
     padConfigureInput(8, HidNpadStyleSet_NpadStandard);
     padInitializeAny(&pad);
@@ -23,59 +38,36 @@ Input::Player *SWITCHInput::update(int rotate) {
     handheld_mode = padIsHandheld(&pad);
 
     if ((single_joycon_mode != previous_single_joycon_mode) || (handheld_mode != previous_handheld_mode)) {
-        previous_handheld_mode = handheld_mode;
-        previous_single_joycon_mode = single_joycon_mode;
-        if (!handheld_mode) {
-            if (single_joycon_mode) {
+        if (!handheld_mode)
+        {
+            if (single_joycon_mode)
+            {
                 hidSetNpadJoyHoldType(HidNpadJoyHoldType_Horizontal);
-                for (int id = 0; id < 8; id++) {
-                    hidSetNpadJoyAssignmentModeSingleByDefault((HidNpadIdType) id);
-                }
-            } else {
-                // find all left/right single JoyCon pairs and join them together
-                for (int id = 0; id < 8; id++) {
-                    hidSetNpadJoyAssignmentModeDual((HidNpadIdType) id);
-                }
-                int lastRightId = 8;
-                for (int id0 = 0; id0 < 8; id0++) {
-                    if (hidGetNpadDeviceType((HidNpadIdType) id0) & HidDeviceTypeBits_JoyLeft) {
-                        for (int id1 = lastRightId - 1; id1 >= 0; id1--) {
-                            if (hidGetNpadDeviceType((HidNpadIdType) id1) & HidDeviceTypeBits_JoyRight) {
-                                lastRightId = id1;
-                                // prevent missing player numbers
-                                if (id0 < id1) {
-                                    hidMergeSingleJoyAsDualJoy((HidNpadIdType) id0, (HidNpadIdType) id1);
-                                } else if (id0 > id1) {
-                                    hidMergeSingleJoyAsDualJoy((HidNpadIdType) id1, (HidNpadIdType) id0);
-                                }
-                                break;
-                            }
-                        }
-                    }
+                for (int id = 0; id < 8; id++)
+                    hidSetNpadJoyAssignmentModeSingleByDefault((HidNpadIdType)id);
+            }
+            else
+            {
+                for (int i = 0; i < 8; i += 2)
+                {
+                    hidSetNpadJoyAssignmentModeDual((HidNpadIdType)i);
+                    hidSetNpadJoyAssignmentModeDual((HidNpadIdType)(i + 1));
+                    hidMergeSingleJoyAsDualJoy((HidNpadIdType)i, (HidNpadIdType)(i + 1));
                 }
             }
         }
+        previous_handheld_mode = handheld_mode;
+        previous_single_joycon_mode = single_joycon_mode;
     }
     if (single_joycon_mode && !handheld_mode) {
-        // handle missing (+) / (-) buttons on single joycon mode
         for (int i = 0; i < PLAYER_MAX; i++) {
             auto joystick = (SDL_Joystick *) players[i].data;
             int index = (int)SDL_JoystickInstanceID(joystick);
             if (hidGetNpadDeviceType((HidNpadIdType)index) & HidDeviceTypeBits_JoyLeft) {
-                int map[] = { 18,16,17,19,11,6,15,12,14,13,24,25};
-                for (int j = 0; j < 12; j++)
-                {
-                    players[i].mapping[j] = map[j];
-                }
                 if (SDL_JoystickGetButton(joystick, KEY_JOY_ZL_DEFAULT))
                     players[i].keys |= Input::Key::Select;
             }
             else if (hidGetNpadDeviceType((HidNpadIdType)index) & HidDeviceTypeBits_JoyRight) {
-                int map[] = { 20,22,23,21,10,7,2,0,3,1,26,27 };
-                for (int j = 0; j < 12; j++)
-                {
-                    players[i].mapping[j] = map[j];
-                }
                 if (SDL_JoystickGetButton(joystick, KEY_JOY_ZR_DEFAULT))
                     players[i].keys |= Input::Key::Select;
             }
@@ -171,5 +163,44 @@ void SWITCHInput::process_axis(Input::Player& player, int rotate)
             currentStickXAxis->value = 0;
             currentStickYAxis->value = 0;
         }
+    }
+}
+
+void SWITCHInput::process_buttons(Input::Player& player, int rotate)
+{
+    if (!player.enabled || player.data == nullptr) {
+        return;
+    }
+
+    int map[12] = { 0 };
+
+    if (single_joycon_mode && !handheld_mode) 
+    {
+        auto joystick = (SDL_Joystick*)player.data;
+        int index = (int)SDL_JoystickInstanceID(joystick);
+        if (hidGetNpadDeviceType((HidNpadIdType)index) & HidDeviceTypeBits_JoyLeft) {
+            int mapLeft[] = { 18,16,17,19,11,6,15,12,14,13,24,25 };
+            for (int j = 0; j < 12; j++)
+            {
+                map[j] = mapLeft[j];
+            }
+        }
+        else if (hidGetNpadDeviceType((HidNpadIdType)index) & HidDeviceTypeBits_JoyRight) {
+            int mapRight[] = { 20,22,23,21,10,7,2,0,3,1,26,27 };
+            for (int j = 0; j < 12; j++)
+            {
+                map[j] = mapRight[j];
+            }
+        }
+    }
+
+    for (int i = 0; i < 12; i++) {
+        int mapping = 0;
+        if (single_joycon_mode && !handheld_mode)
+            mapping = map[i];
+        else
+            mapping = player.mapping[i];
+        if (SDL_JoystickGetButton((SDL_Joystick*)player.data, mapping))
+            player.keys |= key_id[i];
     }
 }
