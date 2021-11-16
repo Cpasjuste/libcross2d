@@ -2,6 +2,7 @@
 // Created by cpasjuste on 21/11/16.
 //
 
+#include <3ds.h>
 #include <citro2d.h>
 #include "cross2d/platforms/3ds/ctr_texture.h"
 #include "cross2d/platforms/3ds/ctr_renderer.h"
