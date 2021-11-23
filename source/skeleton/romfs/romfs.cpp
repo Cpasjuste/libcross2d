@@ -464,7 +464,7 @@ int romfsInit() {
     if (ret != 0) {
         printf("romfsInit: lstat_hook failed\n");
     }
-
+#if __GLIBC__ == 2 && __GLIBC_MINOR__ < 33
     xstat_func = (int (*)(int, const char *, struct stat *)) __xstat;
     ret = funchook_prepare(funchook, (void **) &xstat_func, (void *) xstat_hook);
     if (ret != 0) {
@@ -476,6 +476,7 @@ int romfsInit() {
     if (ret != 0) {
         printf("romfsInit: lxstat_hook failed\n");
     }
+#endif
 #endif
 
     close_func = (int (*)(int)) close;
@@ -526,7 +527,7 @@ int romfsInit() {
         printf("romfsInit: fstat_hook failed\n");
     }
 
-#ifdef __LINUX__
+#if __LINUX__ && __GLIBC__ == 2 && __GLIBC_MINOR__ < 33
     fxstat_func = (int (*)(int, int, struct stat *)) __fxstat;
     ret = funchook_prepare(funchook, (void **) &fxstat_func, (void *) fxstat_hook);
     if (ret != 0) {
