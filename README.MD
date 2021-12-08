@@ -1,4 +1,4 @@
-## libcross2d
+## libcross2d: a cross platform 2d library
 
 - a c++ cross platform 2d [graphic](https://github.com/Cpasjuste/libcross2d-examples/tree/master/examples/texture), [input](https://github.com/Cpasjuste/libcross2d-examples/tree/master/examples/input), audio and [config](https://github.com/Cpasjuste/libcross2d-examples/tree/master/examples/config) library
 - run on Windows, Linux, Nintendo Switch, Nintendo 3DS and Sony PS Vita
