@@ -27,6 +27,15 @@ git init && git submodule add https://github.com/Cpasjuste/libcross2d.git
 cp -r libcross2d/templates/simple/. "$project_path"/.
 sed -i "s/PROJECT_NAME_TEMPLATE/$project_name/g" CMakeLists.txt
 sed -i "s/PROJECT_AUTHOR_TEMPLATE/$project_author/g" CMakeLists.txt
+git add --all . && git commit -am "first commit"
 popd || exit 1
 
-echo "all done.."
+echo "########################################################"
+echo "# \"$project_name\" template successfully created in $project_path"
+echo "# To compile your project (for linux), go to the project directory then:"
+echo "#"
+echo "# mkdir cmake-build-release && cd cmake-build-release"
+echo "# cmake -G \"Unix Makefiles\" -DPLATFORM_LINUX=ON -DCMAKE_BUILD_TYPE=Release ../"
+echo "# make"
+echo "#"
+echo "########################################################"
