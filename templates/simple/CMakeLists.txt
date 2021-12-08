@@ -11,7 +11,7 @@ add_subdirectory(libcross2d)
 project(PROJECT_NAME_TEMPLATE)
 set(VERSION_MAJOR "1")
 set(VERSION_MINOR "0")
-set(PROJECT_AUTHOR "$PROJECT_AUTHOR_TEMPLATE")
+set(PROJECT_AUTHOR "PROJECT_AUTHOR_TEMPLATE")
 set(TITLE_ID "C2D000001") # ps vita
 
 ########################

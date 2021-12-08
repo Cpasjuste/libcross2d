@@ -25,8 +25,8 @@ mkdir -p "$project_path"
 pushd "$project_path" || exit 1
 git init && git submodule add https://github.com/Cpasjuste/libcross2d.git
 cp -r libcross2d/templates/simple/. "$project_path"/.
-sed -i 's/PROJECT_NAME_TEMPLATE/$project_name/g' CMakeLists.txt
-sed -i 's/PROJECT_AUTHOR_TEMPLATE/$project_author/g' CMakeLists.txt
+sed -i "s/PROJECT_NAME_TEMPLATE/$project_name/g" CMakeLists.txt
+sed -i "s/PROJECT_AUTHOR_TEMPLATE/$project_author/g" CMakeLists.txt
 popd || exit 1
 
 echo "all done.."
