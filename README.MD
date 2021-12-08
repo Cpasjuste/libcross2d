@@ -19,4 +19,4 @@
 
 Where to start ?
 ----------------
-You **should** use the [libcross2d template](https://github.com/Cpasjuste/libcross2d-template). Alternatively, you can take a look at the [libcross2d-examples readme](https://github.com/Cpasjuste/libcross2d-examples/blob/master/README.md) and examples.
+You **should** use the [libcross2d template](https://github.com/Cpasjuste/libcross2d-template) for a simple starting point. Alternatively, you can take a look at the [libcross2d-examples](https://github.com/Cpasjuste/libcross2d-examples/blob/master/README.md) repository for more informations and examples.
