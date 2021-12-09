@@ -1,11 +1,15 @@
 #pragma once
 
-#include <sysutil/video.h>
-#include <rsx/gcm_sys.h>
+#include "rsxtiny.h"
 
 //extern u32 *buffer[2];
-extern gcmContextData *context;
+extern tiny_gcmContextData *context; 
+
+#ifdef OLD_TINY3D
+extern VideoResolution Video_Resolution;
+#else
 extern videoResolution Video_Resolution;
+#endif
 
 // Initilize the screen and rsx
 void init_screen(int command_buffer, int z_method);

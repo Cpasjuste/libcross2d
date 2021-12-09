@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
 
     // create main renderer
     auto renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
-    renderer->setPrintStats(true);
+    //renderer->setPrintStats(true);
     renderer->setClearColor(Color::Black);
 
     auto border = new C2DRectangle({2, 2,
@@ -34,25 +34,27 @@ int main(int argc, char *argv[]) {
     rect->setOutlineThickness(8 * scaling);
 
     // create a texture and add it to the rect
-    auto tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "cpasjuste.png");
+    //auto tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "cpasjuste.png");
+    auto tex = new C2DTexture( "/dev_hdd0/cpasjuste.png");
     if (tex->available) {
-        tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
-        tex->setScale(scaling, scaling);
-        tex->setOrigin(Origin::Center);
-        rect->add(tex);
+        //tex->setPosition(rect->getSize().x / 2, rect->getSize().y / 2);
+        //tex->setScale(scaling, scaling);
+        //tex->setOrigin(Origin::Center);
+        renderer->add(tex);
     }
 
     // create a text
     auto text = new Text("libcross2d @ Cpasjuste");
-    text->setOutlineThickness(2);
-    text->setPosition(rect->getSize().x - 16 * scaling, rect->getSize().y - 16 * scaling);
-    text->setOrigin(Origin::BottomRight);
-    text->setScale(scaling, scaling);
+    //text->setOutlineThickness(2);
+    //text->setPosition(rect->getSize().x - 16 * scaling, rect->getSize().y - 16 * scaling);
+    //text->setOrigin(Origin::BottomRight);
+    //text->setScale(scaling, scaling);
     rect->add(text);
 
     // add all this crap to the renderer
     renderer->add(rect);
 
+    /*
     // add some tweening :)
     auto tweenPos = new TweenPosition(
             {renderer->getSize().x / 2 - (256 * scaling), rect->getPosition().y},
@@ -72,6 +74,7 @@ int main(int argc, char *argv[]) {
     auto tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     tweenAlpha->play();
     rect->add(tweenAlpha);
+    */
 
     while (true) {
 

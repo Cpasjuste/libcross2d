@@ -96,6 +96,20 @@ if (PLATFORM_VITA)
 endif (PLATFORM_VITA)
 
 ###########################
+# Sony ps3 target
+###########################
+if (PLATFORM_PS3)
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
+    add_custom_target(${PROJECT_NAME}.self
+            DEPENDS ${PROJECT_NAME}
+            DEPENDS ${PROJECT_NAME}.data
+            COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_NAME} ${PROJECT_NAME}.sprx
+            COMMAND ${PSL1GHT}/bin/sprxlinker ${PROJECT_NAME}.sprx
+            COMMAND ${PSL1GHT}/bin/make_self ${PROJECT_NAME}.sprx ${PROJECT_NAME}.self
+            )
+endif (PLATFORM_PS3)
+
+###########################
 # Dreamcast target
 ###########################
 if (PLATFORM_DREAMCAST)

@@ -283,10 +283,6 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DTexture GLTexture
 #define C2DInput DCInput
 #define C2DAudio DCAudio
-#define C2DRectangle RectangleShape
-#define C2DCircle CircleShape
-#define C2DFont Font
-#define C2DText Text
 
 #define KEY_JOY_UP_DEFAULT      CONT_DPAD_UP
 #define KEY_JOY_DOWN_DEFAULT    CONT_DPAD_DOWN
@@ -311,18 +307,20 @@ extern c2d::Renderer *c2d_renderer;
 
 #include "platforms/ps3/tiny3d_renderer.h"
 #include "platforms/ps3/tiny3d_texture.h"
-#include "platforms/ps3/ps3_input.h"
-#include "platforms/ps3/ps3_audio.h"
+//#include "platforms/ps3/ps3_input.h"
+//#include "platforms/ps3/ps3_audio.h"
+#include "platforms/ps3/ps3_clock.h"
+#include "platforms/ps3/ps3_mutex.h"
 #include "platforms/posix/posix_io.h"
 
 #define C2DRenderer TINY3DRenderer
 #define C2DTexture TINY3DTexture
-#define C2DRectangle Rectangle
-#define C2DLine Line
-#define C2DFont Font
-#define C2DText Text
-#define C2DInput PS3Input
-#define C2DAudio PS3Audio
+//#define C2DInput PS3Input
+//#define C2DAudio PS3Audio
+#define C2DClock PS3Clock
+#define C2DMutex PS3Mutex
+#define C2DInput Input
+#define C2DAudio Audio
 #define C2DIo POSIXIo
 
 #define KEY_JOY_UP_DEFAULT      3

@@ -2,6 +2,8 @@
 // Created by cpasjuste on 12/12/16.
 //
 
+#if 0
+
 #include <cstdio>
 #include <ppu-lv2.h>
 #include <sys/thread.h>
@@ -165,3 +167,5 @@ void PS3Audio::Pause(int pause) {
 
     audio_pause = pause;
 }
+
+#endif

@@ -1,11 +1,12 @@
-#include <rsx/gcm_sys.h>
-#include <rsx/rsx.h>
-#include <assert.h>
+#ifndef __CROSS2D__
+#include "buffer.h"
+#else
+#include "rsxtiny.h"
+#endif
 
 // Thanks to shagkur for working out how to get gcc to compile this callback
 // I highly recomend you don't try and "improve" this unless you are a gcc ninja.
-#if 0
-s32 __attribute__((noinline)) rsxContextCallback(gcmContextData *context,u32 count)
+s32 __attribute__((noinline)) tiny_rsxContextCallback(tiny_gcmContextData *context,u32 count)
 {
   register s32 result asm("3");
   asm volatile (
@@ -18,15 +19,18 @@ s32 __attribute__((noinline)) rsxContextCallback(gcmContextData *context,u32 cou
     "mr    2,31\n"	// restore rtoc
     "addi  1,1,128\n"	// restore stack pointer
     : : "b"(context->callback)
-    : "r31", "r0", "r1", "r2", "lr"
+#if __GNUC__ >= 7		//GCC now diagnoses inline assembly that clobbers register r2. This has always been invalid code, and is no longer quietly tolerated.
+	: "r31", "r0", "lr"
+#else
+	: "r31", "r0", "r1", "r2", "lr"
+#endif
   );
   return result;
 }
-#endif
 
-void commandBufferPut(gcmContextData *context, uint32_t value) {
-    uint32_t *buffer = context->current;
-    *buffer++ = value;
-    context->current = buffer;
+void commandBufferPut(tiny_gcmContextData* context, uint32_t value) {
+	uint32_t* buffer = (uint32_t *)(uint64_t) context->current;
+	 *buffer++ = value;
+	context->current = (uint32_t)(uint64_t) buffer;
 }
 

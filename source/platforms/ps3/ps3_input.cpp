@@ -2,6 +2,8 @@
 // Created by cpasjuste on 11/01/17.
 //
 
+#if 0
+
 #include <cmath>
 #include <cstdio>
 
@@ -308,3 +310,4 @@ void PS3Input::process_buttons(Input::Player &player, int rotate) {
         }
     }
 }
+#endif

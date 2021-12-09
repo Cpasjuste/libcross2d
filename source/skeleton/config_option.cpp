@@ -111,7 +111,7 @@ void Option::setUserData(void *data) {
 }
 
 std::string Option::getString() const {
-#ifdef __DREAMCAST__
+#if defined(__DREAMCAST__) || defined(__PS3__)
     char str[128];
     if (type == Type::Integer) {
         snprintf(str, 127, "%i", integer);

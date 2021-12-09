@@ -9,7 +9,7 @@
 #include <ppu-lv2.h>
 
 #include "cross2d/skeleton/renderer.h"
-#include "ps3/tiny3d/tiny3d.h"
+#include "cross2d/platforms/ps3/tiny3d/tiny3d.h"
 
 namespace c2d {
 
@@ -17,17 +17,17 @@ namespace c2d {
 
     public:
 
-        TINY3DTexture(const char *path);
+        explicit TINY3DTexture(const std::string &path);
 
-        TINY3DTexture(const Vector2f &size = Vector2f(0, 0), int format = C2D_TEXTURE_FMT_RGBA8);
+        explicit TINY3DTexture(const unsigned char *buffer, int bufferSize);
 
-        ~TINY3DTexture();
+        explicit TINY3DTexture(const Vector2f &size = Vector2f(0, 0), Format format = Format::RGBA8);
 
-        int lock(FloatRect *rect, void **pixels, int *pitch);
+        ~TINY3DTexture() override;
 
-        void unlock();
+        int lock(FloatRect *rect, void **pixels, int *pitch) override;
 
-        void setFiltering(int filter);
+        void unlock(void *data = nullptr) override;
 
         //private:
         u32 *pixels;
@@ -35,7 +35,7 @@ namespace c2d {
         text_format fmt;
 
     private:
-
+        bool loadTexture(const std::string &path, const unsigned char *buffer = nullptr, int bufferSize = 0);
     };
 }
 

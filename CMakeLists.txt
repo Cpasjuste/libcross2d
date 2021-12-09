@@ -9,6 +9,7 @@ option(PLATFORM_WINDOWS "Windows target platform (msys/mingw64)" OFF)
 option(PLATFORM_SWITCH "Nintendo Switch target platform" OFF)
 option(PLATFORM_3DS "Nintendo 3DS target platform" OFF)
 option(PLATFORM_VITA "Sony PS Vita target platform" OFF)
+option(PLATFORM_PS3 "Sony PS3 target platform" OFF)
 option(PLATFORM_DREAMCAST "Sega Dreamcast platform target" OFF)
 
 # setup target toolchain
@@ -64,6 +65,10 @@ if (PLATFORM_DREAMCAST)
     set(OPTION_SCREEN_HEIGHT 480 CACHE STRING "Custom screen height" FORCE)
 endif ()
 
+if (PLATFORM_PS3)
+    set(OPTION_BUILTIN_LIBCONFIG ON CACHE BOOL "Build libconfig from sources" FORCE)
+endif ()
+
 ####################
 # COMMON STUFF
 ####################
@@ -80,12 +85,12 @@ include(FindPkgConfig)
 if (OPTION_FREETYPE)
     pkg_search_module(FREETYPE REQUIRED freetype2)
 endif ()
-if (NOT PLATFORM_DREAMCAST)
+if (NOT PLATFORM_DREAMCAST AND NOT PLATFORM_PS3)
     pkg_search_module(PNG REQUIRED libpng)
     pkg_search_module(ZLIB REQUIRED zlib)
 endif ()
 
-set(C2D_CFLAGS -Wall -Wno-narrowing -DLIBCONFIG_STATIC)
+set(C2D_CFLAGS -Wall -Wno-narrowing -DLIBCONFIG_STATIC -D__CROSS2D__)
 set(C2D_INCLUDES include ${FREETYPE_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
 set(C2D_LDFLAGS ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
 set(CMAKE_CXX_STANDARD 17)
@@ -205,6 +210,28 @@ if (PLATFORM_VITA)
             )
     list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
             -g -ffast-math -mtune=cortex-a9 -mfpu=neon -ftree-vectorize)
+elseif (PLATFORM_PS3)
+    enable_language(ASM)
+    set(PLATFORM_INCLUDES
+            source/platforms/ps3
+            source/platforms/ps3/tiny3d/source
+            include/cross2d/platforms/ps3/tiny3d
+            source/platforms/posix
+            ${PSL1GHT}/portlibs/ppu/include/freetype2
+            )
+    file(GLOB PLATFORM_SOURCES
+            source/platforms/ps3/*.c*
+            source/platforms/ps3/tiny3d/source/*.c*
+            source/platforms/ps3/tiny3d/source/*.S*
+            source/platforms/posix/posix_io.cpp
+            )
+    list(APPEND C2D_LDFLAGS
+            rsx gcm_sys sysutil sysmodule rt lv2
+            io audio
+            freetype tiff jpeg pngdec
+            m z
+            )
+    list(APPEND C2D_CFLAGS -D__PS3__ -D__C2D_ARGB__ -DNO_KEYBOARD)
 elseif (PLATFORM_3DS)
     #####################
     # 3DS PLATORM
@@ -295,8 +322,7 @@ project(cross2d_test)
 set(PROJECT_AUTHOR "Cpasjuste")
 set(VERSION_MAJOR "1")
 set(VERSION_MINOR "0")
-# ps vita
-set(TITLE_ID "CROSS0001")
+set(TITLE_ID "CROSS0001") # ps vita
 add_executable(${PROJECT_NAME} test/main.cpp)
 target_link_libraries(${PROJECT_NAME} cross2d)
 

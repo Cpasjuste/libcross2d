@@ -23,6 +23,7 @@ typedef struct {
 
 } VECTOR;
 
+MATRIX MakeLookAtMatrix(VECTOR eye, VECTOR center, VECTOR up);
 
 MATRIX MatrixProjPerspective(float fov, float aspect, float near, float far);
 
