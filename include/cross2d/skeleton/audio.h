@@ -5,15 +5,37 @@
 #ifndef _C2D_AUDIO_H_
 #define _C2D_AUDIO_H_
 
-#include <cstring>
+#include <string>
 #include "cross2d/skeleton/mutex.h"
 #include "audio_buffer.h"
+
+#ifdef __WAV_LOADER__
+
+#include "cross2d/skeleton/dr_libs/dr_wav.h"
+
+#endif
 
 namespace c2d {
 
     class Audio {
 
     public:
+#ifdef __WAV_LOADER__
+
+        class Wav {
+        public:
+            explicit Wav(const std::string &path);
+
+            ~Wav();
+
+            int read(void *buffer, int samples);
+
+        private:
+            drwav wav;
+            bool available = false;
+        };
+
+#endif
 
         typedef void (*C2DAudioCallback)(void *data, unsigned char *stream, int len);
 

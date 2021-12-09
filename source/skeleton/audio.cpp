@@ -4,6 +4,7 @@
 
 #include <string>
 #include "cross2d/c2d.h"
+#include "cross2d/skeleton/audio.h"
 
 using namespace c2d;
 
@@ -105,11 +106,11 @@ bool Audio::isAvailable() {
 }
 
 bool Audio::lock() {
-    return mutex->lock();
+    return mutex != nullptr && mutex->lock();
 }
 
 bool Audio::unlock() {
-    return mutex->unlock();
+    return mutex != nullptr && mutex->unlock();
 }
 
 Audio::~Audio() {
@@ -120,3 +121,26 @@ Audio::~Audio() {
         delete (mutex);
     }
 }
+
+#ifdef __WAV_LOADER__
+
+Audio::Wav::Wav(const std::string &path) {
+    if (!drwav_init_file(&wav, path.c_str(), nullptr)) {
+        available = false;
+        return;
+    }
+    available = true;
+}
+
+Audio::Wav::~Wav() {
+    if (available) {
+        drwav_uninit(&wav);
+    }
+}
+
+int Audio::Wav::read(void *buffer, int samples) {
+    return (int) drwav_read_pcm_frames_s16(
+            &wav, samples, (drwav_int16 *) &buffer);
+}
+
+#endif

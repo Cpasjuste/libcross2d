@@ -28,6 +28,7 @@ option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
 option(OPTION_FREETYPE "Build with freetype support" ON)
 option(OPTION_BOX2D "Build with box2d support" OFF)
+option(OPTION_WAV_LOADER "Build with wav audio support" OFF)
 set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width")
 set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
 
@@ -173,6 +174,10 @@ if (OPTION_BOX2D)
     find_package(box2d REQUIRED)
     list(APPEND C2D_LDFLAGS box2d)
     list(APPEND C2D_CFLAGS -D__BOX2D__)
+endif ()
+
+if (OPTION_WAV_LOADER)
+    list(APPEND C2D_CFLAGS -D__WAV_LOADER__)
 endif ()
 
 # export tools
