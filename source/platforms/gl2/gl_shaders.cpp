@@ -16,7 +16,9 @@
 #include "shaders/lcd3x_v.h"
 
 #else
+
 #include "shaders/shaders.h"
+
 #endif
 using namespace c2d;
 
@@ -172,6 +174,7 @@ GLShaderList::GLShaderList(const std::string &shadersPath) : ShaderList(shadersP
     add("crt cgwg fast", new GLShader(crt_cgwg_fast_v, crt_cgwg_fast_f));
     add("crt easymode", new GLShader(crt_easymode_v, crt_easymode_f));
     add("crt geom", new GLShader(crt_geom_v, crt_geom_f));
+    add("crt geom flat", new GLShader(crt_geom_flat_v, crt_geom_flat_f));
     add("crt hyllian", new GLShader(crt_hyllian_v, crt_hyllian_f));
     // TODO: add("crt zfast", new GLShader(crt_zfast_v, crt_zfast_f));
     add("dot", new GLShader(dot_v, dot_f));

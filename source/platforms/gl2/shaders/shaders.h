@@ -34,6 +34,9 @@ extern const char *crt_easymode_f;
 extern const char *crt_geom_v;
 extern const char *crt_geom_f;
 
+extern const char *crt_geom_flat_v;
+extern const char *crt_geom_flat_f;
+
 extern const char *crt_hyllian_v;
 extern const char *crt_hyllian_f;
 
