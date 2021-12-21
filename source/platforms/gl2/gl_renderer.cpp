@@ -62,12 +62,12 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     GL_CHECK(glUseProgram(shader->GetProgram()));
 
     // set projection
-#if defined(__SDL1__)
-    int w = (int) getSize().x, h = (int) getSize().y;
-#else
+#if defined(__SDL2__)
     int w, h;
     SDL_Window *window = ((SDL2Renderer *) this)->getWindow();
     SDL_GL_GetDrawableSize(window, &w, &h);
+#else
+    int w = (int) getSize().x, h = (int) getSize().y;
 #endif
     // projection
     auto projectionMatrix = glm::orthoLH(0.0f, (float) w, (float) h, 0.0f, 0.0f, 1.0f);

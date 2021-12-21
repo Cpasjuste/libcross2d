@@ -89,7 +89,56 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_LY         1
 #define KEY_JOY_AXIS_RX         2
 #define KEY_JOY_AXIS_RY         3
+#elif __PS4__
+#ifndef NDEBUG
 
+#include <orbis/debugnet.h>
+
+#define printf(...) debugNetPrintf(DEBUGNET_INFO, __VA_ARGS__)
+#endif
+
+#include <piglet.h>
+
+#ifndef GL_QUADS
+#define GL_QUADS 0x0006
+#endif
+
+#ifndef GL_RGBA8
+#define GL_RGBA8 GL_RGBA
+#endif
+
+#include "cross2d/c2d_gl2.h"
+#include "cross2d/platforms/ps4/ps4_renderer.h"
+#include "cross2d/platforms/ps4/ps4_input.h"
+#include "cross2d/platforms/ps4/ps4_io.h"
+#include "cross2d/platforms/posix/posix_clock.h"
+
+#define C2DRenderer PS4Renderer
+#define C2DInput PS4Input
+#define C2DAudio Audio
+#define C2DIo PS4Io
+#define C2DClock POSIXClock
+#define C2DThread Thread
+#define C2DMutex Mutex
+
+#define KEY_JOY_UP_DEFAULT      SCE_PAD_BUTTON_UP
+#define KEY_JOY_DOWN_DEFAULT    SCE_PAD_BUTTON_DOWN
+#define KEY_JOY_LEFT_DEFAULT    SCE_PAD_BUTTON_LEFT
+#define KEY_JOY_RIGHT_DEFAULT   SCE_PAD_BUTTON_RIGHT
+#define KEY_JOY_FIRE1_DEFAULT   SCE_PAD_BUTTON_CROSS
+#define KEY_JOY_FIRE2_DEFAULT   SCE_PAD_BUTTON_CIRCLE
+#define KEY_JOY_FIRE3_DEFAULT   SCE_PAD_BUTTON_SQUARE
+#define KEY_JOY_FIRE4_DEFAULT   SCE_PAD_BUTTON_TRIANGLE
+#define KEY_JOY_FIRE5_DEFAULT   SCE_PAD_BUTTON_L1
+#define KEY_JOY_FIRE6_DEFAULT   SCE_PAD_BUTTON_R1
+#define KEY_JOY_COIN1_DEFAULT   SCE_PAD_BUTTON_L2
+#define KEY_JOY_START1_DEFAULT  SCE_PAD_BUTTON_R2
+#define KEY_JOY_MENU1_DEFAULT   11
+#define KEY_JOY_MENU2_DEFAULT   10
+#define KEY_JOY_AXIS_LX         0
+#define KEY_JOY_AXIS_LY         1
+#define KEY_JOY_AXIS_RX         2
+#define KEY_JOY_AXIS_RY         3
 #elif __3DS__
 #define NO_KEYBOARD 1
 

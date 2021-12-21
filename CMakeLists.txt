@@ -9,6 +9,7 @@ option(PLATFORM_WINDOWS "Windows target platform (msys/mingw64)" OFF)
 option(PLATFORM_SWITCH "Nintendo Switch target platform" OFF)
 option(PLATFORM_3DS "Nintendo 3DS target platform" OFF)
 option(PLATFORM_VITA "Sony PS Vita target platform" OFF)
+option(PLATFORM_PS4 "Sony PS4 target platform" OFF)
 option(PLATFORM_PS3 "Sony PS3 target platform" OFF)
 option(PLATFORM_DREAMCAST "Sega Dreamcast platform target" OFF)
 
@@ -22,9 +23,9 @@ option(OPTION_SDL1 "SDL1 support" OFF)
 option(OPTION_SDL2 "SDL2 support" OFF)
 option(OPTION_RENDER_GL1 "OpenGL 1.2 rendering" OFF)
 option(OPTION_RENDER_GL2 "OpenGL 3.3 rendering" OFF)
+option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
 option(OPTION_LOADER_GLAD "Glad OpenGL loader" ON)
 option(OPTION_LOADER_GLEW "Glew OpenGL loader" OFF)
-option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
 option(OPTION_FREETYPE "Build with freetype support" ON)
 option(OPTION_BOX2D "Build with box2d support" OFF)
@@ -56,6 +57,14 @@ if (PLATFORM_VITA)
     set(OPTION_BOX2D ON CACHE BOOL "Build with box2d support" FORCE)
     set(OPTION_SCREEN_WIDTH 960 CACHE STRING "Custom screen width" FORCE)
     set(OPTION_SCREEN_HEIGHT 544 CACHE STRING "Custom screen height" FORCE)
+endif ()
+
+if (PLATFORM_PS4)
+    message(STATUS "C2D: PS4 with GLES2 support enabled")
+    set(OPTION_RENDER_GLES2 ON CACHE BOOL "OpenGLES 2.0 rendering" FORCE)
+    set(OPTION_LOADER_GLAD OFF CACHE BOOL "Glad OpenGL loader" FORCE)
+    set(OPTION_SCREEN_WIDTH 1920 CACHE STRING "Custom screen width" FORCE)
+    set(OPTION_SCREEN_HEIGHT 1080 CACHE STRING "Custom screen height" FORCE)
 endif ()
 
 if (PLATFORM_DREAMCAST)
@@ -134,11 +143,11 @@ if (OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
     list(APPEND C2D_CFLAGS -D__GL2__)
     if (OPTION_RENDER_GLES2)
         list(APPEND C2D_CFLAGS -D__GLES2__)
-        if (NOT PLATFORM_VITA)
+        if (NOT PLATFORM_VITA AND NOT PLATFORM_PS4)
             list(APPEND C2D_LDFLAGS GLESv2)
         endif ()
     endif ()
-    if (NOT PLATFORM_SWITCH AND NOT PLATFORM_VITA)
+    if (NOT PLATFORM_SWITCH AND NOT PLATFORM_VITA AND NOT PLATFORM_PS4)
         set(OpenGL_GL_PREFERENCE GLVND)
         find_package(OpenGL REQUIRED)
         list(APPEND C2D_INCLUDES ${OPENGL_INCLUDE_DIRS})
@@ -210,6 +219,25 @@ if (PLATFORM_VITA)
             )
     list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
             -g -ffast-math -mtune=cortex-a9 -mfpu=neon -ftree-vectorize)
+elseif (PLATFORM_PS4)
+    #####################
+    # PS4 PLATORM
+    #####################
+    set(PLATFORM_INCLUDES
+            include/cross2d/platforms/ps4
+            include/cross2d/platforms/posix
+            )
+    file(GLOB PLATFORM_SOURCES
+            source/platforms/ps4/*.c*
+            source/platforms/posix/*.c*
+            )
+    list(APPEND C2D_LDFLAGS
+            SceSysmodule_stub SceSystemService_stub SceNet_stub
+            SceUserService_stub ScePigletv2VSH_stub SceVideoOut_stub
+            SceGnmDriver_stub orbis ScePad_stub SceAudioOut_stub SceIme_stub
+            unwind c++ c++abi
+            )
+    list(APPEND C2D_CFLAGS -D__PSP4__ -DDEBUG_NET_IP="192.168.0.187" -DNO_KEYBOARD -Wno-writable-strings)
 elseif (PLATFORM_PS3)
     enable_language(ASM)
     set(PLATFORM_INCLUDES
@@ -322,7 +350,11 @@ project(cross2d_test)
 set(PROJECT_AUTHOR "Cpasjuste")
 set(VERSION_MAJOR "1")
 set(VERSION_MINOR "0")
-set(TITLE_ID "CROSS0001") # ps vita
+if (PLATFORM_PS4)
+    set(PS4_PKG_TITLE "libcross2d sample")
+    set(PS4_PKG_TITLE_ID "CROS20001")
+    set(PS4_PKG_VERSION "01.00")
+endif ()
 add_executable(${PROJECT_NAME} test/main.cpp)
 target_link_libraries(${PROJECT_NAME} cross2d)
 
@@ -334,10 +366,10 @@ include(cmake/targets.cmake)
 #############
 # install
 #############
-install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
-        PERMISSIONS OWNER_EXECUTE OWNER_READ
-        DESTINATION bin
-)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libcross2d.a DESTINATION lib)
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/cross2d DESTINATION include)
+#install(
+#        FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
+#        PERMISSIONS OWNER_EXECUTE OWNER_READ
+#        DESTINATION bin
+#)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libcross2d.a DESTINATION lib)
+#install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/cross2d DESTINATION include)

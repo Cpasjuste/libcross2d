@@ -32,7 +32,7 @@ static GLuint createAndCompileShader(GLenum type, const char *source, int size =
         return 0;
     }
 
-#ifdef __PSP2__
+#if defined(__PSP2__)
     glShaderBinary(1, &handle, 0, source, size);
 #else
     GLint success;
@@ -56,7 +56,7 @@ GLShader::GLShader(const char *vertex, const char *fragment, int type, int vsize
     GLuint vsh, fsh;
     std::string v, f;
 
-#ifdef __PSP2__
+#if defined(__PSP2__)
     vsh = createAndCompileShader(GL_VERTEX_SHADER, vertex, vsize);
     fsh = createAndCompileShader(GL_FRAGMENT_SHADER, fragment, fsize);
 #else
