@@ -2,25 +2,19 @@
 
  # add romfs to project
  macro(add_romfs target romfs_dir)
-     # find absolute romfs directory
-     set(ROMFS_INPUT_DIR ${romfs_dir})
-     if (NOT IS_ABSOLUTE ${romfs_dir})
-         set(ROMFS_INPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${romfs_dir}")
-     endif ()
-
      # build tar object file from directory
      add_custom_command(
-             OUTPUT app.romfs.o
-             COMMAND ${CMAKE_COMMAND} -E touch ${ROMFS_INPUT_DIR}/.keep
-             COMMAND cd ${ROMFS_INPUT_DIR} && ${ZIP} -r ${CMAKE_CURRENT_BINARY_DIR}/romfs.zip .
-             COMMAND ${CMAKE_LINKER} --relocatable --format binary --output app.romfs.o romfs.zip
-             COMMAND ${CMAKE_COMMAND} -E remove -f romfs.zip
-             DEPENDS ${ROMFS_INPUT_DIR}
+             OUTPUT ${target}.romfs.c
+             COMMAND ${CMAKE_COMMAND} -E touch ${romfs_dir}/.keep
+             COMMAND cd ${romfs_dir} && ${ZIP} -r ${CMAKE_CURRENT_BINARY_DIR}/${target}.romfs.zip .
+             # https://github.com/gwilymk/bin2c
+             COMMAND bin2c ${CMAKE_CURRENT_BINARY_DIR}/${target}.romfs.zip ${CMAKE_CURRENT_BINARY_DIR}/${target}.romfs.c c2d_romfs
+             COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_CURRENT_BINARY_DIR}/${target}.romfs.zip
+             DEPENDS ${romfs_dir}
      )
 
      # add static library
-     add_library(${target}-romfs STATIC app.romfs.o)
-     set_source_files_properties(app.romfs.o PROPERTIES EXTERNAL_OBJECT true GENERATED true)
-     set_target_properties(${target}-romfs PROPERTIES LINKER_LANGUAGE C)
-     target_link_libraries(${target} ${target}-romfs)
+     add_library(${target}-romfs STATIC ${target}.romfs.c)
+     # cross2d needs to be linked before target romfs
+     target_link_libraries(${target} cross2d ${target}-romfs)
  endmacro()

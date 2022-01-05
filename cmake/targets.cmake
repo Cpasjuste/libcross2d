@@ -99,13 +99,28 @@ endif (PLATFORM_VITA)
 # PS4 target
 ###########################
 if (PLATFORM_PS4)
-    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
+    #set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
+    #set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_DEBUG -s)
     # SELF
-    add_self(${PROJECT_NAME})
+    #add_self(${PROJECT_NAME})
+
+    set(AUTH_INFO "000000000000000000000000001C004000FF000000000080000000000000000000000000000000000000008000400040000000000000008000000000000000080040FFFF000000F000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+    add_custom_command(
+            OUTPUT "${PROJECT_NAME}.self"
+            COMMAND ${CMAKE_COMMAND} -E env "ORBISDEV=${ORBISDEV}" "${ORBISDEV}/bin/orbis-elf-create" "${PROJECT_NAME}" "${PROJECT_NAME}.oelf"
+            COMMAND "python" "${ORBISDEV}/bin/make_fself.py" "--auth-info" "${AUTH_INFO}" "${PROJECT_NAME}.oelf" "${PROJECT_NAME}.self"
+            VERBATIM
+            DEPENDS "${PROJECT_NAME}"
+    )
+    add_custom_target(
+            "${PROJECT_NAME}_self" ALL
+            DEPENDS "${PROJECT_NAME}.self"
+    )
+
     add_dependencies(${PROJECT_NAME}_self ${PROJECT_NAME}.data)
     # ROMFS FILE LIST (for gp4gen) (TODO: properly do this...)
     execute_process(
-            COMMAND bash -c "cd ${CMAKE_CURRENT_BINARY_DIR}/data_romfs/ && find . -type f | cut -d '/' -f2- | tr '\n' ','"
+            COMMAND bash -c "[ -d ${CMAKE_CURRENT_BINARY_DIR}/data_romfs ] && cd ${CMAKE_CURRENT_BINARY_DIR}/data_romfs/ && find . -type f | cut -d '/' -f2- | tr '\n' ','"
             OUTPUT_VARIABLE C2D_ROMFS_FILES
     )
     # PKG
@@ -128,9 +143,12 @@ if (PLATFORM_PS4)
     )
     add_custom_target(
             "${PROJECT_NAME}_pkg" ALL
-            #DEPENDS ${C2D_ROMFS_FILES}
             DEPENDS "${PROJECT_NAME}.pkg"
     )
+    add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
+            DEPENDS ${PROJECT_NAME}.pkg
+            # TODO
+            )
 endif (PLATFORM_PS4)
 
 ###########################

@@ -13,8 +13,8 @@
 #define printf(fmt, ...) (0)
 #endif
 
-extern "C" char _binary_romfs_zip_start[];
-extern "C" char _binary_romfs_zip_end[];
+extern "C" const char c2d_romfs[];
+extern "C" const int c2d_romfs_length;
 
 struct PhysPtr {
     std::string path;
@@ -34,7 +34,7 @@ static PhysPtr *physGet(int fd) {
         return nullptr;
     }
 
-    for (auto &ptr : physPtrList) {
+    for (auto &ptr: physPtrList) {
         if (ptr.fd == fd) {
             return &ptr;
         }
@@ -422,8 +422,8 @@ int romfsInit() {
 
     printf("romfsInit... ");
     PHYSFS_init(nullptr);
-    PHYSFS_uint64 size = _binary_romfs_zip_end - _binary_romfs_zip_start;
-    PHYSFS_mountMemory(_binary_romfs_zip_start, size,
+    PHYSFS_uint64 size = c2d_romfs_length;
+    PHYSFS_mountMemory(c2d_romfs, size,
                        nullptr, "romfs.zip", "/romfs", 1);
 
     funchook = funchook_create();

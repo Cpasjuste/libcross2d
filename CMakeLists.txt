@@ -29,6 +29,7 @@ option(OPTION_LOADER_GLEW "Glew OpenGL loader" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
 option(OPTION_FREETYPE "Build with freetype support" ON)
 option(OPTION_BOX2D "Build with box2d support" OFF)
+option(OPTION_TEST "Build test executable" OFF)
 set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width")
 set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
 
@@ -321,6 +322,7 @@ elseif (PLATFORM_LINUX)
     list(APPEND C2D_CFLAGS -D__PHYSFS_HOOKS__)
     list(APPEND C2D_LDFLAGS ${PHYSFS_LIBRARIES})
     set(PHYSFS_HOOKS ON CACHE BOOL "" FORCE)
+    # romfs: physfs
 
     if (NOT PLATFORM_WINDOWS)
         list(APPEND C2D_CFLAGS -D__LINUX__)
@@ -346,22 +348,23 @@ target_compile_options(${PROJECT_NAME} PUBLIC ${C2D_CFLAGS})
 #####################
 # test executable
 #####################
-project(cross2d_test)
-set(PROJECT_AUTHOR "Cpasjuste")
-set(VERSION_MAJOR "1")
-set(VERSION_MINOR "0")
-if (PLATFORM_PS4)
-    set(PS4_PKG_TITLE "libcross2d sample")
-    set(PS4_PKG_TITLE_ID "CROS20001")
-    set(PS4_PKG_VERSION "01.00")
+if (OPTION_TEST)
+    project(cross2d_test)
+    set(PROJECT_AUTHOR "Cpasjuste")
+    set(VERSION_MAJOR "1")
+    set(VERSION_MINOR "0")
+    if (PLATFORM_PS4)
+        set(PS4_PKG_TITLE "libcross2d sample")
+        set(PS4_PKG_TITLE_ID "CROS20001")
+        set(PS4_PKG_VERSION "01.00")
+    endif ()
+    add_executable(${PROJECT_NAME} test/main.cpp)
+    target_link_libraries(${PROJECT_NAME} cross2d)
+    #############
+    # targets
+    #############
+    include(cmake/targets.cmake)
 endif ()
-add_executable(${PROJECT_NAME} test/main.cpp)
-target_link_libraries(${PROJECT_NAME} cross2d)
-
-#############
-# targets
-#############
-include(cmake/targets.cmake)
 
 #############
 # install
