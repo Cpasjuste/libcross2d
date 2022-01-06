@@ -94,7 +94,7 @@ bool SDL2Input::waitKey(unsigned int *key, int player) {
 
 Input::Player *SDL2Input::update(int rotate) {
 
-    for (auto &player : players) {
+    for (auto &player: players) {
         player.keys = 0;
     }
 
@@ -108,7 +108,7 @@ Input::Player *SDL2Input::update(int rotate) {
 
     SDL_JoystickUpdate(); // ensure all joysticks are up-to-date to remove lag
 
-    for (auto &player : players) {
+    for (auto &player: players) {
 
         if (!player.enabled) {
             continue;
@@ -382,11 +382,9 @@ void SDL2Input::process_touch(Input::Player &player) {
 
     player.touch = Vector2f(0, 0);
 
-    if (SDL_BUTTON(SDL_BUTTON_LEFT)) {
-        if (SDL_GetMouseState(&x, &y)) {
-            player.touch.x = x;
-            player.touch.y = y;
-            player.keys |= Input::Key::Touch;
-        }
+    if (SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+        player.touch.x = (float) x;
+        player.touch.y = (float) y;
+        player.keys |= Input::Key::Touch;
     }
 }

@@ -61,7 +61,8 @@ if (PLATFORM_VITA)
 endif ()
 
 if (PLATFORM_PS4)
-    message(STATUS "C2D: PS4 with GLES2 support enabled")
+    message(STATUS "C2D: PS4 with SDL2 OpenGLES 2.0 support enabled")
+    set(OPTION_SDL2 ON CACHE BOOL "OpenGLES 2.0 rendering" FORCE)
     set(OPTION_RENDER_GLES2 ON CACHE BOOL "OpenGLES 2.0 rendering" FORCE)
     set(OPTION_LOADER_GLAD OFF CACHE BOOL "Glad OpenGL loader" FORCE)
     set(OPTION_SCREEN_WIDTH 1920 CACHE STRING "Custom screen width" FORCE)
@@ -233,10 +234,7 @@ elseif (PLATFORM_PS4)
             source/platforms/posix/*.c*
             )
     list(APPEND C2D_LDFLAGS
-            SceSysmodule_stub SceSystemService_stub SceNet_stub
-            SceUserService_stub ScePigletv2VSH_stub SceVideoOut_stub
-            SceGnmDriver_stub orbis ScePad_stub SceAudioOut_stub SceIme_stub
-            unwind c++ c++abi
+            c++
             )
     list(APPEND C2D_CFLAGS -D__PSP4__ -DDEBUG_NET_IP="192.168.0.187" -DNO_KEYBOARD -Wno-writable-strings)
 elseif (PLATFORM_PS3)

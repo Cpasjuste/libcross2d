@@ -99,56 +99,11 @@ endif (PLATFORM_VITA)
 # PS4 target
 ###########################
 if (PLATFORM_PS4)
-    #set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
-    #set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_DEBUG -s)
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
     # SELF
-    #add_self(${PROJECT_NAME})
-
-    set(AUTH_INFO "000000000000000000000000001C004000FF000000000080000000000000000000000000000000000000008000400040000000000000008000000000000000080040FFFF000000F000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
-    add_custom_command(
-            OUTPUT "${PROJECT_NAME}.self"
-            COMMAND ${CMAKE_COMMAND} -E env "ORBISDEV=${ORBISDEV}" "${ORBISDEV}/bin/orbis-elf-create" "${PROJECT_NAME}" "${PROJECT_NAME}.oelf"
-            COMMAND "python" "${ORBISDEV}/bin/make_fself.py" "--auth-info" "${AUTH_INFO}" "${PROJECT_NAME}.oelf" "${PROJECT_NAME}.self"
-            VERBATIM
-            DEPENDS "${PROJECT_NAME}"
-    )
-    add_custom_target(
-            "${PROJECT_NAME}_self" ALL
-            DEPENDS "${PROJECT_NAME}.self"
-    )
-
-    add_dependencies(${PROJECT_NAME}_self ${PROJECT_NAME}.data)
-    # ROMFS FILE LIST (for gp4gen) (TODO: properly do this...)
-    execute_process(
-            COMMAND bash -c "[ -d ${CMAKE_CURRENT_BINARY_DIR}/data_romfs ] && cd ${CMAKE_CURRENT_BINARY_DIR}/data_romfs/ && find . -type f | cut -d '/' -f2- | tr '\n' ','"
-            OUTPUT_VARIABLE C2D_ROMFS_FILES
-    )
-    # PKG
-    add_custom_command(
-            OUTPUT "${PROJECT_NAME}.pkg"
-            # copy self to romfs dir (eboot)
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.self" "${CMAKE_CURRENT_BINARY_DIR}/data_romfs/eboot.bin"
-            # update sfo
-            COMMAND "${ORBISDEV}/bin/orbis-sfo" "${CMAKE_CURRENT_BINARY_DIR}/data_romfs/sce_sys/param.sfo" "-w" "content_id" "IV0001-${PS4_PKG_TITLE_ID}_00-${PS4_PKG_TITLE_ID}0000000"
-            COMMAND "${ORBISDEV}/bin/orbis-sfo" "${CMAKE_CURRENT_BINARY_DIR}/data_romfs/sce_sys/param.sfo" "-w" "title_id" "${PS4_PKG_TITLE_ID}"
-            COMMAND "${ORBISDEV}/bin/orbis-sfo" "${CMAKE_CURRENT_BINARY_DIR}/data_romfs/sce_sys/param.sfo" "-w" "title" "${PS4_PKG_TITLE}"
-            COMMAND "${ORBISDEV}/bin/orbis-sfo" "${CMAKE_CURRENT_BINARY_DIR}/data_romfs/sce_sys/param.sfo" "-w" "version" "${PS4_PKG_VERSION}"
-            COMMAND "${ORBISDEV}/bin/orbis-sfo" "${CMAKE_CURRENT_BINARY_DIR}/data_romfs/sce_sys/param.sfo" "-w" "app_ver" "${PS4_PKG_VERSION}"
-            # generate gp4 file
-            COMMAND "${ORBISDEV}/bin/gp4gen" "--content-id" "IV0001-${PS4_PKG_TITLE_ID}_00-${PS4_PKG_TITLE_ID}0000000" "--files" "${C2D_ROMFS_FILES}"
-            COMMAND ${CMAKE_COMMAND} -E rename "${CMAKE_CURRENT_BINARY_DIR}/homebrew.gp4" "${CMAKE_CURRENT_BINARY_DIR}/data_romfs/homebrew.gp4"
-            COMMAND ${CMAKE_COMMAND} -E env "ORBISDEV=${ORBISDEV}" "${ORBISDEV}/bin/pkgTool" "pkg_build" "${CMAKE_CURRENT_BINARY_DIR}/data_romfs/homebrew.gp4" "${CMAKE_CURRENT_BINARY_DIR}"
-            VERBATIM
-            DEPENDS "${PROJECT_NAME}.self"
-    )
-    add_custom_target(
-            "${PROJECT_NAME}_pkg" ALL
-            DEPENDS "${PROJECT_NAME}.pkg"
-    )
-    add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
-            DEPENDS ${PROJECT_NAME}.pkg
-            # TODO
-            )
+    add_self(${PROJECT_NAME})
+    add_pkg(${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/data_romfs ${PS4_PKG_TITLE_ID} ${PS4_PKG_TITLE} ${PS4_PKG_VERSION})
+    add_dependencies(${PROJECT_NAME}_pkg ${PROJECT_NAME}.data)
 endif (PLATFORM_PS4)
 
 ###########################

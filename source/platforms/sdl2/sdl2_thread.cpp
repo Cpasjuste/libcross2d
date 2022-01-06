@@ -11,7 +11,7 @@ SDL2Thread::SDL2Thread(Function fn, void *data) : Thread(fn, data) {
 }
 
 int SDL2Thread::join() {
-    int ret;
+    int ret = 0;
 
     if (thread) {
         SDL_WaitThread(thread, &ret);
