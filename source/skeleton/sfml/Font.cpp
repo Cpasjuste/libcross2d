@@ -29,12 +29,14 @@
 #include "cross2d/skeleton/sfml/Font.hpp"
 
 #ifndef __NO_FREETYPE__
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
 #include FT_BITMAP_H
 #include FT_STROKER_H
+
 #endif
 
 #include <cstdlib>
@@ -427,7 +429,7 @@ namespace c2d {
             return glyph;
         }
 
-        FT_Bitmap *bitmap = &((FT_BitmapGlyph)(glyphDesc))->bitmap;
+        FT_Bitmap *bitmap = &((FT_BitmapGlyph) (glyphDesc))->bitmap;
 
         // Apply bold if necessary -- fallback technique using bitmap (lower quality)
         if (!outline) {
@@ -605,12 +607,15 @@ namespace c2d {
                 // TODO:
                 //if ((textureWidth * 2 <= Texture::getMaximumSize()) &&
                 //    (textureHeight * 2 <= Texture::getMaximumSize())) {
-                if ((textureWidth * 2 <= 1024) &&
-                    (textureHeight * 2 <= 1024)) {
+                if ((textureWidth * 2 <= 1024) && (textureHeight * 2 <= 1024)) {
+#if __GL2__
+                    printf("Font:: resizing font texture from %ix%i to %ix%i\n",
+                           textureWidth, textureHeight, textureWidth * 2, textureHeight * 2);
+                    page.texture->resize({(int) textureWidth * 2, (int) textureHeight * 2}, true);
+                    m_dirty_tex = true;
+#else
                     // TODO
-                    //page.texture->resize(Vector2f(textureWidth * 2, textureHeight * 2));
-                    // TODO
-                    Texture *texture = new C2DTexture(
+                    auto texture = new C2DTexture(
                             Vector2f(textureWidth * 2, textureHeight * 2), Texture::Format::RGBA8);
                     texture->setFilter(m_filtering);
                     //printf("Font:: created new tex to fit chars (%p)\n", texture);
@@ -630,10 +635,10 @@ namespace c2d {
 
                     m_dirty_tex = true;
 
-                    //printf("Font:: deleting old tex (%p)\n", page.texture);
+                    printf("Font:: replacing old texture (%p) by new texture (%p)\n", page.texture, texture);
                     delete (page.texture);
                     page.texture = texture;
-
+#endif
                 } else {
                     // Oops, we've reached the maximum texture size...
                     printf("Failed to add a new character to the font: the maximum texture size has been reached\n");

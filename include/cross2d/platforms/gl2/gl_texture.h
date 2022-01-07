@@ -28,6 +28,8 @@ namespace c2d {
 
         void unlock(void *data = nullptr) override;
 
+        int resize(const Vector2i &size, bool keepPixels = false) override;
+
         void setFilter(Filter filter) override;
 
         unsigned int texID = 0;

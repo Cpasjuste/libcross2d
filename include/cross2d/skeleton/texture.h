@@ -36,7 +36,7 @@ namespace c2d {
             return tex_size;
         }
 
-        virtual int resize(const Vector2f &size, bool copyPixels = false) { return -1; };
+        virtual int resize(const Vector2i &size, bool keepPixels = false) { return -1; };
 
         virtual int lock(FloatRect *rect, void **pixels, int *pitch) { return -1; };
 
