@@ -50,7 +50,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 #endif
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
-    SDL_GL_SetSwapInterval(1);
 
     window = SDL_CreateWindow(
             "CROSS2D_SDL2_GL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -67,6 +66,8 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't SDL_GL_CreateContext: %s\n", SDL_GetError());
         return;
     }
+
+    SDL_GL_SetSwapInterval(1);
 
 #if __GLAD__
     // amdgpu proprietary driver 19.30 and SDL2 getproc bug
