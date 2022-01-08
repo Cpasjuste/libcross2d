@@ -138,7 +138,7 @@ endif ()
 # gl2 / gles2
 if (OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
     file(GLOB GL_SRC source/platforms/gl2/*.c*)
-    if (NOT PLATFORM_VITA)
+    if (NOT PLATFORM_VITA AND NOT PLATFORM_PS4)
         file(GLOB GL_SHADERS_SRC source/platforms/gl2/shaders/*.c*)
     endif ()
     list(APPEND C2D_SOURCES ${GL_SRC} ${GL_SHADERS_SRC})
@@ -231,6 +231,7 @@ elseif (PLATFORM_PS4)
             )
     file(GLOB PLATFORM_SOURCES
             source/platforms/ps4/*.c*
+            source/platforms/ps4/shaders/*.c*
             source/platforms/posix/*.c*
             )
     list(APPEND C2D_LDFLAGS

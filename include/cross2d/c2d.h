@@ -92,9 +92,9 @@ extern c2d::Renderer *c2d_renderer;
 #elif __PS4__
 #ifndef NDEBUG
 
-#include "cross2d/platforms/ps4/ps4_debug.h"
+#include "cross2d/platforms/ps4/ps4_sys.h"
 
-#define printf c2d::PS4Debug::print
+#define printf c2d::PS4Sys::print
 #endif
 
 #include "c2d_gl2.h"

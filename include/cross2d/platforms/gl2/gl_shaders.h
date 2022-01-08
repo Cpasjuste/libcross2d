@@ -19,8 +19,7 @@ namespace c2d {
             SCALE_TYPE_VIEWPORT = 2
         };
 
-        GLShader(const char *vertex, const char *fragment, int scale_type = SCALE_TYPE_SOURCE,
-                 int vsize = 0, int fsize = 0);
+        GLShader(const char *vertex, const char *fragment, int vsize = 0, int fsize = 0);
 
         ~GLShader();
 
@@ -38,7 +37,7 @@ namespace c2d {
 
     private:
         GLuint program = -1;
-        int scale_type = 0;
+        int scale_type = SCALE_TYPE_SOURCE;
         bool available = false;
 
     };
