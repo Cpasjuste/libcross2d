@@ -3,7 +3,7 @@
 //
 
 #include <malloc.h>
-#include "cross2d/platforms/sdl2/sdl2_audio.h"
+#include "cross2d/c2d.h"
 
 using namespace c2d;
 
@@ -49,7 +49,7 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
 
     deviceID = SDL_OpenAudioDevice(nullptr, 0, &wanted, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
     if (deviceID == 0u) {
-        printf("SDL2Audio: Unable to open audio: %s\n", SDL_GetError());
+        printf("SDL2Audio: unable to open audio: %s\n", SDL_GetError());
         available = false;
         return;
     }
@@ -58,6 +58,7 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
     printf("SDL2Audio: frequency %d (wanted: %d)\n", wanted.freq, obtained.freq);
     printf("SDL2Audio: samples %d (wanted: %d)\n", wanted.samples, obtained.samples);
     printf("SDL2Audio: channels %d (wanted: %d)\n", wanted.channels, obtained.channels);
+
 
     SDL_PauseAudioDevice(deviceID, 1);
     available = true;

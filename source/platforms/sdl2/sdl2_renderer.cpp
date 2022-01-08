@@ -12,12 +12,21 @@ static SDL_GLContext context = nullptr;
 #ifdef __PSP2__
 unsigned int sceLibcHeapSize = 2 * 1024 * 1024;
 #endif
+#ifdef __PS4__
+
+void *log_cb(void *userdata, int category, SDL_LogPriority priority, const char *message) {
+    printf("[SDL2] %s\n", message);
+    return nullptr;
+}
+
+#endif
 
 SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
     SDL_ShowCursor(SDL_DISABLE);
 
 #ifdef __PS4__
+    SDL_LogSetOutputFunction((SDL_LogOutputFunction) &log_cb, nullptr);
     SDL_SetHint(SDL_HINT_PS4_PIGLET_MODULES_PATH, "/data/self/system/common/lib");
 #endif
 

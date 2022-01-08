@@ -99,8 +99,6 @@ endif (PLATFORM_VITA)
 # PS4 target
 ###########################
 if (PLATFORM_PS4)
-    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
-    # SELF
     add_self(${PROJECT_NAME})
     add_pkg(${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/data_romfs ${PS4_PKG_TITLE_ID} ${PS4_PKG_TITLE} ${PS4_PKG_VERSION})
     add_dependencies(${PROJECT_NAME}_pkg ${PROJECT_NAME}.data)

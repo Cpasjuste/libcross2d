@@ -25,7 +25,7 @@ void GLRenderer::initGL() {
     printf("GL version  : %s\n", glGetString(GL_VERSION));
     printf("GL glsl     : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-#ifndef __GLES2__
+#ifdef glBindVertexArray
     // vao
     GL_CHECK(glGenVertexArrays(1, &vao));
 #endif
@@ -78,7 +78,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     // set mpv matrix uniform
     shader->SetUniformMatrix("MVPMatrix", glm::value_ptr(mpvMatrix));
 
-#ifndef __GLES2__
+#ifdef glBindVertexArray
     // bind vao
     GL_CHECK(glBindVertexArray(vao));
 #endif
@@ -146,12 +146,13 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
         }
     }
 
-    // unbind object vbo
-    vertexArray->unbind();
-#ifndef __GLES2__
+#ifdef glBindVertexArray
     // unbind object vao
     glBindVertexArray(0);
 #endif
+    // unbind object vbo
+    vertexArray->unbind();
+
     GL_CHECK(glUseProgram(0));
 }
 
@@ -173,7 +174,7 @@ void GLRenderer::flip(bool draw, bool inputs) {
 
 GLRenderer::~GLRenderer() {
     printf("~GL2Renderer\n");
-#ifndef __GLES2__
+#ifdef glBindVertexArray
     if (glIsVertexArray(vao)) {
         GL_CHECK(glDeleteVertexArrays(1, &vao));
     }
@@ -186,7 +187,7 @@ namespace c2d {
     void CheckOpenGLError(const char *stmt, const char *fname, int line) {
         GLenum err = glGetError();
         if (err != GL_NO_ERROR) {
-            printf("OpenGL error %08x, at %s:%i - for %s\n", err, fname, line, stmt);
+            printf("OpenGL error 0x%04x at %s:%i - for %s\n", err, fname, line, stmt);
             abort();
         }
     }
