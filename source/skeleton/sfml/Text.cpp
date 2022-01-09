@@ -428,13 +428,14 @@ namespace c2d {
             return;
         }
 
-        ensureGeometryUpdate();
-        // sfml use pixel coordinates for texCoords, but c2d use normalized one.
         // if the texture size changed, we need to update vertex buffer for normalized texCoords
         if (m_font->getTexture(m_characterSize)->getSize() != m_textureSize) {
             m_geometryNeedUpdate = true;
             ensureGeometryUpdate();
+        } else {
+            ensureGeometryUpdate();
         }
+
         setOrigin(m_text_origin);
     }
 
@@ -523,7 +524,7 @@ namespace c2d {
                 auto width = (float) (words[i].size() * m_characterSize);
 #else
                 float width = 0;
-                for (auto &c : words[i]) {
+                for (auto &c: words[i]) {
                     const Glyph &g = m_font->getGlyph(c, m_characterSize, bold, m_outlineThickness);
                     width += g.bounds.width;
                 }
@@ -671,14 +672,14 @@ namespace c2d {
             m_bounds.width = (maxX - minX) + (2 * scale);
             m_bounds.height = (maxY - minY) + (2 * scale);
             m_size = {m_bounds.width, m_bounds.height};
+        }
 
-            m_vertices.update();
-            m_outlineVertices.update();
+        m_vertices.update();
+        m_outlineVertices.update();
 
-            if (!m_font->isBmFont() && m_font->isDirtyTex()) {
-                m_font->getTexture(m_characterSize)->unlock();
-                m_font->setDirtyTex(false);
-            }
+        if (!m_font->isBmFont() && m_font->isDirtyTex()) {
+            m_font->getTexture(m_characterSize)->unlock();
+            m_font->setDirtyTex(false);
         }
     }
 } // namespace sf

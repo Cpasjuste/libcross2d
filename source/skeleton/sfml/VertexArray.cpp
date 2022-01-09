@@ -81,7 +81,8 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void VertexArray::append(const Vertex &vertex) {
         m_vertices.push_back(vertex);
-        update();
+        // do not call update here, "Text" will use append a lot (gl buffer overflow)
+        //update();
     }
 
 
@@ -134,7 +135,8 @@ namespace c2d {
 
     void VertexArray::update() {
 #ifdef __GL2__
-        if (c2d_renderer == nullptr || !c2d_renderer->available) {
+        if (c2d_renderer == nullptr || !c2d_renderer->available
+            || m_vertices.empty()) {
             return;
         }
 
@@ -142,6 +144,8 @@ namespace c2d {
             GL_CHECK(glGenBuffers(1, &vbo));
         }
 
+        printf("VertexArray::update(%p): vbo: %i, vertices: %lu, size: %lu\n",
+               this, vbo, m_vertices.size(), sizeof(Vertex) * m_vertices.size());
         GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
         GL_CHECK(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_vertices.size(), m_vertices.data(), GL_STREAM_DRAW));
         GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));

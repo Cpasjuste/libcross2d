@@ -187,6 +187,7 @@ namespace c2d {
         std::vector<Vertex> m_vertices;      ///< Vertices contained in the array
         PrimitiveType m_primitiveType; ///< Type of primitives to draw
         unsigned int vbo = 0;
+        //size_t vbo_size = 0;
     };
 
 } // namespace c2d
