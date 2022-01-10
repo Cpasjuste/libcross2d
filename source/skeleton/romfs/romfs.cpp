@@ -112,22 +112,22 @@ static off_t lseek_hook(int fd, off_t offset, int whence) {
 
     PhysPtr *fsPtr = physGet(fd);
     if (fsPtr) {
-        off_t cur = PHYSFS_tell(fsPtr->file);
+        off_t pos = PHYSFS_tell(fsPtr->file);
         if (whence == SEEK_SET) {
-            cur = offset;
+            pos = offset;
         } else if (whence == SEEK_CUR) {
-            cur += offset;
+            pos += offset;
         } else if (whence == SEEK_END) {
-            cur = (off_t) fsPtr->size + offset;
+            pos = (off_t) fsPtr->size + offset;
         }
 
-        if (PHYSFS_seek(fsPtr->file, cur) == 0) {
+        if (PHYSFS_seek(fsPtr->file, pos) == 0) {
             printf("NOK: lseek_hook(%i, %li, %i)\n", fd, offset, whence);
             return -1;
         }
 
-        printf("OK: lseek_hook(%i, %li, %i), ret = %li\n", fd, offset, whence, cur);
-        return cur;
+        printf("OK: lseek_hook(%i, %li, %i), ret = %li\n", fd, offset, whence, pos);
+        return pos;
     }
 
     return lseek_func(fd, offset, whence);
@@ -253,6 +253,7 @@ static FILE *fopen_hook(const char *filename, const char *mode) {
             file->_file = fd;
 #else
             file->_fileno = fd;
+            file->_flags = 0x0004; // ok to read
 #endif
             return file;
         } else {
@@ -365,6 +366,47 @@ static int fclose_hook(FILE *stream) {
     }
 
     return fclose_func(stream);
+}
+
+static int (*fileno_func)(FILE *stream);
+
+static int fileno_hook(FILE *stream) {
+#ifdef __WINDOWS__
+    int fd = stream->_file;
+#else
+    int fd = stream->_fileno;
+#endif
+    PhysPtr *fsPtr = physGet(fd);
+    if (fsPtr) {
+        printf("OK: fileno_hook(%i)\n", fd);
+        return fd;
+    }
+
+    return fileno_func(stream);
+}
+
+static int (*fgetc_func)(FILE *stream);
+
+int fgetc_hook(FILE *stream) {
+#ifdef __WINDOWS__
+    int fd = stream->_file;
+#else
+    int fd = stream->_fileno;
+#endif
+    PhysPtr *fsPtr = physGet(fd);
+    if (fsPtr) {
+        char buf;
+        ssize_t len = PHYSFS_readBytes(fsPtr->file, &buf, 1);
+        if (len == 1) {
+            printf("OK: fgetc_hook(%i)\n", fd);
+            return buf;
+        } else {
+            printf("NOK: fgetc_hook(%i)\n", fd);
+            return -1;
+        }
+    }
+
+    return fgetc_func(stream);
 }
 
 int (*fstat_func)(int fd, struct stat *buf);
@@ -539,6 +581,18 @@ int romfsInit() {
     ret = funchook_prepare(funchook, (void **) &fclose_func, (void *) fclose_hook);
     if (ret != 0) {
         printf("romfsInit: fclose_hook failed\n");
+    }
+
+    fileno_func = (int (*)(FILE *)) fileno;
+    ret = funchook_prepare(funchook, (void **) &fileno_func, (void *) fileno_hook);
+    if (ret != 0) {
+        printf("romfsInit: fileno_hook failed\n");
+    }
+
+    fgetc_func = (int (*)(FILE *)) fgetc;
+    ret = funchook_prepare(funchook, (void **) &fgetc_func, (void *) fgetc_hook);
+    if (ret != 0) {
+        printf("romfsInit: fgetc_hook failed\n");
     }
 
     ret = funchook_install(funchook, 0);

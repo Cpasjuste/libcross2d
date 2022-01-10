@@ -15,7 +15,7 @@ Config::Config(const std::string &name, const std::string &path, int version) : 
 
 bool Config::load() {
 
-    //printf("Config::load: %s\n", path.c_str());
+    printf("Config::load: %s\n", path.c_str());
     if (config_read_file(&config, path.c_str()) == CONFIG_FALSE) {
         printf("Config::load: file not found: %s\n", path.c_str());
         return false;
