@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
    libconfig - A library for processing structured configuration files
-   Copyright (C) 2005-2014  Mark A Lindner
+   Copyright (C) 2005-2018  Mark A Lindner
 
    This file is part of libconfig.
 
@@ -37,6 +37,17 @@ namespace libconfig {
 
 // ---------------------------------------------------------------------------
 
+static const char **__include_func(config_t *config,
+                                   const char *include_dir,
+                                   const char *path,
+                                   const char **error)
+{
+  Config *self = reinterpret_cast<Config *>(config_get_hook(config));
+  return(self->evaluateIncludePath(path, error));
+}
+
+// ---------------------------------------------------------------------------
+
 ParseException::ParseException(const char *file, int line, const char *error)
   : _file(file ? ::strdup(file) : NULL), _line(line), _error(error)
 {
@@ -54,14 +65,14 @@ ParseException::ParseException(const ParseException &other)
 
 // ---------------------------------------------------------------------------
 
-ParseException::~ParseException() throw()
+ParseException::~ParseException() LIBCONFIGXX_NOEXCEPT
 {
   ::free((void *)_file);
 }
 
 // ---------------------------------------------------------------------------
 
-const char *ParseException::what() const throw()
+const char *ParseException::what() const LIBCONFIGXX_NOEXCEPT
 {
   return("ParseException");
 }
@@ -200,14 +211,14 @@ SettingException &SettingException::operator=(const SettingException &other)
 
 // ---------------------------------------------------------------------------
 
-const char *SettingException::what() const throw()
+const char *SettingException::what() const LIBCONFIGXX_NOEXCEPT
 {
   return("SettingException");
 }
 
 // ---------------------------------------------------------------------------
 
-SettingException::~SettingException() throw()
+SettingException::~SettingException() LIBCONFIGXX_NOEXCEPT
 {
   ::free(_path);
 }
@@ -236,7 +247,7 @@ SettingTypeException::SettingTypeException(const Setting &setting,
 
 // ---------------------------------------------------------------------------
 
-const char *SettingTypeException::what() const throw()
+const char *SettingTypeException::what() const LIBCONFIGXX_NOEXCEPT
 {
   return("SettingTypeException");
 }
@@ -266,7 +277,7 @@ SettingNotFoundException::SettingNotFoundException(const char *path)
 
 // ---------------------------------------------------------------------------
 
-const char *SettingNotFoundException::what() const throw()
+const char *SettingNotFoundException::what() const LIBCONFIGXX_NOEXCEPT
 {
   return("SettingNotFoundException");
 }
@@ -281,14 +292,14 @@ SettingNameException::SettingNameException(const Setting &setting,
 
 // ---------------------------------------------------------------------------
 
-const char *SettingNameException::what() const throw()
+const char *SettingNameException::what() const LIBCONFIGXX_NOEXCEPT
 {
   return("SettingNameException");
 }
 
 // ---------------------------------------------------------------------------
 
-const char *FileIOException::what() const throw()
+const char *FileIOException::what() const LIBCONFIGXX_NOEXCEPT
 {
   return("FileIOException");
 }
@@ -307,7 +318,9 @@ Config::Config()
 {
   _config = new config_t;
   config_init(_config);
+  config_set_hook(_config, reinterpret_cast<void *>(this));
   config_set_destructor(_config, ConfigDestructor);
+  config_set_include_func(_config, __include_func);
 }
 
 // ---------------------------------------------------------------------------
@@ -320,9 +333,9 @@ Config::~Config()
 
 // ---------------------------------------------------------------------------
 
-void Config::setAutoConvert(bool flag)
+void Config::clear()
 {
-  config_set_auto_convert(_config, (flag ? CONFIG_TRUE : CONFIG_FALSE));
+  config_clear(_config);
 }
 
 // ---------------------------------------------------------------------------
@@ -341,9 +354,16 @@ int Config::getOptions() const
 
 // ---------------------------------------------------------------------------
 
-bool Config::getAutoConvert() const
+void Config::setOption(Config::Option option, bool flag)
 {
-  return(config_get_auto_convert(_config) != CONFIG_FALSE);
+  config_set_option(_config, (int)option, flag ? CONFIG_TRUE : CONFIG_FALSE);
+}
+
+// ---------------------------------------------------------------------------
+
+bool Config::getOption(Config::Option option) const
+{
+  return(config_get_option(_config, (int)option) == CONFIG_TRUE);
 }
 
 // ---------------------------------------------------------------------------
@@ -374,6 +394,20 @@ unsigned short Config::getTabWidth() const
 
 // ---------------------------------------------------------------------------
 
+void Config::setFloatPrecision(unsigned short digits)
+{
+  return (config_set_float_precision(_config,digits));
+}
+
+// ---------------------------------------------------------------------------
+
+unsigned short Config::getFloatPrecision() const
+{
+  return (config_get_float_precision(_config));
+}
+
+// ---------------------------------------------------------------------------
+
 void Config::setIncludeDir(const char *includeDir)
 {
   config_set_include_dir(_config, includeDir);
@@ -384,6 +418,13 @@ void Config::setIncludeDir(const char *includeDir)
 const char *Config::getIncludeDir() const
 {
   return(config_get_include_dir(_config));
+}
+
+// ---------------------------------------------------------------------------
+
+const char **Config::evaluateIncludePath(const char *path, const char **error)
+{
+  return(config_default_include_func(_config, getIncludeDir(), path, error));
 }
 
 // ---------------------------------------------------------------------------
@@ -658,9 +699,6 @@ Setting::operator unsigned int() const
 
   int v = config_setting_get_int(_setting);
 
-  if(v < 0)
-    v = 0;
-
   return(static_cast<unsigned int>(v));
 }
 
@@ -700,9 +738,6 @@ Setting::operator unsigned long long() const
   assertType(TypeInt64);
 
   long long v = config_setting_get_int64(_setting);
-
-  if(v < INT64_CONST(0))
-    v = INT64_CONST(0);
 
   return(static_cast<unsigned long long>(v));
 }

@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
    libconfig - A library for processing structured configuration files
-   Copyright (C) 2005-2018  Mark A Lindner
+   Copyright (C) 2005-2020  Mark A Lindner
 
    This file is part of libconfig.
 
@@ -29,7 +29,7 @@
 
 /* ------------------------------------------------------------------------- */
 
-void strvec_append(strvec_t *vec, const char *s)
+void libconfig_strvec_append(strvec_t *vec, const char *s)
 {
   if(vec->length == vec->capacity)
   {
@@ -47,7 +47,7 @@ void strvec_append(strvec_t *vec, const char *s)
 
 /* ------------------------------------------------------------------------- */
 
-const char **strvec_release(strvec_t *vec)
+const char **libconfig_strvec_release(strvec_t *vec)
 {
   const char **r = vec->strings;
   if(r)
@@ -55,6 +55,20 @@ const char **strvec_release(strvec_t *vec)
 
   __zero(vec);
   return(r);
+}
+
+/* ------------------------------------------------------------------------- */
+
+void libconfig_strvec_delete(const char *const *vec)
+{
+  const char *const *p;
+
+  if(!vec) return;
+
+  for(p = vec; *p; ++p)
+    __delete(*p);
+
+  __delete(vec);
 }
 
 /* ------------------------------------------------------------------------- */

@@ -201,6 +201,16 @@ int stat_hook(const char *pathname, struct stat *buf) {
     return stat_func(pathname, buf);
 }
 
+int (*stat64_func)(const char *pathname, struct stat64 *buf);
+
+int stat64_hook(const char *pathname, struct stat64 *buf) {
+    if (isRomFs(pathname)) {
+        printf("OK: stat64_hook(%s)\n", pathname);
+        return stat_hook(pathname, (struct stat *) buf);
+    }
+    return stat64_func(pathname, buf);
+}
+
 #ifdef __LINUX__
 
 int (*lstat_func)(const char *pathname, struct stat *buf);
@@ -413,6 +423,7 @@ int (*fstat_func)(int fd, struct stat *buf);
 
 int fstat_hook(int fd, struct stat *buf) {
 
+    printf("fstat_hook(%i)\n", fd);
     PhysPtr *fsPtr = physGet(fd);
     if (fsPtr) {
         printf("OK: fstat_hook(%i)\n", fd);
@@ -420,6 +431,19 @@ int fstat_hook(int fd, struct stat *buf) {
     }
 
     return fstat_func(fd, buf);
+}
+
+int (*fstat64_func)(int fd, struct stat64 *buf);
+
+int fstat64_hook(int fd, struct stat64 *buf) {
+
+    PhysPtr *fsPtr = physGet(fd);
+    if (fsPtr) {
+        printf("OK: fstat64_hook(%i)\n", fd);
+        return stat_hook(fsPtr->path.c_str(), (struct stat *) buf);
+    }
+
+    return fstat64_func(fd, buf);
 }
 
 #ifdef __LINUX__
@@ -500,6 +524,12 @@ int romfsInit() {
         printf("romfsInit: stat_hook failed\n");
     }
 
+    stat64_func = (int (*)(const char *, struct stat64 *)) stat64;
+    ret = funchook_prepare(funchook, (void **) &stat64_func, (void *) stat64_hook);
+    if (ret != 0) {
+        printf("romfsInit: stat64_hook failed\n");
+    }
+
 #ifdef __LINUX__
     lstat_func = (int (*)(const char *, struct stat *)) lstat;
     ret = funchook_prepare(funchook, (void **) &lstat_func, (void *) lstat_hook);
@@ -567,6 +597,12 @@ int romfsInit() {
     ret = funchook_prepare(funchook, (void **) &fstat_func, (void *) fstat_hook);
     if (ret != 0) {
         printf("romfsInit: fstat_hook failed\n");
+    }
+
+    fstat64_func = (int (*)(int, struct stat64 *)) fstat64;
+    ret = funchook_prepare(funchook, (void **) &fstat64_func, (void *) fstat64_hook);
+    if (ret != 0) {
+        printf("romfsInit: fstat64_hook failed\n");
     }
 
 #if __LINUX__ && __GLIBC__ == 2 && __GLIBC_MINOR__ < 33

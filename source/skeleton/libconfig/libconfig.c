@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
    libconfig - A library for processing structured configuration files
-   Copyright (C) 2005-2018  Mark A Lindner
+   Copyright (C) 2005-2020  Mark A Lindner
 
    This file is part of libconfig.
 
@@ -41,6 +41,7 @@
 #include "libconfig.h"
 #include "parsectx.h"
 #include "scanctx.h"
+#include "strvec.h"
 #include "wincompat.h"
 #include "grammar.h"
 #include "scanner.h"
@@ -96,7 +97,7 @@ static void __config_locale_override(void)
 
 #else
 
-//#warning "No way to modify calling thread's locale!"
+#warning "No way to modify calling thread's locale!"
 
 #endif
 }
@@ -117,7 +118,7 @@ static void __config_locale_restore(void)
 
 #else
 
-//#warning "No way to modify calling thread's locale!"
+#warning "No way to modify calling thread's locale!"
 
 #endif
 }
@@ -212,8 +213,8 @@ static void __config_write_value(const config_t *config,
     {
       const int sci_ok = config_get_option(
             config, CONFIG_OPTION_ALLOW_SCIENTIFIC_NOTATION);
-      format_double(value->fval, config->float_precision, sci_ok, fbuf,
-                    sizeof(fbuf));
+      libconfig_format_double(value->fval, config->float_precision, sci_ok,
+                              fbuf, sizeof(fbuf));
       fputs(fbuf, stream);
       break;
     }
@@ -539,15 +540,15 @@ static int __config_read(config_t *config, FILE *stream, const char *filename,
 
   config_clear(config);
 
-  parsectx_init(&parse_ctx);
+  libconfig_parsectx_init(&parse_ctx);
   parse_ctx.config = config;
   parse_ctx.parent = config->root;
   parse_ctx.setting = config->root;
 
   __config_locale_override();
 
-  scanctx_init(&scan_ctx, filename);
-  config->root->file = scanctx_current_filename(&scan_ctx);
+  libconfig_scanctx_init(&scan_ctx, filename);
+  config->root->file = libconfig_scanctx_current_filename(&scan_ctx);
   scan_ctx.config = config;
   libconfig_yylex_init_extra(&scan_ctx, &scanner);
 
@@ -563,17 +564,18 @@ static int __config_read(config_t *config, FILE *stream, const char *filename,
   {
     YY_BUFFER_STATE buf;
 
-    config->error_file = scanctx_current_filename(&scan_ctx);
+    config->error_file = libconfig_scanctx_current_filename(&scan_ctx);
     config->error_type = CONFIG_ERR_PARSE;
 
     /* Unwind the include stack, freeing the buffers and closing the files. */
-    while((buf = (YY_BUFFER_STATE)scanctx_pop_include(&scan_ctx)) != NULL)
+    while((buf = (YY_BUFFER_STATE)libconfig_scanctx_pop_include(&scan_ctx))
+          != NULL)
       libconfig_yy_delete_buffer(buf, scanner);
   }
 
   libconfig_yylex_destroy(scanner);
-  config->filenames = scanctx_cleanup(&scan_ctx);
-  parsectx_cleanup(&parse_ctx);
+  config->filenames = libconfig_scanctx_cleanup(&scan_ctx);
+  libconfig_parsectx_cleanup(&parse_ctx);
 
   __config_locale_restore();
 
@@ -692,7 +694,6 @@ int config_write_file(config_t *config, const char *filename)
 
   config_write(config, stream);
 
-#ifndef __DREAMCAST__
   if(config_get_option(config, CONFIG_OPTION_FSYNC))
   {
     int fd = fileno(stream);
@@ -708,7 +709,6 @@ int config_write_file(config_t *config, const char *filename)
       }
     }
   }
-#endif
 
   fclose(stream);
   config->error_type = CONFIG_ERR_NONE;
@@ -720,7 +720,7 @@ int config_write_file(config_t *config, const char *filename)
 void config_destroy(config_t *config)
 {
   __config_setting_destroy(config->root);
-  __delete_vec(config->filenames);
+  libconfig_strvec_delete(config->filenames);
   __delete(config->include_dir);
   __zero(config);
 }
@@ -731,7 +731,9 @@ void config_clear(config_t *config)
 {
   /* Destroy the root setting (recursively) and then create a new one. */
   __config_setting_destroy(config->root);
-  __delete_vec(config->filenames);
+
+  libconfig_strvec_delete(config->filenames);
+  config->filenames = NULL;
 
   config->root = __new(config_setting_t);
   config->root->type = CONFIG_TYPE_GROUP;
@@ -1216,7 +1218,7 @@ config_setting_t *config_setting_lookup(config_setting_t *setting,
                                         const char *path)
 {
   const char *p = path;
-  config_setting_t *found;
+  config_setting_t *found = setting;
 
   for(;;)
   {
@@ -1227,20 +1229,18 @@ config_setting_t *config_setting_lookup(config_setting_t *setting,
       break;
 
     if(*p == '[')
-      found = config_setting_get_elem(setting, atoi(++p));
+      found = config_setting_get_elem(found, atoi(++p));
     else
-      found = config_setting_get_member(setting, p);
+      found = config_setting_get_member(found, p);
 
     if(! found)
       break;
-
-    setting = found;
 
     while(! strchr(PATH_TOKENS, *p))
       p++;
   }
 
-  return(*p ? NULL : setting);
+  return(*p || (found == setting) ? NULL : found);
 }
 
 /* ------------------------------------------------------------------------- */
@@ -1628,7 +1628,12 @@ config_setting_t *config_setting_add(config_setting_t *parent,
   }
 
   if(config_setting_get_member(parent, name) != NULL)
-    return(NULL); /* already exists */
+  {
+    if(config_get_option(parent->config, CONFIG_OPTION_ALLOW_OVERRIDES))
+      config_setting_remove(parent, name);
+    else
+      return(NULL); /* already exists */
+  }
 
   return(config_setting_create(parent, name, type));
 }
