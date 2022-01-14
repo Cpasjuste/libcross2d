@@ -5,18 +5,18 @@
 #ifndef C2D_INPUT_H
 #define C2D_INPUT_H
 
+#include "cross2d/skeleton/sfml/Clock.hpp"
+#include "cross2d/skeleton/sfml/Vector2.hpp"
+
 #ifndef BIT
 #define BIT(n) (1U<<(n))
 #endif
 
 #define PLAYER_MAX 4
-#define KEY_COUNT 12
+#define KEY_COUNT 14
 
 #define EV_RESIZE   BIT(1)
 #define EV_QUIT     BIT(2)
-
-#include "cross2d/skeleton/sfml/Clock.hpp"
-#include "cross2d/skeleton/sfml/Vector2.hpp"
 
 namespace c2d {
 
@@ -37,8 +37,10 @@ namespace c2d {
             Fire4 = BIT(12),
             Fire5 = BIT(13),
             Fire6 = BIT(14),
-            Touch = BIT(15),
-            Delay = BIT(16)
+            Menu1 = BIT(15),
+            Menu2 = BIT(16),
+            Touch = BIT(17),
+            Delay = BIT(18)
         };
 
         struct Axis {
