@@ -15,7 +15,7 @@ namespace c2d {
 
         Thread(Function fn, void *data) {};
 
-        virtual ~Thread() = default;;
+        virtual ~Thread() = default;
 
         virtual int join() {
             printf("c2d::Thread:join: unimplemented\n");
