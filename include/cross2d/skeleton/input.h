@@ -88,8 +88,10 @@ namespace c2d {
 
         virtual int getRepeatDelay();
 
+        // see C2D_DEFAULT_JOY_KEYS in c2d.h for mapping "struct"
         virtual void setJoystickMapping(int player, const int *mapping, int deadzone = 8000);
 
+        // see C2D_DEFAULT_KB_KEYS in c2d.h for mapping "struct"
         virtual void setKeyboardMapping(const int *mapping);
 
         Player players[PLAYER_MAX];

@@ -249,8 +249,8 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_MENU2_DEFAULT   6
 #define KEY_JOY_AXIS_LX         0
 #define KEY_JOY_AXIS_LY         1
-#define KEY_JOY_AXIS_RX         4
-#define KEY_JOY_AXIS_RY         5
+#define KEY_JOY_AXIS_RX         3
+#define KEY_JOY_AXIS_RY         4
 
 #elif __SDL1__
 
@@ -485,6 +485,7 @@ extern c2d::Renderer *c2d_renderer;
 #endif
 #endif
 
+// "Hori GEM Xbox controller"
 const int C2D_DEFAULT_JOY_KEYS[]{
         // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
         KEY_JOY_UP_DEFAULT, KEY_JOY_DOWN_DEFAULT, KEY_JOY_LEFT_DEFAULT, KEY_JOY_RIGHT_DEFAULT,
@@ -492,6 +493,7 @@ const int C2D_DEFAULT_JOY_KEYS[]{
         KEY_JOY_FIRE1_DEFAULT, KEY_JOY_FIRE2_DEFAULT, KEY_JOY_FIRE3_DEFAULT,
         KEY_JOY_FIRE4_DEFAULT, KEY_JOY_FIRE5_DEFAULT, KEY_JOY_FIRE6_DEFAULT,
         KEY_JOY_MENU1_DEFAULT, KEY_JOY_MENU2_DEFAULT,
+        KEY_JOY_AXIS_LX, KEY_JOY_AXIS_LY, KEY_JOY_AXIS_RX, KEY_JOY_AXIS_RY,
         0
 };
 

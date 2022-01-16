@@ -8,6 +8,11 @@ using namespace c2d;
 
 Input::Input() : keyboard() {
 
+    Input::setKeyboardMapping(C2D_DEFAULT_KB_KEYS);
+    for (int i = 0; i < PLAYER_MAX; i++) {
+        Input::setJoystickMapping(i, C2D_DEFAULT_JOY_KEYS);
+    }
+
     repeatClock = new C2DClock();
 }
 
@@ -25,7 +30,7 @@ Input::Player *Input::update(int rotate) {
         stateOld = players[0].keys;
         return players;
     } else {
-        unsigned int diff = stateOld ^players[0].keys;
+        unsigned int diff = stateOld ^ players[0].keys;
         stateOld = players[0].keys;
         if (diff > 0) {
             repeatClock->restart();
@@ -61,6 +66,10 @@ void Input::setJoystickMapping(int player, const int *mapping, int deadzone) {
     for (int i = 0; i < KEY_COUNT; i++) {
         players[player].mapping[i] = mapping[i];
     }
+    players[player].lx.id = mapping[14];
+    players[player].ly.id = mapping[15];
+    players[player].rx.id = mapping[16];
+    players[player].ry.id = mapping[17];
     players[player].dead_zone = deadzone;
 }
 

@@ -27,14 +27,9 @@ Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 #endif
 
     m_input = new C2DInput();
-    m_input->setJoystickMapping(0, C2D_DEFAULT_JOY_KEYS);
-    m_input->setKeyboardMapping(C2D_DEFAULT_KB_KEYS);
-
     m_io = new C2DIo();
-
     m_font = new C2DFont();
     m_font->loadDefault();
-
     m_elapsedClock = new C2DClock();
     m_deltaClock = new C2DClock();
 }
@@ -61,7 +56,7 @@ void Renderer::onUpdate() {
     // input
     if (m_process_inputs) {
         m_input->update();
-        for (auto &player : m_input->players) {
+        for (auto &player: m_input->players) {
             unsigned int keys = player.keys;
             if (keys > 0 && keys != Input::Key::Delay) {
                 onInput(m_input->players);

@@ -146,11 +146,11 @@ void SDL2Input::process_axis(Input::Player &player, int rotate) {
     auto deadZone = (float) player.dead_zone;
     float scalingFactor, magnitude;
     bool up = false, down = false, left = false, right = false;
-    Axis *currentStickXAxis = nullptr;
-    Axis *currentStickYAxis = nullptr;
+    Axis *currentStickXAxis;
+    Axis *currentStickYAxis;
     float slope = 0.414214f; // tangent of 22.5 degrees for size of angular zones
 
-    for (int i = 0; i <= 1; i++) {
+    for (int i = 0; i < 2; i++) {
 
         if (i == 0) {
             // left stick
@@ -161,11 +161,12 @@ void SDL2Input::process_axis(Input::Player &player, int rotate) {
             currentStickXAxis = &(player.rx);
             currentStickYAxis = &(player.ry);
         }
+
         analogX = (float) (SDL_JoystickGetAxis((SDL_Joystick *) player.data, currentStickXAxis->id));
         analogY = (float) (SDL_JoystickGetAxis((SDL_Joystick *) player.data, currentStickYAxis->id));
 
-        //radial and scaled deadzone
-        //http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
+        // radial and scaled deadzone
+        // http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
 
         if ((magnitude = std::sqrt(analogX * analogX + analogY * analogY)) >= deadZone) {
 
