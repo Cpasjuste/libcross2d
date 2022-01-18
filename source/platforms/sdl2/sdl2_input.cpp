@@ -51,16 +51,6 @@ SDL2Input::SDL2Input() : Input() {
         // allow keyboard mapping to player1
         players[0].enabled = true;
     }
-
-    for (int i = 0; i < PLAYER_MAX; i++) {
-        for (int k = 0; k < KEY_COUNT; k++) {
-            players[i].mapping[k] = 0;
-        }
-    }
-
-    for (int i = 0; i < KEY_COUNT; i++) {
-        keyboard.mapping[i] = 0;
-    }
 }
 
 SDL2Input::~SDL2Input() {
@@ -267,9 +257,7 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
     }
 
     for (int i = 0; i < KEY_COUNT; i++) {
-
         int mapping = player.mapping[i];
-
 #ifdef __PSP2__
         // rotate buttons on ps vita to play in portrait mode
         if (rotate == 1) {

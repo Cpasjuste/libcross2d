@@ -608,7 +608,7 @@ namespace c2d {
                 //if ((textureWidth * 2 <= Texture::getMaximumSize()) &&
                 //    (textureHeight * 2 <= Texture::getMaximumSize())) {
                 if ((textureWidth * 2 <= 1024) && (textureHeight * 2 <= 1024)) {
-#if __GL2__
+#if defined(__GL2__) || defined(__PSP2__)
                     printf("Font:: resizing font texture from %ix%i to %ix%i\n",
                            textureWidth, textureHeight, textureWidth * 2, textureHeight * 2);
                     page.texture->resize({(int) textureWidth * 2, (int) textureHeight * 2}, true);

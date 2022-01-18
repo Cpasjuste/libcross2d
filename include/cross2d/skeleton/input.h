@@ -2,8 +2,8 @@
 // Created by cpasjuste on 11/01/17.
 //
 
-#ifndef C2D_INPUT_H
-#define C2D_INPUT_H
+#ifndef __C2D_INPUT_H__
+#define __C2D_INPUT_H__
 
 #include "cross2d/skeleton/sfml/Clock.hpp"
 #include "cross2d/skeleton/sfml/Vector2.hpp"
@@ -95,7 +95,7 @@ namespace c2d {
         virtual void setKeyboardMapping(const int *mapping);
 
         Player players[PLAYER_MAX];
-        Keyboard keyboard;
+        Keyboard keyboard{};
 
     private:
 
@@ -106,4 +106,4 @@ namespace c2d {
     };
 }
 
-#endif //_INPUT_H
+#endif //__C2D_INPUT_H__

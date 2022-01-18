@@ -233,6 +233,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
 
+// "Hori GEM Xbox controller"
 #define KEY_JOY_UP_DEFAULT      (-1)  // use hat
 #define KEY_JOY_DOWN_DEFAULT    (-1)  // use hat
 #define KEY_JOY_LEFT_DEFAULT    (-1)  // use hat
@@ -485,7 +486,6 @@ extern c2d::Renderer *c2d_renderer;
 #endif
 #endif
 
-// "Hori GEM Xbox controller"
 const int C2D_DEFAULT_JOY_KEYS[]{
         // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
         KEY_JOY_UP_DEFAULT, KEY_JOY_DOWN_DEFAULT, KEY_JOY_LEFT_DEFAULT, KEY_JOY_RIGHT_DEFAULT,

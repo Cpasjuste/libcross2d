@@ -77,8 +77,8 @@ PSP2Texture::PSP2Texture(const unsigned char *buffer, int bufferSize) : Texture(
     available = true;
 }
 
-int PSP2Texture::resize(const Vector2f &size, bool copyPixels) {
-    if (size.x == getSize().x && size.y == getSize().y) {
+int PSP2Texture::resize(const Vector2i &size, bool copyPixels) {
+    if (size.x == (int) getSize().x && size.y == (int) getSize().y) {
         return 0;
     }
 
@@ -110,8 +110,8 @@ int PSP2Texture::resize(const Vector2f &size, bool copyPixels) {
     vita2d_free_texture(tex);
     tex = tex_new;
     pitch = (int) size.x * bpp;
-    tex_size = {(int) size.x, (int) size.y};
-    setSize(size);
+    tex_size = size;
+    setSize({(float) size.x, (float) size.y});
     setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     setFilter(filter);
 

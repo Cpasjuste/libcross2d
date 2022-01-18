@@ -23,7 +23,7 @@ namespace c2d {
 
         ~PSP2Texture() override;
 
-        int resize(const Vector2f &size, bool copyPixels = true) override;
+        int resize(const Vector2i &size, bool copyPixels = true) override;
 
         int lock(FloatRect *rect, void **pixels, int *pitch) override;
 

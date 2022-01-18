@@ -6,8 +6,7 @@
 
 using namespace c2d;
 
-Input::Input() : keyboard() {
-
+Input::Input() {
     Input::setKeyboardMapping(C2D_DEFAULT_KB_KEYS);
     for (int i = 0; i < PLAYER_MAX; i++) {
         Input::setJoystickMapping(i, C2D_DEFAULT_JOY_KEYS);
