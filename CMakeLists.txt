@@ -288,6 +288,9 @@ elseif (PLATFORM_SWITCH)
             source/platforms/posix/posix_clock.cpp
             source/platforms/switch/*.c*)
     list(APPEND C2D_CFLAGS -D__SWITCH__ -DNO_KEYBOARD)
+    if (OPTION_DEBUG_SVC)
+        list(APPEND C2D_CFLAGS -D__DEBUG_SVC__)
+    endif ()
     ########################
     # DREAMCAST PLATORM
     ########################

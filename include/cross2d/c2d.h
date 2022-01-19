@@ -2,8 +2,8 @@
 // Created by cpasjuste on 29/11/17.
 //
 
-#ifndef _C2D_H_
-#define _C2D_H_
+#ifndef __C2D_H__
+#define __C2D_H__
 
 #include "cross2d/skeleton/object.h"
 #include "cross2d/skeleton/io.h"
@@ -516,4 +516,4 @@ const int C2D_DEFAULT_KB_KEYS[]{
 };
 #endif
 
-#endif //_C2D_H_
+#endif //__C2D_H__

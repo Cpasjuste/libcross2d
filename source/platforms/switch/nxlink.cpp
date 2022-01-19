@@ -9,20 +9,27 @@ static int sock = -1;
 
 void initNxLink() {
 #ifndef NDEBUG
+#ifdef __DEBUG_SVC__
+    consoleDebugInit(debugDevice_SVC);
+    stdout = stderr;
+#else
     socketInitializeDefault();
     sock = nxlinkStdio();
     if (sock < 0) {
         socketExit();
     }
 #endif
+#endif
 }
 
 void deinitNxLink() {
 #ifndef NDEBUG
+#ifndef __DEBUG_SVC__
     if (sock >= 0) {
         close(sock);
         socketExit();
         sock = -1;
     }
+#endif
 #endif
 }
