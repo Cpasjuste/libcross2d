@@ -99,9 +99,19 @@ endif (PLATFORM_VITA)
 # PS4 target
 ###########################
 if (PLATFORM_PS4)
+    string(REPLACE "." "" PS4_PKG_VERSION_CLEAN ${PS4_PKG_VERSION})
     add_self(${PROJECT_NAME})
     add_pkg(${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/data_romfs ${PS4_PKG_TITLE_ID} ${PS4_PKG_TITLE} ${PS4_PKG_VERSION})
     add_dependencies(${PROJECT_NAME}_pkg ${PROJECT_NAME}.data)
+    add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
+            DEPENDS ${PROJECT_NAME}_pkg
+            COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/IV0001-${PS4_PKG_TITLE_ID}_00-${PS4_PKG_TITLE_ID}000${PS4_PKG_VERSION_CLEAN}.pkg ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
+            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_datadir -D DST=${CMAKE_BINARY_DIR}/release/${PROJECT_NAME} -P ${CMAKE_CURRENT_LIST_DIR}/copy_directory_custom.cmake
+            COMMAND cd ${CMAKE_BINARY_DIR}/release && ${ZIP} -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip ${PROJECT_NAME}
+            )
 endif (PLATFORM_PS4)
 
 ###########################
