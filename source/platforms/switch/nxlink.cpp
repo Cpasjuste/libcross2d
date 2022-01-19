@@ -5,7 +5,9 @@
 #include <unistd.h>
 #include "cross2d/c2d.h"
 
+#ifndef NDEBUG
 static int sock = -1;
+#endif
 
 void initNxLink() {
 #ifndef NDEBUG
