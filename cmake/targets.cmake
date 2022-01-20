@@ -33,7 +33,7 @@ if (PLATFORM_LINUX OR PLATFORM_WINDOWS)
     # release
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
     add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
-            DEPENDS ${PROJECT_NAME}.data
+            DEPENDS ${PROJECT_NAME}
             COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip
             COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
