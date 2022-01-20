@@ -13,8 +13,8 @@
 #define printf(fmt, ...) (0)
 #endif
 
-extern "C" const char c2d_romfs[];
-extern "C" const int c2d_romfs_length;
+extern "C" unsigned char c2d_romfs_zip[];
+extern "C" int c2d_romfs_zip_len;
 
 struct PhysPtr {
     std::string path;
@@ -488,8 +488,8 @@ int romfsInit() {
 
     printf("romfsInit... ");
     PHYSFS_init(nullptr);
-    PHYSFS_uint64 size = c2d_romfs_length;
-    PHYSFS_mountMemory(c2d_romfs, size,
+    PHYSFS_uint64 size = c2d_romfs_zip_len;
+    PHYSFS_mountMemory(c2d_romfs_zip, size,
                        nullptr, "romfs.zip", "/romfs", 1);
 
     funchook = funchook_create();

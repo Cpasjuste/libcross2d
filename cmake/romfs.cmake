@@ -5,11 +5,12 @@
      # build tar object file from directory
      add_custom_command(
              OUTPUT ${target}.romfs.c
+             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
              COMMAND ${CMAKE_COMMAND} -E touch ${romfs_dir}/.keep
-             COMMAND cd ${romfs_dir} && ${ZIP} -r ${CMAKE_CURRENT_BINARY_DIR}/${target}.romfs.zip .
-             # https://github.com/gwilymk/bin2c
-             COMMAND bin2c ${CMAKE_CURRENT_BINARY_DIR}/${target}.romfs.zip ${CMAKE_CURRENT_BINARY_DIR}/${target}.romfs.c c2d_romfs
-             COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_CURRENT_BINARY_DIR}/${target}.romfs.zip
+             COMMAND cd ${romfs_dir} && ${ZIP} -r ${CMAKE_CURRENT_BINARY_DIR}/c2d_romfs.zip .
+             # need to be in WORKING_DIRECTORY
+             COMMAND xxd -i c2d_romfs.zip > ${target}.romfs.c
+             COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_CURRENT_BINARY_DIR}/c2d_romfs.zip
              DEPENDS ${romfs_dir}
      )
 
