@@ -60,6 +60,12 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
         return;
     }
 
+    if (s.x <= 0 || s.y <= 0) {
+        int x = 0, y = 0;
+        SDL_GetWindowSize(window, &x, &y);
+        setSize((float) x, (float) y);
+    }
+
     context = SDL_GL_CreateContext(window);
     if (context == nullptr) {
         printf("Couldn't SDL_GL_CreateContext: %s\n", SDL_GetError());
