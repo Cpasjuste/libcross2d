@@ -1,10 +1,24 @@
-//
-// Created by cpasjuste on 17/09/18.
-//
+/*
+    cgwg's CRT shader
+    Copyright (C) 2010-2011 cgwg, Themaister
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the Free
+    Software Foundation; either version 2 of the License, or (at your option)
+    any later version.
+    (cgwg gave their consent to have their code distributed under the GPL in
+    this message:
+        http://board.byuu.org/viewtopic.php?p=26075#p26075
+        "Feel free to distribute my shaders under the GPL. After all, the
+        barrel distortion code was taken from the Curvature shader, which is
+        under the GPL."
+    )
+*/
 
-const char *crt_cgwg_fast_v = R"text(
-
+const char *c2d_crt_cgwg_fast_shader = R"text(
+// Parameter lines go here:
 #pragma parameter CRTCGWG_GAMMA "CRTcgwg Gamma" 2.7 0.0 10.0 0.01
+
+#if defined(VERTEX)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
@@ -72,11 +86,7 @@ void main()
     ratio_scale = vTexCoord * SourceSize.xy;
 }
 
-)text";
-
-const char *crt_cgwg_fast_f = R"text(
-
-#pragma parameter CRTCGWG_GAMMA "CRTcgwg Gamma" 2.7 0.0 10.0 0.01
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -175,5 +185,5 @@ void main()
 
     FragColor = vec4(pow(mcol * multi, vec3(0.454545, 0.454545, 0.454545)), 1.0);
 }
-
+#endif
 )text";

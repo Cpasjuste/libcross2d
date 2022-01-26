@@ -1,15 +1,24 @@
-//
-// Created by cpasjuste on 15/09/18.
-//
+/*
+   Author: rsn8887 (based on TheMaister)
+   License: Public domain
+   This is an integer prescale filter that should be combined
+   with a bilinear hardware filtering (GL_BILINEAR filter or some such) to achieve
+   a smooth scaling result with minimum blur. This is good for pixelgraphics
+   that are scaled by non-integer factors.
 
-// texture
-const char *sharp_bilinear_scanlines_v = R"text(
+   The prescale factor and texel coordinates are precalculated
+   in the vertex shader for speed.
+*/
 
+const char *c2d_interpolation_sharp_bilinear_scanlines_shader = R"text(
+// Parameter lines go here:
 #pragma parameter SCANLINE_BASE_BRIGHTNESS "Scanline Base Brightness" 0.60 0.0 1.0 0.01
 #pragma parameter SCANLINE_HORIZONTAL_MODULATION "Scanline Horizontal Modulation" 0.0 0.0 2.00 0.01
 #pragma parameter SCANLINE_VERTICAL_MODULATION "Scanline Vertical Modulation" 0.75 0.0 2.0 0.01
 
 #define pi 3.141592654
+
+#if defined(VERTEX)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
@@ -60,15 +69,7 @@ void main()
     precalc_scale = max(floor(outsize.xy / InputSize.xy), vec2(1.0, 1.0));
 }
 
-)text";
-
-const char *sharp_bilinear_scanlines_f = R"text(
-
-#pragma parameter SCANLINE_BASE_BRIGHTNESS "Scanline Base Brightness" 0.60 0.0 1.0 0.01
-#pragma parameter SCANLINE_HORIZONTAL_MODULATION "Scanline Horizontal Modulation" 0.0 0.0 2.00 0.01
-#pragma parameter SCANLINE_VERTICAL_MODULATION "Scanline Vertical Modulation" 0.75 0.0 2.0 0.01
-
-#define pi 3.141592654
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -146,5 +147,5 @@ void main()
    vec3 scanline = res * (SCANLINE_BASE_BRIGHTNESS + dot(sine_comp * sin(vTexCoord * omega), vec2(1.0, 1.0)));
    FragColor = vec4(scanline.rgb, 1.0);
 }
-
+#endif
 )text";

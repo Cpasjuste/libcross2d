@@ -1,12 +1,10 @@
-//
-// Created by cpasjuste on 17/09/18.
-//
+/*
+	Fragment shader based on "Improved texture interpolation" by Iñigo Quílez
+	Original description: http://www.iquilezles.org/www/articles/texture/texture.htm
+*/
 
-const char *sharp_bilinear_v = R"text(
-
-// Parameter lines go here:
-#pragma parameter SHARP_BILINEAR_PRE_SCALE "Sharp Bilinear Prescale" 4.0 1.0 10.0 1.0
-#pragma parameter AUTO_PRESCALE "Automatic Prescale" 1.0 0.0 1.0 1.0
+const char *c2d_interpolation_quilez_shader = R"text(
+#if defined(VERTEX)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
@@ -49,13 +47,7 @@ void main()
     TEX0.xy = TexCoord.xy;
 }
 
-)text";
-
-const char *sharp_bilinear_f = R"text(
-
-// Parameter lines go here:
-#pragma parameter SHARP_BILINEAR_PRE_SCALE "Sharp Bilinear Prescale" 4.0 1.0 10.0 1.0
-#pragma parameter AUTO_PRESCALE "Automatic Prescale" 1.0 0.0 1.0 1.0
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -93,32 +85,21 @@ COMPAT_VARYING vec4 TEX0;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-// All parameter floats need to have COMPAT_PRECISION in front of them
-uniform COMPAT_PRECISION float SHARP_BILINEAR_PRE_SCALE;
-uniform COMPAT_PRECISION float AUTO_PRESCALE;
-#else
-#define SHARP_BILINEAR_PRE_SCALE 4.0
-#define AUTO_PRESCALE 1.0
-#endif
-
 void main()
 {
-   vec2 texel = vTexCoord * SourceSize.xy;
-   vec2 texel_floored = floor(texel);
-   vec2 s = fract(texel);
-   float scale = (AUTO_PRESCALE > 0.5) ? floor(outsize.y / InputSize.y + 0.01) : SHARP_BILINEAR_PRE_SCALE;
-   float region_range = 0.5 - 0.5 / scale;
+	vec2 p = vTexCoord.xy;
 
-   // Figure out where in the texel to sample to get correct pre-scaled bilinear.
-   // Uses the hardware bilinear interpolator to avoid having to sample 4 times manually.
+	p = p * SourceSize.xy + vec2(0.5, 0.5);
 
-   vec2 center_dist = s - 0.5;
-   vec2 f = (center_dist - clamp(center_dist, -region_range, region_range)) * scale + 0.5;
+	vec2 i = floor(p);
+	vec2 f = p - i;
+	f = f * f * f * (f * (f * 6.0 - vec2(15.0, 15.0)) + vec2(10.0, 10.0));
+	p = i + f;
 
-   vec2 mod_texel = texel_floored + f;
+	p = (p - vec2(0.5, 0.5)) * SourceSize.zw;
 
-   FragColor = vec4(COMPAT_TEXTURE(Source, mod_texel / SourceSize.xy).rgb, 1.0);
+	// final sum and weight normalization
+   FragColor = vec4(COMPAT_TEXTURE(Source, p));
 }
-
+#endif
 )text";

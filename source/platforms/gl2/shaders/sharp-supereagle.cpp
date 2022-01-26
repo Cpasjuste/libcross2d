@@ -1,9 +1,15 @@
-//
-// Created by cpasjuste on 17/09/18.
-//
+/*              SuperEagle code               */
+/*  Copied from the Dosbox source code        */
+/*  Copyright (C) 2002-2007  The DOSBox Team  */
+/*  License: GNU-GPL                          */
+/*  Adapted by guest(r) on 16.4.2007          */
 
-// vertex color shader
-const char *supereagle_v = R"text(
+/*  GET_RESULT function                            */
+/*  Copyright (c) 1999-2001 by Derek Liauw Kie Fa  */
+/*  License: GNU-GPL                               */
+
+const char *c2d_sharp_supereagle_shader = R"text(
+#if defined(VERTEX)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
@@ -70,9 +76,7 @@ void main()
    t8.xy = vTexCoord + vec2(+dx+dx,+dy+dy);
 }
 
-)text";
-
-const char *supereagle_f = R"text(
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -242,5 +246,5 @@ void main()
 
    FragColor = vec4(p10, 1.0);
 }
-
+#endif
 )text";

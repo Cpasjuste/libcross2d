@@ -1,13 +1,27 @@
-//
-// Created by cpasjuste on 17/09/18.
-//
+/*
+   Hyllian's Bevel Shader
 
-const char *bevel_v = R"text(
+   Copyright (C) 2011-2014 Hyllian/Jararaca - sergiogdb@gmail.com
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License
+   as published by the Free Software Foundation; either version 2
+   of the License, or (at your option) any later version.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
 
+const char *c2d_handheld_bevel_shader = R"text(
 // Parameter lines go here:
 #pragma parameter BEVEL_LEVEL "Bevel Level" 0.2 0.0 0.5 0.01
 #pragma parameter InputGamma "Input Gamma" 2.4 0.1 5.0 0.1
 #pragma parameter OutputGamma "Output Gamma" 2.2 0.1 5.0 0.1
+
+#if defined(VERTEX)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
@@ -51,14 +65,7 @@ void main()
     TEX0.xy = TexCoord.xy * 1.0000001;
 }
 
-)text";
-
-const char *bevel_f = R"text(
-
-// Parameter lines go here:
-#pragma parameter BEVEL_LEVEL "Bevel Level" 0.2 0.0 0.5 0.01
-#pragma parameter InputGamma "Input Gamma" 2.4 0.1 5.0 0.1
-#pragma parameter OutputGamma "Output Gamma" 2.2 0.1 5.0 0.1
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -132,5 +139,5 @@ void main()
 
    FragColor = vec4(GAMMA_OUT(color), 1.0);
 }
-
+#endif
 )text";

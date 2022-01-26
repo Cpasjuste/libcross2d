@@ -1,15 +1,10 @@
-//
-// Created by cpasjuste on 17/09/18.
-//
-
-const char *scanlines_v = R"text(
-
+const char *c2d_crt_nes_mini_shader = R"text(
 // Parameter lines go here:
-#pragma parameter SCANLINE_BASE_BRIGHTNESS "Scanline Base Brightness" 0.95 0.0 1.0 0.01
-#pragma parameter SCANLINE_SINE_COMP_A "Scanline Sine Comp A" 0.0 0.0 0.10 0.01
-#pragma parameter SCANLINE_SINE_COMP_B "Scanline Sine Comp B" 0.15 0.0 1.0 0.05
+#pragma parameter SCANTHICK "Scanline Thickness" 2.0 2.0 4.0 2.0
+#pragma parameter INTENSITY "Scanline Intensity" 0.15 0.0 1.0 0.01
+#pragma parameter BRIGHTBOOST "Luminance Boost" 0.15 0.0 1.0 0.01
 
-#define pi 3.141592654
+#if defined(VERTEX)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
@@ -32,7 +27,6 @@ COMPAT_ATTRIBUTE vec4 COLOR;
 COMPAT_ATTRIBUTE vec4 TexCoord;
 COMPAT_VARYING vec4 COL0;
 COMPAT_VARYING vec4 TEX0;
-COMPAT_VARYING vec2 omega;
 
 vec4 _oPosition1;
 uniform mat4 MVPMatrix;
@@ -46,20 +40,10 @@ void main()
 {
     gl_Position = MVPMatrix * VertexCoord;
     COL0 = COLOR;
-    TEX0.xy = TexCoord.xy;
-	omega = vec2(pi * OutputSize.x, 2.0 * pi * TextureSize.y);
+    TEX0.xy = TexCoord.xy * 1.00001;
 }
 
-)text";
-
-const char *scanlines_f = R"text(
-
-// Parameter lines go here:
-#pragma parameter SCANLINE_BASE_BRIGHTNESS "Scanline Base Brightness" 0.95 0.0 1.0 0.01
-#pragma parameter SCANLINE_SINE_COMP_A "Scanline Sine Comp A" 0.0 0.0 0.10 0.01
-#pragma parameter SCANLINE_SINE_COMP_B "Scanline Sine Comp B" 0.15 0.0 1.0 0.05
-
-#define pi 3.141592654
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -89,7 +73,6 @@ uniform COMPAT_PRECISION vec2 TextureSize;
 uniform COMPAT_PRECISION vec2 InputSize;
 uniform sampler2D Texture;
 COMPAT_VARYING vec4 TEX0;
-COMPAT_VARYING vec2 omega;
 
 // compatibility #defines
 #define Source Texture
@@ -100,21 +83,26 @@ COMPAT_VARYING vec2 omega;
 
 #ifdef PARAMETER_UNIFORM
 // All parameter floats need to have COMPAT_PRECISION in front of them
-uniform COMPAT_PRECISION float SCANLINE_BASE_BRIGHTNESS;
-uniform COMPAT_PRECISION float SCANLINE_SINE_COMP_A;
-uniform COMPAT_PRECISION float SCANLINE_SINE_COMP_B;
+uniform COMPAT_PRECISION float SCANTHICK;
+uniform COMPAT_PRECISION float INTENSITY;
+uniform COMPAT_PRECISION float BRIGHTBOOST;
 #else
-#define SCANLINE_BASE_BRIGHTNESS 0.95
-#define SCANLINE_SINE_COMP_A 0.0
-#define SCANLINE_SINE_COMP_B 0.15
+#define SCANTHICK 2.0
+#define INTENSITY 0.15
+#define BRIGHTBOOST 0.15
 #endif
 
 void main()
 {
-   vec2 sine_comp = vec2(SCANLINE_SINE_COMP_A, SCANLINE_SINE_COMP_B);
-   vec3 res = COMPAT_TEXTURE(Source, vTexCoord).xyz;
-   vec3 scanline = res * (SCANLINE_BASE_BRIGHTNESS + dot(sine_comp * sin(vTexCoord * omega), vec2(1.0, 1.0)));
-   FragColor = vec4(scanline.x, scanline.y, scanline.z, 1.0);
-}
+    vec3 texel = COMPAT_TEXTURE(Texture, TEX0.xy).rgb;
+    vec3 pixelHigh = ((1.0 + BRIGHTBOOST) - (0.2 * texel)) * texel;
+    vec3 pixelLow  = ((1.0 - INTENSITY) + (0.1 * texel)) * texel;
+    float selectY = mod(TEX0.y * SCANTHICK * TextureSize.y, 2.0);
+    float selectHigh = step(1.0, selectY);
+    float selectLow = 1.0 - selectHigh;
+    vec3 pixelColor = (selectLow * pixelLow) + (selectHigh * pixelHigh);
 
+    FragColor = vec4(pixelColor, 1.0);
+}
+#endif
 )text";

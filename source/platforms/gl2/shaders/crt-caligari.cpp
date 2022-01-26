@@ -1,9 +1,20 @@
-//
-// Created by cpasjuste on 17/09/18.
-//
+/*
+    Phosphor shader - Copyright (C) 2011 caligari.
+    Ported by Hyllian.
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License
+   as published by the Free Software Foundation; either version 2
+   of the License, or (at your option) any later version.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
 
-const char *crt_caligari_v = R"text(
-
+const char *c2d_crt_caligari_shader = R"text(
 // Parameter lines go here:
 // 0.5 = the spot stays inside the original pixel
 // 1.0 = the spot bleeds up to the center of next pixel
@@ -14,6 +25,8 @@ const char *crt_caligari_v = R"text(
 // Constants used with gamma correction.
 #pragma parameter InputGamma "CRTCaligari Input Gamma" 2.4 0.0 5.0 0.1
 #pragma parameter OutputGamma "CRTCaligari Output Gamma" 2.2 0.0 5.0 0.1
+
+#if defined(VERTEX)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
@@ -58,20 +71,7 @@ void main()
    oney = vec2(0.0, SourceSize.w);
 }
 
-)text";
-
-const char *crt_caligari_f = R"text(
-
-// Parameter lines go here:
-// 0.5 = the spot stays inside the original pixel
-// 1.0 = the spot bleeds up to the center of next pixel
-#pragma parameter SPOT_WIDTH "CRTCaligari Spot Width" 0.9 0.1 1.5 0.05
-#pragma parameter SPOT_HEIGHT "CRTCaligari Spot Height" 0.65 0.1 1.5 0.05
-// Used to counteract the desaturation effect of weighting.
-#pragma parameter COLOR_BOOST "CRTCaligari Color Boost" 1.45 1.0 2.0 0.05
-// Constants used with gamma correction.
-#pragma parameter InputGamma "CRTCaligari Input Gamma" 2.4 0.0 5.0 0.1
-#pragma parameter OutputGamma "CRTCaligari Output Gamma" 2.2 0.0 5.0 0.1
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -199,5 +199,5 @@ void main()
 
    FragColor = clamp( GAMMA_OUT(color), 0.0, 1.0 );
 }
-
+#endif
 )text";

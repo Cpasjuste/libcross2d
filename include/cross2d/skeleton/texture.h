@@ -48,6 +48,8 @@ namespace c2d {
 
         virtual void setShader(int shaderIndex);
 
+        virtual void setShader(const std::string &shaderName);
+
         virtual void applyShader() {};
         // END - to implement, device specific code
 

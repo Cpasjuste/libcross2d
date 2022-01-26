@@ -40,7 +40,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     Vertex *vertices;
     size_t vertexCount;
-    GLTexture *tex = nullptr;
+    GLTexture *tex;
     GLShader *shader;
     Vector2f inputSize, textureSize, outputSize;
 
@@ -116,12 +116,10 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
         shader->SetUniform("TextureSize", textureSize);
         shader->SetUniform("OutputSize", outputSize);
 #if 0
-        if (glTexture->shader != nullptr) {
-            printf("inputSize: %ix%i, textureSize: %ix%i, outputSize: %ix%i\n",
-                   (int) inputSize.x, (int) inputSize.y,
-                   (int) textureSize.x, (int) textureSize.y,
-                   (int) outputSize.x, (int) outputSize.y);
-        }
+        printf("inputSize: %ix%i, textureSize: %ix%i, outputSize: %ix%i\n",
+               (int) inputSize.x, (int) inputSize.y,
+               (int) textureSize.x, (int) textureSize.y,
+               (int) outputSize.x, (int) outputSize.y);
 #endif
     }
 

@@ -17,91 +17,47 @@ const int texture_v_length = 0;
 extern const char *texture_f;
 const int texture_f_length = 0;
 
-//////////////////////////////
+// crt shaders
 
-extern const char *bevel_v;
-const int bevel_v_length = 0;
-extern const char *bevel_f;
-const int bevel_f_length = 0;
+extern const char *c2d_crt_aperture_shader;     // scaling: integer | filter: point     |
+extern const char *c2d_crt_caligari_shader;     // scaling: integer | filter: point     |
+extern const char *c2d_crt_cgwg_fast_shader;    // scaling: integer | filter: point     |
+extern const char *c2d_crt_easymode_shader;     // scaling: integer | filter: point     |
+extern const char *c2d_crt_fakelottes_shader;   // scaling: integer | filter: linear    |
+extern const char *c2d_crt_geom_shader;         // scaling: integer | filter: point     |
+extern const char *c2d_crt_geom_flat_shader;    // scaling: integer | filter: point     |
+extern const char *c2d_crt_hyllian_shader;      // scaling: integer | filter: point     |
+extern const char *c2d_crt_lottes_fast_shader;  // scaling: integer | filter: linear    |
+extern const char *c2d_crt_lottes_shader;       // scaling: integer | filter: point     |
+extern const char *c2d_crt_mattias_shader;      // scaling: integer | filter: point     |
+extern const char *c2d_crt_nes_mini_shader;     // scaling: integer | filter: any       |
+extern const char *c2d_crt_pi_shader;           // scaling: integer | filter: linear    |
+extern const char *c2d_crt_pi_flat_shader;      // scaling: integer | filter: linear    |
+extern const char *c2d_crt_zfast_shader;        // scaling: integer | filter: linear    |
 
-extern const char *crt_aperture_v;
-const int crt_aperture_v_length = 0;
-extern const char *crt_aperture_f;
-const int crt_aperture_f_length = 0;
+// handheld shaders
 
-extern const char *crt_caligari_v;
-const int crt_caligari_v_length = 0;
-extern const char *crt_caligari_f;
-const int crt_caligari_f_length = 0;
+extern const char *c2d_handheld_bevel_shader;       // scaling: integer | filter: point     |
+extern const char *c2d_handheld_dot_shader;         // scaling: integer | filter: point     |
+extern const char *c2d_handheld_lcd1x_shader;       // scaling: integer | filter: point     |
+extern const char *c2d_handheld_lcd3x_shader;       // scaling: integer | filter: point     |
+extern const char *c2d_handheld_retro_v2_shader;    // scaling: integer | filter: point     |
+extern const char *c2d_handheld_zfast_lcd_shader;   // scaling: integer | filter: linear    |
 
-extern const char *crt_cgwg_fast_v;
-const int crt_cgwg_fast_v_length = 0;
-extern const char *crt_cgwg_fast_f;
-const int crt_cgwg_fast_f_length = 0;
+// interpolation shaders
+extern const char *c2d_interpolation_aann_shader;                       // scaling: free    | filter: linear    |
+extern const char *c2d_interpolation_pixellate_shader;                  // scaling: free    | filter: point     |
+extern const char *c2d_interpolation_quilez_shader;                     // scaling: free    | filter: linear    |
+extern const char *c2d_interpolation_sharp_bilinear_shader;             // scaling: free    | filter: linear    |
+extern const char *c2d_interpolation_sharp_bilinear_scanlines_shader;   // scaling: integer | filter: linear    |
 
-extern const char *crt_easymode_v;
-const int crt_easymode_v_length = 0;
-extern const char *crt_easymode_f;
-const int crt_easymode_f_length = 0;
+// scanlines
+extern const char *c2d_scanline_simple_shader;          // scaling: free    | filter: point    |
 
-extern const char *crt_geom_v;
-const int crt_geom_v_length = 0;
-extern const char *crt_geom_f;
-const int crt_geom_f_length = 0;
-
-extern const char *crt_geom_flat_v;
-const int crt_geom_flat_v_length = 0;
-extern const char *crt_geom_flat_f;
-const int crt_geom_flat_f_length = 0;
-
-extern const char *crt_hyllian_v;
-const int crt_hyllian_v_length = 0;
-extern const char *crt_hyllian_f;
-const int crt_hyllian_f_length = 0;
-
-extern const char *dot_v;
-const int dot_v_length = 0;
-extern const char *dot_f;
-const int dot_f_length = 0;
-
-extern const char *lcd3x_v;
-const int lcd3x_v_length = 0;
-extern const char *lcd3x_f;
-const int lcd3x_f_length = 0;
-
-extern const char *retro_v2_v;
-const int retro_v2_v_length = 0;
-extern const char *retro_v2_f;
-const int retro_v2_f_length = 0;
-
-extern const char *scanlines_v;
-const int scanlines_v_length = 0;
-extern const char *scanlines_f;
-const int scanlines_f_length = 0;
-
-extern const char *sharp_bilinear_v;
-const int sharp_bilinear_v_length = 0;
-extern const char *sharp_bilinear_f;
-const int sharp_bilinear_f_length = 0;
-
-extern const char *sharp_bilinear_scanlines_v;
-const int sharp_bilinear_scanlines_v_length = 0;
-extern const char *sharp_bilinear_scanlines_f;
-const int sharp_bilinear_scanlines_f_length = 0;
-
-extern const char *supereagle_v;
-const int supereagle_v_length = 0;
-extern const char *supereagle_f;
-const int supereagle_f_length = 0;
-
-extern const char *sal2x_v;
-const int sal2x_v_length = 0;
-extern const char *sal2x_f;
-const int sal2x_f_length = 0;
-
-extern const char *sabr_v3_v;
-const int sabr_v3_v_length = 0;
-extern const char *sabr_v3_f;
-const int sabr_v3_f_length = 0;
+// "sharp"
+extern const char *c2d_sharp_2xsal_shader;              // scaling: free    | filter: point     |
+extern const char *c2d_sharp_sabr_v30_shader;           // scaling: free    | filter: point    |
+extern const char *c2d_sharp_supereagle_shader;         // scaling: free    | filter: point    |
+extern const char *c2d_sharp_xbrz_freescale_shader;     // scaling: free    | filter: point    |
 
 #endif //__C2D_SHADERS_H__

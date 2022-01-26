@@ -1,13 +1,15 @@
-//
-// Created by cpasjuste on 17/09/18.
-//
+/*
+   Author: Themaister
+   License: Public domain
+*/
 
-const char *dot_v = R"text(
-
+const char *c2d_handheld_dot_shader = R"text(
 // Parameter lines go here:
 #pragma parameter gamma "Dot Gamma" 2.4 0.0 5.0 0.05
 #pragma parameter shine "Dot Shine" 0.05 0.0 0.5 0.01
 #pragma parameter blend "Dot Blend" 0.65 0.0 1.0 0.01
+
+#if defined(VERTEX)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
@@ -66,14 +68,7 @@ void main()
    pixel_no = vTexCoord * SourceSize.xy;
 }
 
-)text";
-
-const char *dot_f = R"text(
-
-// Parameter lines go here:
-#pragma parameter gamma "Dot Gamma" 2.4 0.0 5.0 0.05
-#pragma parameter shine "Dot Shine" 0.05 0.0 0.5 0.01
-#pragma parameter blend "Dot Blend" 0.65 0.0 1.0 0.01
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -168,5 +163,5 @@ void main()
 
    FragColor = vec4(out_color, 1.0);
 }
-
+#endif
 )text";

@@ -1,9 +1,25 @@
-//
-// Created by cpasjuste on 17/09/18.
-//
+/*
+	SABR v3.0 Shader
+	Joshua Street
 
-// vertex color shader
-const char *sabr_v3_v = R"text(
+	Portions of this algorithm were taken from Hyllian's 5xBR v3.7c
+	shader.
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
+const char *c2d_sharp_sabr_v30_shader = R"text(
+#if defined(VERTEX)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
@@ -65,9 +81,7 @@ void main()
 	xyp_9_14_9   = tc.xyyy + vec4( 2.0 * x,  -y, 0.0,        y);
 }
 
-)text";
-
-const char *sabr_v3_f = R"text(
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -304,5 +318,5 @@ color
 
 	FragColor = vec4(mix(res1, res2, step(c_df(P12, res1), c_df(P12, res2))), 1.0);
 }
-
+#endif
 )text";

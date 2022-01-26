@@ -1,9 +1,9 @@
-//
-// Created by cpasjuste on 17/09/18.
-//
+/*
+    CRT Shader by EasyMode
+    License: GPL
+*/
 
-const char *crt_aperture_v = R"text(
-
+const char *c2d_crt_aperture_shader = R"text(
 #pragma parameter SHARPNESS_IMAGE "Sharpness Image" 1.0 1.0 5.0 1.0
 #pragma parameter SHARPNESS_EDGES "Sharpness Edges" 3.0 1.0 5.0 1.0
 #pragma parameter GLOW_WIDTH "Glow Width" 0.5 0.05 0.65 0.05
@@ -22,6 +22,8 @@ const char *crt_aperture_v = R"text(
 #pragma parameter BRIGHTNESS "Brightness" 1.5 0.0 2.0 0.05
 
 #define Coord TEX0
+
+#if defined(VERTEX)
 
 #if __VERSION__ >= 130
 #define OUT out
@@ -59,29 +61,7 @@ void main()
     Coord = TexCoord * 1.0001;
 }
 
-
-)text";
-
-const char *crt_aperture_f = R"text(
-
-#pragma parameter SHARPNESS_IMAGE "Sharpness Image" 1.0 1.0 5.0 1.0
-#pragma parameter SHARPNESS_EDGES "Sharpness Edges" 3.0 1.0 5.0 1.0
-#pragma parameter GLOW_WIDTH "Glow Width" 0.5 0.05 0.65 0.05
-#pragma parameter GLOW_HEIGHT "Glow Height" 0.5 0.05 0.65 0.05
-#pragma parameter GLOW_HALATION "Glow Halation" 0.1 0.0 1.0 0.01
-#pragma parameter GLOW_DIFFUSION "Glow Diffusion" 0.05 0.0 1.0 0.01
-#pragma parameter MASK_COLORS "Mask Colors" 2.0 2.0 3.0 1.0
-#pragma parameter MASK_STRENGTH "Mask Strength" 0.3 0.0 1.0 0.05
-#pragma parameter MASK_SIZE "Mask Size" 1.0 1.0 9.0 1.0
-#pragma parameter SCANLINE_SIZE_MIN "Scanline Size Min." 0.5 0.5 1.5 0.05
-#pragma parameter SCANLINE_SIZE_MAX "Scanline Size Max." 1.5 0.5 1.5 0.05
-#pragma parameter SCANLINE_SHAPE "Scanline Shape" 2.5 1.0 100.0 0.1
-#pragma parameter SCANLINE_OFFSET "Scanline Offset" 1.0 0.0 1.0 1.0
-#pragma parameter GAMMA_INPUT "Gamma Input" 2.4 1.0 5.0 0.1
-#pragma parameter GAMMA_OUTPUT "Gamma Output" 2.4 1.0 5.0 0.1
-#pragma parameter BRIGHTNESS "Brightness" 1.5 0.0 2.0 0.05
-
-#define Coord TEX0
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define IN in
@@ -246,4 +226,5 @@ void main()
     FragColor = vec4(col, 1.0);
 }
 
+#endif
 )text";

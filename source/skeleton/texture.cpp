@@ -2,8 +2,6 @@
 // Created by cpasjuste on 29/11/17.
 //
 
-#include <cross2d/skeleton/texture.h>
-
 #include "cross2d/c2d.h"
 
 using namespace c2d;
@@ -46,14 +44,23 @@ Texture::Texture(const Vector2f &size, Format fmt) : RectangleShape(Vector2f{0, 
 
 void Texture::setShader(int shaderIndex) {
     ShaderList *shaderList = c2d_renderer->getShaderList();
-    if (shaderIndex >= shaderList->getCount()) {
-        shader = shaderList->get(0);
-        return;
-    }
-
     shader = shaderList->get(shaderIndex);
+    if (!shader) {
+        printf("Texture::setShader: shader not found (%i)\n", shaderIndex);
+        shader = shaderList->get(0);
+    }
+}
+
+void Texture::setShader(const std::string &shaderName) {
+    ShaderList *shaderList = c2d_renderer->getShaderList();
+    shader = shaderList->get(shaderName);
+    if (!shader) {
+        printf("Texture::setShader: shader not found (%s)\n", shaderName.c_str());
+        shader = shaderList->get(0);
+    }
 }
 
 Texture::~Texture() {
     printf("~Texture(%p)\n", this);
 }
+

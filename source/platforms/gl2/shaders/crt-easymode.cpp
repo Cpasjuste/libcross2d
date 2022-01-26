@@ -1,10 +1,26 @@
-//
-// Created by cpasjuste on 17/09/18.
-//
+/*
+    CRT Shader by EasyMode
+    License: GPL
+    A flat CRT shader ideally for 1080p or higher displays.
+    Recommended Settings:
+    Video
+    - Aspect Ratio:  4:3
+    - Integer Scale: Off
+    Shader
+    - Filter: Nearest
+    - Scale:  Don't Care
+    Example RGB Mask Parameter Settings:
+    Aperture Grille (Default)
+    - Dot Width:  1
+    - Dot Height: 1
+    - Stagger:    0
+    Lottes' Shadow Mask
+    - Dot Width:  2
+    - Dot Height: 1
+    - Stagger:    3
+*/
 
-// vertex color shader
-const char *crt_easymode_v = R"text(
-
+const char *c2d_crt_easymode_shader = R"text(
 // Parameter lines go here:
 #pragma parameter SHARPNESS_H "Sharpness Horizontal" 0.5 0.0 1.0 0.05
 #pragma parameter SHARPNESS_V "Sharpness Vertical" 1.0 0.0 1.0 0.05
@@ -23,6 +39,8 @@ const char *crt_easymode_v = R"text(
 #pragma parameter GAMMA_OUTPUT "Gamma Output" 1.8 0.1 5.0 0.1
 #pragma parameter BRIGHT_BOOST "Brightness Boost" 1.2 1.0 2.0 0.01
 #pragma parameter DILATION "Dilation" 1.0 0.0 1.0 1.0
+
+#if defined(VERTEX)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
@@ -61,28 +79,7 @@ void main()
     TEX0.xy = TexCoord.xy;
 }
 
-)text";
-
-const char *crt_easymode_f = R"text(
-
-// Parameter lines go here:
-#pragma parameter SHARPNESS_H "Sharpness Horizontal" 0.5 0.0 1.0 0.05
-#pragma parameter SHARPNESS_V "Sharpness Vertical" 1.0 0.0 1.0 0.05
-#pragma parameter MASK_STRENGTH "Mask Strength" 0.3 0.0 1.0 0.01
-#pragma parameter MASK_DOT_WIDTH "Mask Dot Width" 1.0 1.0 100.0 1.0
-#pragma parameter MASK_DOT_HEIGHT "Mask Dot Height" 1.0 1.0 100.0 1.0
-#pragma parameter MASK_STAGGER "Mask Stagger" 0.0 0.0 100.0 1.0
-#pragma parameter MASK_SIZE "Mask Size" 1.0 1.0 100.0 1.0
-#pragma parameter SCANLINE_STRENGTH "Scanline Strength" 1.0 0.0 1.0 0.05
-#pragma parameter SCANLINE_BEAM_WIDTH_MIN "Scanline Beam Width Min." 1.5 0.5 5.0 0.5
-#pragma parameter SCANLINE_BEAM_WIDTH_MAX "Scanline Beam Width Max." 1.5 0.5 5.0 0.5
-#pragma parameter SCANLINE_BRIGHT_MIN "Scanline Brightness Min." 0.35 0.0 1.0 0.05
-#pragma parameter SCANLINE_BRIGHT_MAX "Scanline Brightness Max." 0.65 0.0 1.0 0.05
-#pragma parameter SCANLINE_CUTOFF "Scanline Cutoff" 400.0 1.0 1000.0 1.0
-#pragma parameter GAMMA_INPUT "Gamma Input" 2.0 0.1 5.0 0.1
-#pragma parameter GAMMA_OUTPUT "Gamma Output" 1.8 0.1 5.0 0.1
-#pragma parameter BRIGHT_BOOST "Brightness Boost" 1.2 1.0 2.0 0.01
-#pragma parameter DILATION "Dilation" 1.0 0.0 1.0 1.0
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -263,5 +260,5 @@ void main()
 
     FragColor = vec4(col * BRIGHT_BOOST, 1.0);
 }
-
+#endif
 )text";

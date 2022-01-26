@@ -2,8 +2,8 @@
 // Created by cpasjuste on 27/01/17.
 //
 
-#ifndef CROSS2D_SHADERS_H
-#define CROSS2D_SHADERS_H
+#ifndef C2D_SHADERLIST_H
+#define C2D_SHADERLIST_H
 
 #include <string>
 #include <vector>
@@ -19,13 +19,13 @@ namespace c2d {
             std::string name;
             void *data = nullptr;
 
-            Shader(const std::string n, void *d) {
+            Shader(const std::string &n, void *d) {
                 name = n;
                 data = d;
             }
         };
 
-        ShaderList(const std::string &shadersPath = "") {
+        ShaderList() {
             list.emplace_back("NONE", nullptr);
         }
 
@@ -33,7 +33,7 @@ namespace c2d {
             list.clear();
         }
 
-        virtual void add(std::string n, void *d) {
+        virtual void add(const std::string &n, void *d) {
             list.emplace_back(n, d);
         }
 
@@ -45,7 +45,7 @@ namespace c2d {
         }
 
         virtual Shader *get(const std::string &name) {
-            for (auto &i : list) {
+            for (auto &i: list) {
                 if (i.name == name) {
                     return &i;
                 }
@@ -55,14 +55,14 @@ namespace c2d {
 
         virtual std::vector<std::string> getNames() {
             std::vector<std::string> names;
-            for (auto &i : list) {
+            for (auto &i: list) {
                 names.push_back(i.name);
             }
             return names;
         }
 
         virtual int getCount() {
-            return list.size();
+            return (int) list.size();
         }
 
     private:
@@ -70,4 +70,4 @@ namespace c2d {
     };
 }
 
-#endif //CROSS2D_SHADERS_H
+#endif //C2D_SHADERLIST_H

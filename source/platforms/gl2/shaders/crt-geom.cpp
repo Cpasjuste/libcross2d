@@ -1,16 +1,27 @@
-//
-// Created by cpasjuste on 17/09/18.
-//
+/*
+    CRT-interlaced
+    Copyright (C) 2010-2012 cgwg, Themaister and DOLLS
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the Free
+    Software Foundation; either version 2 of the License, or (at your option)
+    any later version.
+    (cgwg gave their consent to have the original version of this shader
+    distributed under the GPL in this message:
+        http://board.byuu.org/viewtopic.php?p=26075#p26075
+        "Feel free to distribute my shaders under the GPL. After all, the
+        barrel distortion code was taken from the Curvature shader, which is
+        under the GPL."
+    )
+	This shader variant is pre-configured with screen curvature
+*/
 
-// vertex color shader
-const char *crt_geom_flat_v = R"text(
-
+const char *c2d_crt_geom_shader = R"text(
 #pragma parameter CRTgamma "CRTGeom Target Gamma" 2.4 0.1 5.0 0.1
 #pragma parameter monitorgamma "CRTGeom Monitor Gamma" 2.2 0.1 5.0 0.1
 #pragma parameter d "CRTGeom Distance" 1.6 0.1 3.0 0.1
 #pragma parameter CURVATURE "CRTGeom Curvature Toggle" 1.0 0.0 1.0 1.0
 #pragma parameter R "CRTGeom Curvature Radius" 2.0 0.1 10.0 0.1
-#pragma parameter cornersize "CRTGeom Corner Size" 0.001 0.001 1.0 0.005
+#pragma parameter cornersize "CRTGeom Corner Size" 0.03 0.001 1.0 0.005
 #pragma parameter cornersmooth "CRTGeom Corner Smoothness" 1000.0 80.0 2000.0 100.0
 #pragma parameter x_tilt "CRTGeom Horizontal Tilt" 0.0 -0.5 0.5 0.05
 #pragma parameter y_tilt "CRTGeom Vertical Tilt" 0.0 -0.5 0.5 0.05
@@ -26,9 +37,9 @@ const char *crt_geom_flat_v = R"text(
 #define CRTgamma 2.4
 #define monitorgamma 2.2
 #define d 1.6
-#define CURVATURE 0.0
+#define CURVATURE 1.0
 #define R 2.0
-#define cornersize 0.001
+#define cornersize 0.03
 #define cornersmooth 1000.0
 #define x_tilt 0.0
 #define y_tilt 0.0
@@ -40,6 +51,8 @@ const char *crt_geom_flat_v = R"text(
 #define lum 0.0
 #define interlace_detect 1.0
 #endif
+
+#if defined(VERTEX)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
@@ -166,7 +179,7 @@ void main()
 // nonzero)
 	const vec2 angle = vec2(0.0,0.0);
 // size of curved corners
-//	cornersize = 0.001;
+//	cornersize = 0.03;
 // border smoothness parameter
 // decrease if borders are too aliased
 //	cornersmooth = 1000.0;
@@ -199,45 +212,7 @@ void main()
 
 }
 
-)text";
-
-const char *crt_geom_flat_f = R"text(
-
-#pragma parameter CRTgamma "CRTGeom Target Gamma" 2.4 0.1 5.0 0.1
-#pragma parameter monitorgamma "CRTGeom Monitor Gamma" 2.2 0.1 5.0 0.1
-#pragma parameter d "CRTGeom Distance" 1.6 0.1 3.0 0.1
-#pragma parameter CURVATURE "CRTGeom Curvature Toggle" 1.0 0.0 1.0 1.0
-#pragma parameter R "CRTGeom Curvature Radius" 2.0 0.1 10.0 0.1
-#pragma parameter cornersize "CRTGeom Corner Size" 0.001 0.001 1.0 0.005
-#pragma parameter cornersmooth "CRTGeom Corner Smoothness" 1000.0 80.0 2000.0 100.0
-#pragma parameter x_tilt "CRTGeom Horizontal Tilt" 0.0 -0.5 0.5 0.05
-#pragma parameter y_tilt "CRTGeom Vertical Tilt" 0.0 -0.5 0.5 0.05
-#pragma parameter overscan_x "CRTGeom Horiz. Overscan %" 100.0 -125.0 125.0 1.0
-#pragma parameter overscan_y "CRTGeom Vert. Overscan %" 100.0 -125.0 125.0 1.0
-#pragma parameter DOTMASK "CRTGeom Dot Mask Toggle" 0.3 0.0 0.3 0.3
-#pragma parameter SHARPER "CRTGeom Sharpness" 1.0 1.0 3.0 1.0
-#pragma parameter scanline_weight "CRTGeom Scanline Weight" 0.3 0.1 0.5 0.05
-#pragma parameter lum "CRTGeom Luminance" 0.0 0.0 1.0 0.01
-#pragma parameter interlace_detect "CRTGeom Interlacing Simulation" 1.0 0.0 1.0 1.0
-
-#ifndef PARAMETER_UNIFORM
-#define CRTgamma 2.4
-#define monitorgamma 2.2
-#define d 1.6
-#define CURVATURE 0.0
-#define R 2.0
-#define cornersize 0.001
-#define cornersmooth 1000.0
-#define x_tilt 0.0
-#define y_tilt 0.0
-#define overscan_x 100.0
-#define overscan_y 100.0
-#define DOTMASK 0.3
-#define SHARPER 1.0
-#define scanline_weight 0.3
-#define lum 0.0
-#define interlace_detect 1.0
-#endif
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -504,5 +479,5 @@ vec3 dotMaskWeights = mix(
     FragColor = _OUT._color;
     return;
 }
-
+#endif
 )text";

@@ -1,11 +1,19 @@
-//
-// Created by cpasjuste on 15/09/18.
-//
+/*
+ * sharp-bilinear
+ * Author: Themaister
+ * License: Public domain
+ *
+ * Does a bilinear stretch, with a preapplied Nx nearest-neighbor scale, giving a
+ * sharper image than plain bilinear.
+ */
 
-const char *retro_v2_v = R"text(
 
-#pragma parameter RETRO_PIXEL_SIZE "Retro Pixel Size" 0.84 0.0 1.0 0.01
-// ^^This value must be between 0.0 (totally black) and 1.0 (nearest neighbor)
+const char *c2d_interpolation_sharp_bilinear_shader = R"text(
+// Parameter lines go here:
+#pragma parameter SHARP_BILINEAR_PRE_SCALE "Sharp Bilinear Prescale" 4.0 1.0 10.0 1.0
+#pragma parameter AUTO_PRESCALE "Automatic Prescale" 1.0 0.0 1.0 1.0
+
+#if defined(VERTEX)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
@@ -48,12 +56,7 @@ void main()
     TEX0.xy = TexCoord.xy;
 }
 
-)text";
-
-const char *retro_v2_f = R"text(
-
-#pragma parameter RETRO_PIXEL_SIZE "Retro Pixel Size" 0.84 0.0 1.0 0.01
-// ^^This value must be between 0.0 (totally black) and 1.0 (nearest neighbor)
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -92,27 +95,31 @@ COMPAT_VARYING vec4 TEX0;
 #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
 #ifdef PARAMETER_UNIFORM
-uniform COMPAT_PRECISION float RETRO_PIXEL_SIZE;
+// All parameter floats need to have COMPAT_PRECISION in front of them
+uniform COMPAT_PRECISION float SHARP_BILINEAR_PRE_SCALE;
+uniform COMPAT_PRECISION float AUTO_PRESCALE;
 #else
-#define RETRO_PIXEL_SIZE 0.84
+#define SHARP_BILINEAR_PRE_SCALE 4.0
+#define AUTO_PRESCALE 1.0
 #endif
 
 void main()
 {
-    // Reading the texel
-    vec3 E = pow(COMPAT_TEXTURE(Source, vTexCoord).xyz, vec3(2.4));
+   vec2 texel = vTexCoord * SourceSize.xy;
+   vec2 texel_floored = floor(texel);
+   vec2 s = fract(texel);
+   float scale = (AUTO_PRESCALE > 0.5) ? floor(outsize.y / InputSize.y + 0.01) : SHARP_BILINEAR_PRE_SCALE;
+   float region_range = 0.5 - 0.5 / scale;
 
-    vec2 fp = fract(vTexCoord*SourceSize.xy);
-    vec2 ps = InputSize.xy * outsize.zw;
+   // Figure out where in the texel to sample to get correct pre-scaled bilinear.
+   // Uses the hardware bilinear interpolator to avoid having to sample 4 times manually.
 
-    vec2 f = clamp(clamp(fp + 0.5*ps, 0.0, 1.0) - RETRO_PIXEL_SIZE, vec2(0.0), ps)/ps;
+   vec2 center_dist = s - 0.5;
+   vec2 f = (center_dist - clamp(center_dist, -region_range, region_range)) * scale + 0.5;
 
-    float max_coord =  max(f.x, f.y);
+   vec2 mod_texel = texel_floored + f;
 
-    vec3 res = mix(E*(1.04+fp.x*fp.y), E*0.36, max_coord);
-
-    // Product interpolation
-    FragColor = vec4(clamp( pow(res, vec3(1.0 / 2.2)), 0.0, 1.0 ), 1.0);
+   FragColor = vec4(COMPAT_TEXTURE(Source, mod_texel / SourceSize.xy).rgb, 1.0);
 }
-
+#endif
 )text";

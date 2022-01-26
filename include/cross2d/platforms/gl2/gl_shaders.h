@@ -13,13 +13,9 @@ namespace c2d {
 
     public:
 
-        enum {
-            SCALE_TYPE_SCREEN = 0,
-            SCALE_TYPE_SOURCE = 1,
-            SCALE_TYPE_VIEWPORT = 2
-        };
+        GLShader(const char *source, const std::string &version);
 
-        GLShader(const char *vertex, const char *fragment, int vsize = 0, int fsize = 0);
+        GLShader(const char *vertex, const char *fragment, int vSize = 0, int fSize = 0);
 
         ~GLShader();
 
@@ -27,28 +23,24 @@ namespace c2d {
 
         void SetUniform(const GLchar *n, const Vector2f &v);
 
-        void SetUniform(const GLchar *n, const float v0, const float v1);
+        void SetUniform(const GLchar *n, float v0, float v1);
 
-        void SetUniform(const GLchar *n, const int v);
+        void SetUniform(const GLchar *n, int v);
 
         GLuint GetProgram();
 
-        int getScaleType();
-
     private:
         GLuint program = -1;
-        int scale_type = SCALE_TYPE_SOURCE;
         bool available = false;
-
     };
 
     class GLShaderList : public ShaderList {
 
     public:
 
-        GLShaderList(const std::string &shadersPath = "");
+        GLShaderList();
 
-        virtual ~GLShaderList();
+        ~GLShaderList() override;
 
         Shader *color = nullptr;
     };
