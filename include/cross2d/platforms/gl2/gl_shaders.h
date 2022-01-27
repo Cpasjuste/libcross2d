@@ -15,9 +15,10 @@ namespace c2d {
 
         GLShader(const std::string &name, const char *source, const std::string &version);
 
-        GLShader(const std::string &name, const char *vertex, const char *fragment, int vSize = 0, int fSize = 0);
+        GLShader(const std::string &name, const char *vertex, const char *fragment,
+                 int vertexSize = 0, int fragmentSize = 0, const std::string &version = "100");
 
-        ~GLShader();
+        ~GLShader() override;
 
         void SetUniformMatrix(const GLchar *n, const GLfloat *v);
 
@@ -40,7 +41,7 @@ namespace c2d {
 
         GLShaderList();
 
-        //~GLShaderList() override;
+        ~GLShaderList() override;
     };
 }
 

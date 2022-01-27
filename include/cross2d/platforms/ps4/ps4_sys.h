@@ -8,8 +8,6 @@
 namespace c2d {
     class PS4Sys {
     public:
-        static void dumpShaderBinary(int id, const char *name, const char *type);
-
         static void print(const char *fmt, ...);
     };
 }

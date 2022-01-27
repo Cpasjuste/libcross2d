@@ -7,15 +7,15 @@
 
 // length of 0 means it's not a precompiled/binary shader (see gl_shaders.cpp)
 
-extern const char *color_v;
-const int color_f_length = 0;
-extern const char *color_f;
-const int color_v_length = 0;
+extern const char *c2d_color_v;
+const int c2d_color_f_length = 0;
+extern const char *c2d_color_f;
+const int c2d_color_v_length = 0;
 
-extern const char *texture_v;
-const int texture_v_length = 0;
-extern const char *texture_f;
-const int texture_f_length = 0;
+extern const char *c2d_texture_v;
+const int c2d_texture_v_length = 0;
+extern const char *c2d_texture_f;
+const int c2d_texture_f_length = 0;
 
 // crt shaders
 

@@ -33,6 +33,9 @@ option(OPTION_TEST "Build test executable" OFF)
 set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width")
 set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
 
+# ps4
+option(OPTION_PS4_DUMP_SHADER "Dump ps4 shaders" OFF)
+
 ####################
 # SANITY CHECKS
 ####################
@@ -138,7 +141,7 @@ endif ()
 # gl2 / gles2
 if (OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
     file(GLOB GL_SRC source/platforms/gl2/*.c*)
-    if (NOT PLATFORM_VITA AND NOT PLATFORM_PS4)
+    if ((NOT PLATFORM_VITA AND NOT PLATFORM_PS4) OR OPTION_PS4_DUMP_SHADER)
         file(GLOB GL_SHADERS_SRC source/platforms/gl2/shaders/*.c*)
     endif ()
     list(APPEND C2D_SOURCES ${GL_SRC} ${GL_SHADERS_SRC})
@@ -231,9 +234,14 @@ elseif (PLATFORM_PS4)
             )
     file(GLOB PLATFORM_SOURCES
             source/platforms/ps4/*.c*
-            source/platforms/ps4/shaders/*.c*
             source/platforms/posix/*.c*
             )
+    if (NOT OPTION_PS4_DUMP_SHADER)
+        file(GLOB PS4_SHADERS_SOURCES source/platforms/ps4/shaders/*.c*)
+        list(APPEND PLATFORM_SOURCES ${PS4_SHADERS_SOURCES})
+    else ()
+        list(APPEND C2D_CFLAGS -DPS4_DUMP_SHADERS)
+    endif ()
     list(APPEND C2D_LDFLAGS
             c++
             )

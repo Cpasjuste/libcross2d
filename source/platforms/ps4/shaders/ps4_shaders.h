@@ -1,90 +1,109 @@
-//
-// Created by cpasjuste on 08/01/2022.
-//
-
 #ifndef C2D_PS4_SHADERS_H
 #define C2D_PS4_SHADERS_H
 
-extern const char color_v[];
-const int color_f_length = 718;
-extern const char color_f[];
-const int color_v_length = 1244;
-
-extern const char texture_v[];
-const int texture_v_length = 1393;
-extern const char texture_f[];
-const int texture_f_length = 941;
-
-//////////////////////////////
-
-extern const char bevel_v[];
-const int bevel_v_length = 2100;
-extern const char bevel_f[];
-const int bevel_f_length = 2754;
-
-extern const char crt_aperture_v[];
-const int crt_aperture_v_length = 2532;
-extern const char crt_aperture_f[];
-const int crt_aperture_f_length = 9885;
-
-extern const char crt_cgwg_fast_v[];
-const int crt_cgwg_fast_v_length = 3343;
-extern const char crt_cgwg_fast_f[];
-const int crt_cgwg_fast_f_length = 5157;
-
-extern const char crt_easymode_v[];
-const int crt_easymode_v_length = 2844;
-extern const char crt_easymode_f[];
-const int crt_easymode_f_length = 9229;
-
-extern const char crt_hyllian_v[];
-const int crt_hyllian_v_length = 3210;
-extern const char crt_hyllian_f[];
-const int crt_hyllian_f_length = 9048;
-
-extern const char dot_v[];
-const int dot_v_length = 2931;
-extern const char dot_f[];
-const int dot_f_length = 3851;
-
-extern const char lcd3x_v[];
-const int lcd3x_v_length = 1830;
-extern const char lcd3x_f[];
-const int lcd3x_f_length = 2503;
-
-extern const char retro_v2_v[];
-const int retro_v2_v_length = 1962;
-extern const char retro_v2_f[];
-const int retro_v2_f_length = 2719;
-
-extern const char sabr_v3_v[];
-const int sabr_v3_v_length = 3218;
-extern const char sabr_v3_f[];
-const int sabr_v3_f_length = 13564;
-
-extern const char sal2x_v[];
-const int sal2x_v_length = 1836;
-extern const char sal2x_f[];
-const int sal2x_f_length = 2479;
-
-extern const char scanlines_v[];
-const int scanlines_v_length = 2263;
-extern const char scanlines_f[];
-const int scanlines_f_length = 2406;
-
-extern const char sharp_bilinear_v[];
-const int sharp_bilinear_v_length = 1994;
-extern const char sharp_bilinear_f[];
-const int sharp_bilinear_f_length = 2897;
-
-extern const char sharp_bilinear_scanlines_v[];
-const int sharp_bilinear_scanlines_v_length = 2879;
-extern const char sharp_bilinear_scanlines_f[];
-const int sharp_bilinear_scanlines_f_length = 3528;
-
-extern const char supereagle_v[];
-const int supereagle_v_length = 3038;
-extern const char supereagle_f[];
-const int supereagle_f_length = 7284;
+extern const char c2d_c2d_color_v[];
+const int c2d_c2d_color_v_length = 1244;
+extern const char c2d_c2d_color_f[];
+const int c2d_c2d_color_f_length = 718;
+extern const char c2d_c2d_texture_v[];
+const int c2d_c2d_texture_v_length = 1393;
+extern const char c2d_c2d_texture_f[];
+const int c2d_c2d_texture_f_length = 941;
+extern const char c2d_crt_aperture_v[];
+const int c2d_crt_aperture_v_length = 7528;
+extern const char c2d_crt_aperture_f[];
+const int c2d_crt_aperture_f_length = 10582;
+extern const char c2d_crt_cgwg_fast_v[];
+const int c2d_crt_cgwg_fast_v_length = 6312;
+extern const char c2d_crt_cgwg_fast_f[];
+const int c2d_crt_cgwg_fast_f_length = 7106;
+extern const char c2d_crt_easymode_v[];
+const int c2d_crt_easymode_v_length = 8603;
+extern const char c2d_crt_easymode_f[];
+const int c2d_crt_easymode_f_length = 10113;
+extern const char c2d_crt_geom_v[];
+const int c2d_crt_geom_v_length = 16352;
+extern const char c2d_crt_geom_f[];
+const int c2d_crt_geom_f_length = 19594;
+extern const char c2d_crt_hyllian_v[];
+const int c2d_crt_hyllian_v_length = 8093;
+extern const char c2d_crt_hyllian_f[];
+const int c2d_crt_hyllian_f_length = 9743;
+extern const char c2d_crt_nes_mini_v[];
+const int c2d_crt_nes_mini_v_length = 3598;
+extern const char c2d_crt_nes_mini_f[];
+const int c2d_crt_nes_mini_f_length = 3520;
+extern const char c2d_crt_pi_v[];
+const int c2d_crt_pi_v_length = 6470;
+extern const char c2d_crt_pi_f[];
+const int c2d_crt_pi_f_length = 6636;
+extern const char c2d_crt_pi_flat_v[];
+const int c2d_crt_pi_flat_v_length = 6320;
+extern const char c2d_crt_pi_flat_f[];
+const int c2d_crt_pi_flat_f_length = 6370;
+extern const char c2d_crt_zfast_v[];
+const int c2d_crt_zfast_v_length = 6505;
+extern const char c2d_crt_zfast_f[];
+const int c2d_crt_zfast_f_length = 6367;
+extern const char c2d_handheld_bevel_v[];
+const int c2d_handheld_bevel_v_length = 3931;
+extern const char c2d_handheld_bevel_f[];
+const int c2d_handheld_bevel_f_length = 3885;
+extern const char c2d_handheld_dot_v[];
+const int c2d_handheld_dot_v_length = 5659;
+extern const char c2d_handheld_dot_f[];
+const int c2d_handheld_dot_f_length = 5481;
+extern const char c2d_handheld_lcd1x_v[];
+const int c2d_handheld_lcd1x_v_length = 3451;
+extern const char c2d_handheld_lcd1x_f[];
+const int c2d_handheld_lcd1x_f_length = 3333;
+extern const char c2d_handheld_lcd3x_v[];
+const int c2d_handheld_lcd3x_v_length = 3511;
+extern const char c2d_handheld_lcd3x_f[];
+const int c2d_handheld_lcd3x_f_length = 3537;
+extern const char c2d_handheld_retro_v2_v[];
+const int c2d_handheld_retro_v2_v_length = 3544;
+extern const char c2d_handheld_retro_v2_f[];
+const int c2d_handheld_retro_v2_f_length = 3814;
+extern const char c2d_handheld_zfast_lcd_v[];
+const int c2d_handheld_zfast_lcd_v_length = 4740;
+extern const char c2d_handheld_zfast_lcd_f[];
+const int c2d_handheld_zfast_lcd_f_length = 4562;
+extern const char c2d_interpolation_aann_v[];
+const int c2d_interpolation_aann_v_length = 7941;
+extern const char c2d_interpolation_aann_f[];
+const int c2d_interpolation_aann_f_length = 9427;
+extern const char c2d_interpolation_pixellate_v[];
+const int c2d_interpolation_pixellate_v_length = 4776;
+extern const char c2d_interpolation_pixellate_f[];
+const int c2d_interpolation_pixellate_f_length = 5374;
+extern const char c2d_interpolation_quilez_v[];
+const int c2d_interpolation_quilez_v_length = 3095;
+extern const char c2d_interpolation_quilez_f[];
+const int c2d_interpolation_quilez_f_length = 2977;
+extern const char c2d_interpolation_sharp_bilinear_v[];
+const int c2d_interpolation_sharp_bilinear_v_length = 3910;
+extern const char c2d_interpolation_sharp_bilinear_f[];
+const int c2d_interpolation_sharp_bilinear_f_length = 3964;
+extern const char c2d_interpolation_sharp_bilinear_scanlines_v[];
+const int c2d_interpolation_sharp_bilinear_scanlines_v_length = 5293;
+extern const char c2d_interpolation_sharp_bilinear_scanlines_f[];
+const int c2d_interpolation_sharp_bilinear_scanlines_f_length = 4907;
+extern const char c2d_scanline_simple_v[];
+const int c2d_scanline_simple_v_length = 4091;
+extern const char c2d_scanline_simple_f[];
+const int c2d_scanline_simple_f_length = 3465;
+extern const char c2d_sharp_2xsal_v[];
+const int c2d_sharp_2xsal_v_length = 3570;
+extern const char c2d_sharp_2xsal_f[];
+const int c2d_sharp_2xsal_f_length = 3556;
+extern const char c2d_sharp_sabr_v30_v[];
+const int c2d_sharp_sabr_v30_v_length = 11845;
+extern const char c2d_sharp_sabr_v30_f[];
+const int c2d_sharp_sabr_v30_f_length = 15459;
+extern const char c2d_sharp_supereagle_v[];
+const int c2d_sharp_supereagle_v_length = 7717;
+extern const char c2d_sharp_supereagle_f[];
+const int c2d_sharp_supereagle_f_length = 9163;
 
 #endif //C2D_PS4_SHADERS_H

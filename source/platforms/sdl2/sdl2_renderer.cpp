@@ -17,8 +17,8 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
     SDL_ShowCursor(SDL_DISABLE);
 
-#ifdef __PS4__
-    //SDL_SetHint(SDL_HINT_PS4_PIGLET_MODULES_PATH, "/data/self/system/common/lib");
+#ifdef PS4_DUMP_SHADERS
+    SDL_SetHint(SDL_HINT_PS4_PIGLET_MODULES_PATH, "/data/self/system/common/lib");
 #endif
 
     if ((SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
