@@ -61,7 +61,8 @@ static GLuint compile(GLenum type, const char *source, int size = 0) {
 }
 
 // TODO: (re)add precompiled shader support (rebuild shaders for ps4)
-GLShader::GLShader(const char *vertex, const char *fragment, int vsize, int fsize) {
+GLShader::GLShader(const std::string &n, const char *vertex, const char *fragment, int vsize, int fsize)
+        : ShaderList::Shader(n) {
 
     GLuint vsh, fsh;
     std::string v, f;
@@ -111,8 +112,8 @@ GLShader::GLShader(const char *vertex, const char *fragment, int vsize, int fsiz
     }
 
 #ifdef __PS4__
-        //PS4Sys::dumpShaderBinary(vsh, name, "v");
-        //PS4Sys::dumpShaderBinary(fsh, name, "f");
+        PS4Sys::dumpShaderBinary(vsh, name.c_str(), "v");
+        PS4Sys::dumpShaderBinary(fsh, name.c_str(), "f");
 #endif
 
     GL_CHECK(glDeleteShader(vsh));
@@ -121,7 +122,8 @@ GLShader::GLShader(const char *vertex, const char *fragment, int vsize, int fsiz
     available = true;
 }
 
-GLShader::GLShader(const char *source, const std::string &version) {
+GLShader::GLShader(const std::string &n, const char *source, const std::string &version)
+        : ShaderList::Shader(n) {
     GLuint vsh, fsh;
     GLint link_result;
     std::string vertex, fragment;
@@ -227,9 +229,9 @@ GLShaderList::GLShaderList() : ShaderList() {
     GLShaderList::add("lcd3x", new GLShader((const char *) lcd3x_v_data, (const char *) lcd3x_f_data,
                                             GLShader::SCALE_TYPE_SOURCE, lcd3x_v_size, lcd3x_f_size));
 #else
-    const char *glsl = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
     std::string version = "100";
 #ifndef __GLES2__
+    const char *glsl = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
     if (glsl && strlen(glsl) > 0) {
         char v[32];
         int major, minor;
@@ -242,71 +244,76 @@ GLShaderList::GLShaderList() : ShaderList() {
 #endif
 
     // color shader
-    color = new Shader("color", new GLShader(color_v, color_f,
-                                             color_v_length, color_f_length));
+    color = new GLShader("color", color_v, color_f,
+                         color_v_length, color_f_length);
     // texture shader
-    get(0)->data = new GLShader(texture_v, texture_f,
-                                texture_v_length, texture_f_length);
+    add(new GLShader("texture", texture_v, texture_f,
+                     texture_v_length, texture_f_length));
 
     // crt shaders
-    add("crt-aperture", new GLShader(c2d_crt_aperture_shader, version));
-    add("crt-caligari", new GLShader(c2d_crt_caligari_shader, version));
-    add("crt-cgwg-fast", new GLShader(c2d_crt_cgwg_fast_shader, version));
-    add("crt-easymode", new GLShader(c2d_crt_easymode_shader, version));
-    add("crt-fakelottes", new GLShader(c2d_crt_fakelottes_shader, version));
-    add("crt-geom", new GLShader(c2d_crt_geom_shader, version));
-    add("crt-geom-flat", new GLShader(c2d_crt_geom_flat_shader, version));
-    add("crt-hyllian", new GLShader(c2d_crt_hyllian_shader, version));
-    add("crt-lottes-fast", new GLShader(c2d_crt_lottes_fast_shader, version));
-    add("crt-lottes", new GLShader(c2d_crt_lottes_shader, version));
-    add("crt-mattias", new GLShader(c2d_crt_mattias_shader, version));
-    add("crt-nes-mini", new GLShader(c2d_crt_nes_mini_shader, version));
-    add("crt-pi", new GLShader(c2d_crt_pi_shader, version));
-    add("crt-pi-flat", new GLShader(c2d_crt_pi_flat_shader, version));
-    add("crt-zfast", new GLShader(c2d_crt_zfast_shader, version));
+    add(new GLShader("crt-aperture", c2d_crt_aperture_shader, version));
+    add(new GLShader("crt-caligari", c2d_crt_caligari_shader, version));
+    add(new GLShader("crt-cgwg-fast", c2d_crt_cgwg_fast_shader, version));
+    add(new GLShader("crt-easymode", c2d_crt_easymode_shader, version));
+    add(new GLShader("crt-fakelottes", c2d_crt_fakelottes_shader, version));
+    add(new GLShader("crt-geom", c2d_crt_geom_shader, version));
+    add(new GLShader("crt-geom-flat", c2d_crt_geom_flat_shader, version));
+    add(new GLShader("crt-hyllian", c2d_crt_hyllian_shader, version));
+    add(new GLShader("crt-lottes-fast", c2d_crt_lottes_fast_shader, version));
+    add(new GLShader("crt-lottes", c2d_crt_lottes_shader, version));
+    add(new GLShader("crt-mattias", c2d_crt_mattias_shader, version));
+    add(new GLShader("crt-nes-mini", c2d_crt_nes_mini_shader, version));
+    add(new GLShader("crt-pi", c2d_crt_pi_shader, version));
+    add(new GLShader("crt-pi-flat", c2d_crt_pi_flat_shader, version));
+    add(new GLShader("crt-zfast", c2d_crt_zfast_shader, version));
 
     // handheld shaders
-    add("handheld-bevel", new GLShader(c2d_handheld_bevel_shader, version));
-    add("handheld-dot", new GLShader(c2d_handheld_dot_shader, version));
-    add("handheld-lcd1x", new GLShader(c2d_handheld_lcd1x_shader, version));
-    add("handheld-lcd3x", new GLShader(c2d_handheld_lcd3x_shader, version));
-    add("handheld-retro-v2", new GLShader(c2d_handheld_retro_v2_shader, version));
-    add("handheld-zfast-lcd", new GLShader(c2d_handheld_zfast_lcd_shader, version));
+    add(new GLShader("handheld-bevel", c2d_handheld_bevel_shader, version));
+    add(new GLShader("handheld-dot", c2d_handheld_dot_shader, version));
+    add(new GLShader("handheld-lcd1x", c2d_handheld_lcd1x_shader, version));
+    add(new GLShader("handheld-lcd3x", c2d_handheld_lcd3x_shader, version));
+    add(new GLShader("handheld-retro-v2", c2d_handheld_retro_v2_shader, version));
+    add(new GLShader("handheld-zfast-lcd", c2d_handheld_zfast_lcd_shader, version));
 
     // interpolation shaders
-    add("interpolation-aann", new GLShader(c2d_interpolation_aann_shader, version));
-    add("interpolation-pixellate", new GLShader(c2d_interpolation_pixellate_shader, version));
-    add("interpolation-quilez", new GLShader(c2d_interpolation_quilez_shader, version));
-    add("interpolation-sharp-bilinear", new GLShader(c2d_interpolation_sharp_bilinear_shader, version));
-    add("interpolation-sharp-bilinear-scanlines",
-        new GLShader(c2d_interpolation_sharp_bilinear_scanlines_shader, version));
+    add(new GLShader("interpolation-aann", c2d_interpolation_aann_shader, version));
+    add(new GLShader("interpolation-pixellate", c2d_interpolation_pixellate_shader, version));
+    add(new GLShader("interpolation-quilez", c2d_interpolation_quilez_shader, version));
+    add(new GLShader("interpolation-sharp-bilinear", c2d_interpolation_sharp_bilinear_shader, version));
+    add(new GLShader("interpolation-sharp-bilinear-scanlines",
+                     c2d_interpolation_sharp_bilinear_scanlines_shader, version));
 
     // scanlines
-    add("scanline-simple", new GLShader(c2d_scanline_simple_shader, version));
+    add(new GLShader("scanline-simple", c2d_scanline_simple_shader, version));
 
     // sharp
-    add("sharp-2xsal", new GLShader(c2d_sharp_2xsal_shader, version));
-    add("sharp-sabr-v3.0", new GLShader(c2d_sharp_sabr_v30_shader, version));
-    add("sharp-supereagle", new GLShader(c2d_sharp_supereagle_shader, version));
-    add("sharp-xbrz-freescale", new GLShader(c2d_sharp_xbrz_freescale_shader, version));
+    add(new GLShader("sharp-2xsal", c2d_sharp_2xsal_shader, version));
+    add(new GLShader("sharp-sabr-v3.0", c2d_sharp_sabr_v30_shader, version));
+    add(new GLShader("sharp-supereagle", c2d_sharp_supereagle_shader, version));
+    add(new GLShader("sharp-xbrz-freescale", c2d_sharp_xbrz_freescale_shader, version));
 
 #endif //__PSP2__
 }
 
+#if 0
 GLShaderList::~GLShaderList() {
 
+    /*
     if (color) {
-        if (color->data != nullptr) {
-            delete ((GLShader *) color->data);
+        if (color != nullptr) {
+            delete (color);
         }
-        delete (color);
     }
+    */
 
+    /*
     for (int i = 0; i < GLShaderList::getCount(); i++) {
         if (GLShaderList::get(i)->data != nullptr) {
             delete ((GLShader *) GLShaderList::get(i)->data);
         }
     }
+    */
 }
+#endif
 
 #endif // __GL2__

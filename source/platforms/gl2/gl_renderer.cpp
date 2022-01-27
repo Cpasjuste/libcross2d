@@ -52,10 +52,10 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     vertices = vertexArray->getVertices()->data();
     vertexCount = vertexArray->getVertexCount();
     tex = sprite ? (GLTexture *) sprite->getTexture() : (GLTexture *) texture;
-    shader = tex && tex->available ? (GLShader *) m_shaderList->get(0)->data :
-             (GLShader *) ((GLShaderList *) m_shaderList)->color->data;
+    shader = tex && tex->available ? (GLShader *) m_shaderList->get(0) :
+             (GLShader *) ((GLShaderList *) m_shaderList)->color;
     if (tex && tex->shader) {
-        shader = (GLShader *) tex->shader->data;
+        shader = (GLShader *) tex->shader;
     }
 
     // set shader

@@ -9,13 +9,13 @@
 
 namespace c2d {
 
-    class GLShader {
+    class GLShader : public ShaderList::Shader {
 
     public:
 
-        GLShader(const char *source, const std::string &version);
+        GLShader(const std::string &name, const char *source, const std::string &version);
 
-        GLShader(const char *vertex, const char *fragment, int vSize = 0, int fSize = 0);
+        GLShader(const std::string &name, const char *vertex, const char *fragment, int vSize = 0, int fSize = 0);
 
         ~GLShader();
 
@@ -40,9 +40,7 @@ namespace c2d {
 
         GLShaderList();
 
-        ~GLShaderList() override;
-
-        Shader *color = nullptr;
+        //~GLShaderList() override;
     };
 }
 
