@@ -13,6 +13,13 @@ option(PLATFORM_PS4 "Sony PS4 target platform" OFF)
 option(PLATFORM_PS3 "Sony PS3 target platform" OFF)
 option(PLATFORM_DREAMCAST "Sega Dreamcast platform target" OFF)
 
+if (NOT PLATFORM_LINUX AND NOT PLATFORM_WINDOWS
+        AND NOT PLATFORM_SWITCH AND NOT PLATFORM_3DS
+        AND NOT PLATFORM_VITA AND NOT PLATFORM_PS3
+        AND NOT PLATFORM_PS4 AND NOT PLATFORM_DREAMCAST)
+    set(PLATFORM_LINUX ON)
+endif ()
+
 # setup target toolchain
 include(cmake/toolchain.cmake)
 
