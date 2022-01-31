@@ -19,8 +19,6 @@ namespace c2d {
 
         void setFilter(Filter filter) override;
 
-        void setShader(int shaderIndex) override;
-
         unsigned int texID = 0;
         unsigned int fbo = 0;
     };

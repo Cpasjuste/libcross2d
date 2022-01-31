@@ -249,9 +249,7 @@ elseif (PLATFORM_PS4)
     else ()
         list(APPEND C2D_CFLAGS -DPS4_DUMP_SHADERS)
     endif ()
-    list(APPEND C2D_LDFLAGS
-            c++
-            )
+    list(APPEND C2D_LDFLAGS samplerate)
     list(APPEND C2D_CFLAGS -D__PSP4__ -DDEBUG_NET_IP="192.168.0.187" -DNO_KEYBOARD -Wno-writable-strings)
 elseif (PLATFORM_PS3)
     enable_language(ASM)
