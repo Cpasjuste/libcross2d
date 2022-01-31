@@ -22,6 +22,8 @@ namespace c2d {
 
     private:
         SDL_mutex *mutex = nullptr;
+
+        friend class SDL2Cond;
     };
 }
 

@@ -24,6 +24,7 @@
 #include "cross2d/skeleton/config.h"
 #include "cross2d/skeleton/thread.h"
 #include "cross2d/skeleton/mutex.h"
+#include "cross2d/skeleton/cond.h"
 #include "cross2d/widgets/button.h"
 #include "cross2d/widgets/textbox.h"
 #include "cross2d/widgets/listbox.h"
