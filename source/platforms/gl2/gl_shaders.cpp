@@ -82,11 +82,11 @@ GLShader::GLShader(const std::string &n, const char *vertex, const char *fragmen
 
     // use precompiled if size > 0
     if (vertexSize > 0) {
-        printf("GLShader::GLShader: %s (from binary)\n", name.c_str());
+        //printf("GLShader::GLShader: %s (from binary)\n", name.c_str());
         vsh = compile(GL_VERTEX_SHADER, vertex, vertexSize);
         fsh = compile(GL_FRAGMENT_SHADER, fragment, fragmentSize);
     } else {
-        printf("GLShader::GLShader: %s, version: %s\n", name.c_str(), version.c_str());
+        //printf("GLShader::GLShader: %s, version: %s\n", name.c_str(), version.c_str());
         v = std::string("#version " + version + "\n") + vertex;
         f = std::string("#version " + version + "\n") + fragment;
         vsh = compile(GL_VERTEX_SHADER, v.c_str(), vertexSize);
@@ -138,11 +138,11 @@ GLShader::GLShader(const std::string &n, const char *source, const std::string &
 
     size_t pos = std::string(source).find("#version");
     if (pos != std::string::npos) {
-        printf("GLShader::GLShader: %s, version: (from source)\n", name.c_str());
+        //printf("GLShader::GLShader: %s, version: (from source)\n", name.c_str());
         vertex = std::string(source).insert(pos + 13, "#define VERTEX\n");
         fragment = std::string(source).insert(pos + 13, "#define FRAGMENT\n");
     } else {
-        printf("GLShader::GLShader: %s, version: %s\n", name.c_str(), version.c_str());
+        //printf("GLShader::GLShader: %s, version: %s\n", name.c_str(), version.c_str());
         vertex = std::string("#version " + version + "\n#define VERTEX\n") + source;
         fragment = std::string("#version " + version + "\n#define FRAGMENT\n") + source;
     }

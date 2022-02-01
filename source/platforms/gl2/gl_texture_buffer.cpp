@@ -5,12 +5,14 @@
 #ifdef __GL2__
 
 #include "cross2d/c2d.h"
+#include "cross2d/platforms/gl2/gl_texture_buffer.h"
+
 
 #define GL_ABGR_EXT 0x8000
 
 using namespace c2d;
 
-GLTextureBuffer::GLTextureBuffer(const Vector2f &size, Format format) : Texture(size, format) {
+int GLTextureBuffer::createTexture(const Vector2f &size, Texture::Format format) {
 
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -18,7 +20,6 @@ GLTextureBuffer::GLTextureBuffer(const Vector2f &size, Format format) : Texture(
     glGenTextures(1, &texID);
 
     if (texID) {
-
         glBindTexture(GL_TEXTURE_2D, texID);
 
         switch (format) {
@@ -53,7 +54,7 @@ GLTextureBuffer::GLTextureBuffer(const Vector2f &size, Format format) : Texture(
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             printf("GLTextureBuffer(%p): couldn't create texture buffer", this);
         } else {
-            tex_size = {size.x, size.y};
+            tex_size = {(int) size.x, (int) size.y};
             Texture::setSize(size.x, size.y);
             Texture::setTexture(this, true);
             available = true;
@@ -65,21 +66,11 @@ GLTextureBuffer::GLTextureBuffer(const Vector2f &size, Format format) : Texture(
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     //printf("GLTextureBuffer(%p): %ix%i\n", this, (int) size.x, (int) size.y);
+
+    return 0;
 }
 
-void GLTextureBuffer::setFilter(Filter f) {
-
-    this->filter = f;
-
-    glBindTexture(GL_TEXTURE_2D, texID);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    filter == Filter::Linear ? GL_LINEAR : GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                    filter == Filter::Linear ? GL_LINEAR : GL_NEAREST);
-}
-
-GLTextureBuffer::~GLTextureBuffer() {
-
+void GLTextureBuffer::deleteTexture() {
     //printf("~GLTextureBuffer(%p)\n", this);
 #ifndef __PSP2__
     if (glIsFramebuffer(fbo) == GL_TRUE) {
@@ -99,6 +90,36 @@ GLTextureBuffer::~GLTextureBuffer() {
 #ifndef __PSP2__
     }
 #endif
+}
+
+GLTextureBuffer::GLTextureBuffer(const Vector2f &size, Format format) : Texture(size, format) {
+    createTexture(size, format);
+}
+
+int GLTextureBuffer::resize(const Vector2i &size, bool keepPixels) {
+    printf("GLTextureBuffer::resize: %i x %i\n", (int) size.x, (int) size.y);
+    if (size.x == getTextureRect().width && size.y == getTextureRect().height) {
+        return -1;
+    }
+
+    deleteTexture();
+    createTexture({(float) size.x, (float) size.y}, format);
+
+    return 0;
+}
+
+void GLTextureBuffer::setFilter(Filter f) {
+    this->filter = f;
+
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                    filter == Filter::Linear ? GL_LINEAR : GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                    filter == Filter::Linear ? GL_LINEAR : GL_NEAREST);
+}
+
+GLTextureBuffer::~GLTextureBuffer() {
+    deleteTexture();
 }
 
 #endif // __GL2__

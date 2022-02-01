@@ -17,10 +17,17 @@ namespace c2d {
 
         ~GLTextureBuffer() override;
 
+        int resize(const Vector2i &size, bool keepPixels = false) override;
+
         void setFilter(Filter filter) override;
 
         unsigned int texID = 0;
         unsigned int fbo = 0;
+
+    private:
+        int createTexture(const Vector2f &size = Vector2f(0, 0), Format format = Format::RGBA8);
+
+        void deleteTexture();
     };
 }
 

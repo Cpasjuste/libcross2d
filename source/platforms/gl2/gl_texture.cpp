@@ -195,7 +195,7 @@ int GLTexture::resize(const Vector2i &size, bool keepPixels) {
 
     printf("GLTexture::resize: done\n");
 
-    return -1;
+    return 0;
 }
 
 int GLTexture::save(const std::string &path) {
