@@ -36,7 +36,7 @@ void GLRenderer::initGL() {
     m_shaderList = (ShaderList *) new GLShaderList();
 }
 
-void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture, Sprite *sprite) {
+void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {
 
     Vertex *vertices;
     size_t vertexCount;
@@ -51,7 +51,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     vertices = vertexArray->getVertices()->data();
     vertexCount = vertexArray->getVertexCount();
-    tex = sprite ? (GLTexture *) sprite->getTexture() : (GLTexture *) texture;
+    tex = (GLTexture *) texture;
     shader = tex && tex->available ? (GLShader *) m_shaderList->get(0) :
              (GLShader *) ((GLShaderList *) m_shaderList)->color;
     if (tex && tex->shader) {
@@ -103,15 +103,9 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
         GL_CHECK(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                                        (void *) offsetof(Vertex, texCoords)));
         // set retroarch shader params
-        if (sprite) {
-            inputSize = {(float) sprite->getTextureRect().width, (float) sprite->getTextureRect().height};
-            textureSize = {sprite->getTexture()->getSize().x, sprite->getTexture()->getSize().y};
-            outputSize = {inputSize.x * sprite->getScale().x, inputSize.y * sprite->getScale().y};
-        } else {
-            inputSize = {(float) texture->getTextureRect().width, (float) texture->getTextureRect().height};
-            textureSize = {texture->getSize().x, texture->getSize().y};
-            outputSize = {inputSize.x * texture->getScale().x, inputSize.y * texture->getScale().y};
-        }
+        inputSize = {(float) texture->getTextureRect().width, (float) texture->getTextureRect().height};
+        textureSize = {texture->getSize().x, texture->getSize().y};
+        outputSize = {inputSize.x * texture->getScale().x, inputSize.y * texture->getScale().y};
         shader->SetUniform("InputSize", inputSize);
         shader->SetUniform("TextureSize", textureSize);
         shader->SetUniform("OutputSize", outputSize);

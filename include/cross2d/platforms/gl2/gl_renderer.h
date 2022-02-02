@@ -19,8 +19,7 @@ namespace c2d {
 
         void initGL();
 
-        void draw(VertexArray *vertexArray, const Transform &transform,
-                  Texture *texture, Sprite *sprite = nullptr) override;
+        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
 
         void clear() override;
 

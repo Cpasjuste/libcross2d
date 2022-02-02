@@ -8,10 +8,10 @@
 #include <climits>
 #include <funchook.h>
 
-#ifdef NDEBUG
+//#ifdef NDEBUG
 #pragma GCC diagnostic ignored "-Wunused-value"
 #define printf(fmt, ...) (0)
-#endif
+//#endif
 
 extern "C" unsigned char c2d_romfs_zip[];
 extern "C" int c2d_romfs_zip_len;

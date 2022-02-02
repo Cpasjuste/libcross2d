@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cmath>
+
 #include "cross2d/skeleton/sfml/RectangleShape.hpp"
 
 using namespace c2d;
@@ -100,8 +100,9 @@ namespace c2d {
             }
         }
 
-        if (index >= m_corner_point_count * 4)
-            return Vector2f(0, 0);
+        if (index >= m_corner_point_count * 4) {
+            return {};
+        }
 
         Vector2f center;
         float deltaAngle = 90.0f / (float) (m_corner_point_count - 1);
@@ -129,8 +130,8 @@ namespace c2d {
                 return {0, 0};
         }
 
-        return Vector2f(m_radius * std::cos(deltaAngle * (float) (index - centerIndex) * pi / 180) + center.x,
-                        -m_radius * std::sin(deltaAngle * (float) (index - centerIndex) * pi / 180) + center.y);
+        return {m_radius * std::cos(deltaAngle * (float) (index - centerIndex) * pi / 180) + center.x,
+                -m_radius * std::sin(deltaAngle * (float) (index - centerIndex) * pi / 180) + center.y};
     }
 
 } // namespace sf
