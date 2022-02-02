@@ -30,6 +30,7 @@
 #include "cross2d/widgets/listbox.h"
 #include "cross2d/widgets/configbox.h"
 #include "cross2d/widgets/progress.h"
+#include "cross2d/widgets/gradient_rectangle.h"
 
 #ifdef __WINDOWS__
 #undef MessageBox

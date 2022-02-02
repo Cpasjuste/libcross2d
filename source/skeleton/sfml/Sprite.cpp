@@ -31,13 +31,10 @@
 namespace c2d {
 
 ////////////////////////////////////////////////////////////
-    Sprite::Sprite() : RectangleShape({0, 0}) {
-        type = Type::Sprite;
-    }
+    Sprite::Sprite() : RectangleShape({0, 0}) {}
 
 ////////////////////////////////////////////////////////////
     Sprite::Sprite(Texture *texture) : RectangleShape(texture->getSize()) {
-        type = Type::Sprite;
         setTexture(texture, true);
     }
 
@@ -45,7 +42,6 @@ namespace c2d {
     Sprite::Sprite(Texture *texture, const IntRect &rectangle)
             : RectangleShape({(float) rectangle.left, (float) rectangle.top,
                               (float) rectangle.width, (float) rectangle.height}) {
-        type = Type::Sprite;
         m_textureRect = rectangle;
         setTextureRect(rectangle);
         setTexture(texture);

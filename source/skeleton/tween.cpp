@@ -218,8 +218,6 @@ void Tween::step() {
                        (uint8_t) (float4[2] * 255.0f), (uint8_t) (float4[3] * 255.0f)};
         if (object->getType() == Type::Text) {
             ((Text *) transform)->setFillColor(color);
-        } else if (object->getType() == Type::Sprite) {
-            ((Sprite *) transform)->setFillColor(color);
         } else {
             ((Shape *) transform)->setFillColor(color);
         }
@@ -227,8 +225,6 @@ void Tween::step() {
         auto alpha = (uint8_t) (float4[0] * 255);
         if (object->getType() == Type::Text) {
             ((Text *) transform)->setAlpha(alpha, true);
-        } else if (object->getType() == Type::Sprite) {
-            ((Sprite *) transform)->setAlpha(alpha, true);
         } else {
             ((Shape *) transform)->setAlpha(alpha, true);
         }
