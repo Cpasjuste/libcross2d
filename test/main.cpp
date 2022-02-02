@@ -33,7 +33,6 @@ int main(int argc, char *argv[]) {
     rect->setOutlineColor(Color::Orange);
     rect->setOutlineThickness(8 * scaling);
 
-#if 0
     // create a texture and add it to the rect
     auto tex = new C2DTexture(renderer->getIo()->getRomFsPath() + "cpasjuste.png");
     if (tex->available) {
@@ -73,7 +72,6 @@ int main(int argc, char *argv[]) {
     auto tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     tweenAlpha->play();
     rect->add(tweenAlpha);
-#endif
 
     while (true) {
 
