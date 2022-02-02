@@ -157,8 +157,7 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     FloatRect Shape::getGlobalBounds() const {
-        Transform t = transformation * getTransform();
-        return t.transformRect(getLocalBounds());
+        return getTransform().transformRect(getLocalBounds());
     }
 
 ////////////////////////////////////////////////////////////
@@ -338,6 +337,13 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Shape::updateOutline() {
+        // Return if there is no outline
+        if (m_outlineThickness == 0.f) {
+            m_outlineVertices.clear();
+            m_bounds = m_insideBounds;
+            return;
+        }
+
         std::size_t count = m_vertices.getVertexCount() - 2;
         m_outlineVertices.resize((count + 1) * 2);
 
