@@ -19,7 +19,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
 #ifdef __PS4__
     //SDL_SetHint(SDL_HINT_AUDIO_RESAMPLING_MODE, "fast");
-#ifdef PS4_DUMP_SHADERS
+#if defined(PS4_SHACC) || defined(PS4_DUMP_SHADERS)
     SDL_SetHint(SDL_HINT_PS4_PIGLET_MODULES_PATH, "/data/self/system/common/lib");
 #endif
 #endif

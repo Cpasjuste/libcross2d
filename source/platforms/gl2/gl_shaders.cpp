@@ -16,14 +16,15 @@
 #include "shaders/lcd3x_v.h"
 
 #elif defined(__PS4__)
-#if PS4_DUMP_SHADERS
+#if PS4_SHACC
 
-#include "../ps4/ps4_shader_compiler.h"
 #include "shaders/shaders.h"
 #include "cross2d/platforms/gl2/gl_shaders.h"
 
-
+#if PS4_DUMP_SHADERS
+#include "../ps4/ps4_shader_compiler.h"
 static c2d::PS4ShaderCompiler *shaderCompiler;
+#endif
 #else
 
 #include "../ps4/shaders/ps4_shaders.h"
@@ -260,7 +261,7 @@ GLShaderList::GLShaderList() : ShaderList() {
     }
 #endif
 
-#if defined(__PS4__) && !defined(PS4_DUMP_SHADERS)
+#if defined(__PS4__) && !defined(PS4_SHACC)
     // color shader
     color = new GLShader("c2d-color", c2d_c2d_color_v, c2d_c2d_color_f,
                          c2d_c2d_color_v_length, c2d_c2d_color_f_length);

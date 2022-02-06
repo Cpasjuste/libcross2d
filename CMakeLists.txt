@@ -40,9 +40,6 @@ option(OPTION_TEST "Build test executable" OFF)
 set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width")
 set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
 
-# ps4
-option(OPTION_PS4_DUMP_SHADER "Dump ps4 shaders" OFF)
-
 ####################
 # SANITY CHECKS
 ####################
@@ -77,6 +74,12 @@ if (PLATFORM_PS4)
     set(OPTION_LOADER_GLAD OFF CACHE BOOL "Glad OpenGL loader" FORCE)
     set(OPTION_SCREEN_WIDTH 1920 CACHE STRING "Custom screen width" FORCE)
     set(OPTION_SCREEN_HEIGHT 1080 CACHE STRING "Custom screen height" FORCE)
+    #
+    option(OPTION_PS4_SHACC "PS4 shacc" OFF)
+    option(OPTION_PS4_DUMP_SHADER "Dump ps4 shaders" OFF)
+    if (OPTION_PS4_DUMP_SHADER)
+        set(OPTION_PS4_SHACC ON CACHE BOOL "PS4 shacc" FORCE)
+    endif ()
 endif ()
 
 if (PLATFORM_DREAMCAST)
@@ -148,7 +151,7 @@ endif ()
 # gl2 / gles2
 if (OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
     file(GLOB GL_SRC source/platforms/gl2/*.c*)
-    if ((NOT PLATFORM_VITA AND NOT PLATFORM_PS4) OR OPTION_PS4_DUMP_SHADER)
+    if ((NOT PLATFORM_VITA AND NOT PLATFORM_PS4) OR OPTION_PS4_SHACC)
         file(GLOB GL_SHADERS_SRC source/platforms/gl2/shaders/*.c*)
     endif ()
     list(APPEND C2D_SOURCES ${GL_SRC} ${GL_SHADERS_SRC})
@@ -243,11 +246,14 @@ elseif (PLATFORM_PS4)
             source/platforms/ps4/*.c*
             source/platforms/posix/*.c*
             )
-    if (NOT OPTION_PS4_DUMP_SHADER)
+    if (NOT OPTION_PS4_SHACC)
         file(GLOB PS4_SHADERS_SOURCES source/platforms/ps4/shaders/*.c*)
         list(APPEND PLATFORM_SOURCES ${PS4_SHADERS_SOURCES})
     else ()
-        list(APPEND C2D_CFLAGS -DPS4_DUMP_SHADERS)
+        list(APPEND C2D_CFLAGS -DPS4_SHACC)
+        if (OPTION_PS4_DUMP_SHADER)
+            list(APPEND C2D_CFLAGS -DPS4_DUMP_SHADERS)
+        endif ()
     endif ()
     list(APPEND C2D_CFLAGS -D__PSP4__ -DNO_KEYBOARD -Wno-writable-strings)
 elseif (PLATFORM_PS3)
@@ -365,6 +371,7 @@ target_compile_options(${PROJECT_NAME} PUBLIC ${C2D_CFLAGS})
 if (OPTION_TEST)
     project(cross2d_test)
     set(PROJECT_AUTHOR "Cpasjuste")
+    set(VERSION_MAJOR "1")
     set(VERSION_MAJOR "1")
     set(VERSION_MINOR "0")
     if (PLATFORM_PS4)
