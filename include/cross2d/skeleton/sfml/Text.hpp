@@ -351,6 +351,10 @@ namespace c2d {
 
         c2d::Vector2f &getSize() const override;
 
+        void setPosition(float x, float y) override;
+
+        void setPosition(const Vector2f &position) override;
+
         void setSize(float width, float height) override;
 
         void setSize(const Vector2f &size) override;

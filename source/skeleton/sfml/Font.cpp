@@ -39,9 +39,6 @@
 
 #endif
 
-#include <cstdlib>
-#include <cstring>
-
 extern unsigned char c2d_font_default[];
 extern int c2d_font_default_length;
 
@@ -311,11 +308,14 @@ namespace c2d {
     }
 
     void Font::setFilter(Texture::Filter filter) {
-
         m_filtering = filter;
         for (unsigned int i = 0; i < m_pages.size(); i++) {
             m_pages[i].texture->setFilter(filter);
         }
+    }
+
+    Texture::Filter Font::getFilter() {
+        return m_filtering;
     }
 
     void Font::setOffset(Vector2f off) {

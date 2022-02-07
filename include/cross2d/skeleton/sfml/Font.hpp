@@ -222,6 +222,8 @@ namespace c2d {
 
         virtual void setFilter(Texture::Filter filter);
 
+        virtual Texture::Filter getFilter();
+
         virtual void setOffset(Vector2f offset);
 
         virtual Vector2f getOffset() const;

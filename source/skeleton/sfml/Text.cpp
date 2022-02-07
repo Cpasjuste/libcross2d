@@ -388,6 +388,19 @@ namespace c2d {
         return m_text_origin;
     }
 
+    void Text::setPosition(float x, float y) {
+        // non integer position does not play well with point filtering
+        if (m_font->getFilter() == Texture::Filter::Point) {
+            Transformable::setPosition((float) ((int) x), (float) ((int) y));
+        } else {
+            Transformable::setPosition(x, y);
+        }
+    }
+
+    void Text::setPosition(const Vector2f &position) {
+        Text::setPosition(position.x, position.y);
+    }
+
 ////////////////////////////////////////////////////////////
 
     Vector2f &Text::getSize() const {
