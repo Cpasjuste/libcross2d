@@ -61,7 +61,10 @@ if (PLATFORM_SWITCH)
 endif ()
 
 if (PLATFORM_VITA)
-    message(STATUS "C2D: Ps Vita with Gxm support enabled")
+    message(STATUS "C2D: Ps Vita with SDL2/PVR support enabled")
+    set(OPTION_SDL2 ON CACHE BOOL "SDL2 support" FORCE)
+    set(OPTION_RENDER_GLES2 ON CACHE BOOL "OpenGLES 2.0 rendering" FORCE)
+    set(OPTION_LOADER_GLAD OFF CACHE BOOL "Glad OpenGL loader" FORCE)
     set(OPTION_BOX2D ON CACHE BOOL "Build with box2d support" FORCE)
     set(OPTION_SCREEN_WIDTH 960 CACHE STRING "Custom screen width" FORCE)
     set(OPTION_SCREEN_HEIGHT 544 CACHE STRING "Custom screen height" FORCE)
@@ -151,7 +154,7 @@ endif ()
 # gl2 / gles2
 if (OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
     file(GLOB GL_SRC source/platforms/gl2/*.c*)
-    if ((NOT PLATFORM_VITA AND NOT PLATFORM_PS4) OR OPTION_PS4_SHACC)
+    if (NOT PLATFORM_PS4 OR OPTION_PS4_SHACC)
         file(GLOB GL_SHADERS_SRC source/platforms/gl2/shaders/*.c*)
     endif ()
     list(APPEND C2D_SOURCES ${GL_SRC} ${GL_SHADERS_SRC})
@@ -213,24 +216,17 @@ if (PLATFORM_VITA)
     set(PLATFORM_INCLUDES
             source/platforms/posix
             source/platforms/psp2
-            source/platforms/psp2/vita-shader-collection/includes
             )
     file(GLOB PLATFORM_SOURCES
             source/platforms/posix/posix_io.cpp
             source/platforms/psp2/*.c*
-            source/platforms/sdl2/sdl2_audio.cpp
-            source/platforms/sdl2/sdl2_input.cpp
-            source/platforms/sdl2/sdl2_thread.cpp
-            source/platforms/sdl2/sdl2_mutex.cpp
             )
     list(APPEND C2D_LDFLAGS
-            ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/vita-shader-collection/lib/libvitashaders.a
-            SDL2 vita2d jpeg png box2d
-            SceDisplay_stub SceGxm_stub SceSysmodule_stub
-            SceAppMgr_stub SceCtrl_stub SceCommonDialog_stub
-            SceAudio_stub SceTouch_stub SceHid_stub SceMotion_stub
-            ScePower_stub SceAppUtil_stub
-            z c stdc++ pthread m
+            libgpu_es4_ext_stub_weak libIMGEGL_stub_weak libGLESv2_stub_weak
+            SceGxm_stub SceDisplay_stub SceCtrl_stub SceAppMgr_stub SceIme_stub
+            SceAudio_stub SceSysmodule_stub SceIofilemgr_stub SceCommonDialog_stub
+            SceTouch_stub SceHid_stub SceMotion_stub ScePower_stub SceProcessmgr_stub
+            m
             )
     list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
             -g -ffast-math -mtune=cortex-a9 -mfpu=neon -ftree-vectorize)

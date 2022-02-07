@@ -19,7 +19,6 @@ GLRenderer::GLRenderer(const Vector2f &size) : Renderer(size) {
 }
 
 void GLRenderer::initGL() {
-
     printf("GL vendor   : %s\n", glGetString(GL_VENDOR));
     printf("GL renderer : %s\n", glGetString(GL_RENDERER));
     printf("GL version  : %s\n", glGetString(GL_VERSION));
@@ -37,7 +36,6 @@ void GLRenderer::initGL() {
 }
 
 void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {
-
     Vertex *vertices;
     size_t vertexCount;
     GLTexture *tex;

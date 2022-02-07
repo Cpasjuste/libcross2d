@@ -6,8 +6,7 @@
 
 #include "cross2d/c2d.h"
 
-#ifdef __PSP2__
-
+#ifdef __PSP2_OLD__
 #include "shaders/color_f.h"
 #include "shaders/color_v.h"
 #include "shaders/texture_f.h"
@@ -237,7 +236,7 @@ GLShaderList::GLShaderList() : ShaderList() {
     shaderCompiler = new PS4ShaderCompiler("/data/c2d_shaders_dump");
 #endif
 
-#if  defined(__PSP2__)
+#if  defined(__PSP2_OLD__)
     // add color shader
     auto *colorShader = new GLShader((const char *) color_v_data, (const char *) color_f_data,
                                      GLShader::SCALE_TYPE_SOURCE, color_v_size, color_f_size);
