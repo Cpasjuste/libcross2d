@@ -16,7 +16,6 @@
 using namespace c2d;
 
 GLTexture::GLTexture(const std::string &p) : Texture(p) {
-
     int w, h, n = 0;
 
     pixels = stbi_load(path.c_str(), &w, &h, &n, 4);
@@ -42,11 +41,10 @@ GLTexture::GLTexture(const std::string &p) : Texture(p) {
         printf("GLTexture(%p): couldn't create texture: %s\n", this, path.c_str());
     }
 
-    //printf("GLTexture(%p): %ix%i\n", this, w, h);
+    printf("GLTexture(%p): %ix%i\n", this, w, h);
 }
 
 GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
-
     int w, h, n = 0;
 
     pixels = stbi_load_from_memory(buffer, bufferSize, &w, &h, &n, 4);
@@ -76,7 +74,6 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
 }
 
 GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format) {
-
     glGenTextures(1, &texID);
 
     if (texID) {
@@ -123,7 +120,6 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
 }
 
 int GLTexture::resize(const Vector2i &size, bool keepPixels) {
-
     printf("GLTexture::resize: %i x %i\n", (int) size.x, (int) size.y);
 
     if (size.x == getTextureRect().width && size.y == getTextureRect().height) {
@@ -199,7 +195,6 @@ int GLTexture::resize(const Vector2i &size, bool keepPixels) {
 }
 
 int GLTexture::save(const std::string &path) {
-
     int res;
     int width = getTextureRect().width;
     int height = getTextureRect().height;
@@ -230,7 +225,6 @@ int GLTexture::save(const std::string &path) {
 }
 
 int GLTexture::lock(FloatRect *rect, void **pix, int *p) {
-
     if (rect == nullptr) {
         *pix = pixels;
     } else {
@@ -245,7 +239,6 @@ int GLTexture::lock(FloatRect *rect, void **pix, int *p) {
 }
 
 void GLTexture::unlock(void *data) {
-
     glBindTexture(GL_TEXTURE_2D, texID);
 
     switch (format) {
@@ -287,7 +280,6 @@ void GLTexture::unlock(void *data) {
 }
 
 void GLTexture::setFilter(Filter f) {
-
     this->filter = f;
 
     glBindTexture(GL_TEXTURE_2D, texID);
@@ -299,7 +291,6 @@ void GLTexture::setFilter(Filter f) {
 }
 
 GLTexture::~GLTexture() {
-
     //printf("~GLTexture(%p)\n", this);
 
     if (pixels) {
@@ -307,15 +298,11 @@ GLTexture::~GLTexture() {
         pixels = nullptr;
     }
 
-#ifndef __PSP2__
     if (glIsTexture(texID) == GL_TRUE) {
-#endif
         //printf("glDeleteTextures(%i)\n", texID);
         glDeleteTextures(1, &texID);
         texID = 0;
-#ifndef __PSP2__
     }
-#endif
 }
 
 #endif // __GL2__

@@ -17,7 +17,9 @@
 
 #if defined(__SDL2__) && defined(__GLES2__)
 #ifndef __GLAD__
-
+#ifdef __PSP2__
+#define GL_GLEXT_PROTOTYPES
+#endif
 #include <SDL2/SDL_opengles2.h>
 
 #endif

@@ -13,7 +13,7 @@ namespace c2d {
 
     public:
 
-        GLShader(const std::string &name, const char *source, const std::string &version);
+        GLShader(const std::string &name, const char *source, int size, const std::string &version);
 
         GLShader(const std::string &name, const char *vertex, const char *fragment,
                  int vertexSize = 0, int fragmentSize = 0, const std::string &version = "100");

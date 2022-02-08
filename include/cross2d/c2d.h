@@ -48,12 +48,12 @@ extern c2d::Renderer *c2d_renderer;
 
 #ifdef __PSP2__
 #define NO_KEYBOARD 1
-#ifndef NDEBUG
+//#ifndef NDEBUG
 
 #include <psp2/kernel/clib.h>
 
 #define printf sceClibPrintf
-#endif
+//#endif
 
 #include "c2d_gl2.h"
 #include "c2d_sdl2.h"

@@ -2,8 +2,8 @@
 // Created by cpasjuste on 17/09/18.
 //
 
-const char *c2d_texture_v = R"text(
-
+const char *c2d_texture_shader = R"text(
+#if defined(VERTEX)
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
 #define COMPAT_ATTRIBUTE in
@@ -32,9 +32,7 @@ void main()
     TEX0.xy = TexCoord.xy;
 }
 
-)text";
-
-const char *c2d_texture_f = R"text(
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -58,4 +56,5 @@ void main()
     fragColor = COMPAT_TEXTURE(tex, TEX0.xy) * COL0;
 }
 
+#endif
 )text";

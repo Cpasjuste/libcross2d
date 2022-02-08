@@ -2,61 +2,69 @@
 // Created by cpasjuste on 27/01/2022.
 //
 
-#if defined(__PS4__) && defined(PS4_DUMP_SHADERS)
+#ifdef GL_DUMP_SHADERS
 
-#include <cstdio>
-#include <string>
-#include <cstdarg>
+#include "cross2d/c2d.h"
+#include "gl_shader_dumper.h"
+
+#ifdef __PS4__
+
 #include <orbis/Pigletv2VSH.h>
-
-#include "ps4_shader_compiler.h"
-#include "ps4_sys.h"
-
-using namespace c2d;
 
 extern "C" void glPigletGetShaderBinarySCE(
         GLuint program, GLsizei bufSize, GLsizei *length,
         GLenum *binaryFormat, void *binary);
+extern "C" void glGetProgramBinary(
+        GLuint program, GLsizei bufSize, GLsizei *length,
+        GLenum *binaryFormat, void *binary);
+#endif
 
-PS4ShaderCompiler::PS4ShaderCompiler(const std::string &dumpPath) {
+using namespace c2d;
+
+GLShaderDumper::GLShaderDumper(const std::string &dumpPath) {
     dump_path = dumpPath;
     header_path = dump_path + "/" + header_name;
 
     FILE *fp = fopen(header_path.c_str(), "w");
-    fprintf(fp, "#ifndef C2D_PS4_SHADERS_H\n#define C2D_PS4_SHADERS_H\n\n");
+    fprintf(fp, "#ifndef C2D_SHADERS_H\n#define C2D_SHADERS_H\n\n");
     fclose(fp);
 }
 
-PS4ShaderCompiler::~PS4ShaderCompiler() {
+GLShaderDumper::~GLShaderDumper() {
     FILE *fp = fopen(header_path.c_str(), "a");
-    fprintf(fp, "\n#endif //C2D_PS4_SHADERS_H\n");
+    fprintf(fp, "\n#endif //C2D_SHADERS_H\n");
     fclose(fp);
 }
 
-void PS4ShaderCompiler::dump(int id, const std::string &name, const std::string &type) {
-    int size;
+void GLShaderDumper::dump(int id, const std::string &name, const std::string &type) {
     GLenum format = 0;
-    int need_comma = 0, file_size;
+    int need_comma = 0, size;
     std::string path = dump_path + "/" + name + "_" + type + ".cpp";
     char *buf = (char *) malloc(0x5000);
     memset(buf, 0, 0x5000);
 
     // dump shader
+#ifdef __PS4__
     glPigletGetShaderBinarySCE((GLuint) id, 0x5000, &size, &format, buf);
+#else
+    format = GL_SGX_PROGRAM_BINARY_IMG;
+    glGetProgramBinaryOES((GLuint) id, 0x5000, &size, &format, buf);
+#endif
 
     if (size > 0) {
         // add shader to cpp file
-        PS4Sys::print("PS4ShaderCompiler::dumpShaderBinary: "
-                      "dumping shader to: %s, (size: %i)\n", path.c_str(), size);
+        printf("GLShaderDumper::dump: "
+               "dumping shader to: %s, (size: %i)\n", path.c_str(), size);
 
-        file_size = size;
         std::string array_name = "c2d_" + name + "_" + type;
         std::replace(array_name.begin(), array_name.end(), '-', '_');
         array_name.erase(std::remove(array_name.begin(), array_name.end(), '.'), array_name.end());
         FILE *fp = fopen(path.c_str(), "w");
-
-        fprintf(fp, "#include \"ps4_shaders.h\"\n\nconst char %s[%i] = {", array_name.c_str(), size);
-        for (int i = 0; i < file_size; ++i) {
+#ifdef __VITA__
+        fwrite(buf, size, 1, fp);
+#else
+        fprintf(fp, "#include \"%s\"\n\nconst char %s[%i] = {", header_name.c_str(), array_name.c_str(), size);
+        for (int i = 0; i < size; ++i) {
             if (need_comma)
                 fprintf(fp, ", ");
             else
@@ -72,7 +80,11 @@ void PS4ShaderCompiler::dump(int id, const std::string &name, const std::string 
         fp = fopen(header_path.c_str(), "a");
         fprintf(fp, "extern const char %s[];\n", array_name.c_str());
         fprintf(fp, "const int %s_length = %i;\n", array_name.c_str(), size);
+#endif
         fclose(fp);
+    } else {
+        printf("GLShaderDumper::dump: "
+               "dumping shader failed...: %s\n", path.c_str());
     }
 
     free(buf);
