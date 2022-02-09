@@ -75,11 +75,22 @@ bool POSIXIo::exist(const std::string &path) {
 }
 
 bool POSIXIo::create(const std::string &path) {
-#ifdef __PSP2__
-    return sceIoMkdir(path.c_str(), 0777) == 0;
-#else
-    return mkdir(path.c_str(), 0755) == 0;
-#endif
+    char *p = strdup(path.c_str());
+    char *dir = p + 1;
+
+    while (dir) {
+        dir = strchr(dir, '/');
+        if (dir) {
+            *dir = 0;
+        }
+        mkdir(p, 0700);
+        if (dir) {
+            *dir++ = '/';
+        }
+    }
+
+    free(p);
+    return true;
 }
 
 bool POSIXIo::removeFile(const std::string &path) {
@@ -263,7 +274,7 @@ Io::File POSIXIo::findFile(const std::string &path,
 
     if ((dir = opendir(path.c_str())) != nullptr) {
         while ((ent = readdir(dir)) != nullptr) {
-            for (const auto &search : whitelist) {
+            for (const auto &search: whitelist) {
                 if (Utility::contains(ent->d_name, search)) {
                     if (!blacklist.empty() && Utility::contains(ent->d_name, blacklist)) {
                         continue;

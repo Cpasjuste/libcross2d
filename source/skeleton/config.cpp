@@ -57,15 +57,15 @@ bool Config::save() {
     return config_write_file(&config, path.c_str()) == 1;
 }
 
-int Config::getVersion() const {
+int Config::getVersion() {
     return version;
 }
 
-void Config::setVersion(int version) {
-    this->version = version;
+void Config::setVersion(int v) {
+    version = v;
 }
 
-const std::string &Config::getPath() const {
+std::string Config::getPath() const {
     return path;
 }
 

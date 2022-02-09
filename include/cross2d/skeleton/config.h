@@ -11,37 +11,33 @@
 
 #include "config_group.h"
 
-namespace c2d {
+namespace c2d::config {
+    class Config : public Group {
 
-    namespace config {
+    public:
 
-        class Config : public Group {
+        Config(const std::string &name, const std::string &path, int version = 1);
 
-        public:
+        ~Config();
 
-            Config(const std::string &name, const std::string &path, int version = 1);
+        bool load();
 
-            ~Config();
+        bool loadFromString(const std::string &str);
 
-            bool load();
+        bool save();
 
-            bool loadFromString(const std::string &str);
+        int getVersion();
 
-            bool save();
+        void setVersion(int version);
 
-            int getVersion() const;
+        std::string getPath() const;
 
-            void setVersion(int version);
+    private:
 
-            const std::string &getPath() const;
-
-        private:
-
-            int version;
-            std::string path;
-            config_t config;
-        };
-    }
+        int version;
+        std::string path;
+        config_t config;
+    };
 }
 
 #endif //C2D_CONFIG_H
