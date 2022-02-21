@@ -43,8 +43,13 @@ namespace c2d {
             : RectangleShape({(float) rectangle.left, (float) rectangle.top,
                               (float) rectangle.width, (float) rectangle.height}) {
         m_textureRect = rectangle;
-        setTextureRect(rectangle);
+        Shape::setTextureRect(rectangle);
         setTexture(texture);
+    }
+
+    void Sprite::setTextureRect(const IntRect &rect) {
+        RectangleShape::setSize((float) rect.width, (float) rect.height);
+        Shape::setTextureRect(rect);
     }
 
 } // namespace c2d

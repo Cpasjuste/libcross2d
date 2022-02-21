@@ -89,7 +89,7 @@ namespace c2d {
         /// \see getTextureRect, setTexture
         ///
         ////////////////////////////////////////////////////////////
-        void setTextureRect(const IntRect &rect);
+        virtual void setTextureRect(const IntRect &rect);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the fill color of the shape

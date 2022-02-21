@@ -68,6 +68,8 @@ namespace c2d {
         ///
         ////////////////////////////////////////////////////////////
         Sprite(Texture *texture, const IntRect &rectangle);
+
+        void setTextureRect(const IntRect &rect) override;
     };
 
 } // namespace c2d
