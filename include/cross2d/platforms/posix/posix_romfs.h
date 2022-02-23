@@ -16,6 +16,8 @@ namespace c2d {
 
         std::string mountPoint;
 
+        bool inited = false;
+
     private:
         C2DThread *thread = nullptr;
     };

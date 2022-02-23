@@ -36,6 +36,7 @@ static int fuseThread(void *ptr) {
     if (fuse_opt_parse(&args, nullptr, nullptr, nullptr)) {
         printf("POSIXRomFs::POSIXRomFs: fuse_opt_parse failed\n");
         fuse_opt_free_args(&args);
+        romFs->inited = true;
         return EXIT_FAILURE;
     }
 
@@ -43,6 +44,7 @@ static int fuseThread(void *ptr) {
                             true, false)) == nullptr) {
         printf("POSIXRomFs::POSIXRomFs: initFuseZip failed\n");
         fuse_opt_free_args(&args);
+        romFs->inited = true;
         return EXIT_FAILURE;
     }
 
@@ -95,10 +97,12 @@ static int fuseThread(void *ptr) {
     if (fuse_session == nullptr) {
         printf("POSIXRomFs::POSIXRomFs: fuse_setup failed\n");
         delete (data);
+        romFs->inited = true;
         return EXIT_FAILURE;
     }
 
     printf("POSIXRomFs::POSIXRomFs: fuse mount point: %s\n", fuse_mnt);
+    romFs->inited = true;
     res = fuse_loop(fuse_session);
 
     delete (data);
@@ -110,6 +114,7 @@ static int fuseThread(void *ptr) {
 POSIXRomFs::POSIXRomFs(const std::string &mnt) {
     mountPoint = mnt;
     thread = new C2DThread(fuseThread, this);
+    while (!inited) {}
 }
 
 POSIXRomFs::~POSIXRomFs() {
