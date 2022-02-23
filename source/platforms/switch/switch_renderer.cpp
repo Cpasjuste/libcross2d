@@ -13,7 +13,6 @@ void deinitNxLink();
 SWITCHRenderer::SWITCHRenderer(const Vector2f &size) : SDL2Renderer(size) {
 
     initNxLink();
-    romfsInit();
 
     printf("SWITCHRenderer(%ix%i)\n", (int) size.x, (int) size.y);
 
@@ -77,6 +76,5 @@ SWITCHRenderer::~SWITCHRenderer() {
     }
 #endif
 
-    romfsExit();
     deinitNxLink();
 }

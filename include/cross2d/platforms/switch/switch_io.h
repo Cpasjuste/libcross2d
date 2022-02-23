@@ -14,6 +14,10 @@ namespace c2d {
 
     public:
 
+        NXIo() : POSIXIo() {
+            romfsInit();
+        }
+
         std::string getRomFsPath() override {
             return "romfs:/";
         }
