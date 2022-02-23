@@ -62,7 +62,9 @@ FuseZipData *initFuseZip(const char *program, const char *fileName,
         bool readonly, bool force_precise_time) {
 #endif
     FuseZipData *data = NULL;
+#ifndef __CROSS2D__
     int err;
+#endif
     struct zip *zip_file;
     
     int flags = (readonly) ? ZIP_RDONLY : ZIP_CREATE;
