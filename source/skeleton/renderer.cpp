@@ -8,23 +8,11 @@ using namespace c2d;
 
 Renderer *c2d_renderer;
 
-#ifdef __PHYSFS_HOOKS__
-
-extern int romfsInit();
-
-extern int romfsExit();
-
-#endif
-
 Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 
     printf("Renderer(%p)\n", this);
 
     c2d_renderer = this;
-
-#ifdef __PHYSFS_HOOKS__
-    romfsInit();
-#endif
 
     m_input = new C2DInput();
     m_io = new C2DIo();
@@ -126,8 +114,4 @@ Renderer::~Renderer() {
     if (m_shaderList != nullptr) {
         delete (m_shaderList);
     }
-
-#ifdef __PHYSFS_HOOKS__
-    romfsExit();
-#endif
 }

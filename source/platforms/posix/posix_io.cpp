@@ -18,9 +18,22 @@
 
 using namespace c2d;
 
+#ifdef __FUZE_FS__
+
+POSIXIo::POSIXIo() : Io() {
+    POSIXIo::create(POSIXIo::getRomFsPath());
+    romFs = new POSIXRomFs(POSIXIo::getRomFsPath());
+}
+
+POSIXIo::~POSIXIo() {
+    delete (romFs);
+}
+
+#endif
+
 std::string POSIXIo::getRomFsPath() {
-#ifdef __PHYSFS_HOOKS__
-    return "romfs:/";
+#ifdef __FUZE_FS__
+    return "/tmp/c2d_romfs/";
 #else
     return Io::getRomFsPath();
 #endif

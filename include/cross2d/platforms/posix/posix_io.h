@@ -7,11 +7,27 @@
 
 #include "cross2d/skeleton/io.h"
 
+#ifdef __FUZE_FS__
+
+#include "cross2d/platforms/posix/posix_romfs.h"
+
+#endif
+
 namespace c2d {
 
     class POSIXIo : public Io {
 
     public:
+
+#ifdef __FUZE_FS__
+
+        POSIXIo();
+
+        ~POSIXIo() override;
+
+        POSIXRomFs *romFs;
+
+#endif
 
         File getFile(const std::string &path) override;
 

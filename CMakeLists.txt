@@ -330,19 +330,22 @@ elseif (PLATFORM_DREAMCAST)
 elseif (PLATFORM_LINUX)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
 
-    # romfs: physfs
-    pkg_search_module(PHYSFS REQUIRED physfs)
-    # romfs: funchook
-    set(FUNCHOOK_CPU x86 CACHE STRING "" FORCE)
-    add_subdirectory(source/skeleton/romfs/funchook)
-    list(APPEND C2D_LDFLAGS funchook-static)
-    # romfs: physfs wrapper
-    list(APPEND PLATFORM_SOURCES source/skeleton/romfs/romfs.cpp)
-    list(APPEND C2D_INCLUDES ${PHYSFS_INCLUDE_DIRS})
-    list(APPEND C2D_CFLAGS -D__PHYSFS_HOOKS__)
-    list(APPEND C2D_LDFLAGS ${PHYSFS_LIBRARIES})
-    set(PHYSFS_HOOKS ON CACHE BOOL "" FORCE)
-    # romfs: physfs
+    # romfs: fuse-zip
+    pkg_search_module(LIBZIP REQUIRED libzip)
+    pkg_search_module(LIBFUSE REQUIRED fuse)
+    list(APPEND C2D_INCLUDES ${LIBZIP_INCLUDE_DIRS} ${LIBFUSE_INCLUDE_DIRS})
+    list(APPEND C2D_LDFLAGS ${LIBZIP_LIBRARIES} ${LIBFUSE_LIBRARIES})
+    list(APPEND C2D_CFLAGS -D__FUZE_FS__ ${LIBFUSE_CFLAGS})
+    list(APPEND PLATFORM_SOURCES
+            source/skeleton/romfs/fuse-zip/lib/bigBuffer.cpp
+            source/skeleton/romfs/fuse-zip/lib/dataNode.cpp
+            source/skeleton/romfs/fuse-zip/lib/extraField.cpp
+            source/skeleton/romfs/fuse-zip/lib/fileNode.cpp
+            source/skeleton/romfs/fuse-zip/lib/fuse-zip.cpp
+            source/skeleton/romfs/fuse-zip/lib/fuseZipData.cpp
+            source/skeleton/romfs/fuse-zip/lib/util.cpp
+            )
+    # romfs: fuse-zip
 
     if (NOT PLATFORM_WINDOWS)
         list(APPEND C2D_CFLAGS -D__LINUX__)
