@@ -8,6 +8,13 @@ using namespace c2d;
 
 Renderer *c2d_renderer;
 
+#ifdef __FUZE_FS__
+
+#include "cross2d/platforms/posix/posix_romfs.h"
+
+POSIXRomFs *c2d_romFs = nullptr;
+#endif
+
 Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 
     printf("Renderer(%p)\n", this);
@@ -114,4 +121,10 @@ Renderer::~Renderer() {
     if (m_shaderList != nullptr) {
         delete (m_shaderList);
     }
+
+#ifdef __FUZE_FS__
+    if (c2d_romFs) {
+        delete (c2d_romFs);
+    }
+#endif
 }

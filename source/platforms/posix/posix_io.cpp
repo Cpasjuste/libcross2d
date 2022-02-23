@@ -20,13 +20,17 @@ using namespace c2d;
 
 #ifdef __FUZE_FS__
 
-POSIXIo::POSIXIo() : Io() {
-    POSIXIo::create(POSIXIo::getRomFsPath());
-    romFs = new POSIXRomFs(POSIXIo::getRomFsPath());
-}
+#include "cross2d/platforms/posix/posix_romfs.h"
 
-POSIXIo::~POSIXIo() {
-    delete (romFs);
+extern POSIXRomFs *c2d_romFs;
+
+POSIXIo::POSIXIo() : Io() {
+    // we don't want multiple instances of fuse-zip.
+    // romFs (fuse-zip) will be deleted from renderer
+    if (!c2d_romFs) {
+        POSIXIo::create(POSIXIo::getRomFsPath());
+        c2d_romFs = new POSIXRomFs(POSIXIo::getRomFsPath());
+    }
 }
 
 #endif
