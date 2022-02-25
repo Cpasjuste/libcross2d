@@ -65,10 +65,10 @@ void Input::setJoystickMapping(int player, const int *mapping, int deadzone) {
     for (int i = 0; i < KEY_COUNT; i++) {
         players[player].mapping[i] = mapping[i];
     }
-    players[player].lx.id = mapping[14];
-    players[player].ly.id = mapping[15];
-    players[player].rx.id = mapping[16];
-    players[player].ry.id = mapping[17];
+    players[player].lx.id = mapping[16];
+    players[player].ly.id = mapping[17];
+    players[player].rx.id = mapping[18];
+    players[player].ry.id = mapping[19];
     players[player].dead_zone = deadzone;
 }
 

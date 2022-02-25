@@ -18,7 +18,11 @@ static int key_id[KEY_COUNT]{
         Input::Key::Fire3,
         Input::Key::Fire4,
         Input::Key::Fire5,
-        Input::Key::Fire6
+        Input::Key::Fire6,
+        Input::Key::Fire7,
+        Input::Key::Fire8,
+        Input::Key::Menu1,
+        Input::Key::Menu2
 };
 
 SWITCHInput::SWITCHInput() : SDL2Input() {
@@ -53,6 +57,7 @@ Input::Player *SWITCHInput::update(int rotate) {
         previous_handheld_mode = handheld_mode;
         previous_single_joycon_mode = single_joycon_mode;
     }
+
     return players;
 }
 
@@ -145,22 +150,24 @@ void SWITCHInput::process_buttons(Input::Player &player, int rotate) {
         return;
     }
 
-    int mapLeft[] = {18, 16, 17, 19, 11, 6, 15, 12, 14, 13, 24, 25};
-    int mapRight[] = {20, 22, 23, 21, 10, 7, 2, 0, 3, 1, 26, 27};
+    // TODO: fix for new c2d input (KEY_COUNT != 12)
+    int mapLeft[KEY_COUNT] = {18, 16, 17, 19, 11, 6, 15, 12, 14, 13, 24, 25};
+    int mapRight[KEY_COUNT] = {20, 22, 23, 21, 10, 7, 2, 0, 3, 1, 26, 27};
     bool joyLeft, joyRight;
     joyLeft = joyRight = false;
+    int mapping;
 
     if (single_joycon_mode && !handheld_mode) {
         auto joystick = (SDL_Joystick *) player.data;
         int index = (int) SDL_JoystickInstanceID(joystick);
         if (hidGetNpadDeviceType((HidNpadIdType) index) & HidDeviceTypeBits_JoyLeft) {
-            if (SDL_JoystickGetButton(joystick, KEY_JOY_ZL_DEFAULT))
+            if (SDL_JoystickGetButton(joystick, KEY_JOY_FIRE7_DEFAULT)) // ZL
                 player.keys |= Input::Key::Select;
             if (SDL_JoystickGetButton(joystick, KEY_JOY_LSTICK_DEFAULT))
                 player.keys |= Input::Key::Start;
             joyLeft = true;
         } else if (hidGetNpadDeviceType((HidNpadIdType) index) & HidDeviceTypeBits_JoyRight) {
-            if (SDL_JoystickGetButton(joystick, KEY_JOY_ZR_DEFAULT))
+            if (SDL_JoystickGetButton(joystick, KEY_JOY_FIRE8_DEFAULT)) // ZR
                 player.keys |= Input::Key::Select;
             if (SDL_JoystickGetButton(joystick, KEY_JOY_RSTICK_DEFAULT))
                 player.keys |= Input::Key::Start;
@@ -168,14 +175,14 @@ void SWITCHInput::process_buttons(Input::Player &player, int rotate) {
         }
     }
 
-    for (int i = 0; i < 12; i++) {
-        int mapping = 0;
-        if (joyLeft)
+    for (int i = 0; i < KEY_COUNT; i++) {
+        if (joyLeft) {
             mapping = mapLeft[i];
-        else if (joyRight)
+        } else if (joyRight) {
             mapping = mapRight[i];
-        else
+        } else {
             mapping = player.mapping[i];
+        }
         if (SDL_JoystickGetButton((SDL_Joystick *) player.data, mapping))
             player.keys |= key_id[i];
     }

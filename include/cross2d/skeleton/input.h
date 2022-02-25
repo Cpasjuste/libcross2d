@@ -13,7 +13,7 @@
 #endif
 
 #define PLAYER_MAX 4
-#define KEY_COUNT 14
+#define KEY_COUNT 16
 
 #define EV_RESIZE   BIT(1)
 #define EV_QUIT     BIT(2)
@@ -37,10 +37,12 @@ namespace c2d {
             Fire4 = BIT(12),
             Fire5 = BIT(13),
             Fire6 = BIT(14),
-            Menu1 = BIT(8),
-            Menu2 = BIT(7),
-            Touch = BIT(17),
-            Delay = BIT(18)
+            Fire7 = BIT(15),
+            Fire8 = BIT(16),
+            Menu1 = BIT(17),
+            Menu2 = BIT(18),
+            Touch = BIT(19),
+            Delay = BIT(20)
         };
 
         struct Axis {
