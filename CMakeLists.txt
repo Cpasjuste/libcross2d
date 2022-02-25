@@ -309,7 +309,6 @@ elseif (PLATFORM_SWITCH)
     if (OPTION_DEBUG_SVC)
         list(APPEND C2D_CFLAGS -D__DEBUG_SVC__)
     endif ()
-    set(CMAKE_EXECUTABLE_SUFFIX "")
     ########################
     # DREAMCAST PLATORM
     ########################

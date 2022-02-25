@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "cross2d/c2d.h"
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) && !defined(__DEBUG_SVC__)
 static int sock = -1;
 #endif
 

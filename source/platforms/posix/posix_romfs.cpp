@@ -112,6 +112,9 @@ static int fuseThread(void *ptr) {
 }
 
 POSIXRomFs::POSIXRomFs(const std::string &mnt) {
+    // TODO: fix proper unmount with gdb signals
+    system("umount /tmp/c2d_romfs");
+    // TODO: fix proper unmount with gdb signals
     mountPoint = mnt;
     thread = new C2DThread(fuseThread, this);
     while (!inited) {}
