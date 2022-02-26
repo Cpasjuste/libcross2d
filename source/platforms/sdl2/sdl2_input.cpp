@@ -355,14 +355,10 @@ void SDL2Input::process_keyboard(Input::Player &player, int rotate) {
                     player.keys |= Input::Key::Up;
                 }
             } else {
-                printf("player.keys |= key_id[%i] (%x)\n", i, key_id[i]);
                 player.keys |= key_id[i];
             }
         }
     }
-
-    if (player.keys != 0 && player.keys != Input::Key::Delay)
-        printf("#####\n");
 #endif
 }
 
