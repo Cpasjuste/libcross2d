@@ -324,12 +324,8 @@ GLShaderList::GLShaderList() : ShaderList() {
                      c2d_scanline_simple_v_length, c2d_scanline_simple_f_length));
 
     // sharp
-    add(new GLShader("sharp-2xsal", c2d_sharp_2xsal_v, c2d_sharp_2xsal_f,
-                     c2d_sharp_2xsal_v_length, c2d_sharp_2xsal_f_length));
     add(new GLShader("sharp-sabr-v3.0", c2d_sharp_sabr_v30_v, c2d_sharp_sabr_v30_f,
                      c2d_sharp_sabr_v30_v_length, c2d_sharp_sabr_v30_f_length));
-    add(new GLShader("sharp-supereagle", c2d_sharp_supereagle_v, c2d_sharp_supereagle_f,
-                     c2d_sharp_supereagle_v_length, c2d_sharp_supereagle_f_length));
 #else
     // color shader
     color = new GLShader("c2d-color", c2d_color_v, c2d_color_f,
@@ -383,9 +379,7 @@ GLShaderList::GLShaderList() : ShaderList() {
     add(new GLShader("scanline-simple", c2d_scanline_simple_shader, version));
 
     // sharp
-    add(new GLShader("sharp-2xsal", c2d_sharp_2xsal_shader, version));
     add(new GLShader("sharp-sabr-v3.0", c2d_sharp_sabr_v30_shader, version));
-    add(new GLShader("sharp-supereagle", c2d_sharp_supereagle_shader, version));
 #ifndef __PS4__
     add(new GLShader("sharp-xbrz-freescale", c2d_sharp_xbrz_freescale_shader, version));
 #endif
