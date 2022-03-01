@@ -682,8 +682,10 @@ namespace c2d {
             // Update the bounding rectangle
             m_bounds.left = minX;
             m_bounds.top = minY;
-            m_bounds.width = (maxX - minX) + (2 * scale);
-            m_bounds.height = (maxY - minY) + (2 * scale);
+            //m_bounds.width = (maxX - minX) + (2 * scale);     // ?? why did I do this
+            //m_bounds.height = (maxY - minY) + (2 * scale);    // ?? why did I do this
+            m_bounds.width = (maxX - minX) + m_outlineThickness;
+            m_bounds.height = (maxY - minY) + m_outlineThickness;
             m_size = {m_bounds.width, m_bounds.height};
         }
 
