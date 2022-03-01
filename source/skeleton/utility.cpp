@@ -132,7 +132,7 @@ std::string Utility::removeExt(const std::string &str) {
 int Utility::parseInt(const std::string &str, int defValue) {
     char *end = nullptr;
     long i = strtol(str.c_str(), &end, 10);
-    if (end != nullptr) {
+    if (end && end != str.c_str()) {
         return (int) i;
     }
     return defValue;
@@ -141,7 +141,7 @@ int Utility::parseInt(const std::string &str, int defValue) {
 float Utility::parseFloat(const std::string &str) {
     char *end = nullptr;
     double d = strtod(str.c_str(), &end);
-    if (end) {
+    if (end && end != str.c_str()) {
         return (float) d;
     }
     return 0;
