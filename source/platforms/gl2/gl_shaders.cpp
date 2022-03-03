@@ -139,25 +139,25 @@ GLShader::GLShader(const std::string &n, const char *source, const std::string &
 
     size_t pos = std::string(source).find("#version");
     if (pos != std::string::npos) {
-        //printf("GLShader::GLShader: %s, version: (from source)\n", name.c_str());
+        //printf("GLShader::GLShader: %s, version: (from source)\n", n.c_str());
         vertex = std::string(source).insert(pos + 13, "#define VERTEX\n");
         fragment = std::string(source).insert(pos + 13, "#define FRAGMENT\n");
     } else {
-        //printf("GLShader::GLShader: %s, version: %s\n", name.c_str(), version.c_str());
+        //printf("GLShader::GLShader: %s, version: %s\n", n.c_str(), version.c_str());
         vertex = std::string("#version " + version + "\n#define VERTEX\n") + source;
         fragment = std::string("#version " + version + "\n#define FRAGMENT\n") + source;
     }
 
     vsh = compile(GL_VERTEX_SHADER, vertex.c_str(), 0);
     if (!vsh) {
-        printf("GLShader: vsh compilation failed\n");
+        printf("GLShader: %s, vsh compilation failed\n", n.c_str());
         return;
     }
 
     fsh = compile(GL_FRAGMENT_SHADER, fragment.c_str(), 0);
     if (!fsh) {
         glDeleteShader(vsh);
-        printf("GLShader: fsh compilation failed\n");
+        printf("GLShader: %s, fsh compilation failed\n", n.c_str());
         return;
     }
 
@@ -172,7 +172,7 @@ GLShader::GLShader(const std::string &n, const char *source, const std::string &
     if (!link_result) {
         char buf[512];
         glGetProgramInfoLog(program, sizeof(buf), nullptr, buf);
-        printf("GLShader: Link error: %s\n", buf);
+        printf("GLShader: %s, link error: %s\n", n.c_str(), buf);
         glDeleteShader(vsh);
         glDeleteShader(fsh);
         return;
@@ -251,11 +251,11 @@ GLShaderList::GLShaderList() : ShaderList() {
 #ifndef __GLES2__
     const char *glsl = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
     if (glsl && strlen(glsl) > 0) {
-        char v[32];
+        char v[4];
         int major, minor;
-        sscanf(v, "%d.%d", &major, &minor);
+        sscanf(glsl, "%d.%d", &major, &minor);
         if (major > 0) {
-            snprintf(v, 15, "%i", major * 100 + minor);
+            snprintf(v, 4, "%i", major * 100 + minor);
             version = v;
         }
     }
@@ -355,8 +355,10 @@ GLShaderList::GLShaderList() : ShaderList() {
     add(new GLShader("crt-mattias", c2d_crt_mattias_shader, version));
 #endif
     add(new GLShader("crt-nes-mini", c2d_crt_nes_mini_shader, version));
+#ifndef __SWITCH__
     add(new GLShader("crt-pi", c2d_crt_pi_shader, version));
     add(new GLShader("crt-pi-flat", c2d_crt_pi_flat_shader, version));
+#endif
     add(new GLShader("crt-zfast", c2d_crt_zfast_shader, version));
 
     // handheld shaders

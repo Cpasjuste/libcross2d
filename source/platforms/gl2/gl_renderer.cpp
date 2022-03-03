@@ -54,7 +54,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     tex = (GLTexture *) texture;
     shader = tex && tex->available ? (GLShader *) m_shaderList->get(0) :
              (GLShader *) ((GLShaderList *) m_shaderList)->color;
-    if (tex && tex->shader) {
+    if (tex && tex->shader && tex->shader->available) {
         shader = (GLShader *) tex->shader;
     }
 

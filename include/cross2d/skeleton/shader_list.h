@@ -23,6 +23,7 @@ namespace c2d {
             virtual ~Shader() = default;
 
             std::string name;
+            bool available = false;
         };
 
         ShaderList() = default;

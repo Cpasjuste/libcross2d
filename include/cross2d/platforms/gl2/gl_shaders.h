@@ -32,7 +32,6 @@ namespace c2d {
 
     private:
         GLuint program = -1;
-        bool available = false;
     };
 
     class GLShaderList : public ShaderList {
