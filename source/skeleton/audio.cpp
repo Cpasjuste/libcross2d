@@ -8,24 +8,23 @@
 using namespace c2d;
 
 Audio::Audio(int rate, int samples, C2DAudioCallback cb) {
-
     mutex = new C2DMutex();
+
     m_sample_rate = rate;
     m_samples = samples;
     m_samples_size = m_samples * channels * (int) sizeof(int16_t);
 
     m_buffer = new SampleBuffer();
-    m_buffer->resize(m_samples * 5);
+    m_buffer->resize(m_samples * channels * 10);
 
     callback = cb;
     available = true;
 
-    printf("Audio: rate = %i, samples = %i, samples size = %i\n",
+    printf("Audio::Audio: rate = %i, samples = %i, samples size = %i\n",
            rate, samples, m_samples_size);
 }
 
 void Audio::play(const void *data, int samples, bool sync) {
-
     if (available) {
         if (paused) {
             pause(0);
@@ -35,15 +34,18 @@ void Audio::play(const void *data, int samples, bool sync) {
             return;
         }
 
-        int size = samples * channels * (int) sizeof(int16_t) >> 1;
+        //printf("play: samples: %i, queued: %i\n", samples, getSampleBufferQueued());
         if (sync) {
-            while (getSampleBufferQueued() > size) {
-                c2d_renderer->delay(1);
+            while (getSampleBufferQueued() >= getSamples()) {
+                //printf("play (delay): samples: %i, queued: %i\n", samples, getSampleBufferQueued());
+                if (!available) return;
+                if (c2d_renderer) c2d_renderer->delay(1);
             }
         }
+        //printf("play (done): queued: %i\n", getSampleBufferQueued());
 
         lock();
-        m_buffer->push((int16_t *) data, size);
+        m_buffer->push((int16_t *) data, samples * channels);
         unlock();
     }
 }
@@ -105,17 +107,20 @@ bool Audio::isAvailable() {
 }
 
 bool Audio::lock() {
-    return mutex->lock();
+    return mutex ? mutex->lock() : false;
 }
 
 bool Audio::unlock() {
-    return mutex->unlock();
+    return mutex ? mutex->unlock() : false;
 }
 
 Audio::~Audio() {
+    available = false;
+
     if (m_buffer) {
         delete (m_buffer);
     }
+
     if (mutex) {
         delete (mutex);
     }

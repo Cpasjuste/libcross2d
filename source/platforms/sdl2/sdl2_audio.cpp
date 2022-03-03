@@ -7,22 +7,20 @@
 
 using namespace c2d;
 
-static void audioThread(void *data, Uint8 *stream, int size) {
-
+static void audioThread(void *data, Uint8 *stream, int len) {
     auto audio = (SDL2Audio *) data;
+    int samples = len >> 1;
 
-    //printf("c2d::sdl2audio::thread: want: %i, filled: %i\n",
-    //       size, audio->getSampleBufferQueued());
-
-    if (audio->getSampleBufferQueued() >= size >> 1) {
+    //printf("c2d::sdl2audio::thread: want: %i, queued: %i\n", samples, audio->getSampleBufferQueued());
+    if (audio->getSampleBufferQueued() >= samples) {
         audio->lock();
-        audio->getSampleBuffer()->pull((int16_t *) stream, size >> 1);
+        audio->getSampleBuffer()->pull((int16_t *) stream, samples);
         audio->unlock();
+        //printf("c2d::sdl2audio::thread: queued: %i\n", audio->getSampleBufferQueued());
     }
 }
 
 SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, samples, cb) {
-
     if (!available) {
         return;
     }
@@ -54,18 +52,24 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
         return;
     }
 
-    printf("SDL2Audio: format %d (wanted: %d)\n", wanted.format, obtained.format);
-    printf("SDL2Audio: frequency %d (wanted: %d)\n", wanted.freq, obtained.freq);
-    printf("SDL2Audio: samples %d (wanted: %d)\n", wanted.samples, obtained.samples);
-    printf("SDL2Audio: channels %d (wanted: %d)\n", wanted.channels, obtained.channels);
+    printf("SDL2Audio: format %d (wanted: %d)\n", obtained.format, wanted.format);
+    printf("SDL2Audio: frequency %d (wanted: %d)\n", obtained.freq, wanted.freq);
+    printf("SDL2Audio: samples %d (wanted: %d)\n", obtained.samples, wanted.samples);
+    printf("SDL2Audio: channels %d (wanted: %d)\n", obtained.channels, wanted.channels);
 
+    // adjust to obtained values
+    m_samples = obtained.samples * channels;
+    m_samples_size = m_samples * channels * (int) sizeof(int16_t);
+    m_buffer->resize(m_samples * channels * 10);
+
+    printf("SDL2Audio: rate = %i, samples = %i, samples size = %i\n",
+           m_sample_rate, m_samples, m_samples_size);
 
     SDL_PauseAudioDevice(deviceID, 1);
     available = true;
 }
 
 SDL2Audio::~SDL2Audio() {
-
     if (deviceID != 0u) {
         SDL_PauseAudioDevice(deviceID, 1);
         SDL_CloseAudioDevice(deviceID);
@@ -77,7 +81,6 @@ SDL2Audio::~SDL2Audio() {
 }
 
 void SDL2Audio::pause(int pause) {
-
     if (available) {
         SDL_PauseAudioDevice(deviceID, pause);
     }
@@ -86,7 +89,6 @@ void SDL2Audio::pause(int pause) {
 }
 
 void SDL2Audio::reset() {
-
     if (available) {
         SDL_PauseAudioDevice(deviceID, 1);
     }

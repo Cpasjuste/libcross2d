@@ -103,8 +103,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
         GL_CHECK(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                                        (void *) offsetof(Vertex, texCoords)));
         // set retroarch shader params
-        inputSize = {(float) texture->getTextureRect().width, (float) texture->getTextureRect().height};
-        textureSize = {texture->getSize().x, texture->getSize().y};
+        textureSize = inputSize = {texture->getSize().x, texture->getSize().y};
         outputSize = {inputSize.x * texture->getScale().x, inputSize.y * texture->getScale().y};
         shader->SetUniform("InputSize", inputSize);
         shader->SetUniform("TextureSize", textureSize);

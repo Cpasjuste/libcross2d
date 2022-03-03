@@ -6,7 +6,7 @@
 
 using namespace c2d;
 
-Renderer *c2d_renderer;
+Renderer *c2d_renderer = nullptr;
 
 #ifdef __FUZE_FS__
 

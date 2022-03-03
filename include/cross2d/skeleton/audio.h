@@ -2,8 +2,8 @@
 // Created by cpasjuste on 12/12/16.
 //
 
-#ifndef _C2D_AUDIO_H_
-#define _C2D_AUDIO_H_
+#ifndef C2D_AUDIO_H
+#define C2D_AUDIO_H
 
 #include <cstring>
 #include "cross2d/skeleton/mutex.h"
@@ -71,4 +71,4 @@ namespace c2d {
     };
 }
 
-#endif //_C2D_AUDIO_H_
+#endif //C2D_AUDIO_H
