@@ -45,7 +45,7 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
     wanted.callback = cb ? cb : audioThread;
     wanted.userdata = this;
 
-    deviceID = SDL_OpenAudioDevice(nullptr, 0, &wanted, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
+    deviceID = SDL_OpenAudioDevice(nullptr, 0, &wanted, &obtained, 0);
     if (deviceID == 0u) {
         printf("SDL2Audio: unable to open audio: %s\n", SDL_GetError());
         available = false;
@@ -58,7 +58,7 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
     printf("SDL2Audio: channels %d (wanted: %d)\n", obtained.channels, wanted.channels);
 
     // adjust to obtained values
-    m_samples = obtained.samples * channels;
+    m_samples = obtained.samples;
     m_samples_size = m_samples * channels * (int) sizeof(int16_t);
     m_buffer->resize(m_samples * channels * 10);
 
