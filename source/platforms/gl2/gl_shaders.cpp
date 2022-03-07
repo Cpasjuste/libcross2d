@@ -251,11 +251,11 @@ GLShaderList::GLShaderList() : ShaderList() {
 #ifndef __GLES2__
     const char *glsl = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
     if (glsl && strlen(glsl) > 0) {
-        char v[4];
+        char v[16];
         int major, minor;
         sscanf(glsl, "%d.%d", &major, &minor);
         if (major > 0) {
-            snprintf(v, 4, "%i", major * 100 + minor);
+            snprintf(v, 16, "%i", major * 100 + minor);
             version = v;
         }
     }
