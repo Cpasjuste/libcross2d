@@ -19,8 +19,7 @@ namespace c2d {
         int join() override;
 
     private:
-        Handle handle;
-        void *stack = nullptr;
+        void *thread = nullptr;
     };
 }
 

@@ -29,7 +29,6 @@ static void audioCallback(void *const nul_) {
 // Audio thread
 // This handles calling the decoder function to fill NDSP buffers as necessary
 static int audioThread(void *data) {
-
     auto *audio = (CTRAudio *) data;
 
     while (!s_quit && audio->isAvailable()) {  // Whilst the quit flag is unset,
@@ -40,16 +39,14 @@ static int audioThread(void *data) {
                 continue;
             }
             ndspWaveBuf *waveBuf = &s_waveBufs[i];
-            audio->lock();
             if (audio->getSampleBufferQueued() >= audio->getSamplesSize() >> 1) {
+                audio->lock();
                 audio->getSampleBuffer()->pull((int16_t *) waveBuf->data_pcm16, audio->getSamplesSize() >> 1);
                 audio->unlock();
                 // Pass samples to NDSP
                 waveBuf->nsamples = audio->getSamples();
                 ndspChnWaveBufAdd(0, waveBuf);
                 DSP_FlushDataCache(waveBuf->data_pcm16, audio->getSamplesSize());
-            } else {
-                audio->unlock();
             }
         }
 
@@ -63,18 +60,16 @@ static int audioThread(void *data) {
 }
 
 CTRAudio::CTRAudio(int rate, int samples, C2DAudioCallback cb) : Audio(rate, samples, cb) {
-
-    available = false;
-
     // Setup LightEvent for synchronisation of audioThread
     LightEvent_Init(&s_event, RESET_ONESHOT);
 
     Result rc = ndspInit();
     if (R_FAILED(rc)) {
-        if ((R_SUMMARY(rc) == RS_NOTFOUND) && (R_MODULE(rc) == RM_DSP))
+        if ((R_SUMMARY(rc) == RS_NOTFOUND) && (R_MODULE(rc) == RM_DSP)) {
             printf("CTRAudio: DSP init failed: dspfirm.cdc missing!\n");
-        else
+        } else {
             printf("CTRAudio: DSP init failed. Error code: 0x%lx\n", rc);
+        }
         available = false;
         return;
     }
@@ -99,11 +94,12 @@ CTRAudio::CTRAudio(int rate, int samples, C2DAudioCallback cb) : Audio(rate, sam
     ndspSetCallback(audioCallback, nullptr);
 
     thread = new C2DThread(audioThread, this);
+
+    available = true;
     paused = true;
 }
 
 void CTRAudio::pause(int pause) {
-
     Audio::pause(pause);
 
     if (available) {
@@ -112,7 +108,6 @@ void CTRAudio::pause(int pause) {
 }
 
 void CTRAudio::reset() {
-
     if (available) {
         ndspChnReset(0);
     }
@@ -128,9 +123,15 @@ CTRAudio::~CTRAudio() {
     s_quit = true;
     available = false;
     LightEvent_Signal(&s_event);
-    thread->join();
-    delete (thread);
-    ndspChnReset(0);
-    linearFree(s_audioBuffer);
+
+    if (thread) {
+        thread->join();
+        delete (thread);
+    }
+
+    if (s_audioBuffer) {
+        linearFree(s_audioBuffer);
+    }
+
     ndspExit();
 }
