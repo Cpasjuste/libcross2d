@@ -8,57 +8,53 @@
 #include "cross2d/skeleton/renderer.h"
 #include "citro3d.h"
 
-typedef struct {
-    float pos[3];
-    float texcoord[2];
-    float ptcoord[2];
-    u32 color;
-} C2Di_Vertex;
-
-typedef struct {
-    DVLB_s *shader;
-    shaderProgram_s program;
-    C3D_AttrInfo attrInfo;
-    C3D_BufInfo bufInfo;
-    C3D_ProcTex ptBlend;
-    C3D_ProcTex ptCircle;
-    C3D_ProcTexLut ptBlendLut;
-    C3D_ProcTexLut ptCircleLut;
-    u32 sceneW, sceneH;
-
-    C2Di_Vertex *vtxBuf;
-    size_t vtxBufSize;
-    size_t vtxBufPos;
-    size_t vtxBufLastPos;
-
-    u32 flags;
-    C3D_Mtx projMtx;
-    C3D_Mtx mdlvMtx;
-    C3D_Tex *curTex;
-    u32 fadeClr;
-} C2Di_Context;
-
 namespace c2d {
 
     class CTRRenderer : public Renderer {
 
     public:
-
         explicit CTRRenderer(const Vector2f &size = Vector2f(0, 0));
 
         ~CTRRenderer() override;
 
-        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture, Sprite *sprite) override;
+        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
 
         void flip(bool draw = true, bool inputs = true) override;
 
         void delay(unsigned int ms) override;
 
-    private:
+        C3D_RenderTarget *target;
 
-        C3D_RenderTarget *renderTarget = nullptr;
-        int uLoc_mdlvMtx, uLoc_projMtx;
+    private:
+        typedef struct {
+            float pos[3];
+            float texcoord[2];
+            float blend[2];
+            u32 color;
+        } C2Di_Vertex;
+
+        typedef struct {
+            DVLB_s *shader;
+            shaderProgram_s program;
+            C3D_AttrInfo attrInfo;
+            C3D_BufInfo bufInfo;
+            C3D_ProcTex ptBlend;
+            C3D_ProcTexLut ptBlendLut;
+
+            C2Di_Vertex *vtxBuf;
+            size_t vtxBufSize;
+            size_t vtxBufPos;
+            size_t vtxBufLastPos;
+
+            u32 flags;
+            C3D_Mtx projMtx;
+            C3D_Mtx mdlvMtx;
+        } C2Di_Context;
+
+        C2Di_Context ctx;
+
         C3D_Mtx s_projTop;
+        int uLoc_mdlvMtx, uLoc_projMtx;
     };
 }
 

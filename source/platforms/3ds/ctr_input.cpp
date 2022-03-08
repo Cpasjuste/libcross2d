@@ -19,15 +19,19 @@ static int key_id[KEY_COUNT]{
         Input::Key::Fire3,
         Input::Key::Fire4,
         Input::Key::Fire5,
-        Input::Key::Fire6
+        Input::Key::Fire6,
+        Input::Key::Fire7,
+        Input::Key::Fire8,
+        Input::Key::Menu1,
+        Input::Key::Menu2
 };
 
 CTRInput::CTRInput() : Input() {
 
     players[0].enabled = true;
 
-    for (auto &player : players) {
-        for (int &key : player.mapping) {
+    for (auto &player: players) {
+        for (int &key: player.mapping) {
             key = 0;
         }
     }
@@ -35,7 +39,7 @@ CTRInput::CTRInput() : Input() {
 
 CTRInput::~CTRInput() {
 
-    for (auto &player : players) {
+    for (auto &player: players) {
         player.enabled = false;
     }
 }
@@ -48,7 +52,7 @@ bool CTRInput::waitKey(unsigned int *key, int player) {
 
 Input::Player *CTRInput::update(int rotate) {
 
-    for (auto &player : players) {
+    for (auto &player: players) {
         player.keys = 0;
     }
 
@@ -59,8 +63,10 @@ Input::Player *CTRInput::update(int rotate) {
     }
 
     hidScanInput();
-    circlePosition circle;
-    hidCircleRead(&circle);
+
+    // TODO
+    //circlePosition circle;
+    //hidCircleRead(&circle);
 
     process_buttons(players[0], rotate);
 

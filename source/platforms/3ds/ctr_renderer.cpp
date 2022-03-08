@@ -2,41 +2,75 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#include <3ds.h>
-#include <citro2d.h>
 #include "cross2d/platforms/3ds/ctr_texture.h"
 #include "cross2d/platforms/3ds/ctr_renderer.h"
+#include "vshader_shbin.h"
 
 using namespace c2d;
 
-extern "C" {
-extern C2Di_Context __C2Di_Context;
-extern void C2Di_AppendVtx(float x, float y, float z, float u, float v, float ptx, float pty, u32 color);
-}
-
 CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
-
     osSetSpeedupEnable(true);
 
     gfxInitDefault();
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
-    C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
-    C2D_Prepare();
 
-    //consoleInit(GFX_BOTTOM, nullptr);
-    consoleDebugInit(debugDevice_SVC);
-    stdout = stderr;
+    /// from citro2d (init)
+    ctx.vtxBufSize = 64 * 1024;
+    ctx.vtxBuf = (C2Di_Vertex *) linearAlloc(ctx.vtxBufSize * sizeof(C2Di_Vertex));
+    if (!ctx.vtxBuf) {
+        return;
+    }
 
-    renderTarget = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
-    C3D_FrameEndHook(nullptr, nullptr);
+    ctx.shader = DVLB_ParseFile((u32 *) render2d_shbin, render2d_shbin_size);
+    if (!ctx.shader) {
+        linearFree(ctx.vtxBuf);
+        return;
+    }
 
-    uLoc_mdlvMtx = shaderInstanceGetUniformLocation(__C2Di_Context.program.vertexShader, "mdlvMtx");
-    uLoc_projMtx = shaderInstanceGetUniformLocation(__C2Di_Context.program.vertexShader, "projMtx");
+    shaderProgramInit(&ctx.program);
+    shaderProgramSetVsh(&ctx.program, &ctx.shader->DVLE[0]);
+
+    AttrInfo_Init(&ctx.attrInfo);
+    AttrInfo_AddLoader(&ctx.attrInfo, 0, GPU_FLOAT, 3);         // v0=position
+    AttrInfo_AddLoader(&ctx.attrInfo, 1, GPU_FLOAT, 2);         // v1=texcoord
+    AttrInfo_AddLoader(&ctx.attrInfo, 2, GPU_FLOAT, 2);         // v2=blend
+    AttrInfo_AddLoader(&ctx.attrInfo, 3, GPU_UNSIGNED_BYTE, 4); // v3=color
+
+    BufInfo_Init(&ctx.bufInfo);
+    BufInfo_Add(&ctx.bufInfo, ctx.vtxBuf, sizeof(C2Di_Vertex), 4, 0x3210);
+
+    // Cache these common projection matrices
     Mtx_OrthoTilt(&s_projTop, 0.0f, 400.0f, 240.0f, 0.0f, 1.0f, -1.0f, true);
-    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projMtx, &s_projTop);
-    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_mdlvMtx, &__C2Di_Context.mdlvMtx);
 
-    C3D_TexEnv *env = C3D_GetTexEnv(1);
+    // Prepare proctex
+    C3D_ProcTexInit(&ctx.ptBlend, 0, 1);
+    C3D_ProcTexClamp(&ctx.ptBlend, GPU_PT_CLAMP_TO_EDGE, GPU_PT_CLAMP_TO_EDGE);
+    C3D_ProcTexCombiner(&ctx.ptBlend, true, GPU_PT_U, GPU_PT_V);
+    C3D_ProcTexFilter(&ctx.ptBlend, GPU_PT_LINEAR);
+
+    // Prepare proctex lut
+    float data[129];
+    for (int i = 0; i <= 128; i++) {
+        data[i] = (float) i / 128.0f;
+    }
+    ProcTexLut_FromArray(&ctx.ptBlendLut, data);
+
+    /// from citro2d (prepare)
+    C3D_BindProgram(&ctx.program);
+    C3D_SetAttrInfo(&ctx.attrInfo);
+    C3D_SetBufInfo(&ctx.bufInfo);
+    C3D_ProcTexBind(1, &ctx.ptBlend);
+    C3D_ProcTexLutBind(GPU_LUT_ALPHAMAP, &ctx.ptBlendLut);
+
+    C3D_TexEnv *env;
+    // Set texenv0 to retrieve the texture color (or white if disabled)
+    env = C3D_GetTexEnv(0);
+    C3D_TexEnvInit(env);
+    C3D_TexEnvFunc(env, C3D_Both, GPU_REPLACE);
+    C3D_TexEnvColor(env, 0xFFFFFFFF);
+
+    // Set texenv1 to blend the output of texenv0 with the primary color
+    env = C3D_GetTexEnv(1);
     C3D_TexEnvInit(env);
     C3D_TexEnvSrc(env, C3D_RGB, GPU_PREVIOUS, GPU_PRIMARY_COLOR, GPU_TEXTURE3);
     C3D_TexEnvOpRgb(env, GPU_TEVOP_RGB_SRC_COLOR, GPU_TEVOP_RGB_SRC_COLOR, GPU_TEVOP_RGB_ONE_MINUS_SRC_ALPHA);
@@ -44,13 +78,40 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     C3D_TexEnvFunc(env, C3D_RGB, GPU_INTERPOLATE);
     C3D_TexEnvFunc(env, C3D_Alpha, GPU_MODULATE);
 
-    printf("CTRRenderer(%ix%i)\n", (int) size.x, (int) size.y);
+    // Configure depth test to overwrite pixels with the same depth (needed to draw overlapping sprites)
+    C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
+
+    // Don't cull anything
+    C3D_CullFace(GPU_CULL_NONE);
+
+    target = C3D_RenderTargetCreate((int) size.y, (int) size.x, GPU_RB_RGBA8, GPU_RB_DEPTH16);
+    if (target) {
+        C3D_RenderTargetSetOutput(target, GFX_TOP, GFX_LEFT,
+                                  GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) |
+                                  GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) |
+                                  GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |
+                                  GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
+    }
+
+    ctx.vtxBufPos = 0;
+    ctx.vtxBufLastPos = 0;
+    Mtx_Identity(&ctx.projMtx);
+    Mtx_Identity(&ctx.mdlvMtx);
+
+    // uniforms
+    uLoc_mdlvMtx = shaderInstanceGetUniformLocation(ctx.program.vertexShader, "mdlvMtx");
+    uLoc_projMtx = shaderInstanceGetUniformLocation(ctx.program.vertexShader, "projMtx");
+    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projMtx, &s_projTop);
+    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_mdlvMtx, &ctx.mdlvMtx);
+
+    consoleInit(GFX_BOTTOM, nullptr);
+    //consoleDebugInit(debugDevice_SVC);
+    //stdout = stderr;
 
     available = true;
 }
 
-void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture, Sprite *sprite) {
-
+void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {
     if (vertexArray == nullptr || vertexArray->getVertexCount() < 1) {
         //printf("gl_render::draw: no vertices\n");
         return;
@@ -58,7 +119,7 @@ void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
 
     Vertex *vertices = vertexArray->getVertices()->data();
     size_t vertexCount = vertexArray->getVertexCount();
-    auto *tex = sprite != nullptr ? (CTRTexture *) sprite->getTexture() : (CTRTexture *) texture;
+    auto *tex = (CTRTexture *) texture;
     float blend;
 
     GPU_Primitive_t type;
@@ -77,41 +138,49 @@ void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
             return;
     }
 
-    if (tex != nullptr) {
+    if (tex) {
         C3D_TexBind(0, &tex->tex);
     }
 
-    C3D_TexEnvSrc(C3D_GetTexEnv(0), C3D_Both, tex ? GPU_TEXTURE0 : GPU_CONSTANT, (GPU_TEVSRC) 0, (GPU_TEVSRC) 0);
+    C3D_TexEnvSrc(C3D_GetTexEnv(0), C3D_Both,
+                  tex ? GPU_TEXTURE0 : GPU_CONSTANT, (GPU_TEVSRC) 0, (GPU_TEVSRC) 0);
 
     for (unsigned int i = 0; i < vertexCount; i++) {
         Vertex v = vertices[i];
         Vector2f pos = transform.transformPoint(v.position);
+
+        C2Di_Vertex *vtx = &ctx.vtxBuf[ctx.vtxBufPos++];
+        vtx->pos[0] = pos.x;
+        vtx->pos[1] = pos.y;
+        vtx->pos[2] = 0.5f;
+        vtx->texcoord[0] = v.texCoords.x;
+        vtx->texcoord[1] = v.texCoords.y;
+        vtx->blend[0] = 0;
         blend = v.color.r == 255 && v.color.g == 255 && v.color.b == 255 ? 0 : 1;
-        C2Di_AppendVtx(pos.x, pos.y, 0.5f, v.texCoords.x, v.texCoords.y,
-                       0, tex != nullptr ? blend : 1.0f, v.color.toABGR());
+        vtx->blend[1] = tex ? blend : 1.0f;
+        vtx->color = v.color.toABGR();
     }
 
-    size_t len = __C2Di_Context.vtxBufPos - __C2Di_Context.vtxBufLastPos;
-    if (len > 0) {
-        C3D_DrawArrays(type, (int) __C2Di_Context.vtxBufLastPos, (int) len);
-        __C2Di_Context.vtxBufLastPos = __C2Di_Context.vtxBufPos;
+    if (ctx.vtxBufPos - ctx.vtxBufLastPos) {
+        C3D_DrawArrays(type, (int) ctx.vtxBufLastPos, (int) (ctx.vtxBufPos - ctx.vtxBufLastPos));
+        ctx.vtxBufLastPos = ctx.vtxBufPos;
     }
 }
 
 void CTRRenderer::flip(bool draw, bool inputs) {
-
     if (draw) {
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-        C2D_TargetClear(renderTarget, m_clearColor.toABGR());
-        C2D_SceneBegin(renderTarget);
+        C3D_FrameSplit(0);
+        C3D_RenderTargetClear(target, C3D_CLEAR_ALL, m_clearColor.toRGBA(), 0);
+        C3D_FrameDrawOn(target);
     }
 
     Renderer::flip(draw, inputs);
 
     if (draw) {
-        __C2Di_Context.vtxBufPos = 0;
-        __C2Di_Context.vtxBufLastPos = 0;
         C3D_FrameEnd(0);
+        ctx.vtxBufPos = 0;
+        ctx.vtxBufLastPos = 0;
     }
 }
 
@@ -121,7 +190,9 @@ void CTRRenderer::delay(unsigned int ms) {
 }
 
 CTRRenderer::~CTRRenderer() {
-    C2D_Fini();
+    shaderProgramFree(&ctx.program);
+    DVLB_Free(ctx.shader);
+    linearFree(ctx.vtxBuf);
     C3D_Fini();
     gfxExit();
 }

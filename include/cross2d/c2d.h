@@ -161,6 +161,8 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_FIRE4_DEFAULT   11
 #define KEY_JOY_FIRE5_DEFAULT   9
 #define KEY_JOY_FIRE6_DEFAULT   8
+#define KEY_JOY_FIRE7_DEFAULT   99
+#define KEY_JOY_FIRE8_DEFAULT   99
 #define KEY_JOY_COIN1_DEFAULT   2
 #define KEY_JOY_START1_DEFAULT  3
 #define KEY_JOY_MENU1_DEFAULT   3

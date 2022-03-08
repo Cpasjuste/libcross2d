@@ -290,10 +290,11 @@ elseif (PLATFORM_3DS)
             )
     file(GLOB PLATFORM_SOURCES
             source/platforms/3ds/*.c*
+            source/platforms/3ds/vshader_shbin.o
             source/platforms/posix/*.c*
             )
-    list(APPEND C2D_LDFLAGS citro2d citro3d ctru m)
-    list(APPEND C2D_CFLAGS -DARM11 -D__3DS__ -D__CITRO3D__)
+    list(APPEND C2D_LDFLAGS citro3d ctru m)
+    list(APPEND C2D_CFLAGS -DARM11 -D__3DS__)
     #####################
     # SWITCH PLATORM
     #####################
