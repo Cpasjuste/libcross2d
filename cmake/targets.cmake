@@ -69,7 +69,6 @@ endif (PLATFORM_SWITCH)
 # 3DS target
 #####################
 if (PLATFORM_3DS)
-    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
     add_custom_target(${PROJECT_NAME}.3dsx
             DEPENDS ${PROJECT_NAME}
             DEPENDS ${PROJECT_NAME}.data
