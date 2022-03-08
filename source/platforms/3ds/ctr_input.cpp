@@ -27,46 +27,29 @@ static int key_id[KEY_COUNT]{
 };
 
 CTRInput::CTRInput() : Input() {
-
     players[0].enabled = true;
-
-    for (auto &player: players) {
-        for (int &key: player.mapping) {
-            key = 0;
-        }
-    }
 }
 
 CTRInput::~CTRInput() {
-
     for (auto &player: players) {
         player.enabled = false;
     }
 }
 
 bool CTRInput::waitKey(unsigned int *key, int player) {
-
-    // TODO:
+    // TODO
     return true;
 }
 
 Input::Player *CTRInput::update(int rotate) {
-
     for (auto &player: players) {
         player.keys = 0;
     }
-
 
     if (!aptMainLoop()) {
         players[0].keys |= EV_QUIT;
         return players;
     }
-
-    hidScanInput();
-
-    // TODO
-    //circlePosition circle;
-    //hidCircleRead(&circle);
 
     process_buttons(players[0], rotate);
 
@@ -75,20 +58,20 @@ Input::Player *CTRInput::update(int rotate) {
 }
 
 void CTRInput::process_buttons(Input::Player &player, int rotate) {
-
     if (!player.enabled) {
         return;
     }
 
+    hidScanInput();
     u32 held = hidKeysHeld();
 
     for (int i = 0; i < KEY_COUNT; i++) {
-
-        int mapping = player.mapping[i];
-        if (mapping < 0)
+        u32 mapping = player.mapping[i];
+        if (mapping < 0) {
             mapping = 0;
+        }
 
-        if (held & BIT(mapping)) {
+        if (held & mapping) {
             if (rotate && key_id[i] == Input::Key::Up) {
                 if (rotate == 1) {
                     player.keys |= Input::Key::Right;
