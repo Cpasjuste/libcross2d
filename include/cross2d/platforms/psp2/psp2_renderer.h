@@ -19,8 +19,7 @@ namespace c2d {
 
         void setClearColor(const Color &color) override;
 
-        void draw(VertexArray *vertexArray, const Transform &transform,
-                  Texture *texture, Sprite *sprite = nullptr) override;
+        void draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) override;
 
         void flip(bool draw = true, bool inputs = true) override;
 

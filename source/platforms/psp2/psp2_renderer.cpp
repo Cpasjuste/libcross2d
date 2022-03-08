@@ -12,12 +12,14 @@
 
 using namespace c2d;
 
+unsigned int sceLibcHeapSize = 4 * 1024 * 1024;
+int _newlib_heap_size_user = 192 * 1024 * 1024;
+
 extern "C" {
 extern float _vita2d_ortho_matrix[4 * 4];
 extern SceGxmVertexProgram *_vita2d_colorVertexProgram;
 extern SceGxmFragmentProgram *_vita2d_colorFragmentProgram;
 extern SceGxmVertexProgram *_vita2d_textureVertexProgram;
-//extern SceGxmFragmentProgram *_vita2d_textureFragmentProgram;
 extern SceGxmFragmentProgram *_vita2d_textureTintFragmentProgram;
 extern const SceGxmProgramParameter *_vita2d_colorWvpParam;
 extern const SceGxmProgramParameter *_vita2d_textureWvpParam;
@@ -34,10 +36,10 @@ PSP2Renderer::PSP2Renderer(const Vector2f &size) : Renderer(size) {
     vita2d_init();
     vita2d_set_vblank_wait(1);
 
-    m_shaderList = (ShaderList *) new PSP2ShaderList("");
+    m_shaderList = (ShaderList *) new PSP2ShaderList();
 }
 
-void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture, Sprite *sprite) {
+void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {
     Vertex *vertices;
     size_t vertexCount;
 
@@ -73,7 +75,7 @@ void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
             return;
     }
 
-    auto tex = sprite ? (PSP2Texture *) sprite->getTexture() : (PSP2Texture *) texture;
+    auto tex = (PSP2Texture *) texture;
     if (tex && tex->available) {
         if (vertices[0].color == Color::White) {
             // we only apply custom shader to "white" texture

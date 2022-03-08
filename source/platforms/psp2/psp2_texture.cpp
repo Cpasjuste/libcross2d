@@ -150,10 +150,10 @@ void PSP2Texture::setShader(int shaderIndex) {
 }
 
 void PSP2Texture::applyShader() {
-    auto *v2d_shader = (vita2d_shader *) shader->data;
+    auto *s = (PSP2Shader *) shader;
 
-    sceGxmSetVertexProgram(vita2d_get_context(), v2d_shader->vertexProgram);
-    sceGxmSetFragmentProgram(vita2d_get_context(), v2d_shader->fragmentProgram);
+    sceGxmSetVertexProgram(vita2d_get_context(), s->vertexProgram);
+    sceGxmSetFragmentProgram(vita2d_get_context(), s->fragmentProgram);
 
     // set shader params
     auto *tex_size = (float *) vita2d_pool_memalign(2 * sizeof(float), sizeof(float));
@@ -166,23 +166,28 @@ void PSP2Texture::applyShader() {
     out_size[1] = getSize().y * getScale().y;
     //printf("out_size: %f %f\n", out_size[0], out_size[1]);
 
-    if (v2d_shader->vertexInput.texture_size) {
-        PSP2ShaderList::setVertexUniform(v2d_shader->vertexInput.texture_size, tex_size, 2);
+    if (s->vertexInput.texture_size) {
+        s->setVertexUniform((SceGxmProgramParameter *) s->vertexInput.texture_size, tex_size, 2);
     }
-    if (v2d_shader->vertexInput.output_size) {
-        PSP2ShaderList::setVertexUniform(v2d_shader->vertexInput.output_size, out_size, 2);
+
+    if (s->vertexInput.output_size) {
+        s->setVertexUniform((SceGxmProgramParameter *) s->vertexInput.output_size, out_size, 2);
     }
-    if (v2d_shader->vertexInput.video_size) {
-        PSP2ShaderList::setVertexUniform(v2d_shader->vertexInput.video_size, tex_size, 2);
+
+    if (s->vertexInput.video_size) {
+        s->setVertexUniform((SceGxmProgramParameter *) s->vertexInput.video_size, tex_size, 2);
     }
-    if (v2d_shader->fragmentInput.texture_size) {
-        PSP2ShaderList::setFragmentUniform(v2d_shader->fragmentInput.texture_size, tex_size, 2);
+
+    if (s->fragmentInput.texture_size) {
+        s->setFragmentUniform((SceGxmProgramParameter *) s->fragmentInput.texture_size, tex_size, 2);
     }
-    if (v2d_shader->fragmentInput.output_size) {
-        PSP2ShaderList::setFragmentUniform(v2d_shader->fragmentInput.output_size, out_size, 2);
+
+    if (s->fragmentInput.output_size) {
+        s->setFragmentUniform((SceGxmProgramParameter *) s->fragmentInput.output_size, out_size, 2);
     }
-    if (v2d_shader->fragmentInput.video_size) {
-        PSP2ShaderList::setFragmentUniform(v2d_shader->fragmentInput.video_size, tex_size, 2);
+
+    if (s->fragmentInput.video_size) {
+        s->setFragmentUniform((SceGxmProgramParameter *) s->fragmentInput.video_size, tex_size, 2);
     }
 }
 
