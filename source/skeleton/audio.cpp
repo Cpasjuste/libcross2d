@@ -34,10 +34,10 @@ void Audio::play(const void *data, int samples, bool sync) {
             return;
         }
 
-        //printf("play: samples: %i, queued: %i\n", samples, getSampleBufferQueued());
+        //printf("play: samples: %i, queued: %i\n", samples * channels, getSampleBufferQueued());
         if (sync) {
-            while (getSampleBufferQueued() >= getSamples()) {
-                //printf("play (delay): samples: %i, queued: %i\n", samples, getSampleBufferQueued());
+            while (getSampleBufferQueued() >= getSamples() * channels) {
+                //printf("play (delay): samples: %i, queued: %i\n", getSamples() * channels, getSampleBufferQueued());
                 if (!available) return;
                 if (c2d_renderer) c2d_renderer->delay(1);
             }

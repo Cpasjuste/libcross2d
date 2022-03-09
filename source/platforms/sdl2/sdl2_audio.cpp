@@ -62,8 +62,8 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
     m_samples_size = m_samples * channels * (int) sizeof(int16_t);
     m_buffer->resize(m_samples * channels * 10);
 
-    printf("SDL2Audio: rate = %i, samples = %i, samples size = %i\n",
-           m_sample_rate, m_samples, m_samples_size);
+    printf("SDL2Audio: rate = %i, samples = %i, samples size = %i (sdl samples size: %i)\n",
+           m_sample_rate, m_samples, m_samples_size, obtained.size);
 
     SDL_PauseAudioDevice(deviceID, 1);
     available = true;
