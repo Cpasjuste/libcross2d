@@ -107,6 +107,7 @@ int PSP2Texture::resize(const Vector2i &size, bool copyPixels) {
         }
     }
 
+    vita2d_wait_rendering_done();
     vita2d_free_texture(tex);
     tex = tex_new;
     pitch = (int) size.x * bpp;
@@ -227,6 +228,5 @@ PSP2Texture::~PSP2Texture() {
         printf("~PSP2Texture(%p) (tex = %p)\n", this, tex);
         vita2d_wait_rendering_done();
         vita2d_free_texture(tex);
-        tex = nullptr;
     }
 }
