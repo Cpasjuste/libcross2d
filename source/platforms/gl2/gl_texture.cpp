@@ -314,34 +314,29 @@ void GLTexture::unlock(void *data) {
     switch (format) {
         case Format::RGBA8:
             glTexSubImage2D(GL_TEXTURE_2D, 0,
-                            (GLsizei) getTextureRect().left, (GLsizei) getTextureRect().top,
-                            (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                            0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
                             GL_RGBA, GL_UNSIGNED_BYTE, data ? data : pixels);
             break;
 #ifndef __GLES2__
             case Format::BGRA8:
                 glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                (GLsizei) getTextureRect().left, (GLsizei) getTextureRect().top,
-                                (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                                0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
                                 GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data ? data : pixels);
                 break;
             case Format::ARGB8:
                 glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                (GLsizei) getTextureRect().left, (GLsizei) getTextureRect().top,
-                                (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                                0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
                                 GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, data ? data : pixels);
                 break;
             case Format::ABGR8:
                 glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                (GLsizei) getTextureRect().left, (GLsizei) getTextureRect().top,
-                                (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                                0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
                                 GL_ABGR_EXT, GL_UNSIGNED_INT_8_8_8_8, data ? data : pixels);
                 break;
 #endif
         default:
             glTexSubImage2D(GL_TEXTURE_2D, 0,
-                            (GLsizei) getTextureRect().left, (GLsizei) getTextureRect().top,
-                            (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
+                            0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
                             GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
             break;
     }
