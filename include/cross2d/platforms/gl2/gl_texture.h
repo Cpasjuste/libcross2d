@@ -12,13 +12,12 @@ namespace c2d {
     class GLTexture : public Texture {
 
     public:
+        explicit GLTexture(const std::string &path);
 
-        GLTexture(const std::string &path);
+        explicit GLTexture(const unsigned char *buffer, int bufferSize);
 
-        GLTexture(const unsigned char *buffer, int bufferSize);
-
-        GLTexture(const Vector2f &size = Vector2f(0, 0),
-                  Format format = Format::RGBA8);
+        explicit GLTexture(const Vector2f &size = Vector2f(0, 0),
+                           Format format = Format::RGBA8);
 
         ~GLTexture() override;
 
@@ -35,6 +34,9 @@ namespace c2d {
         unsigned int texID = 0;
 
         unsigned char *pixels = nullptr;
+
+    private:
+        unsigned char *getPixels(int *w, int *h, const unsigned char *buffer = nullptr, int bufferSize = 0);
 
     };
 }

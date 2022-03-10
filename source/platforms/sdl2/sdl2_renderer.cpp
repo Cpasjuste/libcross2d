@@ -10,18 +10,20 @@ static SDL_Window *window = nullptr;
 static SDL_GLContext context = nullptr;
 
 #ifdef __PSP2__
-unsigned int sceLibcHeapSize = 2 * 1024 * 1024;
+unsigned int sceLibcHeapSize = 10 * 1024 * 1024;
+int _newlib_heap_size_user = 192 * 1024 * 1024;
 #endif
 
 SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
-
     SDL_ShowCursor(SDL_DISABLE);
 
 #ifdef __PS4__
     //SDL_SetHint(SDL_HINT_AUDIO_RESAMPLING_MODE, "fast");
-#if defined(PS4_SHACC) || defined(PS4_DUMP_SHADERS)
+#ifndef GL_SHADERS_BINARY
     SDL_SetHint(SDL_HINT_PS4_PIGLET_MODULES_PATH, "/data/self/system/common/lib");
 #endif
+#elif __PSP2__
+    SDL_setenv("VITA_DISABLE_TOUCH_BACK", "1", 1);
 #endif
 
     if ((SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
@@ -66,7 +68,7 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
     if (s.x <= 0 || s.y <= 0) {
         int x = 0, y = 0;
         SDL_GetWindowSize(window, &x, &y);
-        setSize((float) x, (float) y);
+        SDL2Renderer::setSize((float) x, (float) y);
     }
 
     context = SDL_GL_CreateContext(window);

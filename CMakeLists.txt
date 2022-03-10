@@ -33,6 +33,8 @@ option(OPTION_RENDER_GL2 "OpenGL 3.3 rendering" OFF)
 option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
 option(OPTION_LOADER_GLAD "Glad OpenGL loader" ON)
 option(OPTION_LOADER_GLEW "Glew OpenGL loader" OFF)
+option(OPTION_GL_DUMP_SHADERS "Dump shaders binaries" OFF)
+option(OPTION_GL_SHADERS_BINARY "Use glsl shaders binaries" OFF)
 option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
 option(OPTION_FREETYPE "Build with freetype support" ON)
 option(OPTION_BOX2D "Build with box2d support" OFF)
@@ -61,7 +63,10 @@ if (PLATFORM_SWITCH)
 endif ()
 
 if (PLATFORM_VITA)
-    message(STATUS "C2D: Ps Vita with Gxm support enabled")
+    message(STATUS "C2D: Ps Vita with SDL2/PVR support enabled")
+    set(OPTION_SDL2 ON CACHE BOOL "SDL2 support" FORCE)
+    set(OPTION_RENDER_GLES2 ON CACHE BOOL "OpenGLES 2.0 rendering" FORCE)
+    set(OPTION_LOADER_GLAD OFF CACHE BOOL "Glad OpenGL loader" FORCE)
     set(OPTION_BOX2D ON CACHE BOOL "Build with box2d support" FORCE)
     set(OPTION_SCREEN_WIDTH 960 CACHE STRING "Custom screen width" FORCE)
     set(OPTION_SCREEN_HEIGHT 544 CACHE STRING "Custom screen height" FORCE)
@@ -74,12 +79,6 @@ if (PLATFORM_PS4)
     set(OPTION_LOADER_GLAD OFF CACHE BOOL "Glad OpenGL loader" FORCE)
     set(OPTION_SCREEN_WIDTH 1920 CACHE STRING "Custom screen width" FORCE)
     set(OPTION_SCREEN_HEIGHT 1080 CACHE STRING "Custom screen height" FORCE)
-    #
-    option(OPTION_PS4_SHACC "PS4 shacc" OFF)
-    option(OPTION_PS4_DUMP_SHADER "Dump ps4 shaders" OFF)
-    if (OPTION_PS4_DUMP_SHADER)
-        set(OPTION_PS4_SHACC ON CACHE BOOL "PS4 shacc" FORCE)
-    endif ()
 endif ()
 
 if (PLATFORM_DREAMCAST)
@@ -143,7 +142,9 @@ if (OPTION_SDL2)
     pkg_search_module(SDL2 REQUIRED sdl2)
     list(APPEND C2D_INCLUDES ${SDL2_INCLUDE_DIRS})
     list(APPEND C2D_CFLAGS -D__SDL2__)
-    list(APPEND C2D_LDFLAGS ${SDL2_LIBRARIES})
+    if (NOT PLATFORM_VITA)
+        list(APPEND C2D_LDFLAGS ${SDL2_LIBRARIES})
+    endif ()
     file(GLOB SDL2_SRC source/platforms/sdl2/*.c*)
     list(APPEND C2D_SOURCES ${SDL2_SRC})
 endif ()
@@ -151,7 +152,7 @@ endif ()
 # gl2 / gles2
 if (OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
     file(GLOB GL_SRC source/platforms/gl2/*.c*)
-    if ((NOT PLATFORM_VITA AND NOT PLATFORM_PS4) OR OPTION_PS4_SHACC)
+    if (NOT OPTION_GL_SHADERS_BINARY)
         file(GLOB GL_SHADERS_SRC source/platforms/gl2/shaders/*.c*)
     endif ()
     list(APPEND C2D_SOURCES ${GL_SRC} ${GL_SHADERS_SRC})
@@ -193,6 +194,13 @@ if (OPTION_RENDER_GL1 OR OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
     endif ()
 endif ()
 
+if (OPTION_GL_DUMP_SHADERS)
+    list(APPEND C2D_CFLAGS -DGL_DUMP_SHADERS)
+endif ()
+if (OPTION_GL_SHADERS_BINARY)
+    list(APPEND C2D_CFLAGS -DGL_SHADERS_BINARY)
+endif ()
+
 if (OPTION_BOX2D)
     find_package(box2d REQUIRED)
     list(APPEND C2D_LDFLAGS box2d)
@@ -213,26 +221,26 @@ if (PLATFORM_VITA)
     set(PLATFORM_INCLUDES
             source/platforms/posix
             source/platforms/psp2
-            source/platforms/psp2/vita-shader-collection/includes
             )
     file(GLOB PLATFORM_SOURCES
             source/platforms/posix/posix_io.cpp
             source/platforms/psp2/*.c*
-            source/platforms/sdl2/sdl2_audio.cpp
-            source/platforms/sdl2/sdl2_input.cpp
-            source/platforms/sdl2/sdl2_thread.cpp
-            source/platforms/sdl2/sdl2_mutex.cpp
             )
+    if (OPTION_GL_SHADERS_BINARY)
+        file(GLOB SHADERS_SOURCES source/platforms/psp2/shaders/*.c*)
+        list(APPEND PLATFORM_SOURCES ${SHADERS_SOURCES})
+    endif ()
     list(APPEND C2D_LDFLAGS
-            ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/vita-shader-collection/lib/libvitashaders.a
-            SDL2 vita2d jpeg png box2d
-            SceDisplay_stub SceGxm_stub SceSysmodule_stub
-            SceAppMgr_stub SceCtrl_stub SceCommonDialog_stub
-            SceAudio_stub SceTouch_stub SceHid_stub SceMotion_stub
-            ScePower_stub SceAppUtil_stub
-            z c stdc++ pthread m
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/libs/libSDL2.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/libs/liblibgpu_es4_ext_stub_weak.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/libs/liblibIMGEGL_stub_weak.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/libs/liblibGLESv2_stub_weak.a
+            SceGxm_stub SceDisplay_stub SceCtrl_stub SceAppMgr_stub SceIme_stub
+            SceAudio_stub SceSysmodule_stub SceIofilemgr_stub SceCommonDialog_stub
+            SceTouch_stub SceHid_stub SceMotion_stub ScePower_stub SceProcessmgr_stub
+            m
             )
-    list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
+    list(APPEND C2D_CFLAGS -D__PSP2__ -D__POW2_TEX__ -DNO_KEYBOARD
             -g -ffast-math -mtune=cortex-a9 -mfpu=neon -ftree-vectorize)
 elseif (PLATFORM_PS4)
     #####################
@@ -246,14 +254,9 @@ elseif (PLATFORM_PS4)
             source/platforms/ps4/*.c*
             source/platforms/posix/*.c*
             )
-    if (NOT OPTION_PS4_SHACC)
-        file(GLOB PS4_SHADERS_SOURCES source/platforms/ps4/shaders/*.c*)
-        list(APPEND PLATFORM_SOURCES ${PS4_SHADERS_SOURCES})
-    else ()
-        list(APPEND C2D_CFLAGS -DPS4_SHACC)
-        if (OPTION_PS4_DUMP_SHADER)
-            list(APPEND C2D_CFLAGS -DPS4_DUMP_SHADERS)
-        endif ()
+    if (OPTION_GL_SHADERS_BINARY)
+        file(GLOB SHADERS_SOURCES source/platforms/ps4/shaders/*.c*)
+        list(APPEND PLATFORM_SOURCES ${SHADERS_SOURCES})
     endif ()
     list(APPEND C2D_CFLAGS -D__PSP4__ -DNO_KEYBOARD -Wno-writable-strings)
 elseif (PLATFORM_PS3)

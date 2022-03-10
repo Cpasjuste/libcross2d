@@ -3,8 +3,8 @@
 //
 
 // vertex color shader
-const char *c2d_color_v = R"text(
-
+const char *c2d_color_shader = R"text(
+#if defined(VERTEX)
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
 #define COMPAT_ATTRIBUTE in
@@ -30,9 +30,7 @@ void main()
     COL0 = COLOR;
 }
 
-)text";
-
-const char *c2d_color_f = R"text(
+#elif defined(FRAGMENT)
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING in
@@ -53,5 +51,5 @@ void main()
 {
     fragColor = vec4(COL0);
 }
-
+#endif
 )text";
