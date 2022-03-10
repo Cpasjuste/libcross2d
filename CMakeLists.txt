@@ -142,7 +142,9 @@ if (OPTION_SDL2)
     pkg_search_module(SDL2 REQUIRED sdl2)
     list(APPEND C2D_INCLUDES ${SDL2_INCLUDE_DIRS})
     list(APPEND C2D_CFLAGS -D__SDL2__)
-    list(APPEND C2D_LDFLAGS ${SDL2_LIBRARIES})
+    if (NOT PLATFORM_VITA)
+        list(APPEND C2D_LDFLAGS ${SDL2_LIBRARIES})
+    endif ()
     file(GLOB SDL2_SRC source/platforms/sdl2/*.c*)
     list(APPEND C2D_SOURCES ${SDL2_SRC})
 endif ()
@@ -229,7 +231,10 @@ if (PLATFORM_VITA)
         list(APPEND PLATFORM_SOURCES ${SHADERS_SOURCES})
     endif ()
     list(APPEND C2D_LDFLAGS
-            libgpu_es4_ext_stub_weak libIMGEGL_stub_weak libGLESv2_stub_weak
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/libs/libSDL2.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/libs/liblibgpu_es4_ext_stub_weak.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/libs/liblibIMGEGL_stub_weak.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/libs/liblibGLESv2_stub_weak.a
             SceGxm_stub SceDisplay_stub SceCtrl_stub SceAppMgr_stub SceIme_stub
             SceAudio_stub SceSysmodule_stub SceIofilemgr_stub SceCommonDialog_stub
             SceTouch_stub SceHid_stub SceMotion_stub ScePower_stub SceProcessmgr_stub
