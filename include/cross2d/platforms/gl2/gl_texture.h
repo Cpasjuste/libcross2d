@@ -36,6 +36,8 @@ namespace c2d {
 
         unsigned char *pixels = nullptr;
 
+    private:
+        unsigned char *getPixels(int *w, int *h, const unsigned char *buffer = nullptr, int bufferSize = 0);
     };
 }
 

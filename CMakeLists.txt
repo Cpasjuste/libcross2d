@@ -235,7 +235,7 @@ if (PLATFORM_VITA)
             SceTouch_stub SceHid_stub SceMotion_stub ScePower_stub SceProcessmgr_stub
             m
             )
-    list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
+    list(APPEND C2D_CFLAGS -D__PSP2__ -D__POW2_TEX__ -DNO_KEYBOARD
             -g -ffast-math -mtune=cortex-a9 -mfpu=neon -ftree-vectorize)
 elseif (PLATFORM_PS4)
     #####################
