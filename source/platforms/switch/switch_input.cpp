@@ -150,8 +150,8 @@ void SWITCHInput::process_buttons(Input::Player &player, int rotate) {
         return;
     }
 
-    int mapLeft[KEY_COUNT] = {18, 16, 17, 19, 11, 6, 15, 12, 14, 13, 24, 25, 4, 8, 6, 11};
-    int mapRight[KEY_COUNT] = {20, 22, 23, 21, 10, 7, 2, 0, 3, 1, 26, 27, 5, 9, 7, 10};
+    int mapLeft[KEY_COUNT] = {18, 16, 17, 19, 11, 6, 15, 12, 14, 13, 24, 25, 4, 8, 8, 4};
+    int mapRight[KEY_COUNT] = {20, 22, 23, 21, 10, 7, 2, 0, 3, 1, 26, 27, 5, 9, 9, 5};
     bool joyLeft, joyRight;
     joyLeft = joyRight = false;
     int mapping;
