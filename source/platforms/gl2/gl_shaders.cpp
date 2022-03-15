@@ -327,6 +327,21 @@ GLShaderList::GLShaderList() : ShaderList() {
     // sharp
     add(new GLShader("sharp-sabr-v3.0", c2d_sharp_sabr_v30_v, c2d_sharp_sabr_v30_f,
                      c2d_sharp_sabr_v30_v_length, c2d_sharp_sabr_v30_f_length));
+#elif __VITA__
+    // default shader
+    color = new GLShader("c2d-color", c2d_color_shader, c2d_color_shader_length, version);
+    add(new GLShader("c2d-texture", c2d_texture_shader, c2d_texture_shader_length, version));
+    // other shaders are either not working or too slow on ps vita
+    add(new GLShader("crt-nes-mini", c2d_crt_nes_mini_shader, c2d_crt_nes_mini_shader_length, version));
+    add(new GLShader("crt-zfast", c2d_crt_zfast_shader, c2d_crt_zfast_shader_length, version));
+    add(new GLShader("handheld-bevel", c2d_handheld_bevel_shader, c2d_handheld_bevel_shader_length, version));
+    add(new GLShader("handheld-lcd3x", c2d_handheld_lcd3x_shader, c2d_handheld_lcd3x_shader_length, version));
+    add(new GLShader("interpolation-pixellate", c2d_interpolation_pixellate_shader,
+                     c2d_interpolation_pixellate_shader_length, version));
+    add(new GLShader("interpolation-sharp-bilinear", c2d_interpolation_sharp_bilinear_shader,
+                     c2d_interpolation_sharp_bilinear_shader_length, version));
+    add(new GLShader("scanline-simple", c2d_scanline_simple_shader, c2d_scanline_simple_shader_length, version));
+    add(new GLShader("sharp-2xsal", c2d_sharp_2xsal_shader, c2d_sharp_2xsal_shader_length, version));
 #else
     // default shader
     color = new GLShader("c2d-color", c2d_color_shader, c2d_color_shader_length, version);
@@ -337,9 +352,7 @@ GLShaderList::GLShaderList() : ShaderList() {
 #ifndef __PS4__
     add(new GLShader("crt-caligari", c2d_crt_caligari_shader, c2d_crt_caligari_shader_length, version));
 #endif //__PS4__
-#ifndef __PSP2__
     add(new GLShader("crt-cgwg-fast", c2d_crt_cgwg_fast_shader, c2d_crt_cgwg_fast_shader_length, version));
-#endif //__PSP2__
     add(new GLShader("crt-easymode", c2d_crt_easymode_shader, c2d_crt_easymode_shader_length, version));
 #ifndef __PS4__
     add(new GLShader("crt-fakelottes", c2d_crt_fakelottes_shader, c2d_crt_fakelottes_shader_length, version));
@@ -352,9 +365,7 @@ GLShaderList::GLShaderList() : ShaderList() {
 #ifndef __PS4__
     add(new GLShader("crt-lottes-fast", c2d_crt_lottes_fast_shader, c2d_crt_lottes_fast_shader_length, version));
     add(new GLShader("crt-lottes", c2d_crt_lottes_shader, c2d_crt_lottes_shader_length, version));
-#ifndef __PSP2__
     add(new GLShader("crt-mattias", c2d_crt_mattias_shader, c2d_crt_mattias_shader_length, version));
-#endif //__PSP2__
 #endif //__PS4__
     add(new GLShader("crt-nes-mini", c2d_crt_nes_mini_shader, c2d_crt_nes_mini_shader_length, version));
     add(new GLShader("crt-pi", c2d_crt_pi_shader, c2d_crt_pi_shader_length, version));
@@ -375,10 +386,8 @@ GLShaderList::GLShaderList() : ShaderList() {
                      c2d_interpolation_aann_shader_length, version));
     add(new GLShader("interpolation-pixellate", c2d_interpolation_pixellate_shader,
                      c2d_interpolation_pixellate_shader_length, version));
-#ifndef __PSP2__
     add(new GLShader("interpolation-quilez", c2d_interpolation_quilez_shader,
                      c2d_interpolation_quilez_shader_length, version));
-#endif
     add(new GLShader("interpolation-sharp-bilinear", c2d_interpolation_sharp_bilinear_shader,
                      c2d_interpolation_sharp_bilinear_shader_length, version));
     add(new GLShader("interpolation-sharp-bilinear-scanlines", c2d_interpolation_sharp_bilinear_scanlines_shader,
@@ -389,13 +398,12 @@ GLShaderList::GLShaderList() : ShaderList() {
 
     // sharp
     add(new GLShader("sharp-2xsal", c2d_sharp_2xsal_shader, c2d_sharp_2xsal_shader_length, version));
-#ifndef __PSP2__
     add(new GLShader("sharp-sabr-v3.0", c2d_sharp_sabr_v30_shader, c2d_sharp_sabr_v30_shader_length, version));
     add(new GLShader("sharp-supereagle", c2d_sharp_supereagle_shader, c2d_sharp_supereagle_shader_length, version));
 #ifndef __PS4__
-    add(new GLShader("sharp-xbrz-freescale", c2d_sharp_xbrz_freescale_shader, c2d_sharp_xbrz_freescale_shader_length, version));
+    add(new GLShader("sharp-xbrz-freescale", c2d_sharp_xbrz_freescale_shader, c2d_sharp_xbrz_freescale_shader_length,
+                     version));
 #endif //__PS4__
-#endif //__PSP2__
 #endif //__PS4__ / GL_SHADERS_BINARY
 }
 
