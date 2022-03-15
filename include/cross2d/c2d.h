@@ -232,18 +232,18 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DClock POSIXClock
 
 // "Hori GEM Xbox controller"
-#define KEY_JOY_UP_DEFAULT      (-1)  // use hat
-#define KEY_JOY_DOWN_DEFAULT    (-1)  // use hat
-#define KEY_JOY_LEFT_DEFAULT    (-1)  // use hat
-#define KEY_JOY_RIGHT_DEFAULT   (-1)  // use hat
+#define KEY_JOY_UP_DEFAULT      23  // TODO
+#define KEY_JOY_DOWN_DEFAULT    20  // TODO
+#define KEY_JOY_LEFT_DEFAULT    21  // TODO
+#define KEY_JOY_RIGHT_DEFAULT   22  // TODO
 #define KEY_JOY_FIRE1_DEFAULT   0
 #define KEY_JOY_FIRE2_DEFAULT   1
 #define KEY_JOY_FIRE3_DEFAULT   2
 #define KEY_JOY_FIRE4_DEFAULT   3
 #define KEY_JOY_FIRE5_DEFAULT   4
 #define KEY_JOY_FIRE6_DEFAULT   5
-#define KEY_JOY_FIRE7_DEFAULT   99 // TODO
-#define KEY_JOY_FIRE8_DEFAULT   99 // TODO
+#define KEY_JOY_FIRE7_DEFAULT   26  // TODO
+#define KEY_JOY_FIRE8_DEFAULT   27  // TODO
 #define KEY_JOY_COIN1_DEFAULT   6
 #define KEY_JOY_START1_DEFAULT  7
 #define KEY_JOY_MENU1_DEFAULT   7
