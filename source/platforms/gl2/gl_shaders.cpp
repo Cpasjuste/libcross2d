@@ -145,7 +145,7 @@ GLShader::GLShader(const std::string &n, const char *source, int size,
 
     GL_CHECK(program = glCreateProgram());
 
-    // use shader from source is size <= 0, else binary program
+    // use shader from source is size <= 0, else binary program (should only happen on vita actually)
     if (size <= 0) {
         vertex = std::string("#version " + version + "\n#define VERTEX\n") + source;
         fragment = std::string("#version " + version + "\n#define FRAGMENT\n") + source;
@@ -179,8 +179,10 @@ GLShader::GLShader(const std::string &n, const char *source, int size,
         GL_CHECK(glDeleteShader(vsh));
         GL_CHECK(glDeleteShader(fsh));
     } else {
-        // use binary program
+#ifndef __PS4__
+        // use binary program (we should not reach this on ps4)
         GL_CHECK(glProgramBinary(program, GL_PROGRAM_BINARY_FMT, source, size));
+#endif
     }
 
     glGetProgramiv(program, GL_LINK_STATUS, &link_result);
