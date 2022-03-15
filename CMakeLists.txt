@@ -217,6 +217,7 @@ if (PLATFORM_VITA)
     #####################
     # VITA PLATORM
     #####################
+    enable_language(ASM)
     set(TITLE_ID CROSS0001)
     set(PLATFORM_INCLUDES
             source/platforms/posix
@@ -226,6 +227,7 @@ if (PLATFORM_VITA)
             source/platforms/posix/posix_io.cpp
             source/platforms/psp2/*.c*
             )
+    list(APPEND PLATFORM_SOURCES source/platforms/psp2/memcpy-neon.S)
     if (OPTION_GL_SHADERS_BINARY)
         file(GLOB SHADERS_SOURCES source/platforms/psp2/shaders/*.c*)
         list(APPEND PLATFORM_SOURCES ${SHADERS_SOURCES})
@@ -240,8 +242,10 @@ if (PLATFORM_VITA)
             SceTouch_stub SceHid_stub SceMotion_stub ScePower_stub SceProcessmgr_stub
             m
             )
-    list(APPEND C2D_CFLAGS -D__PSP2__ -D__POW2_TEX__ -DNO_KEYBOARD
-            -g -ffast-math -mtune=cortex-a9 -mfpu=neon -ftree-vectorize)
+    list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
+            -g -mtune=cortex-a9 -march=armv7-a -mfpu=neon -mfloat-abi=hard
+            -ffast-math -mword-relocations -fno-optimize-sibling-calls
+            )
 elseif (PLATFORM_PS4)
     #####################
     # PS4 PLATORM

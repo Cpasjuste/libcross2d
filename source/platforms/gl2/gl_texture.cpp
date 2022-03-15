@@ -15,7 +15,11 @@
 
 using namespace c2d;
 
-#ifdef __POW2_TEX__
+#ifdef __VITA__
+extern "C" void *memcpy_neon(void *dst, const void *src, size_t n);
+#endif
+
+#if defined(__POW2_TEX__) || defined(__VITA__)
 
 static int pow2(int w) {
     if (w == 0)
@@ -44,14 +48,13 @@ unsigned char *GLTexture::getPixels(int *w, int *h, const unsigned char *buffer,
         }
     }
 
+    pitch = *w * bpp;
 #ifndef __POW2_TEX__
     pixels = img;
-    pitch = *w * bpp;
     tex_size = {*w, *h};
 #else
     // copy img to power of 2 pixel data
     tex_size.x = pow2(*w), tex_size.y = pow2(*h);
-    pitch = tex_size.x * bpp;
     pixels = (unsigned char *) malloc((size_t) (tex_size.x * tex_size.y * bpp));
     if (!pixels) {
         free(img);
@@ -87,6 +90,10 @@ GLTexture::GLTexture(const std::string &p) : Texture(p) {
     glBindTexture(GL_TEXTURE_2D, texID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tex_size.x, tex_size.y,
                  0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+#ifdef __VITA__
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#endif
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -100,7 +107,8 @@ GLTexture::GLTexture(const std::string &p) : Texture(p) {
         printf("GLTexture(%p): couldn't create texture: %s\n", this, path.c_str());
     }
 
-    //printf("GLTexture(%p): %ix%i\n", this, w, h);
+    printf("GLTexture(%p): size: %ix%i, bpp: %i, pitch: %i (tex_size: %ix%i)\n",
+           this, w, h, bpp, pitch, tex_size.x, tex_size.y);
 }
 
 GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
@@ -112,12 +120,16 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
         return;
     }
 
-    GL_CHECK(glGenTextures(1, &texID));
-    GL_CHECK(glBindTexture(GL_TEXTURE_2D, texID));
-    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-    GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tex_size.x, tex_size.y,
-                          0, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID);
+#ifdef __VITA__
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#endif
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tex_size.x, tex_size.y,
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     if (texID) {
@@ -129,15 +141,21 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
         printf("GLTexture(%p): couldn't create texture\n", this);
     }
 
-    //printf("GLTexture(%p): %ix%i\n", this, w, h);
+    printf("GLTexture(%p): size: %ix%i, bpp: %i, pitch: %i (tex_size: %ix%i)\n",
+           this, w, h, bpp, pitch, tex_size.x, tex_size.y);
 }
 
 GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format) {
     glGenTextures(1, &texID);
 
-#if __POW2_TEX__
+    // on ps vita it's faster to "unlock" power of 2 textures (glTexSubImage2D)
+#if defined(__POW2_TEX__) || defined(__VITA__)
     tex_size = {pow2((int) size.x), pow2((int) size.y)};
-    pitch = tex_size.x * bpp;
+#ifdef __VITA__
+    if (tex_size.x != (int) size.x) {
+        temp_pixels = (unsigned char *) malloc(tex_size.x * tex_size.y * bpp);
+    }
+#endif
 #else
     tex_size = {(int) size.x, (int) size.y};
 #endif
@@ -171,6 +189,10 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
                 break;
         }
 
+#ifdef __VITA__
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#endif
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         setTexture(this);
@@ -182,12 +204,13 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
         printf("GLTexture(%p): couldn't create texture", this);
     }
 
-    //printf("GLTexture(%p): %ix%i\n", this, (int) size.x, (int) size.y);
+    printf("GLTexture(%p): size: %ix%i, bpp: %i, pitch: %i (tex_size: %ix%i)\n",
+           this, (int) size.x, (int) size.y, bpp, pitch, tex_size.x, tex_size.y);
 }
 
 int GLTexture::resize(const Vector2i &size, bool keepPixels) {
     // TODO: fix npot textures (vita)
-    printf("GLTexture::resize: %i %i > %i x %i\n",
+    printf("GLTexture::resize: %ix%i > %ix%i\n",
            tex_size.x, tex_size.y, (int) size.x, (int) size.y);
 
     if (size.x == getTextureRect().width && size.y == getTextureRect().height) {
@@ -216,14 +239,14 @@ int GLTexture::resize(const Vector2i &size, bool keepPixels) {
     free(pixels);
     pixels = new_pixels;
 
-    GL_CHECK(glBindTexture(GL_TEXTURE_2D, texID));
+    glBindTexture(GL_TEXTURE_2D, texID);
 
     switch (format) {
         case Format::RGBA8:
             // invalidate texture storage
-            GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
-            GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
-                                  GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
+                         GL_RGBA, GL_UNSIGNED_BYTE, pixels);
             break;
 #ifndef __GLES2__
             case Format::ARGB8:
@@ -250,7 +273,12 @@ int GLTexture::resize(const Vector2i &size, bool keepPixels) {
             break;
     }
 
-    GL_CHECK(glBindTexture(GL_TEXTURE_2D, 0));
+#ifdef __VITA__
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#endif
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     tex_size = {size.x, size.y};
     setTexture(this);
@@ -314,30 +342,54 @@ void GLTexture::unlock(void *data) {
     switch (format) {
         case Format::RGBA8:
             glTexSubImage2D(GL_TEXTURE_2D, 0,
-                            0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
+                            0, 0, (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                             GL_RGBA, GL_UNSIGNED_BYTE, data ? data : pixels);
             break;
 #ifndef __GLES2__
             case Format::BGRA8:
                 glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
+                                0, 0, (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                                 GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data ? data : pixels);
                 break;
             case Format::ARGB8:
                 glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
+                                0, 0, (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                                 GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, data ? data : pixels);
                 break;
             case Format::ABGR8:
                 glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
+                                0, 0, (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                                 GL_ABGR_EXT, GL_UNSIGNED_INT_8_8_8_8, data ? data : pixels);
                 break;
 #endif
         default:
+#if defined(__VITA__)
+            // on ps vita it's faster to "unlock" power of 2 textures (glTexSubImage2D)
+            if (tex_size.x == (int) getSize().x) {
+                glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
+                                GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
+            } else {
+                unsigned char *dst = temp_pixels;
+                int dst_pitch = tex_size.x * bpp;
+                unsigned char *src = pixels;
+                int src_pitch = pitch;
+                int w = getTextureRect().width;
+                int h = getTextureRect().height;
+                for (int i = 0; i < h; i++) {
+                    memcpy_neon(dst, src, (size_t) w * bpp);
+                    dst += dst_pitch;
+                    src += src_pitch;
+                }
+                glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
+                                GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : temp_pixels);
+            }
+#else
             glTexSubImage2D(GL_TEXTURE_2D, 0,
-                            0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
+                            0, 0, (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                             GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
+#endif
             break;
     }
 
@@ -359,8 +411,13 @@ GLTexture::~GLTexture() {
     //printf("~GLTexture(%p)\n", this);
     if (pixels) {
         stbi_image_free(pixels);
-        pixels = nullptr;
     }
+
+#ifdef __VITA__
+    if (temp_pixels) {
+        free(temp_pixels);
+    }
+#endif
 
     if (glIsTexture(texID) == GL_TRUE) {
         //printf("glDeleteTextures(%i)\n", texID);
