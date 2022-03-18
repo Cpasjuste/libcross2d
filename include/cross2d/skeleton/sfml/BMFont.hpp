@@ -67,10 +67,10 @@ namespace c2d {
         bool loadFromMemory(const char *fontData, size_t fontDataSize,
                             const char *texData, size_t texDataSize);
 
-        Glyph getGlyph(uint32_t codePoint, unsigned int characterSize,
-                       bool bold, float outlineThickness = 0) override;
+        const Glyph &getGlyph(uint32_t codePoint, unsigned int characterSize,
+                              bool bold, float outlineThickness = 0) const override;
 
-        float getKerning(uint32_t first, uint32_t second, unsigned int characterSize) const override;
+        float getKerning(uint32_t first, uint32_t second, unsigned int characterSize, bool bold) const override;
 
         float getLineSpacing(unsigned int characterSize) const override;
 
@@ -94,6 +94,7 @@ namespace c2d {
 
         Vector2f offset;
         Texture *m_texture = nullptr;
+        static Glyph m_glyph;
 
 #define BMFONT_BLOCK_TYPE_INFO 1
 #define BMFONT_BLOCK_TYPE_COMMON 2

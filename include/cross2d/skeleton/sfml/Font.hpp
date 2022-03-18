@@ -143,8 +143,8 @@ namespace c2d {
         /// \return The glyph corresponding to \a codePoint and \a characterSize
         ///
         ////////////////////////////////////////////////////////////
-        virtual Glyph getGlyph(uint32_t codePoint, unsigned int characterSize,
-                               bool bold, float outlineThickness = 0);
+        virtual const Glyph &getGlyph(uint32_t codePoint, unsigned int characterSize,
+                                      bool bold, float outlineThickness = 0) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the kerning offset of two glyphs
@@ -162,7 +162,7 @@ namespace c2d {
         /// \return Kerning value for \a first and \a second, in pixels
         ///
         ////////////////////////////////////////////////////////////
-        virtual float getKerning(uint32_t first, uint32_t second, unsigned int characterSize) const;
+        virtual float getKerning(uint32_t first, uint32_t second, unsigned int characterSize, bool bold) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the line spacing
