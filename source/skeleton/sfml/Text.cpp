@@ -41,50 +41,35 @@ namespace {
 
         Vector2f texCoords = {1.0f / texSize.x, 1.0f / texSize.y};
 
-        vertices.append(
-                c2d::Vertex(c2d::Vector2f(-outlineThickness, top - outlineThickness), color, texCoords));
-        vertices.append(c2d::Vertex(c2d::Vector2f(lineLength + outlineThickness, top - outlineThickness), color,
-                                    texCoords));
-        vertices.append(
-                c2d::Vertex(c2d::Vector2f(-outlineThickness, bottom + outlineThickness), color, texCoords));
-        vertices.append(
-                c2d::Vertex(c2d::Vector2f(-outlineThickness, bottom + outlineThickness), color, texCoords));
-        vertices.append(c2d::Vertex(c2d::Vector2f(lineLength + outlineThickness, top - outlineThickness), color,
-                                    texCoords));
-        vertices.append(c2d::Vertex(c2d::Vector2f(lineLength + outlineThickness, bottom + outlineThickness), color,
-                                    texCoords));
+        vertices.append(Vertex({-outlineThickness, top - outlineThickness}, color, texCoords));
+        vertices.append(Vertex({lineLength + outlineThickness, top - outlineThickness}, color, texCoords));
+        vertices.append(Vertex({-outlineThickness, bottom + outlineThickness}, color, texCoords));
+        vertices.append(Vertex({-outlineThickness, bottom + outlineThickness}, color, texCoords));
+        vertices.append(Vertex({lineLength + outlineThickness, top - outlineThickness}, color, texCoords));
+        vertices.append(Vertex({lineLength + outlineThickness, bottom + outlineThickness}, color, texCoords));
     }
 
     // Add a glyph quad to the vertex array
-    void
-    addGlyphQuad(c2d::VertexArray &vertices, c2d::Vector2f texSize, c2d::Vector2f position,
-                 const c2d::Color &color, const c2d::Glyph &glyph, float italic, float outlineThickness = 0) {
-        float left = glyph.bounds.left;
-        float top = glyph.bounds.top;
-        float right = glyph.bounds.left + glyph.bounds.width;
-        float bottom = glyph.bounds.top + glyph.bounds.height;
+    void addGlyphQuad(c2d::VertexArray &vertices, c2d::Vector2f texSize, c2d::Vector2f position,
+                      const c2d::Color &color, const c2d::Glyph &glyph, float italic) {
+        float padding = 1.0f / texSize.x;
 
-        float u1 = static_cast<float>(glyph.textureRect.left) / texSize.x;
-        float v1 = static_cast<float>(glyph.textureRect.top) / texSize.y;
-        float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width) / texSize.x;
-        float v2 = static_cast<float>(glyph.textureRect.top + glyph.textureRect.height) / texSize.y;
+        float left = glyph.bounds.left - padding;
+        float top = glyph.bounds.top - padding;
+        float right = glyph.bounds.left + glyph.bounds.width + padding;
+        float bottom = glyph.bounds.top + glyph.bounds.height + padding;
 
-        vertices.append(c2d::Vertex(
-                c2d::Vector2f(position.x + left - italic * top - outlineThickness, position.y + top - outlineThickness),
-                color, c2d::Vector2f(u1, v1)));
-        vertices.append(c2d::Vertex(c2d::Vector2f(position.x + right - italic * top - outlineThickness,
-                                                  position.y + top - outlineThickness), color, c2d::Vector2f(u2, v1)));
-        vertices.append(c2d::Vertex(c2d::Vector2f(position.x + left - italic * bottom - outlineThickness,
-                                                  position.y + bottom - outlineThickness), color,
-                                    c2d::Vector2f(u1, v2)));
-        vertices.append(c2d::Vertex(c2d::Vector2f(position.x + left - italic * bottom - outlineThickness,
-                                                  position.y + bottom - outlineThickness), color,
-                                    c2d::Vector2f(u1, v2)));
-        vertices.append(c2d::Vertex(c2d::Vector2f(position.x + right - italic * top - outlineThickness,
-                                                  position.y + top - outlineThickness), color, c2d::Vector2f(u2, v1)));
-        vertices.append(c2d::Vertex(c2d::Vector2f(position.x + right - italic * bottom - outlineThickness,
-                                                  position.y + bottom - outlineThickness), color,
-                                    c2d::Vector2f(u2, v2)));
+        float u1 = ((float) glyph.textureRect.left - padding) / texSize.x;
+        float v1 = ((float) glyph.textureRect.top - padding) / texSize.y;
+        float u2 = ((float) (glyph.textureRect.left + glyph.textureRect.width) + padding) / texSize.x;
+        float v2 = ((float) (glyph.textureRect.top + glyph.textureRect.height) + padding) / texSize.y;
+
+        vertices.append(Vertex({position.x + left - italic * top, position.y + top}, color, {u1, v1}));
+        vertices.append(Vertex({position.x + right - italic * top, position.y + top}, color, {u2, v1}));
+        vertices.append(Vertex({position.x + left - italic * bottom, position.y + bottom}, color, {u1, v2}));
+        vertices.append(Vertex({position.x + left - italic * bottom, position.y + bottom}, color, {u1, v2}));
+        vertices.append(Vertex({position.x + right - italic * top, position.y + top}, color, {u2, v1}));
+        vertices.append(Vertex({position.x + right - italic * bottom, position.y + bottom}, color, {u2, v2}));
     }
 }
 
@@ -175,8 +160,11 @@ namespace c2d {
     void Text::setFillColor(const Color &color) {
         if (color != m_fillColor) {
             m_fillColor = color;
-            // update geometry in onUpdate to be thread safe
-            m_geometryNeedUpdate = true;
+
+            if (!m_geometryNeedUpdate) {
+                for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
+                    m_vertices[i].color = m_fillColor;
+            }
         }
     }
 
@@ -184,8 +172,11 @@ namespace c2d {
     void Text::setOutlineColor(const Color &color) {
         if (!m_font->isBmFont() && color != m_outlineColor) {
             m_outlineColor = color;
-            // update geometry in onUpdate to be thread safe
-            m_geometryNeedUpdate = true;
+
+            if (!m_geometryNeedUpdate) {
+                for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
+                    m_outlineVertices[i].color = m_outlineColor;
+            }
         }
     }
 
@@ -200,7 +191,6 @@ namespace c2d {
 
 /////////////////////////////////////////////////////////////
     void Text::setAlpha(uint8_t alpha, bool recursive) {
-
         if (alpha != m_fillColor.a) {
             Color color;
             color = m_fillColor;
@@ -280,17 +270,17 @@ namespace c2d {
 
         // Precompute the variables needed by the algorithm
         bool bold = (m_style & Bold) != 0;
-        float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
-        float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + (float) m_line_spacing;
+        auto hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
+        auto vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + (float) m_line_spacing;
 
         // Compute the position
         Vector2f position;
         uint32_t prevChar = 0;
         for (std::size_t i = 0; i < index; ++i) {
-            uint32_t curChar = m_string[i];
+            auto curChar = (uint32_t) m_string[i];
 
             // Apply the kerning offset
-            position.x += static_cast<float>(m_font->getKerning(prevChar, curChar, m_characterSize));
+            position.x += static_cast<float>(m_font->getKerning(prevChar, curChar, m_characterSize, bold));
             prevChar = curChar;
 
             // Handle special characters
@@ -338,7 +328,6 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Text::setOrigin(const Origin &origin) {
-
         m_text_origin = origin;
         float height = m_bounds.height > (float) m_characterSize ? m_bounds.height : (float) m_characterSize;
 
@@ -389,12 +378,7 @@ namespace c2d {
     }
 
     void Text::setPosition(float x, float y) {
-        // non integer position does not play well with point filtering
-        if (m_font->getFilter() == Texture::Filter::Point) {
-            Transformable::setPosition((float) ((int) x), (float) ((int) y));
-        } else {
-            Transformable::setPosition(x, y);
-        }
+        Transformable::setPosition(x, y);
     }
 
     void Text::setPosition(const Vector2f &position) {
@@ -436,7 +420,6 @@ namespace c2d {
     }
 
     void Text::onUpdate() {
-
         if (m_string.empty()) {
             return;
         }
@@ -453,7 +436,6 @@ namespace c2d {
     }
 
     void Text::onDraw(Transform &transform, bool draw) {
-
         if (m_string.empty()) {
             return;
         }
@@ -470,7 +452,6 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Text::ensureGeometryUpdate() const {
-
         // Do nothing, if geometry has not changed
         if (!m_geometryNeedUpdate)
             return;
@@ -504,15 +485,15 @@ namespace c2d {
         float strikeThroughOffset = xBounds.top + xBounds.height / 2.f;
 
         // Precompute the variables needed by the algorithm
-        float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
-        float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + (float) m_line_spacing;
+        auto hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
+        auto vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + (float) m_line_spacing;
 
         // sfml use pixel coordinates for texCoords, but c2d use normalized one.
         // we keep a reference to texture size for checking this in "onUpdate"
         m_textureSize = m_font->getTexture(m_characterSize)->getSize();
 
         float x = 0.f;
-        float y = static_cast<float>(m_characterSize);
+        auto y = static_cast<float>(m_characterSize);
 
         // fix top not at 0 if needed (font->setOffset)
         // TODO: find a better fix
@@ -521,8 +502,8 @@ namespace c2d {
         y += m_font->getOffset().y * scale;
 
         // Create one quad for each character
-        float minX = static_cast<float>(m_characterSize);
-        float minY = static_cast<float>(m_characterSize);
+        auto minX = static_cast<float>(m_characterSize);
+        auto minY = static_cast<float>(m_characterSize);
         float maxX = 0.f;
         float maxY = 0.f;
         uint32_t prevChar = 0;
@@ -554,11 +535,10 @@ namespace c2d {
             }
 
             for (std::size_t j = 0; j < words[i].length(); j++) {
-
                 auto curChar = (uint32_t) words[i][j];
 
                 // Apply the kerning offset
-                x += m_font->getKerning(prevChar, curChar, m_characterSize);
+                x += m_font->getKerning(prevChar, curChar, m_characterSize, bold);
                 prevChar = curChar;
 
                 // handle maxSize.x
@@ -596,7 +576,6 @@ namespace c2d {
                     // Update the current bounds (min coordinates)
                     minX = std::min(minX, x);
                     minY = std::min(minY, y);
-
                     switch (curChar) {
                         case ' ':
                             x += hspace;
@@ -607,6 +586,8 @@ namespace c2d {
                         case '\n':
                             y += vspace;
                             x = 0;
+                            break;
+                        default:
                             break;
                     }
 
@@ -628,22 +609,20 @@ namespace c2d {
                     float bottom = glyph.bounds.top + glyph.bounds.height;
 
                     // Add the outline glyph to the vertices
-                    addGlyphQuad(m_outlineVertices, m_textureSize,
-                                 Vector2f(x, y), m_outlineColor, glyph, italic, m_outlineThickness);
+                    addGlyphQuad(m_outlineVertices, m_textureSize, Vector2f(x, y), m_outlineColor, glyph, italic);
 
                     // Update the current bounds with the outlined glyph bounds
-                    minX = std::min(minX, x + left - italic * bottom - m_outlineThickness);
-                    maxX = std::max(maxX, x + right - italic * top - m_outlineThickness);
-                    minY = std::min(minY, y + top - m_outlineThickness);
-                    maxY = std::max(maxY, y + bottom - m_outlineThickness);
+                    minX = std::min(minX, x + left - italic * bottom);
+                    maxX = std::max(maxX, x + right - italic * top);
+                    minY = std::min(minY, y + top);
+                    maxY = std::max(maxY, y + bottom);
                 }
 
                 // Extract the current glyph's description
                 const Glyph &glyph = m_font->getGlyph(curChar, m_characterSize, bold);
 
                 // Add the glyph to the vertices
-                addGlyphQuad(m_vertices, m_textureSize,
-                             Vector2f(x, y), m_fillColor, glyph, italic);
+                addGlyphQuad(m_vertices, m_textureSize, Vector2f(x, y), m_fillColor, glyph, italic);
 
                 // Update the current bounds with the non outlined glyph bounds
                 if (m_outlineThickness == 0) {

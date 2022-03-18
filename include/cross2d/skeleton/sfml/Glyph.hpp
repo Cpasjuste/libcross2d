@@ -42,7 +42,7 @@ namespace c2d {
         /// \brief Default constructor
         ///
         ////////////////////////////////////////////////////////////
-        Glyph() : advance(0) {}
+        Glyph() : advance(0), lsbDelta(0), rsbDelta(0) {}
 
         Glyph(float advance, FloatRect bounds, IntRect textureRect) {
             this->advance = advance;
@@ -54,6 +54,8 @@ namespace c2d {
         // Member data
         ////////////////////////////////////////////////////////////
         float advance;     ///< Offset to move horizontally to the next character
+        int lsbDelta{};    //!< Left offset after forced autohint. Internally used by getKerning()
+        int rsbDelta{};    //!< Right offset after forced autohint. Internally used by getKerning()
         FloatRect bounds;      ///< Bounding rectangle of the glyph, in coordinates relative to the baseline
         IntRect textureRect; ///< Texture coordinates of the glyph inside the font's texture
     };
@@ -61,7 +63,7 @@ namespace c2d {
 } // namespace c2d
 
 
-#endif // SFML_GLYPH_HPP
+#endif // C2D_GLYPH_HPP
 
 
 ////////////////////////////////////////////////////////////

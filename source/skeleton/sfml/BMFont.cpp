@@ -197,25 +197,21 @@ namespace c2d {
     }
 
 ////////////////////////////////////////////////////////////
-    Glyph BMFont::getGlyph(uint32_t codePoint, unsigned int characterSize,
-                           bool bold, float outlineThickness) {
-
-        if (m_bmfont.glyphs.count(codePoint)) {
+    const Glyph &BMFont::getGlyph(uint32_t codePoint, unsigned int characterSize,
+                                  bool bold, float outlineThickness) const {
+        if (m_bmfont.glyphs.count((key_t) codePoint)) {
             if ((int16_t) characterSize == m_bmfont.info.fontSize) {
-                return m_bmfont.glyphs.at(codePoint);
+                return m_bmfont.glyphs.at((key_t) codePoint);
             } else {
-                Glyph glyph = m_bmfont.glyphs.at(codePoint);
+                Glyph glyph = m_bmfont.glyphs.at((key_t) codePoint);
                 float scaling = (float) characterSize / (float) m_bmfont.info.fontSize;
-                return {
-                        glyph.advance * scaling,
-                        {
-                                glyph.bounds.left * scaling,
-                                glyph.bounds.top * scaling,
-                                glyph.bounds.width * scaling,
-                                glyph.bounds.height * scaling
-                        },
-                        glyph.textureRect
-                };
+                m_glyph.advance = glyph.advance * scaling;
+                m_glyph.bounds.left = glyph.bounds.left * scaling;
+                m_glyph.bounds.top = glyph.bounds.top * scaling;
+                m_glyph.bounds.width = glyph.bounds.width * scaling;
+                m_glyph.bounds.height = glyph.bounds.height * scaling;
+                m_glyph.textureRect = glyph.textureRect;
+                return m_glyph;
             }
         }
 
@@ -223,10 +219,10 @@ namespace c2d {
     }
 
 ////////////////////////////////////////////////////////////
-    float BMFont::getKerning(uint32_t first, uint32_t second, unsigned int characterSize) const {
+    float BMFont::getKerning(uint32_t first, uint32_t second, unsigned int characterSize, bool bold) const {
         if (!m_bmfont.kerningPairs.empty()) {
             float scaling = (float) characterSize / (float) m_bmfont.info.fontSize;
-            for (const auto &kerningPair : m_bmfont.kerningPairs) {
+            for (const auto &kerningPair: m_bmfont.kerningPairs) {
                 if (kerningPair.first == first && kerningPair.second == second) {
                     return (float) kerningPair.amount * scaling;
                 }
