@@ -162,8 +162,10 @@ namespace c2d {
             m_fillColor = color;
 
             if (!m_geometryNeedUpdate) {
-                for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
+                for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i) {
                     m_vertices[i].color = m_fillColor;
+                }
+                m_vertices.update();
             }
         }
     }
@@ -174,8 +176,10 @@ namespace c2d {
             m_outlineColor = color;
 
             if (!m_geometryNeedUpdate) {
-                for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
+                for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i) {
                     m_outlineVertices[i].color = m_outlineColor;
+                }
+                m_outlineVertices.update();
             }
         }
     }
