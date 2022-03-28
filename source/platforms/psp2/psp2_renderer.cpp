@@ -2,8 +2,6 @@
 // Created by cpasjuste on 21/11/16.
 //
 
-#ifdef __VITA2D__
-
 #include <SDL2/SDL.h>
 #include <psp2/display.h>
 #include <psp2/kernel/threadmgr.h>
@@ -14,8 +12,8 @@
 
 using namespace c2d;
 
-unsigned int sceLibcHeapSize = 4 * 1024 * 1024;
-int _newlib_heap_size_user = 192 * 1024 * 1024;
+unsigned int sceLibcHeapSize = 5 * 1024 * 1024;
+int _newlib_heap_size_user = 160 * 1024 * 1024;
 
 extern "C" {
 extern float _vita2d_ortho_matrix[4 * 4];
@@ -160,15 +158,18 @@ void PSP2Renderer::setClearColor(const Color &color) {
 }
 
 void PSP2Renderer::flip(bool draw, bool inputs) {
+    m_process_inputs = inputs;
+    onUpdate();
+
     if (draw) {
         vita2d_start_drawing();
         vita2d_clear_screen();
-    }
 
-    // call base class (draw childs)
-    Renderer::flip(draw, inputs);
+        // call base class (draw childs)
+        Transform trans = Transform::Identity;
+        m_draw_calls_batched = m_draw_calls = 0;
+        Rectangle::onDraw(trans, draw);
 
-    if (draw) {
         vita2d_end_drawing();
         vita2d_wait_rendering_done();
         vita2d_swap_buffers();
@@ -187,5 +188,3 @@ PSP2Renderer::~PSP2Renderer() {
     vita2d_wait_rendering_done();
     vita2d_fini();
 }
-
-#endif //__VITA2D__

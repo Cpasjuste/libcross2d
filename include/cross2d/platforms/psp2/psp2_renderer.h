@@ -5,8 +5,6 @@
 #ifndef _PSP2_RENDERER_H_
 #define _PSP2_RENDERER_H_
 
-#ifdef __VITA2D__
-
 #include "cross2d/skeleton/renderer.h"
 
 namespace c2d {
@@ -28,7 +26,5 @@ namespace c2d {
         void delay(unsigned int ms) override;
     };
 }
-
-#endif //__VITA2D__
 
 #endif //_PSP2_RENDERER_H_

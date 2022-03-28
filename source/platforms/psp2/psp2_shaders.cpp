@@ -2,8 +2,6 @@
 // Created by cpasjuste on 27/01/17.
 //
 
-#ifdef __VITA2D__
-
 #include <vita2d.h>
 #include "cross2d/platforms/psp2/psp2_shaders.h"
 
@@ -43,7 +41,7 @@ using namespace c2d;
 
 PSP2ShaderList::PSP2ShaderList() : ShaderList() {
     PSP2ShaderList::add(new PSP2Shader(
-            "texture", (SceGxmProgram *) texture_v, (SceGxmProgram *) texture_f));
+            "c2d-texture", (SceGxmProgram *) texture_v, (SceGxmProgram *) texture_f));
     PSP2ShaderList::add(new PSP2Shader(
             "lcd3x", (SceGxmProgram *) lcd3x_v, (SceGxmProgram *) lcd3x_f));
     PSP2ShaderList::add(new PSP2Shader(
@@ -150,5 +148,3 @@ PSP2Shader::~PSP2Shader() {
     sceGxmShaderPatcherUnregisterProgram(shaderPatcher, fragmentProgramId);
     sceGxmShaderPatcherUnregisterProgram(shaderPatcher, vertexProgramId);
 }
-
-#endif //__VITA2D__

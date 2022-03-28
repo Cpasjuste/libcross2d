@@ -9,25 +9,19 @@
 #ifdef GL_SHADERS_BINARY
 #ifdef __PS4__
 #include "../ps4/shaders/ps4_shaders.h"
-#elif __PSP2__
-
-#include "../psp2/shaders/shaders.h"
-
 #endif
 #else
+
 #include "shaders/shaders.h"
+
 #endif
+
 #ifdef GL_DUMP_SHADERS
 #include "gl_shader_dumper.h"
 static c2d::GLShaderDumper *shaderDumper;
 #endif
 
-#ifdef __PSP2__
-#define glProgramBinary glProgramBinaryOES
-#define GL_PROGRAM_BINARY_FMT GL_SGX_PROGRAM_BINARY_IMG
-#else
 #define GL_PROGRAM_BINARY_FMT 0
-#endif
 
 using namespace c2d;
 
@@ -129,23 +123,9 @@ GLShader::GLShader(const std::string &n, const char *source, int size,
     //printf("GLShader::GLShader: %s, version: %s, size: %i\n",
     //     name.c_str(), version.c_str(), size);
 
-#if defined(__PSP2__) && !defined(GL_SHADERS_BINARY)
-    // pvr driver doesn't handle "pragma parameter" directive, it seems
-    // TODO
-    /*
-    std::vector<std::string> split = Utility::split(source, "\n");
-    source.clear();
-    for (auto &line: split) {
-        if (!Utility::contains(line, "#pragma parameter")) {
-            source = source.append(line) + "\n";
-        }
-    }
-    */
-#endif
-
     GL_CHECK(program = glCreateProgram());
 
-    // use shader from source is size <= 0, else binary program (should only happen on vita actually)
+    // use shader from source is size <= 0, else binary program
     if (size <= 0) {
         vertex = std::string("#version " + version + "\n#define VERTEX\n") + source;
         fragment = std::string("#version " + version + "\n#define FRAGMENT\n") + source;
@@ -169,9 +149,7 @@ GLShader::GLShader(const std::string &n, const char *source, int size,
         GL_CHECK(glBindAttribLocation(program, 2, "a_texCoord"));
         GL_CHECK(glLinkProgram(program));
 #ifdef GL_DUMP_SHADERS
-#ifdef __PSP2__
-        shaderDumper->dump((int) program, name, "shader");
-#elif __PS4__
+#ifdef __PS4__
         shaderDumper->dump((int) vsh, name, "v");
         shaderDumper->dump((int) fsh, name, "f");
 #endif
@@ -242,9 +220,7 @@ GLShader::~GLShader() {
 GLShaderList::GLShaderList() : ShaderList() {
     std::string version = "100";
 #ifdef GL_DUMP_SHADERS
-#ifdef __PSP2__
-    shaderDumper = new GLShaderDumper("ux0:/data/c2d_shaders");
-#else
+#ifdef __PS4__
     shaderDumper = new GLShaderDumper("/data/c2d_shaders_dump");
 #endif
 #endif
@@ -327,21 +303,6 @@ GLShaderList::GLShaderList() : ShaderList() {
     // sharp
     add(new GLShader("sharp-sabr-v3.0", c2d_sharp_sabr_v30_v, c2d_sharp_sabr_v30_f,
                      c2d_sharp_sabr_v30_v_length, c2d_sharp_sabr_v30_f_length));
-#elif __VITA__
-    // default shader
-    color = new GLShader("c2d-color", c2d_color_shader, c2d_color_shader_length, version);
-    add(new GLShader("c2d-texture", c2d_texture_shader, c2d_texture_shader_length, version));
-    // other shaders are either not working or too slow on ps vita
-    add(new GLShader("crt-nes-mini", c2d_crt_nes_mini_shader, c2d_crt_nes_mini_shader_length, version));
-    add(new GLShader("crt-zfast", c2d_crt_zfast_shader, c2d_crt_zfast_shader_length, version));
-    add(new GLShader("handheld-bevel", c2d_handheld_bevel_shader, c2d_handheld_bevel_shader_length, version));
-    add(new GLShader("handheld-lcd3x", c2d_handheld_lcd3x_shader, c2d_handheld_lcd3x_shader_length, version));
-    add(new GLShader("interpolation-pixellate", c2d_interpolation_pixellate_shader,
-                     c2d_interpolation_pixellate_shader_length, version));
-    add(new GLShader("interpolation-sharp-bilinear", c2d_interpolation_sharp_bilinear_shader,
-                     c2d_interpolation_sharp_bilinear_shader_length, version));
-    add(new GLShader("scanline-simple", c2d_scanline_simple_shader, c2d_scanline_simple_shader_length, version));
-    add(new GLShader("sharp-2xsal", c2d_sharp_2xsal_shader, c2d_sharp_2xsal_shader_length, version));
 #else
     // default shader
     color = new GLShader("c2d-color", c2d_color_shader, c2d_color_shader_length, version);

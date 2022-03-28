@@ -38,10 +38,6 @@ namespace c2d {
     private:
         unsigned char *getPixels(int *w, int *h, const unsigned char *buffer = nullptr, int bufferSize = 0);
 
-#ifdef __VITA__
-        unsigned char *temp_pixels = nullptr;
-#endif
-
     };
 }
 

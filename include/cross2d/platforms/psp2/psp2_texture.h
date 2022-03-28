@@ -5,8 +5,6 @@
 #ifndef _PSP2_TEXTURE_H_
 #define _PSP2_TEXTURE_H_
 
-#ifdef __VITA2D__
-
 #include "cross2d/skeleton/texture.h"
 #include "vita2d.h"
 
@@ -41,7 +39,5 @@ namespace c2d {
         vita2d_texture *tex = nullptr;
     };
 }
-
-#endif //__VITA2D__
 
 #endif //_PSP2_TEXTURE_H_

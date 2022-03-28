@@ -2,8 +2,6 @@
 // Created by cpasjuste on 01/12/16.
 //
 
-#ifdef __VITA2D__
-
 #include <cstring>
 #include <cstdio>
 
@@ -41,7 +39,6 @@ PSP2Texture::PSP2Texture(const std::string &p) : Texture(p) {
 }
 
 PSP2Texture::PSP2Texture(const Vector2f &size, Format fmt) : Texture(size, fmt) {
-    vita2d_texture_set_alloc_memblock_type(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW);
     tex = vita2d_create_empty_texture_format(
             (unsigned int) size.x, (unsigned int) size.y,
             fmt == Format::RGBA8 ? SCE_GXM_TEXTURE_FORMAT_A8B8G8R8
@@ -232,5 +229,3 @@ PSP2Texture::~PSP2Texture() {
         vita2d_free_texture(tex);
     }
 }
-
-#endif //__VITA2D__

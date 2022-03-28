@@ -15,11 +15,7 @@
 
 using namespace c2d;
 
-#ifdef __VITA__
-extern "C" void *memcpy_neon(void *dst, const void *src, size_t n);
-#endif
-
-#if defined(__POW2_TEX__) || defined(__VITA__)
+#if defined(__POW2_TEX__)
 
 static int pow2(int w) {
     if (w == 0)
@@ -90,10 +86,6 @@ GLTexture::GLTexture(const std::string &p) : Texture(p) {
     glBindTexture(GL_TEXTURE_2D, texID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tex_size.x, tex_size.y,
                  0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-#ifdef __VITA__
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#endif
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -122,10 +114,6 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
 
     glGenTextures(1, &texID);
     glBindTexture(GL_TEXTURE_2D, texID);
-#ifdef __VITA__
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#endif
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tex_size.x, tex_size.y,
@@ -149,13 +137,8 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
     glGenTextures(1, &texID);
 
     // on ps vita it's faster to "unlock" power of 2 textures (glTexSubImage2D)
-#if defined(__POW2_TEX__) || defined(__VITA__)
+#if defined(__POW2_TEX__)
     tex_size = {pow2((int) size.x), pow2((int) size.y)};
-#ifdef __VITA__
-    if (tex_size.x != (int) size.x) {
-        temp_pixels = (unsigned char *) malloc(tex_size.x * tex_size.y * bpp);
-    }
-#endif
 #else
     tex_size = {(int) size.x, (int) size.y};
 #endif
@@ -189,10 +172,6 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
                 break;
         }
 
-#ifdef __VITA__
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#endif
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         setTexture(this);
@@ -209,7 +188,6 @@ GLTexture::GLTexture(const Vector2f &size, Format format) : Texture(size, format
 }
 
 int GLTexture::resize(const Vector2i &size, bool keepPixels) {
-    // TODO: fix npot textures (vita)
     printf("GLTexture::resize: %ix%i > %ix%i\n",
            tex_size.x, tex_size.y, (int) size.x, (int) size.y);
 
@@ -270,11 +248,6 @@ int GLTexture::resize(const Vector2i &size, bool keepPixels) {
                          GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
             break;
     }
-
-#ifdef __VITA__
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#endif
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -361,33 +334,9 @@ void GLTexture::unlock(void *data) {
             break;
 #endif
         default:
-#if defined(__VITA__)
-            // on ps vita it's faster to "unlock" power of 2 textures (glTexSubImage2D)
-            if (tex_size.x == (int) getSize().x) {
-                glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
-                                GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
-            } else {
-                unsigned char *dst = temp_pixels;
-                int dst_pitch = tex_size.x * bpp;
-                unsigned char *src = pixels;
-                int src_pitch = pitch;
-                int w = getTextureRect().width;
-                int h = getTextureRect().height;
-                for (int i = 0; i < h; i++) {
-                    memcpy_neon(dst, src, (size_t) w * bpp);
-                    dst += dst_pitch;
-                    src += src_pitch;
-                }
-                glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                0, 0, (GLsizei) tex_size.x, (GLsizei) tex_size.y,
-                                GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : temp_pixels);
-            }
-#else
             glTexSubImage2D(GL_TEXTURE_2D, 0,
                             0, 0, (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
                             GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
-#endif
             break;
     }
 
@@ -410,12 +359,6 @@ GLTexture::~GLTexture() {
     if (pixels) {
         stbi_image_free(pixels);
     }
-
-#ifdef __VITA__
-    if (temp_pixels) {
-        free(temp_pixels);
-    }
-#endif
 
     if (glIsTexture(texID) == GL_TRUE) {
         //printf("glDeleteTextures(%i)\n", texID);

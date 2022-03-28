@@ -5,8 +5,6 @@
 #ifndef C2D_PSP2_SHADERS_H
 #define C2D_PSP2_SHADERS_H
 
-#ifdef __VITA2D__
-
 #include "cross2d/skeleton/shader_list.h"
 
 typedef struct vita2d_shader_input {
@@ -46,7 +44,5 @@ namespace c2d {
         PSP2ShaderList();
     };
 }
-
-#endif //__VITA2D__
 
 #endif //C2D_PSP2_SHADERS_H

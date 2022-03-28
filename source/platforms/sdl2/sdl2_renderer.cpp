@@ -9,20 +9,6 @@ using namespace c2d;
 static SDL_Window *window = nullptr;
 static SDL_GLContext context = nullptr;
 
-#ifdef __PSP2__
-
-#include <psp2/kernel/modulemgr.h>
-
-extern "C" {
-#include "cross2d/platforms/psp2/psp2_pvr_hint.h"
-};
-//unsigned int sceLibcHeapSize = 10 * 1024 * 1024;
-//int _newlib_heap_size_user = 192 * 1024 * 1024;
-// TODO: fix fbneo heap problem..
-unsigned int sceLibcHeapSize = 16 * 1024 * 1024;
-int _newlib_heap_size_user = 148 * 1024 * 1024;
-#endif
-
 SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
     SDL_ShowCursor(SDL_DISABLE);
 
@@ -31,20 +17,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 #ifndef GL_SHADERS_BINARY
     SDL_SetHint(SDL_HINT_PS4_PIGLET_MODULES_PATH, "/data/self/system/common/lib");
 #endif
-#elif __PSP2__
-    SDL_setenv("VITA_DISABLE_TOUCH_BACK", "1", 1);
-    SDL_setenv("VITA_PVR_SKIP_INIT", "yes", 1);
-    sceKernelLoadStartModule("vs0:sys/external/libfios2.suprx", 0, nullptr, 0, nullptr, nullptr);
-    sceKernelLoadStartModule("vs0:sys/external/libc.suprx", 0, nullptr, 0, nullptr, nullptr);
-    sceKernelLoadStartModule("app0:/module/libgpu_es4_ext.suprx", 0, nullptr, 0, nullptr, nullptr);
-    sceKernelLoadStartModule("app0:/module/libIMGEGL.suprx", 0, nullptr, 0, nullptr, nullptr);
-    PVRSRV_PSP2_APPHINT hint;
-    PVRSRVInitializeAppHint(&hint);
-    strcpy(hint.szGLES1, "app0:/module/libGLESv1_CM.suprx");
-    strcpy(hint.szGLES2, "app0:/module/libGLESv2.suprx");
-    strcpy(hint.szWindowSystem, "app0:/module/libpvrPSP2_WSEGL.suprx");
-    hint.ui32SwTexOpCleanupDelay = 5000; // Set to 16 milliseconds to prevent a pool of unfreed memory
-    PVRSRVCreateVirtualAppHint(&hint);
 #endif
 
     if ((SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE)) < 0) {
