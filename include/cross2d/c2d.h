@@ -53,6 +53,29 @@ extern c2d::Renderer *c2d_renderer;
 
 #define printf sceClibPrintf
 
+#ifdef __VITA2D__
+
+#include "platforms/psp2/psp2_renderer.h"
+#include "platforms/psp2/psp2_texture.h"
+#include "platforms/psp2/psp2_io.h"
+#include "platforms/psp2/psp2_clock.h"
+#include "platforms/sdl2/sdl2_input.h"
+#include "platforms/sdl2/sdl2_audio.h"
+#include "platforms/sdl2/sdl2_thread.h"
+#include "platforms/sdl2/sdl2_mutex.h"
+#include "platforms/sdl2/sdl2_cond.h"
+
+#define C2DRenderer PSP2Renderer
+#define C2DTexture PSP2Texture
+#define C2DInput SDL2Input
+#define C2DAudio SDL2Audio
+#define C2DIo PSP2Io
+#define C2DClock PSP2Clock
+#define C2DThread SDL2Thread
+#define C2DMutex SDL2Mutex
+#define C2DCond SDL2Cond
+
+#else
 #include "c2d_gl2.h"
 #include "c2d_sdl2.h"
 #include "platforms/psp2/psp2_io.h"
@@ -60,6 +83,7 @@ extern c2d::Renderer *c2d_renderer;
 
 #define C2DIo PSP2Io
 #define C2DClock PSP2Clock
+#endif
 
 #define KEY_JOY_UP_DEFAULT      8
 #define KEY_JOY_DOWN_DEFAULT    6
