@@ -424,14 +424,15 @@ namespace c2d {
     }
 
     void Text::onUpdate() {
-        if (m_string.empty()) {
+        if (!m_font || m_string.empty()) {
             return;
         }
 
-        // if the texture size changed, we need to update vertex buffer for normalized texCoords
-        if (m_font->getTexture(m_characterSize)->getSize() != m_textureSize) {
+        if (m_font->isDirty()) {
+            printf("dirty: %i\n", m_font->isDirty());
             m_geometryNeedUpdate = true;
             ensureGeometryUpdate();
+            m_font->setDirty(false);
         } else {
             ensureGeometryUpdate();
         }
@@ -440,7 +441,7 @@ namespace c2d {
     }
 
     void Text::onDraw(Transform &transform, bool draw) {
-        if (m_string.empty()) {
+        if (!m_font || m_string.empty()) {
             return;
         }
 
@@ -457,17 +458,13 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void Text::ensureGeometryUpdate() const {
         // Do nothing, if geometry has not changed
-        if (!m_geometryNeedUpdate)
-            return;
-
-        //printf("ensureGeometryUpdate: %s\n", m_string.c_str());
+        if (!m_geometryNeedUpdate) return;
 
         // Mark geometry as updated
         m_geometryNeedUpdate = false;
 
         // No font or text: nothing to draw
-        if ((m_font == nullptr) || m_string.empty())
-            return;
+        if (!m_font || m_string.empty()) return;
 
         // Clear the previous geometry
         m_vertices.clear();
@@ -591,8 +588,6 @@ namespace c2d {
                             y += vspace;
                             x = 0;
                             break;
-                        default:
-                            break;
                     }
 
                     // Update the current bounds (max coordinates)
@@ -672,12 +667,5 @@ namespace c2d {
 
         m_vertices.update();
         m_outlineVertices.update();
-
-        /*
-        if (!m_font->isBmFont() && m_font->isDirtyTex()) {
-            m_font->getTexture(m_characterSize)->unlock();
-            m_font->setDirtyTex(false);
-        }
-        */
     }
 } // namespace sf

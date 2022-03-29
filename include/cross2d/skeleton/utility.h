@@ -19,6 +19,8 @@ namespace c2d {
 
         static float random(float min, float max);
 
+        static int pow2(int i);
+
         static int parseInt(const std::string &str, int defValue = 0);
 
         static float parseFloat(const std::string &str);

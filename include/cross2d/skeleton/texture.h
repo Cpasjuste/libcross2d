@@ -16,7 +16,7 @@ namespace c2d {
     public:
 
         enum class Format : int {
-            RGB565, RGBA8, ARGB8, BGRA8, ABGR8
+            RGB565, RGBA8
         };
 
         enum class Filter : int {
@@ -24,27 +24,23 @@ namespace c2d {
         };
 
         // START - to implement, device specific code
-        Texture(const std::string &path);
+        explicit Texture(const std::string &path);
 
-        Texture(const unsigned char *buffer, int bufferSize);
+        explicit Texture(const unsigned char *buffer, int bufferSize);
 
-        Texture(const Vector2f &size = Vector2f(), Format format = Format::RGBA8);
+        explicit Texture(const Vector2i &size = Vector2i(), Format format = Format::RGBA8);
 
         virtual ~Texture();
 
         virtual Vector2i getTextureSize() {
-            return tex_size;
+            return m_tex_size;
         }
 
-        virtual int resize(const Vector2i &size, bool keepPixels = false) { return -1; };
-
-        virtual int lock(IntRect *rect, uint8_t **pixels, int *pitch) { return -1; };
+        virtual int lock(uint8_t **pixels, int *pitch = nullptr, IntRect rect = {0, 0, 0, 0}) { return -1; };
 
         virtual void unlock() {};
 
-        virtual int save(const std::string &path) { return -1; };
-
-        virtual void setFilter(Filter filter) { this->filter = filter; };
+        virtual void setFilter(Filter filter) { m_filter = filter; };
 
         virtual void setShader(int shaderIndex);
 
@@ -53,16 +49,21 @@ namespace c2d {
         virtual void applyShader() {};
         // END - to implement, device specific code
 
-        std::string path;
-        int bpp = 4;
-        int pitch = 0;
-        Format format = Format::RGBA8;
-        Filter filter = Filter::Linear;
-        ShaderList::Shader *shader = nullptr;
+        virtual int resize(const Vector2i &size, bool keepPixels = false);
+
+        virtual int save(const std::string &path);
+
+        std::string m_path;
+        int m_bpp = 4;
+        int m_pitch = 0;
+        Format m_format = Format::RGBA8;
+        Filter m_filter = Filter::Linear;
+        ShaderList::Shader *m_shader = nullptr;
 
     protected:
-        Vector2i tex_size;
-        IntRect unlock_rect;
+        Vector2i m_tex_size;
+        uint8_t *m_pixels = nullptr;
+        IntRect m_unlock_rect = IntRect();
     };
 }
 

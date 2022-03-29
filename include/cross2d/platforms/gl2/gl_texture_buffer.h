@@ -13,7 +13,7 @@ namespace c2d {
 
     public:
 
-        explicit GLTextureBuffer(const Vector2f &size = Vector2f(0, 0), Format format = Format::RGBA8);
+        explicit GLTextureBuffer(const Vector2i &size = Vector2i(0, 0), Format format = Format::RGBA8);
 
         ~GLTextureBuffer() override;
 
@@ -25,7 +25,7 @@ namespace c2d {
         unsigned int fbo = 0;
 
     private:
-        int createTexture(const Vector2f &size = Vector2f(0, 0), Format format = Format::RGBA8);
+        int createTexture(const Vector2i &size = Vector2i(0, 0), Format format = Format::RGBA8);
 
         void deleteTexture();
     };

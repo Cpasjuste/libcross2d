@@ -485,10 +485,6 @@ namespace c2d {
             glyph.bounds.width = static_cast<float>(bitmap.width);
             glyph.bounds.height = static_cast<float>(bitmap.rows);
 
-            // Resize the pixel buffer to the new size and fill it with transparent white pixels
-            //m_pixelBuffer.resize(static_cast<std::size_t>(width) * static_cast<std::size_t>(height) * 4);
-
-            //uint8_t *current = m_pixelBuffer.data();
             uint8_t *buffer;
             IntRect rect = {
                     (int) (glyph.textureRect.left - padding),
@@ -496,7 +492,7 @@ namespace c2d {
                     (int) (glyph.textureRect.width + 2 * padding),
                     (int) (glyph.textureRect.height + 2 * padding)
             };
-            page.texture->lock(&rect, &buffer, nullptr);
+            page.texture->lock(&buffer, nullptr, rect);
             uint8_t *current = buffer;
             uint8_t *end = current + width * height * 4;
 
@@ -529,8 +525,8 @@ namespace c2d {
                                                             (1 << (7 - ((x - padding) % 8))))
                                                            ? 255 : 0);
 #else
-                        buffer[index * 4 + 3] = (unsigned char) ((pixels[(x - padding) / 8]) &
-                                                                 (1 << (7 - ((x - padding) % 8)))) ? 255 : 0;
+                        buffer[index * 4 + 3] =
+                                ((pixels[(x - padding) / 8]) & (1 << (7 - ((x - padding) % 8)))) ? 255 : 0;
 #endif
                     }
                     pixels += bitmap.pitch;
@@ -553,30 +549,6 @@ namespace c2d {
 
             // Write the pixels to the texture
             page.texture->unlock();
-            /*
-            int x = (int) glyph.textureRect.left - padding;
-            int y = (int) glyph.textureRect.top - padding;
-            int w = (int) glyph.textureRect.width + 2 * padding;
-            int h = (int) glyph.textureRect.height + 2 * padding;
-            page.texture->unlock(m_pixelBuffer.data(), {x, y, w, h});
-            */
-
-            /*
-            void *buffer;
-            int pitch;
-            FloatRect rect = {(float) x, (float) y, (float) w, (float) h};
-            page.texture->lock(&rect, &buffer, &pitch);
-
-            const uint8_t *srcPixels = &m_pixelBuffer[0];
-            auto *dstPixels = (uint8_t *) buffer;
-
-            for (unsigned int i = 0; i < h; i++) {
-                memcpy(dstPixels, srcPixels, w * 4);
-                srcPixels += w * 4;
-                dstPixels += pitch;
-            }
-            */
-            //m_dirty_tex = true;
         }
 
         // Delete the FT glyph
@@ -595,15 +567,15 @@ namespace c2d {
         // Find the line that fits well the glyph
         Row *row = nullptr;
         float bestRatio = 0;
-        for (std::vector<Row>::iterator it = page.rows.begin(); it != page.rows.end() && !row; ++it) {
-            float ratio = static_cast<float>(height) / it->height;
+        for (auto it = page.rows.begin(); it != page.rows.end() && !row; ++it) {
+            float ratio = static_cast<float>(height) / (float) it->height;
 
             // Ignore rows that are either too small or too high
             if ((ratio < 0.7f) || (ratio > 1.f))
                 continue;
 
             // Check if there's enough horizontal space left in the row
-            if (width > page.texture->getTextureRect().width - it->width)
+            if (width > page.texture->getTextureSize().x - it->width)
                 continue;
 
             // Make sure that this new row is the best found so far
@@ -617,21 +589,18 @@ namespace c2d {
 
         // If we didn't find a matching row, create a new one (10% taller than the glyph)
         if (!row) {
-            int rowHeight = height + height / 10;
-            while ((page.nextRow + rowHeight >= (unsigned int) page.texture->getTextureRect().height)
-                   || (width >= (unsigned int) page.texture->getTextureRect().width)) {
+            unsigned int rowHeight = height + height / 10;
+            while ((page.nextRow + rowHeight >= (unsigned int) page.texture->getTextureSize().y)
+                   || (width >= (unsigned int) page.texture->getTextureSize().x)) {
                 // Not enough space: resize the texture if possible
-                unsigned int textureWidth = (unsigned int) page.texture->getTextureRect().width;
-                unsigned int textureHeight = (unsigned int) page.texture->getTextureRect().height;
-                // TODO:
-                //if ((textureWidth * 2 <= Texture::getMaximumSize()) &&
-                //    (textureHeight * 2 <= Texture::getMaximumSize())) {
-                if ((textureWidth * 2 <= 1024) && (textureHeight * 2 <= 1024)) {
+                auto texWidth = (unsigned int) page.texture->getTextureSize().x;
+                auto texHeight = (unsigned int) page.texture->getTextureSize().y;
+                if ((texWidth * 2 <= 2048) && (texHeight * 2 <= 2048)) {
 #if defined(__GL2__) || defined(__PSP2__)
                     printf("Font:: resizing font texture from %ix%i to %ix%i\n",
-                           textureWidth, textureHeight, textureWidth * 2, textureHeight * 2);
-                    page.texture->resize({(int) textureWidth * 2, (int) textureHeight * 2}, true);
-                    //m_dirty_tex = true;
+                           texWidth, texHeight, texWidth * 2, texHeight * 2);
+                    page.texture->resize({(int) texWidth * 2, (int) texHeight * 2}, true);
+                    m_dirty = true;
 #else
                     // TODO
                     auto texture = new C2DTexture(
@@ -652,7 +621,7 @@ namespace c2d {
                         dst += dst_pitch;
                     }
 
-                    m_dirty_tex = true;
+                    m_dirty = true;
 
                     printf("Font:: replacing old texture (%p) by new texture (%p)\n", page.texture, texture);
                     delete (page.texture);
@@ -661,12 +630,12 @@ namespace c2d {
                 } else {
                     // Oops, we've reached the maximum texture size...
                     printf("Failed to add a new character to the font: the maximum texture size has been reached\n");
-                    return IntRect(0, 0, 2, 2);
+                    return {0, 0, 2, 2};
                 }
             }
 
             // We can now create the new row
-            page.rows.push_back(Row(page.nextRow, rowHeight));
+            page.rows.emplace_back(page.nextRow, rowHeight);
             page.nextRow += rowHeight;
             row = &page.rows.back();
         }
@@ -722,19 +691,14 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
 
     Font::Page::Page() : nextRow(3) {
-        if (texture) {
-            delete (texture);
-        }
-
         //printf("Font:: create new tex\n");
         texture = new C2DTexture({128, 128}, Texture::Format::RGBA8);
 
         // Reserve a 2x2 white square for texturing underlines
         uint8_t *buffer;
-        IntRect rect = {0, 0, 2, 2};
-        texture->lock(&rect, &buffer, nullptr);
-        int w = texture->getTextureRect().width;
-        int bpp = texture->bpp;
+        texture->lock(&buffer, nullptr, {0, 0, 2, 2});
+        int w = texture->getTextureSize().x;
+        int bpp = texture->m_bpp;
         for (int x = 0; x < 2; ++x) {
             for (int y = 0; y < 2; ++y) {
                 uint8_t *pixel = &buffer[(x + y * w) * bpp];
@@ -749,10 +713,7 @@ namespace c2d {
 
     Font::Page::~Page() {
         //printf("~Page\n");
-        if (texture != nullptr) {
-            //printf("~Page Texture\n");
-            delete (texture);
-        }
+        delete (texture);
     }
 
 } // namespace sf

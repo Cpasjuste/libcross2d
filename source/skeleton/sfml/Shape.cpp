@@ -61,7 +61,7 @@ namespace c2d {
         if (texture) {
             m_texture = texture;
             // Recompute the texture area if requested, or if there was no texture & rect before
-            if (resetRect || (!m_texture && (m_textureRect == IntRect()))) {
+            if (resetRect || m_textureRect == IntRect()) {
                 setTextureRect(IntRect(0, 0,
                                        (int) m_texture->getTextureSize().x, (int) m_texture->getTextureSize().y));
             }
@@ -79,7 +79,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     void Shape::setTextureRect(const IntRect &rect) {
         if (m_texture) {
-            m_texture->pitch = rect.width * m_texture->bpp;
+            m_texture->m_pitch = rect.width * m_texture->m_bpp;
         }
         m_textureRect = rect;
         m_shape_dirty = true;

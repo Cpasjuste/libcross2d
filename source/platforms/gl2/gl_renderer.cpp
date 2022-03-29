@@ -54,8 +54,8 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
     tex = (GLTexture *) texture;
     shader = tex && tex->available ? (GLShader *) m_shaderList->get(0) :
              (GLShader *) ((GLShaderList *) m_shaderList)->color;
-    if (tex && tex->shader && tex->shader->available) {
-        shader = (GLShader *) tex->shader;
+    if (tex && tex->m_shader && tex->m_shader->available) {
+        shader = (GLShader *) tex->m_shader;
     }
 
     // set shader
@@ -97,7 +97,7 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 
     if (tex && tex->available) {
         // bind texture
-        GL_CHECK(glBindTexture(GL_TEXTURE_2D, tex->texID));
+        GL_CHECK(glBindTexture(GL_TEXTURE_2D, tex->m_texID));
         // set tex coords
         GL_CHECK(glEnableVertexAttribArray(2));
         GL_CHECK(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
