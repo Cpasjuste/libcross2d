@@ -23,9 +23,9 @@ namespace c2d {
 
         int save(const std::string &path) override;
 
-        int lock(FloatRect *rect, void **pixels, int *pitch) override;
+        int lock(IntRect *rect, uint8_t **pixels, int *pitch) override;
 
-        void unlock(void *data = nullptr) override;
+        void unlock() override;
 
         int resize(const Vector2i &size, bool keepPixels = false) override;
 
@@ -33,7 +33,7 @@ namespace c2d {
 
         unsigned int texID = 0;
 
-        unsigned char *pixels = nullptr;
+        uint8_t *pixels = nullptr;
 
     private:
         unsigned char *getPixels(int *w, int *h, const unsigned char *buffer = nullptr, int bufferSize = 0);

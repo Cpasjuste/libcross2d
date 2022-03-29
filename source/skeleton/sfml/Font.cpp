@@ -460,7 +460,7 @@ namespace c2d {
         if ((width > 0) && (height > 0)) {
             // Leave a small padding around characters, so that filtering doesn't
             // pollute them with pixels from neighbors
-            const unsigned int padding = 1;
+            const unsigned int padding = 2;
 
             width += 2 * padding;
             height += 2 * padding;
@@ -480,15 +480,24 @@ namespace c2d {
             glyph.textureRect.height -= 2 * padding;
 
             // Compute the glyph's bounding box
-            glyph.bounds.left = static_cast<float>( bitmapGlyph->left);
+            glyph.bounds.left = static_cast<float>(bitmapGlyph->left);
             glyph.bounds.top = static_cast<float>(-bitmapGlyph->top);
-            glyph.bounds.width = static_cast<float>( bitmap.width);
-            glyph.bounds.height = static_cast<float>( bitmap.rows);
+            glyph.bounds.width = static_cast<float>(bitmap.width);
+            glyph.bounds.height = static_cast<float>(bitmap.rows);
 
             // Resize the pixel buffer to the new size and fill it with transparent white pixels
-            m_pixelBuffer.resize(static_cast<std::size_t>(width) * static_cast<std::size_t>(height) * 4);
+            //m_pixelBuffer.resize(static_cast<std::size_t>(width) * static_cast<std::size_t>(height) * 4);
 
-            uint8_t *current = &m_pixelBuffer[0];
+            //uint8_t *current = m_pixelBuffer.data();
+            uint8_t *buffer;
+            IntRect rect = {
+                    (int) (glyph.textureRect.left - padding),
+                    (int) (glyph.textureRect.top - padding),
+                    (int) (glyph.textureRect.width + 2 * padding),
+                    (int) (glyph.textureRect.height + 2 * padding)
+            };
+            page.texture->lock(&rect, &buffer, nullptr);
+            uint8_t *current = buffer;
             uint8_t *end = current + width * height * 4;
 
 #ifdef __C2D_ARGB__
@@ -515,13 +524,13 @@ namespace c2d {
                         // The color channels remain white, just fill the alpha channel
                         std::size_t index = x + y * width;
 #ifdef __C2D_ARGB__
-                        m_pixelBuffer[index * 4 + 0] =
+                        buffer[index * 4 + 0] =
                                 static_cast<unsigned char>(((pixels[(x - padding) / 8]) &
                                                             (1 << (7 - ((x - padding) % 8))))
                                                            ? 255 : 0);
 #else
-                        m_pixelBuffer[index * 4 + 3] = (unsigned char) ((pixels[(x - padding) / 8]) &
-                                                                        (1 << (7 - ((x - padding) % 8)))) ? 255 : 0;
+                        buffer[index * 4 + 3] = (unsigned char) ((pixels[(x - padding) / 8]) &
+                                                                 (1 << (7 - ((x - padding) % 8)))) ? 255 : 0;
 #endif
                     }
                     pixels += bitmap.pitch;
@@ -533,9 +542,9 @@ namespace c2d {
                         // The color channels remain white, just fill the alpha channel
                         std::size_t index = x + y * width;
 #ifdef __C2D_ARGB__
-                        m_pixelBuffer[index * 4 + 0] = pixels[x - padding];
+                        buffer[index * 4 + 0] = pixels[x - padding];
 #else
-                        m_pixelBuffer[index * 4 + 3] = pixels[x - padding];
+                        buffer[index * 4 + 3] = pixels[x - padding];
 #endif
                     }
                     pixels += bitmap.pitch;
@@ -543,11 +552,16 @@ namespace c2d {
             }
 
             // Write the pixels to the texture
-            unsigned int x = glyph.textureRect.left - padding;
-            unsigned int y = glyph.textureRect.top - padding;
-            unsigned int w = glyph.textureRect.width + 2 * padding;
-            unsigned int h = glyph.textureRect.height + 2 * padding;
+            page.texture->unlock();
+            /*
+            int x = (int) glyph.textureRect.left - padding;
+            int y = (int) glyph.textureRect.top - padding;
+            int w = (int) glyph.textureRect.width + 2 * padding;
+            int h = (int) glyph.textureRect.height + 2 * padding;
+            page.texture->unlock(m_pixelBuffer.data(), {x, y, w, h});
+            */
 
+            /*
             void *buffer;
             int pitch;
             FloatRect rect = {(float) x, (float) y, (float) w, (float) h};
@@ -556,13 +570,13 @@ namespace c2d {
             const uint8_t *srcPixels = &m_pixelBuffer[0];
             auto *dstPixels = (uint8_t *) buffer;
 
-            for (unsigned int i = 0; i < height; i++) {
-                memcpy(dstPixels, srcPixels, width * 4);
-                srcPixels += width * 4;
+            for (unsigned int i = 0; i < h; i++) {
+                memcpy(dstPixels, srcPixels, w * 4);
+                srcPixels += w * 4;
                 dstPixels += pitch;
             }
-
-            m_dirty_tex = true;
+            */
+            //m_dirty_tex = true;
         }
 
         // Delete the FT glyph
@@ -617,7 +631,7 @@ namespace c2d {
                     printf("Font:: resizing font texture from %ix%i to %ix%i\n",
                            textureWidth, textureHeight, textureWidth * 2, textureHeight * 2);
                     page.texture->resize({(int) textureWidth * 2, (int) textureHeight * 2}, true);
-                    m_dirty_tex = true;
+                    //m_dirty_tex = true;
 #else
                     // TODO
                     auto texture = new C2DTexture(
@@ -708,10 +722,8 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
 
     Font::Page::Page() : nextRow(3) {
-
-        if (texture != nullptr) {
+        if (texture) {
             delete (texture);
-            texture = nullptr;
         }
 
         //printf("Font:: create new tex\n");
@@ -719,16 +731,20 @@ namespace c2d {
 
         // Reserve a 2x2 white square for texturing underlines
         uint8_t *buffer;
-        texture->lock(nullptr, reinterpret_cast<void **>(&buffer), nullptr);
+        IntRect rect = {0, 0, 2, 2};
+        texture->lock(&rect, &buffer, nullptr);
+        int w = texture->getTextureRect().width;
+        int bpp = texture->bpp;
         for (int x = 0; x < 2; ++x) {
             for (int y = 0; y < 2; ++y) {
-                uint8_t *pixel = &buffer[(x + y * texture->getTextureRect().width) * texture->bpp];
+                uint8_t *pixel = &buffer[(x + y * w) * bpp];
                 *pixel++ = 255;
                 *pixel++ = 255;
                 *pixel++ = 255;
                 *pixel++ = 255;
             }
         }
+        texture->unlock();
     }
 
     Font::Page::~Page() {
@@ -736,7 +752,6 @@ namespace c2d {
         if (texture != nullptr) {
             //printf("~Page Texture\n");
             delete (texture);
-            texture = nullptr;
         }
     }
 

@@ -135,10 +135,9 @@ int PSP2Texture::lock(FloatRect *rect, void **pixels, int *p) {
 
 void PSP2Texture::setFilter(Filter f) {
     filter = f;
-    vita2d_texture_set_filters(tex,
-                               SCE_GXM_TEXTURE_FILTER_POINT,
-                               filter == Filter::Point ?
-                               SCE_GXM_TEXTURE_FILTER_POINT : SCE_GXM_TEXTURE_FILTER_LINEAR);
+    SceGxmTextureFilter sceFilter = filter == Filter::Point ?
+                                    SCE_GXM_TEXTURE_FILTER_POINT : SCE_GXM_TEXTURE_FILTER_LINEAR;
+    vita2d_texture_set_filters(tex, sceFilter, sceFilter);
 }
 
 void PSP2Texture::setShader(int shaderIndex) {

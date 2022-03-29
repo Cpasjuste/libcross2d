@@ -293,11 +293,13 @@ int GLTexture::save(const std::string &path) {
     return res;
 }
 
-int GLTexture::lock(FloatRect *rect, void **pix, int *p) {
-    if (rect == nullptr) {
+int GLTexture::lock(IntRect *rect, uint8_t **pix, int *p) {
+    if (!rect) {
         *pix = pixels;
+        unlock_rect = {0, 0, getTextureRect().width, getTextureRect().height};
     } else {
-        *pix = (void *) (pixels + (int) rect->top * pitch + (int) rect->left * bpp);
+        *pix = pixels + rect->top * pitch + rect->left * bpp;
+        unlock_rect = *rect;
     }
 
     if (p != nullptr) {
@@ -307,36 +309,49 @@ int GLTexture::lock(FloatRect *rect, void **pix, int *p) {
     return 0;
 }
 
-void GLTexture::unlock(void *data) {
+void GLTexture::unlock() {
+    uint8_t *data = pixels;
+    if (unlock_rect.top != 0 || unlock_rect.left != 0) {
+        data = pixels + unlock_rect.top * pitch + unlock_rect.left * bpp;
+    }
+
+    printf("unlock: {%i, %i, %i, %i}\n",
+           unlock_rect.left, unlock_rect.top, unlock_rect.width, unlock_rect.height);
+
     glBindTexture(GL_TEXTURE_2D, texID);
 
     switch (format) {
         case Format::RGBA8:
             glTexSubImage2D(GL_TEXTURE_2D, 0,
-                            0, 0, (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_RGBA, GL_UNSIGNED_BYTE, data ? data : pixels);
+                            unlock_rect.left, unlock_rect.top,
+                            (GLsizei) unlock_rect.width, (GLsizei) unlock_rect.height,
+                            GL_RGBA, GL_UNSIGNED_BYTE, data);
             break;
 #ifndef __GLES2__
         case Format::BGRA8:
             glTexSubImage2D(GL_TEXTURE_2D, 0,
-                            0, 0, (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data ? data : pixels);
+                            unlock_rect.left, unlock_rect.top,
+                            (GLsizei) unlock_rect.width, (GLsizei) unlock_rect.height,
+                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data);
             break;
         case Format::ARGB8:
             glTexSubImage2D(GL_TEXTURE_2D, 0,
-                            0, 0, (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, data ? data : pixels);
+                            unlock_rect.left, unlock_rect.top,
+                            (GLsizei) unlock_rect.width, (GLsizei) unlock_rect.height,
+                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, data);
             break;
         case Format::ABGR8:
             glTexSubImage2D(GL_TEXTURE_2D, 0,
-                            0, 0, (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_ABGR_EXT, GL_UNSIGNED_INT_8_8_8_8, data ? data : pixels);
+                            unlock_rect.left, unlock_rect.top,
+                            (GLsizei) unlock_rect.width, (GLsizei) unlock_rect.height,
+                            GL_ABGR_EXT, GL_UNSIGNED_INT_8_8_8_8, data);
             break;
 #endif
         default:
             glTexSubImage2D(GL_TEXTURE_2D, 0,
-                            0, 0, (GLsizei) getTextureRect().width, (GLsizei) getTextureRect().height,
-                            GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data ? data : pixels);
+                            unlock_rect.left, unlock_rect.top,
+                            (GLsizei) unlock_rect.width, (GLsizei) unlock_rect.height,
+                            GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data);
             break;
     }
 

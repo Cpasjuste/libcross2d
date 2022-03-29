@@ -230,6 +230,7 @@ namespace c2d {
 
         virtual const std::string &getPath() const;
 
+        /*
         virtual bool isDirtyTex() {
             return m_dirty_tex;
         }
@@ -237,6 +238,7 @@ namespace c2d {
         virtual void setDirtyTex(bool dirty) {
             m_dirty_tex = dirty;
         }
+        */
 
         virtual bool isBmFont() {
             return false;
@@ -337,7 +339,7 @@ namespace c2d {
         Texture::Filter m_filtering = Texture::Filter::Linear;
         Vector2f m_offset;
         std::string m_font_path;
-        mutable bool m_dirty_tex = false;
+        //mutable bool m_dirty_tex = false;
     };
 
 } // namespace c2d

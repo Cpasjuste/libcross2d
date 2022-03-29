@@ -475,9 +475,9 @@ namespace c2d {
         m_bounds = FloatRect();
 
         // Compute values related to the text style
-        bool bold = (m_style & Bold) != 0;
-        bool underlined = (m_style & Underlined) != 0;
-        bool strikeThrough = (m_style & StrikeThrough) != 0;
+        bool bold = m_style & Bold;
+        bool underlined = m_style & Underlined;
+        bool strikeThrough = m_style & StrikeThrough;
         float italic = (m_style & Italic) != 0u ? 0.208f : 0.f; // 12 degrees
         float underlineOffset = m_font->getUnderlinePosition(m_characterSize);
         float underlineThickness = m_font->getUnderlineThickness(m_characterSize);
@@ -501,7 +501,7 @@ namespace c2d {
 
         // fix top not at 0 if needed (font->setOffset)
         // TODO: find a better fix
-        float scale = (float) getCharacterSize() / (float) C2D_DEFAULT_CHAR_SIZE;
+        float scale = (float) m_characterSize / (float) C2D_DEFAULT_CHAR_SIZE;
         x += m_font->getOffset().x * scale;
         y += m_font->getOffset().y * scale;
 
@@ -576,15 +576,15 @@ namespace c2d {
                 }
 
                 // Handle special characters
-                if ((curChar == ' ') || (curChar == '\t') || (curChar == '\n')) {
+                if ((curChar == L' ') || (curChar == L'\t') || (curChar == L'\n')) {
                     // Update the current bounds (min coordinates)
                     minX = std::min(minX, x);
                     minY = std::min(minY, y);
                     switch (curChar) {
-                        case ' ':
+                        case L' ':
                             x += hspace;
                             break;
-                        case '\t':
+                        case L'\t':
                             x += hspace * 4;
                             break;
                         case '\n':
@@ -665,8 +665,6 @@ namespace c2d {
             // Update the bounding rectangle
             m_bounds.left = minX;
             m_bounds.top = minY;
-            //m_bounds.width = (maxX - minX) + (2 * scale);     // ?? why did I do this
-            //m_bounds.height = (maxY - minY) + (2 * scale);    // ?? why did I do this
             m_bounds.width = (maxX - minX) + m_outlineThickness;
             m_bounds.height = (maxY - minY) + m_outlineThickness;
             m_size = {m_bounds.width, m_bounds.height};
@@ -675,9 +673,11 @@ namespace c2d {
         m_vertices.update();
         m_outlineVertices.update();
 
+        /*
         if (!m_font->isBmFont() && m_font->isDirtyTex()) {
             m_font->getTexture(m_characterSize)->unlock();
             m_font->setDirtyTex(false);
         }
+        */
     }
 } // namespace sf

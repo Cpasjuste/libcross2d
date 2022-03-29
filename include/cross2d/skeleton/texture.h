@@ -38,9 +38,9 @@ namespace c2d {
 
         virtual int resize(const Vector2i &size, bool keepPixels = false) { return -1; };
 
-        virtual int lock(FloatRect *rect, void **pixels, int *pitch) { return -1; };
+        virtual int lock(IntRect *rect, uint8_t **pixels, int *pitch) { return -1; };
 
-        virtual void unlock(void *data = nullptr) {};
+        virtual void unlock() {};
 
         virtual int save(const std::string &path) { return -1; };
 
@@ -62,6 +62,7 @@ namespace c2d {
 
     protected:
         Vector2i tex_size;
+        IntRect unlock_rect;
     };
 }
 
