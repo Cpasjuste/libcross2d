@@ -23,6 +23,7 @@ GLTexture::GLTexture(const Vector2i &size, Texture::Format format) : Texture(siz
 int GLTexture::createTexture() {
     glGenTextures(1, &m_texID);
     glBindTexture(GL_TEXTURE_2D, m_texID);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
     if (m_format == Format::RGBA8) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_tex_size.x, m_tex_size.y,
                      0, GL_RGBA, GL_UNSIGNED_BYTE, m_pixels);
