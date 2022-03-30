@@ -458,7 +458,6 @@ namespace c2d {
         unsigned int height = bitmap.rows;
 
         if ((width > 0) && (height > 0)) {
-            //printf("Font::loadGlyph: %c\n", codePoint);
             // Leave a small padding around characters, so that filtering doesn't
             // pollute them with pixels from neighbors
             const unsigned int padding = 2;
@@ -489,15 +488,9 @@ namespace c2d {
             glyph.bounds.width = static_cast<float>(bitmap.width);
             glyph.bounds.height = static_cast<float>(bitmap.rows);
 
-            uint8_t *buffer;
-            IntRect rect = {
-                    (int) (glyph.textureRect.left - padding),
-                    (int) (glyph.textureRect.top - padding),
-                    (int) (glyph.textureRect.width + 2 * padding),
-                    (int) (glyph.textureRect.height + 2 * padding)
-            };
-            page.texture->lock(&buffer, nullptr, rect);
-            uint8_t *current = buffer;
+            // Resize the pixel buffer to the new size and fill it with transparent white pixels
+            m_pixelBuffer.resize(width * height * 4);
+            uint8_t *current = m_pixelBuffer.data();
             uint8_t *end = current + width * height * 4;
 
 #ifdef __C2D_ARGB__
@@ -524,12 +517,12 @@ namespace c2d {
                         // The color channels remain white, just fill the alpha channel
                         std::size_t index = x + y * width;
 #ifdef __C2D_ARGB__
-                        buffer[index * 4 + 0] =
+                        m_pixelBuffer[index * 4 + 0] =
                                 static_cast<unsigned char>(((pixels[(x - padding) / 8]) &
                                                             (1 << (7 - ((x - padding) % 8))))
                                                            ? 255 : 0);
 #else
-                        buffer[index * 4 + 3] =
+                        m_pixelBuffer[index * 4 + 3] =
                                 ((pixels[(x - padding) / 8]) & (1 << (7 - ((x - padding) % 8)))) ? 255 : 0;
 #endif
                     }
@@ -542,9 +535,9 @@ namespace c2d {
                         // The color channels remain white, just fill the alpha channel
                         std::size_t index = x + y * width;
 #ifdef __C2D_ARGB__
-                        buffer[index * 4 + 0] = pixels[x - padding];
+                        m_pixelBuffer[index * 4 + 0] = pixels[x - padding];
 #else
-                        buffer[index * 4 + 3] = pixels[x - padding];
+                        m_pixelBuffer[index * 4 + 3] = pixels[x - padding];
 #endif
                     }
                     pixels += bitmap.pitch;
@@ -552,6 +545,24 @@ namespace c2d {
             }
 
             // Write the pixels to the texture
+            unsigned int x = glyph.textureRect.left - padding;
+            unsigned int y = glyph.textureRect.top - padding;
+            unsigned int w = glyph.textureRect.width + 2 * padding;
+            unsigned int h = glyph.textureRect.height + 2 * padding;
+
+            uint8_t *dst;
+            int pitch;
+            IntRect rect = {(int) x, (int) y, (int) w, (int) h};
+            page.texture->lock(&dst, &pitch, rect);
+
+            const uint8_t *src = m_pixelBuffer.data();
+
+            for (unsigned int i = 0; i < h; i++) {
+                memcpy(dst, src, w * 4);
+                src += w * 4;
+                dst += pitch;
+            }
+
             page.texture->unlock();
         }
 
@@ -600,35 +611,9 @@ namespace c2d {
                 auto texWidth = (unsigned int) page.texture->getTextureSize().x;
                 auto texHeight = (unsigned int) page.texture->getTextureSize().y;
                 if ((texWidth * 2 <= 2048) && (texHeight * 2 <= 2048)) {
-#if defined(__GL2__) || defined(__PSP2__)
-                    printf("Font:: resizing font texture from %ix%i to %ix%i\n",
-                           texWidth, texHeight, texWidth * 2, texHeight * 2);
+                    //printf("Font:: resizing font texture from %ix%i to %ix%i\n",
+                    //     texWidth, texHeight, texWidth * 2, texHeight * 2);
                     page.texture->resize({(int) texWidth * 2, (int) texHeight * 2}, true);
-                    m_dirty = true;
-#else
-                    auto texture = new C2DTexture({(int) texWidth * 2, (int) texHeight * 2}, Texture::Format::RGBA8);
-                    texture->setFilter(m_filtering);
-
-                    uint8_t *src;
-                    int src_pitch;
-                    page.texture->lock(&src, &src_pitch);
-
-                    uint8_t *dst;
-                    int dst_pitch;
-                    texture->lock(&dst, &dst_pitch);
-
-                    for (unsigned int i = 0; i < texHeight; i++) {
-                        std::memcpy(dst, src, texWidth * 4);
-                        src += src_pitch;
-                        dst += dst_pitch;
-                    }
-
-                    texture->unlock();
-
-                    delete (page.texture);
-                    page.texture = texture;
-                    m_dirty = true;
-#endif
                 } else {
                     // Oops, we've reached the maximum texture size...
                     printf("Failed to add a new character to the font: the maximum texture size has been reached\n");

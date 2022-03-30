@@ -40,13 +40,14 @@ int GLTexture::createTexture() {
 void GLTexture::unlock() {
     uint8_t *data = m_pixels + m_unlock_rect.top * m_pitch + m_unlock_rect.left * m_bpp;
 
-    printf("Texture::unlock(%p): rect: {%i, %i, %i, %i}, pixels: %p\n",
-           this, m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height, data);
+    //printf("Texture::unlock(%p): rect: {%i, %i, %i, %i}, pixels: %p\n",
+    //     this, m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height, data);
 
     glBindTexture(GL_TEXTURE_2D, m_texID);
 
     if (m_unlock_rect.width > m_tex_size.x || m_unlock_rect.height > m_tex_size.y) {
         // resize texture requested from "lock"
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
         if (m_format == Format::RGBA8) {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_unlock_rect.width, m_unlock_rect.height,
@@ -56,7 +57,9 @@ void GLTexture::unlock() {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, m_unlock_rect.width, m_unlock_rect.height,
                          0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data);
         }
+        setFilter(m_filter);
     } else {
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, m_tex_size.x);
         if (m_format == Format::RGBA8) {
             glTexSubImage2D(GL_TEXTURE_2D, 0,
                             m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height,

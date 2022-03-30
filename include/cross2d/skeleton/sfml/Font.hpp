@@ -230,14 +230,6 @@ namespace c2d {
 
         virtual const std::string &getPath() const;
 
-        virtual bool isDirty() {
-            return m_dirty;
-        }
-
-        virtual void setDirty(bool dirty) {
-            m_dirty = dirty;
-        }
-
         virtual bool isBmFont() {
             return false;
         }
@@ -337,12 +329,11 @@ namespace c2d {
         Texture::Filter m_filtering = Texture::Filter::Linear;
         Vector2f m_offset;
         std::string m_font_path;
-        mutable bool m_dirty = false;
     };
 
 } // namespace c2d
 
-#endif // SFML_FONT_HPP
+#endif // C2D_FONT_HPP
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Font

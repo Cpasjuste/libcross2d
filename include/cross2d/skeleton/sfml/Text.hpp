@@ -405,7 +405,7 @@ namespace c2d {
         mutable c2d::Vector2f m_size;
         int m_line_spacing = 0;
         Origin m_text_origin = Origin::TopLeft;
-        mutable Vector2f m_textureSize = {128, 128};
+        mutable Vector2i m_textureSize = {128, 128};
     };
 
 } // namespace sf

@@ -33,13 +33,13 @@ using namespace c2d;
 namespace {
 
     // Add an underline or strikethrough line to the vertex array
-    void addLine(c2d::VertexArray &vertices, c2d::Vector2f texSize,
+    void addLine(c2d::VertexArray &vertices, c2d::Vector2i texSize,
                  float lineLength, float lineTop, const c2d::Color &color, float offset,
                  float thickness, float outlineThickness = 0) {
         float top = std::floor(lineTop + offset - (thickness / 2) + 0.5f);
         float bottom = top + std::floor(thickness + 0.5f);
 
-        Vector2f texCoords = {1.0f / texSize.x, 1.0f / texSize.y};
+        Vector2f texCoords = {1.0f / (float) texSize.x, 1.0f / (float) texSize.y};
 
         vertices.append(Vertex({-outlineThickness, top - outlineThickness}, color, texCoords));
         vertices.append(Vertex({lineLength + outlineThickness, top - outlineThickness}, color, texCoords));
@@ -50,19 +50,19 @@ namespace {
     }
 
     // Add a glyph quad to the vertex array
-    void addGlyphQuad(c2d::VertexArray &vertices, c2d::Vector2f texSize, c2d::Vector2f position,
+    void addGlyphQuad(c2d::VertexArray &vertices, c2d::Vector2i texSize, c2d::Vector2f position,
                       const c2d::Color &color, const c2d::Glyph &glyph, float italic) {
-        float padding = 1.0f / texSize.x;
+        float padding = 1.0f / (float) texSize.x;
 
         float left = glyph.bounds.left - padding;
         float top = glyph.bounds.top - padding;
         float right = glyph.bounds.left + glyph.bounds.width + padding;
         float bottom = glyph.bounds.top + glyph.bounds.height + padding;
 
-        float u1 = ((float) glyph.textureRect.left - padding) / texSize.x;
-        float v1 = ((float) glyph.textureRect.top - padding) / texSize.y;
-        float u2 = ((float) (glyph.textureRect.left + glyph.textureRect.width) + padding) / texSize.x;
-        float v2 = ((float) (glyph.textureRect.top + glyph.textureRect.height) + padding) / texSize.y;
+        float u1 = ((float) glyph.textureRect.left - padding) / (float) texSize.x;
+        float v1 = ((float) glyph.textureRect.top - padding) / (float) texSize.y;
+        float u2 = ((float) (glyph.textureRect.left + glyph.textureRect.width) + padding) / (float) texSize.x;
+        float v2 = ((float) (glyph.textureRect.top + glyph.textureRect.height) + padding) / (float) texSize.y;
 
         vertices.append(Vertex({position.x + left - italic * top, position.y + top}, color, {u1, v1}));
         vertices.append(Vertex({position.x + right - italic * top, position.y + top}, color, {u2, v1}));
@@ -428,11 +428,10 @@ namespace c2d {
             return;
         }
 
-        if (m_font->isDirty()) {
-            printf("dirty: %i\n", m_font->isDirty());
+        if (!m_font->isBmFont() && m_font->getTexture(m_characterSize)->getTextureSize() != m_textureSize) {
+            m_textureSize = m_font->getTexture(m_characterSize)->getTextureSize();
             m_geometryNeedUpdate = true;
             ensureGeometryUpdate();
-            m_font->setDirty(false);
         } else {
             ensureGeometryUpdate();
         }
@@ -488,10 +487,6 @@ namespace c2d {
         // Precompute the variables needed by the algorithm
         auto hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
         auto vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + (float) m_line_spacing;
-
-        // sfml use pixel coordinates for texCoords, but c2d use normalized one.
-        // we keep a reference to texture size for checking this in "onUpdate"
-        m_textureSize = m_font->getTexture(m_characterSize)->getSize();
 
         float x = 0.f;
         auto y = static_cast<float>(m_characterSize);
@@ -554,22 +549,22 @@ namespace c2d {
 
                 // If we're using the underlined style and there's a new line, draw a line
                 if (underlined && (curChar == L'\n')) {
-                    addLine(m_vertices, m_textureSize, x, y, m_fillColor, underlineOffset, underlineThickness);
+                    addLine(m_vertices, m_textureSize, x, y,
+                            m_fillColor, underlineOffset, underlineThickness);
 
                     if (m_outlineThickness != 0)
-                        addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, underlineOffset,
-                                underlineThickness,
-                                m_outlineThickness);
+                        addLine(m_outlineVertices, m_textureSize, x, y,
+                                m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
                 }
 
                 // If we're using the strike through style and there's a new line, draw a line across all characters
                 if (strikeThrough && (curChar == L'\n')) {
-                    addLine(m_vertices, m_textureSize, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
+                    addLine(m_vertices, m_textureSize, x, y,
+                            m_fillColor, strikeThroughOffset, underlineThickness);
 
                     if (m_outlineThickness != 0)
-                        addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset,
-                                underlineThickness,
-                                m_outlineThickness);
+                        addLine(m_outlineVertices, m_textureSize, x, y,
+                                m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
                 }
 
                 // Handle special characters
@@ -608,7 +603,7 @@ namespace c2d {
                     float bottom = glyph.bounds.top + glyph.bounds.height;
 
                     // Add the outline glyph to the vertices
-                    addGlyphQuad(m_outlineVertices, m_textureSize, Vector2f(x, y), m_outlineColor, glyph, italic);
+                    addGlyphQuad(m_outlineVertices, m_textureSize, {x, y}, m_outlineColor, glyph, italic);
 
                     // Update the current bounds with the outlined glyph bounds
                     minX = std::min(minX, x + left - italic * bottom);
@@ -621,7 +616,7 @@ namespace c2d {
                 const Glyph &glyph = m_font->getGlyph(curChar, m_characterSize, bold);
 
                 // Add the glyph to the vertices
-                addGlyphQuad(m_vertices, m_textureSize, Vector2f(x, y), m_fillColor, glyph, italic);
+                addGlyphQuad(m_vertices, m_textureSize, {x, y}, m_fillColor, glyph, italic);
 
                 // Update the current bounds with the non outlined glyph bounds
                 if (m_outlineThickness == 0) {
@@ -642,19 +637,20 @@ namespace c2d {
 
             // If we're using the underlined style, add the last line
             if (underlined && (x > 0)) {
-                addLine(m_vertices, m_textureSize, x, y, m_fillColor, underlineOffset, underlineThickness);
+                addLine(m_vertices, m_textureSize, x, y,
+                        m_fillColor, underlineOffset, underlineThickness);
                 if (m_outlineThickness != 0)
-                    addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, underlineOffset, underlineThickness,
-                            m_outlineThickness);
+                    addLine(m_outlineVertices, m_textureSize, x, y,
+                            m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
             }
 
             // If we're using the strike through style, add the last line across all characters
             if (strikeThrough && (x > 0)) {
-                addLine(m_vertices, m_textureSize, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
+                addLine(m_vertices, m_textureSize, x, y,
+                        m_fillColor, strikeThroughOffset, underlineThickness);
                 if (m_outlineThickness != 0)
-                    addLine(m_outlineVertices, m_textureSize, x, y, m_outlineColor, strikeThroughOffset,
-                            underlineThickness,
-                            m_outlineThickness);
+                    addLine(m_outlineVertices, m_textureSize, x, y,
+                            m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
             }
 
             // Update the bounding rectangle

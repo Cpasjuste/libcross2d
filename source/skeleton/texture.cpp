@@ -101,8 +101,8 @@ int Texture::lock(uint8_t **pixels, int *pitch, IntRect rect) {
 
     *pixels = m_pixels + m_unlock_rect.top * m_pitch + m_unlock_rect.left * m_bpp;
 
-    printf("Texture::lock(%p): rect: {%i, %i, %i, %i}, pixels: %p\n",
-           this, m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height, *pixels);
+    //printf("Texture::lock(%p): rect: {%i, %i, %i, %i}, pixels: %p\n",
+    //     this, m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height, *pixels);
 
     return 0;
 }
