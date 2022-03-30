@@ -5,8 +5,6 @@
 #ifdef __GL2__
 
 #include "cross2d/c2d.h"
-#include "cross2d/platforms/gl2/gl_texture.h"
-
 
 using namespace c2d;
 
@@ -39,29 +37,11 @@ int GLTexture::createTexture() {
     return 0;
 }
 
-int GLTexture::lock(uint8_t **pixels, int *pitch, IntRect rect) {
-    if (rect == IntRect()) {
-        m_unlock_rect = {0, 0, getTextureRect().width, getTextureRect().height};
-    } else {
-        m_unlock_rect = rect;
-    }
-
-    if (*pixels) {
-        *pixels = m_pixels + m_unlock_rect.top * m_pitch + m_unlock_rect.left * m_bpp;
-    }
-
-    if (pitch) {
-        *pitch = m_pitch;
-    }
-
-    return 0;
-}
-
 void GLTexture::unlock() {
     uint8_t *data = m_pixels + m_unlock_rect.top * m_pitch + m_unlock_rect.left * m_bpp;
 
-    printf("unlock: {%i, %i, %i, %i}\n",
-           m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height);
+    printf("Texture::unlock(%p): rect: {%i, %i, %i, %i}, pixels: %p\n",
+           this, m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height, data);
 
     glBindTexture(GL_TEXTURE_2D, m_texID);
 

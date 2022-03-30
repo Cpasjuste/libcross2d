@@ -23,7 +23,6 @@ namespace c2d {
             Point, Linear
         };
 
-        // START - to implement, device specific code
         explicit Texture(const std::string &path);
 
         explicit Texture(const unsigned char *buffer, int bufferSize);
@@ -32,26 +31,25 @@ namespace c2d {
 
         virtual ~Texture();
 
-        virtual Vector2i getTextureSize() {
-            return m_tex_size;
-        }
-
-        virtual int lock(uint8_t **pixels, int *pitch = nullptr, IntRect rect = {0, 0, 0, 0}) { return -1; };
+        virtual int lock(uint8_t **pixels, int *pitch = nullptr, IntRect rect = IntRect());
 
         virtual void unlock() {};
 
+        virtual int resize(const Vector2i &size, bool keepPixels = false);
+
+        virtual int save(const std::string &path);
+
         virtual void setFilter(Filter filter) { m_filter = filter; };
+
+        virtual void applyShader() {};
 
         virtual void setShader(int shaderIndex);
 
         virtual void setShader(const std::string &shaderName);
 
-        virtual void applyShader() {};
-        // END - to implement, device specific code
-
-        virtual int resize(const Vector2i &size, bool keepPixels = false);
-
-        virtual int save(const std::string &path);
+        virtual Vector2i getTextureSize() {
+            return m_tex_size;
+        }
 
         std::string m_path;
         int m_bpp = 4;

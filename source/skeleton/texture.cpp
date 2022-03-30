@@ -63,10 +63,10 @@ Texture::Texture(const unsigned char *buffer, int bufferSize) : RectangleShape({
            this, m_tex_size.x, m_tex_size.y, m_bpp, m_pitch);
 }
 
-Texture::Texture(const Vector2i &size, Format fmt) : RectangleShape(Vector2f{0, 0}) {
+Texture::Texture(const Vector2i &size, Format format) : RectangleShape(Vector2f{0, 0}) {
     type = Type::Texture;
-    m_format = fmt;
-    m_bpp = fmt == Format::RGB565 ? 2 : 4;
+    m_format = format;
+    m_bpp = format == Format::RGB565 ? 2 : 4;
 
     m_pixels = (uint8_t *) malloc(size.x * size.y * m_bpp);
     if (!m_pixels) {
@@ -88,6 +88,25 @@ Texture::Texture(const Vector2i &size, Format fmt) : RectangleShape(Vector2f{0, 
            this, m_tex_size.x, m_tex_size.y, m_bpp, m_pitch);
 }
 
+int Texture::lock(uint8_t **pixels, int *pitch, IntRect rect) {
+    if (rect == IntRect()) {
+        m_unlock_rect = {0, 0, getTextureRect().width, getTextureRect().height};
+    } else {
+        m_unlock_rect = rect;
+    }
+
+    if (pitch) {
+        *pitch = m_pitch;
+    }
+
+    *pixels = m_pixels + m_unlock_rect.top * m_pitch + m_unlock_rect.left * m_bpp;
+
+    printf("Texture::lock(%p): rect: {%i, %i, %i, %i}, pixels: %p\n",
+           this, m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height, *pixels);
+
+    return 0;
+}
+
 int Texture::resize(const Vector2i &size, bool keepPixels) {
     printf("Texture::resize: %ix%i > %ix%i\n",
            m_tex_size.x, m_tex_size.y, (int) size.x, (int) size.y);
@@ -97,39 +116,38 @@ int Texture::resize(const Vector2i &size, bool keepPixels) {
         return -1;
     }
 
-    // new pitch
-    m_pitch = size.x * m_bpp;
-
-    uint8_t *src;
-    auto new_pixels = (uint8_t *) malloc(m_pitch * size.y);
-    auto src_rect = IntRect(0, 0, m_tex_size.x, m_tex_size.y);
     auto dst_rect = IntRect(0, 0, size.x, size.y);
+    auto dst_pitch = size.x * m_bpp;
+    auto dst_pixels = (uint8_t *) malloc(dst_pitch * size.y);
+    memset(dst_pixels, 0, dst_pitch * size.y);
+
+    uint8_t *src_pixels;
+    int src_pitch;
+    auto src_rect = IntRect(0, 0, m_tex_size.x, m_tex_size.y);
+    lock(&src_pixels, &src_pitch, dst_rect);
 
     // copy pixels if requested
     if (keepPixels) {
-        // lock should resize the texture when lock rect > texture size
-        lock(&src, nullptr, dst_rect);
-        auto dst = new_pixels;
+        auto dst = dst_pixels;
         for (int i = 0; i < src_rect.height; i++) {
-            memcpy(dst, src, (ssize_t) (src_rect.width * m_bpp));
-            src += src_rect.width * m_bpp;
-            dst += m_pitch;
+            memcpy(dst, src_pixels, src_pitch);
+            src_pixels += src_pitch;
+            dst += dst_pitch;
         }
-    } else {
-        memset(new_pixels, 0, m_pitch * size.y);
     }
 
     // replace pixels buffer
     free(m_pixels);
-    m_pixels = new_pixels;
+    m_pixels = dst_pixels;
 
     // upload pixels (and resize if needed)
     unlock();
 
     // update texture information
-    m_tex_size = {size.x, size.y};
-    setSize({(float) size.x, (float) size.y});
-    setTextureRect({0, 0, (int) size.x, (int) size.y});
+    m_pitch = dst_pitch;
+    m_tex_size = {dst_rect.width, dst_rect.height};
+    setSize({(float) dst_rect.width, (float) dst_rect.height});
+    setTextureRect(dst_rect);
     setFilter(m_filter);
 
     return 0;
@@ -139,6 +157,9 @@ int Texture::save(const std::string &path) {
     int res;
     int width = getTextureRect().width;
     int height = getTextureRect().height;
+
+    printf("Texture::save(%p): %ix%i, bpp: %i, pitch: %i\n",
+           this, width, height, m_bpp, m_pitch);
 
     if (!m_pixels) {
         return -1;
@@ -159,7 +180,7 @@ int Texture::save(const std::string &path) {
         res = stbi_write_png(path.c_str(), width, height, 3, tmp, width * 3);
         free(tmp);
     } else {
-        res = stbi_write_png(path.c_str(), width, height, 4, m_pixels, width * 4);
+        res = stbi_write_png(path.c_str(), width, height, m_bpp, m_pixels, m_pitch);
     }
 
     return res;

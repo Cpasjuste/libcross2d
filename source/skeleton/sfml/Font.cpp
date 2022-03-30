@@ -255,7 +255,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     float Font::getLineSpacing(unsigned int characterSize) const {
 #ifndef __NO_FREETYPE__
-        FT_Face face = static_cast<FT_Face>(m_face);
+        auto face = static_cast<FT_Face>(m_face);
 
         if (face && setCurrentSize(characterSize)) {
             return ((float) face->size->metrics.height / (float) (1 << 6));
@@ -271,12 +271,12 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     float Font::getUnderlinePosition(unsigned int characterSize) const {
 #ifndef __NO_FREETYPE__
-        FT_Face face = static_cast<FT_Face>(m_face);
+        auto face = static_cast<FT_Face>(m_face);
 
         if (face && setCurrentSize(characterSize)) {
             // Return a fixed position if font is a bitmap font
             if (!FT_IS_SCALABLE(face))
-                return characterSize / 10.f;
+                return (float) characterSize / 10.f;
 
             return -static_cast<float>(FT_MulFix(face->underline_position, face->size->metrics.y_scale)) /
                    static_cast<float>(1 << 6);
@@ -292,12 +292,12 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     float Font::getUnderlineThickness(unsigned int characterSize) const {
 #ifndef __NO_FREETYPE__
-        FT_Face face = static_cast<FT_Face>(m_face);
+        auto face = static_cast<FT_Face>(m_face);
 
         if (face && setCurrentSize(characterSize)) {
             // Return a fixed thickness if font is a bitmap font
             if (!FT_IS_SCALABLE(face))
-                return characterSize / 14.f;
+                return (float) characterSize / 14.f;
 
             return static_cast<float>(FT_MulFix(face->underline_thickness, face->size->metrics.y_scale)) /
                    static_cast<float>(1 << 6);
@@ -458,6 +458,7 @@ namespace c2d {
         unsigned int height = bitmap.rows;
 
         if ((width > 0) && (height > 0)) {
+            //printf("Font::loadGlyph: %c\n", codePoint);
             // Leave a small padding around characters, so that filtering doesn't
             // pollute them with pixels from neighbors
             const unsigned int padding = 2;
@@ -467,10 +468,13 @@ namespace c2d {
 
             // Get the glyphs page corresponding to the character size
             Page &page = m_pages[characterSize];
-            m_pages[characterSize].texture->setFilter(m_filtering);
+            page.texture->setFilter(m_filtering);
 
             // Find a good position for the new glyph into the texture
             glyph.textureRect = findGlyphRect(page, width, height);
+            if (glyph.textureRect == IntRect()) {
+                return glyph;
+            }
 
             // Make sure the texture data is positioned in the center
             // of the allocated texture rectangle
@@ -602,35 +606,33 @@ namespace c2d {
                     page.texture->resize({(int) texWidth * 2, (int) texHeight * 2}, true);
                     m_dirty = true;
 #else
-                    // TODO
-                    auto texture = new C2DTexture(
-                            Vector2f(textureWidth * 2, textureHeight * 2), Texture::Format::RGBA8);
+                    auto texture = new C2DTexture({(int) texWidth * 2, (int) texHeight * 2}, Texture::Format::RGBA8);
                     texture->setFilter(m_filtering);
-                    //printf("Font:: created new tex to fit chars (%p)\n", texture);
 
                     uint8_t *src;
                     int src_pitch;
-                    page.texture->lock(nullptr, reinterpret_cast<void **>(&src), &src_pitch);
+                    page.texture->lock(&src, &src_pitch);
 
                     uint8_t *dst;
                     int dst_pitch;
-                    texture->lock(nullptr, reinterpret_cast<void **>(&dst), &dst_pitch);
-                    for (int i = 0; i < (int) textureHeight; ++i) {
-                        std::memcpy(dst, src, (size_t) (textureWidth * 4));
+                    texture->lock(&dst, &dst_pitch);
+
+                    for (unsigned int i = 0; i < texHeight; i++) {
+                        std::memcpy(dst, src, texWidth * 4);
                         src += src_pitch;
                         dst += dst_pitch;
                     }
 
-                    m_dirty = true;
+                    texture->unlock();
 
-                    printf("Font:: replacing old texture (%p) by new texture (%p)\n", page.texture, texture);
                     delete (page.texture);
                     page.texture = texture;
+                    m_dirty = true;
 #endif
                 } else {
                     // Oops, we've reached the maximum texture size...
                     printf("Failed to add a new character to the font: the maximum texture size has been reached\n");
-                    return {0, 0, 2, 2};
+                    return {0, 0, 0, 0};
                 }
             }
 
@@ -656,7 +658,7 @@ namespace c2d {
         // FT_Set_Pixel_Sizes is an expensive function, so we must call it
         // only when necessary to avoid killing performances
 
-        FT_Face face = static_cast<FT_Face>(m_face);
+        auto face = static_cast<FT_Face>(m_face);
         FT_UShort currentSize = face->size->metrics.x_ppem;
 
         if (currentSize != characterSize) {

@@ -20,8 +20,6 @@ namespace c2d {
 
         ~GLTexture() override;
 
-        int lock(uint8_t **pixels, int *pitch = nullptr, IntRect rect = {0, 0, 0, 0}) override;
-
         void unlock() override;
 
         void setFilter(Filter filter) override;
