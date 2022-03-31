@@ -326,7 +326,6 @@ namespace c2d {
         ensureGeometryUpdate();
         Transform t = transformation * getTransform();
         return t.transformRect(getLocalBounds());
-        //return getTransform().transformRect(getLocalBounds());
     }
 
 
