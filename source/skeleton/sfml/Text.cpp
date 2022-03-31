@@ -52,7 +52,7 @@ namespace {
     // Add a glyph quad to the vertex array
     void addGlyphQuad(c2d::VertexArray &vertices, c2d::Vector2i texSize, c2d::Vector2f position,
                       const c2d::Color &color, const c2d::Glyph &glyph, float italic) {
-        float padding = 1.0f / (float) texSize.x;
+        float padding = 1.0f;
 
         float left = glyph.bounds.left - padding;
         float top = glyph.bounds.top - padding;

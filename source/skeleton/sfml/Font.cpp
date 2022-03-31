@@ -628,7 +628,7 @@ namespace c2d {
         }
 
         // Find the glyph's rectangle on the selected row
-        IntRect rect(row->width, row->top, width, height);
+        IntRect rect(Rect<unsigned int>({row->width, row->top}, {width, height}));
 
         // Update the row informations
         row->width += width;
