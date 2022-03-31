@@ -57,10 +57,10 @@ namespace c2d {
         Format m_format = Format::RGBA8;
         Filter m_filter = Filter::Linear;
         ShaderList::Shader *m_shader = nullptr;
+        uint8_t *m_pixels = nullptr;
 
     protected:
         Vector2i m_tex_size;
-        uint8_t *m_pixels = nullptr;
         IntRect m_unlock_rect = IntRect();
     };
 }
