@@ -113,7 +113,7 @@ void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
         void *vertexDefaultBuffer;
         sceGxmReserveVertexDefaultUniformBuffer(vita2d_get_context(), &vertexDefaultBuffer);
         sceGxmSetUniformDataF(vertexDefaultBuffer, _vita2d_textureWvpParam, 0, 16, _vita2d_ortho_matrix);
-        sceGxmSetFragmentTexture(vita2d_get_context(), 0, &tex->tex->gxm_tex);
+        sceGxmSetFragmentTexture(vita2d_get_context(), 0, &tex->m_tex->gxm_tex);
         sceGxmSetVertexStream(vita2d_get_context(), 0, v2d_vertices);
         sceGxmDraw(vita2d_get_context(), type, SCE_GXM_INDEX_FORMAT_U16, v2d_indices, vertexCount);
     } else {

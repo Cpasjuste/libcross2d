@@ -33,6 +33,7 @@ Texture::Texture(const std::string &p) : RectangleShape({0, 0}) {
     Texture::setTexture(this);
     Texture::setTextureRect({0, 0, w, h});
     Texture::setFillColor(Color::White);
+    Texture::setShader(0);
 
     printf("Texture(%p): size: %ix%i, bpp: %i, pitch: %i, path: %s\n",
            this, m_tex_size.x, m_tex_size.y, m_bpp, m_pitch, m_path.c_str());
@@ -58,6 +59,7 @@ Texture::Texture(const unsigned char *buffer, int bufferSize) : RectangleShape({
     Texture::setTexture(this);
     Texture::setTextureRect({0, 0, w, h});
     Texture::setFillColor(Color::White);
+    Texture::setShader(0);
 
     printf("Texture(%p): size: %ix%i, bpp: %i, pitch: %i\n",
            this, m_tex_size.x, m_tex_size.y, m_bpp, m_pitch);
@@ -83,6 +85,7 @@ Texture::Texture(const Vector2i &size, Format format) : RectangleShape(Vector2f{
     Texture::setTexture(this);
     Texture::setTextureRect({0, 0, size.x, size.y});
     Texture::setFillColor(Color::White);
+    Texture::setShader(0);
 
     printf("Texture(%p): size: %ix%i, bpp: %i, pitch: %i\n",
            this, m_tex_size.x, m_tex_size.y, m_bpp, m_pitch);

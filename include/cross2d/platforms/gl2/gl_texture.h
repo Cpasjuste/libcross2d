@@ -16,7 +16,7 @@ namespace c2d {
 
         explicit GLTexture(const unsigned char *buffer, int bufferSize);
 
-        explicit GLTexture(const Vector2i &size = Vector2i(0, 0), Format format = Format::RGBA8);
+        explicit GLTexture(const Vector2i &size = Vector2i(), Format format = Format::RGBA8);
 
         ~GLTexture() override;
 

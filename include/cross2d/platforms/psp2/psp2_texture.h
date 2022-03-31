@@ -16,27 +16,22 @@ namespace c2d {
 
         explicit PSP2Texture(const std::string &path);
 
-        explicit PSP2Texture(const Vector2f &size = Vector2f(0, 0),
-                Format format = Format::RGBA8);
+        explicit PSP2Texture(const unsigned char *buffer, int bufferSize);
 
-        PSP2Texture(const unsigned char *buffer, int bufferSize);
+        explicit PSP2Texture(const Vector2i &size = Vector2i(), Format format = Format::RGBA8);
 
         ~PSP2Texture() override;
 
-        int resize(const Vector2i &size, bool copyPixels = true) override;
-
-        int lock(FloatRect *rect, void **pixels, int *pitch) override;
-
-        int save(const std::string &path) override;
+        int resize(const Vector2i &size, bool keepPixels = false) override;
 
         void setFilter(Filter filter) override;
 
-        void setShader(int shader) override;
-
         void applyShader() override;
 
-        //private:
-        vita2d_texture *tex = nullptr;
+        vita2d_texture *m_tex = nullptr;
+
+    private:
+        int createTexture();
     };
 }
 

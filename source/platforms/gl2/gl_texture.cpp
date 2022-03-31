@@ -21,6 +21,10 @@ GLTexture::GLTexture(const Vector2i &size, Texture::Format format) : Texture(siz
 }
 
 int GLTexture::createTexture() {
+    if (!m_pixels) {
+        return -1;
+    }
+
     glGenTextures(1, &m_texID);
     glBindTexture(GL_TEXTURE_2D, m_texID);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
