@@ -563,7 +563,7 @@ namespace c2d {
                 dst += pitch;
             }
 
-            page.texture->unlock();
+            page.texture->unlock(page.texture->getTextureSize().x);
         }
 
         // Delete the FT glyph

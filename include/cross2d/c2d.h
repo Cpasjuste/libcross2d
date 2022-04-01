@@ -101,6 +101,8 @@ extern c2d::Renderer *c2d_renderer;
 #define printf c2d::PS4Sys::print
 #endif
 
+#define GL_UNPACK_ROW_LENGTH 0x0CF2
+
 #include "c2d_gl2.h"
 #include "c2d_sdl2.h"
 #include "cross2d/platforms/ps4/ps4_io.h"

@@ -20,7 +20,9 @@ namespace c2d {
 
         ~GLTexture() override;
 
-        void unlock() override;
+        int resize(const Vector2i &size, bool keepPixels = false) override;
+
+        void unlock(int rowLength = 0) override;
 
         void setFilter(Filter filter) override;
 

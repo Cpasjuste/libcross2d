@@ -110,52 +110,6 @@ int Texture::lock(uint8_t **pixels, int *pitch, IntRect rect) {
     return 0;
 }
 
-int Texture::resize(const Vector2i &size, bool keepPixels) {
-    printf("Texture::resize: %ix%i > %ix%i\n",
-           m_tex_size.x, m_tex_size.y, (int) size.x, (int) size.y);
-
-    if (size == m_tex_size || size.x < m_tex_size.x || size.y < m_tex_size.y) {
-        printf("Texture::resize: invalid parameters\n");
-        return -1;
-    }
-
-    auto dst_rect = IntRect(0, 0, size.x, size.y);
-    auto dst_pitch = size.x * m_bpp;
-    auto dst_pixels = (uint8_t *) malloc(dst_pitch * size.y);
-    memset(dst_pixels, 0, dst_pitch * size.y);
-
-    uint8_t *src_pixels;
-    int src_pitch;
-    auto src_rect = IntRect(0, 0, m_tex_size.x, m_tex_size.y);
-    lock(&src_pixels, &src_pitch, dst_rect);
-
-    // copy pixels if requested
-    if (keepPixels) {
-        auto dst = dst_pixels;
-        for (int i = 0; i < src_rect.height; i++) {
-            memcpy(dst, src_pixels, src_pitch);
-            src_pixels += src_pitch;
-            dst += dst_pitch;
-        }
-    }
-
-    // replace pixels buffer
-    free(m_pixels);
-    m_pixels = dst_pixels;
-
-    // upload pixels (and resize if needed)
-    unlock();
-
-    // update texture information
-    m_pitch = dst_pitch;
-    m_tex_size = {dst_rect.width, dst_rect.height};
-    setSize({(float) dst_rect.width, (float) dst_rect.height});
-    setTextureRect(dst_rect);
-    setFilter(m_filter);
-
-    return 0;
-}
-
 int Texture::save(const std::string &path) {
     int res;
     int width = getTextureRect().width;

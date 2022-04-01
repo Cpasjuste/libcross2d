@@ -33,9 +33,9 @@ namespace c2d {
 
         virtual int lock(uint8_t **pixels, int *pitch = nullptr, IntRect rect = IntRect());
 
-        virtual void unlock() {};
+        virtual void unlock(int rowLength = 0) {};
 
-        virtual int resize(const Vector2i &size, bool keepPixels = false);
+        virtual int resize(const Vector2i &size, bool keepPixels = false) { return -1; };
 
         virtual int save(const std::string &path);
 
