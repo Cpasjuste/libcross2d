@@ -10,9 +10,10 @@ int main(int argc, char *argv[]) {
 
     // create main renderer
     auto renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
-    renderer->setPrintStats(true);
+    //renderer->setPrintStats(true);
     renderer->setClearColor(Color::Black);
 
+#if 0
     auto border = new C2DRectangle({2, 2,
                                     renderer->getSize().x - 4, renderer->getSize().y - 4});
     border->setFillColor(Color::Transparent);
@@ -72,12 +73,19 @@ int main(int argc, char *argv[]) {
     auto tweenAlpha = new TweenAlpha(255, 200, 3.0f, TweenLoop::PingPong);
     tweenAlpha->play();
     rect->add(tweenAlpha);
+#endif
 
     while (true) {
 
+        unsigned int buttons = renderer->getInput()->getButtons();
+
         // stop if any key is pressed
-        if (renderer->getInput()->getKeys() != 0) {
+        if (buttons & Input::Button::Quit) {
             break;
+        }
+
+        if(buttons > 0 && buttons != Input::Button::Delay) {
+            printf("keys: %x\n", buttons);
         }
 
         // renderer everything

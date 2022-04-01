@@ -15,8 +15,18 @@ Renderer *c2d_renderer = nullptr;
 POSIXRomFs *c2d_romFs = nullptr;
 #endif
 
-Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
+#ifdef __SWITCH__
 
+void initNxLink();
+
+void deinitNxLink();
+
+#endif
+
+Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
+#ifdef __SWITCH__
+    initNxLink();
+#endif
     printf("Renderer(%p)\n", this);
 
     c2d_renderer = this;
@@ -30,7 +40,6 @@ Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
 }
 
 void Renderer::onUpdate() {
-
     // time
     m_deltaTime = m_deltaClock->restart();
 
@@ -52,8 +61,8 @@ void Renderer::onUpdate() {
     if (m_process_inputs) {
         m_input->update();
         for (auto &player: m_input->players) {
-            unsigned int keys = player.keys;
-            if (keys > 0 && keys != Input::Key::Delay) {
+            unsigned int keys = player.buttons;
+            if (keys > 0 && keys != Input::Button::Delay) {
                 onInput(m_input->players);
                 break;
             }
@@ -64,7 +73,6 @@ void Renderer::onUpdate() {
 }
 
 void Renderer::flip(bool draw, bool inputs) {
-
     m_process_inputs = inputs;
     onUpdate();
 
@@ -108,7 +116,6 @@ ShaderList *Renderer::getShaderList() {
 }
 
 Renderer::~Renderer() {
-
     printf("~Renderer(%p)\n", this);
 
     delete (m_font);
@@ -126,5 +133,9 @@ Renderer::~Renderer() {
     if (c2d_romFs) {
         delete (c2d_romFs);
     }
+#endif
+
+#ifdef __SWITCH__
+    deinitNxLink();
 #endif
 }

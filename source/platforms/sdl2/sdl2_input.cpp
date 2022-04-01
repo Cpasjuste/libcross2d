@@ -6,47 +6,34 @@
 
 using namespace c2d;
 
-static int key_id[KEY_COUNT]{
-        Input::Key::Up,
-        Input::Key::Down,
-        Input::Key::Left,
-        Input::Key::Right,
-        Input::Key::Select,
-        Input::Key::Start,
-        Input::Key::Fire1,
-        Input::Key::Fire2,
-        Input::Key::Fire3,
-        Input::Key::Fire4,
-        Input::Key::Fire5,
-        Input::Key::Fire6,
-        Input::Key::Fire7,
-        Input::Key::Fire8,
-        Input::Key::Menu1,
-        Input::Key::Menu2
-};
-
 SDL2Input::SDL2Input() : Input() {
-    if (SDL_WasInit(SDL_INIT_JOYSTICK) == 0) {
-        printf("SDL2Input: SDL_INIT_JOYSTICK\n");
-        SDL_InitSubSystem(SDL_INIT_JOYSTICK);
+    if (SDL_WasInit(SDL_INIT_GAMECONTROLLER) == 0) {
+        SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
     }
 
     int joystick_count = SDL_NumJoysticks();
     if (joystick_count > PLAYER_MAX) {
         joystick_count = PLAYER_MAX;
     }
-    printf("%d Joystick(s) Found\n", joystick_count);
+
+    printf("SDL2Input: %i Joystick(s) Found\n", joystick_count);
 
     if (joystick_count > 0) {
         for (int i = 0; i < joystick_count; i++) {
-            printf("Joystick: %i\n", i);
-            players[i].data = SDL_JoystickOpen(i);
+            if (!SDL_IsGameController(i)) {
+                printf("SDL2Input: joystick %i is not a game controller, skipping!", i);
+                continue;
+            }
+
+            SDL_GameController *pad = SDL_GameControllerOpen(i);
+            char *mapping = SDL_GameControllerMapping(pad);
+            printf("SDL2Input: GameController detected: %s, mapping: %s\n",
+                   SDL_GameControllerName(pad), mapping);
+            SDL_free(mapping);
+
+            players[i].data = pad;
             players[i].id = i;
             players[i].enabled = true;
-            printf("Name: %s\n", SDL_JoystickName((SDL_Joystick *) players[i].data));
-            printf("Hats %d\n", SDL_JoystickNumHats((SDL_Joystick *) players[i].data));
-            printf("Buttons %d\n", SDL_JoystickNumButtons((SDL_Joystick *) players[i].data));
-            printf("Axis %d\n", SDL_JoystickNumAxes((SDL_Joystick *) players[i].data));
         }
     } else {
         // allow keyboard mapping to player1
@@ -55,26 +42,22 @@ SDL2Input::SDL2Input() : Input() {
 }
 
 SDL2Input::~SDL2Input() {
-    for (int i = 0; i < PLAYER_MAX; i++) {
-        players[i].enabled = false;
-    }
-
-    if (SDL_WasInit(SDL_INIT_JOYSTICK)) {
-        SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+    if (SDL_WasInit(SDL_INIT_GAMECONTROLLER)) {
+        SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
     }
 }
 
-bool SDL2Input::waitKey(unsigned int *key, int player) {
+bool SDL2Input::waitButton(unsigned int *key, int player) {
     SDL_Event event = {};
 
     while (SDL_PollEvent(&event) != 0) {
-        if (event.type == SDL_JOYBUTTONDOWN) {
-            if (key != nullptr) {
-                *key = event.jbutton.button;
+        if (event.type == SDL_CONTROLLERBUTTONDOWN) {
+            if (key) {
+                *key = event.cbutton.button;
             }
             return true;
         } else if (event.type == SDL_KEYDOWN) {
-            if (key != nullptr) {
+            if (key) {
                 *key = event.key.keysym.scancode;
             }
             return true;
@@ -86,27 +69,21 @@ bool SDL2Input::waitKey(unsigned int *key, int player) {
 
 Input::Player *SDL2Input::update(int rotate) {
     for (auto &player: players) {
-        player.keys = 0;
+        player.buttons = 0;
     }
 
     SDL_Event event = {};
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
-            players[0].keys |= EV_QUIT;
+            players[0].buttons |= Input::Button::Quit;
             return players;
         }
     }
 
-    SDL_JoystickUpdate(); // ensure all joysticks are up-to-date to remove lag
-
     for (auto &player: players) {
-
         if (!player.enabled) {
             continue;
         }
-
-        // hat
-        process_hat(player, rotate);
 
         // sticks
         process_axis(player, rotate);
@@ -131,13 +108,16 @@ void SDL2Input::process_axis(Input::Player &player, int rotate) {
     }
 
     float analogX, analogY;
-    auto deadZone = (float) player.dead_zone;
+    auto deadZone = (float) player.dz;
     float scalingFactor, magnitude;
     bool up = false, down = false, left = false, right = false;
     Axis *currentStickXAxis;
     Axis *currentStickYAxis;
     float slope = 0.414214f; // tangent of 22.5 degrees for size of angular zones
 
+    auto pad = (SDL_GameController *) player.data;
+
+    // process directional axis
     for (int i = 0; i < 2; i++) {
         if (i == 0) {
             // left stick
@@ -149,14 +129,13 @@ void SDL2Input::process_axis(Input::Player &player, int rotate) {
             currentStickYAxis = &(player.ry);
         }
 
-        analogX = (float) (SDL_JoystickGetAxis((SDL_Joystick *) player.data, currentStickXAxis->id));
-        analogY = (float) (SDL_JoystickGetAxis((SDL_Joystick *) player.data, currentStickYAxis->id));
+        analogX = (float) (SDL_GameControllerGetAxis(pad, (SDL_GameControllerAxis) currentStickXAxis->id));
+        analogY = (float) (SDL_GameControllerGetAxis(pad, (SDL_GameControllerAxis) currentStickYAxis->id));
 
         // radial and scaled deadzone
         // http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
 
         if ((magnitude = std::sqrt(analogX * analogX + analogY * analogY)) >= deadZone) {
-
             // analog control
             scalingFactor = 32767.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
             currentStickXAxis->value = (short) (analogX * scalingFactor);
@@ -191,17 +170,17 @@ void SDL2Input::process_axis(Input::Player &player, int rotate) {
             }
 
             if (right)
-                player.keys |= (rotate == 1) ? Input::Key::Down :
-                               (rotate == 3) ? Input::Key::Up : Input::Key::Right;
+                player.buttons |= (rotate == 1) ? Input::Button::Down :
+                                  (rotate == 3) ? Input::Button::Up : Input::Button::Right;
             if (left)
-                player.keys |= (rotate == 1) ? Input::Key::Up :
-                               (rotate == 3) ? Input::Key::Down : Input::Key::Left;
+                player.buttons |= (rotate == 1) ? Input::Button::Up :
+                                  (rotate == 3) ? Input::Button::Down : Input::Button::Left;
             if (up)
-                player.keys |= (rotate == 1) ? Input::Key::Right :
-                               (rotate == 3) ? Input::Key::Left : Input::Key::Up;
+                player.buttons |= (rotate == 1) ? Input::Button::Right :
+                                  (rotate == 3) ? Input::Button::Left : Input::Button::Up;
             if (down)
-                player.keys |= (rotate == 1) ? Input::Key::Left :
-                               (rotate == 3) ? Input::Key::Right : Input::Key::Down;
+                player.buttons |= (rotate == 1) ? Input::Button::Left :
+                                  (rotate == 3) ? Input::Button::Right : Input::Button::Down;
         } else {
             currentStickXAxis->value = 0;
             currentStickYAxis->value = 0;
@@ -209,82 +188,47 @@ void SDL2Input::process_axis(Input::Player &player, int rotate) {
     } // end for
 }
 
-void SDL2Input::process_hat(Input::Player &player, int rotate) {
+void SDL2Input::process_buttons(Input::Player &player, int rotate) {
     if (!player.enabled || !player.data) {
         return;
     }
 
-    int value = SDL_JoystickGetHat((SDL_Joystick *) player.data, 0);
+    auto pad = (SDL_GameController *) player.data;
 
-    if (value == SDL_HAT_UP
-        || value == SDL_HAT_LEFTUP
-        || value == SDL_HAT_RIGHTUP) {
-        player.keys |= (rotate == 1) ?
-                       Input::Key::Right : (rotate == 3) ? Input::Key::Left
-                                                         : Input::Key::Up;
-    }
-    if (value == SDL_HAT_DOWN
-        || value == SDL_HAT_LEFTDOWN
-        || value == SDL_HAT_RIGHTDOWN) {
-        player.keys |= (rotate == 1) ?
-                       Input::Key::Left : (rotate == 3) ? Input::Key::Right
-                                                        : Input::Key::Down;
-    }
-    if (value == SDL_HAT_LEFT
-        || value == SDL_HAT_LEFTDOWN
-        || value == SDL_HAT_LEFTUP) {
-        player.keys |= (rotate == 1) ?
-                       Input::Key::Up : (rotate == 3) ? Input::Key::Down
-                                                      : Input::Key::Left;
-    }
-    if (value == SDL_HAT_RIGHT
-        || value == SDL_HAT_RIGHTDOWN
-        || value == SDL_HAT_RIGHTUP) {
-        player.keys |= (rotate == 1) ?
-                       Input::Key::Down : (rotate == 3) ? Input::Key::Up
-                                                        : Input::Key::Right;
-    }
-}
-
-void SDL2Input::process_buttons(Input::Player &player, int rotate) {
-    if (!player.enabled || player.data == nullptr) {
-        return;
-    }
-
-    for (int i = 0; i < KEY_COUNT; i++) {
-        int button = player.mapping[i];
+    for (const auto &buttonMap: player.mapping) {
+        int button = buttonMap.value;
 #ifdef __PSP2__
         // rotate buttons on ps vita to play in portrait mode
         if (rotate == 1) {
             switch (button) {
-                case KEY_JOY_FIRE1_DEFAULT: // PSP2_CROSS (SDL-Vita)
-                    button = KEY_JOY_FIRE2_DEFAULT; // PSP2_CIRCLE (SDL-Vita)
+                case KEY_JOY_A_DEFAULT: // PSP2_CROSS (SDL-Vita)
+                    button = KEY_JOY_B_DEFAULT; // PSP2_CIRCLE (SDL-Vita)
                     break;
-                case KEY_JOY_FIRE3_DEFAULT: // PSP2_SQUARE (SDL-Vita)
-                    button = KEY_JOY_FIRE1_DEFAULT; // PSP2_CROSS (SDL-Vita)
+                case KEY_JOY_X_DEFAULT: // PSP2_SQUARE (SDL-Vita)
+                    button = KEY_JOY_A_DEFAULT; // PSP2_CROSS (SDL-Vita)
                     break;
-                case KEY_JOY_FIRE4_DEFAULT: // PSP2_TRIANGLE (SDL-Vita)
-                    button = KEY_JOY_FIRE3_DEFAULT; // PSP2_SQUARE (SDL-Vita)
+                case KEY_JOY_Y_DEFAULT: // PSP2_TRIANGLE (SDL-Vita)
+                    button = KEY_JOY_X_DEFAULT; // PSP2_SQUARE (SDL-Vita)
                     break;
-                case KEY_JOY_FIRE2_DEFAULT: // PSP2_CIRCLE (SDL-Vita)
-                    button = KEY_JOY_FIRE4_DEFAULT; // PSP2_TRIANGLE (SDL-Vita)
+                case KEY_JOY_B_DEFAULT: // PSP2_CIRCLE (SDL-Vita)
+                    button = KEY_JOY_Y_DEFAULT; // PSP2_TRIANGLE (SDL-Vita)
                     break;
                 default:
                     break;
             }
         } else if (rotate == 3) {
             switch (button) {
-                case KEY_JOY_FIRE1_DEFAULT: // PSP2_CROSS (SDL-Vita)
-                    button = KEY_JOY_FIRE3_DEFAULT; // PSP2_SQUARE (SDL-Vita)
+                case KEY_JOY_A_DEFAULT: // PSP2_CROSS (SDL-Vita)
+                    button = KEY_JOY_X_DEFAULT; // PSP2_SQUARE (SDL-Vita)
                     break;
-                case KEY_JOY_FIRE3_DEFAULT: // PSP2_SQUARE (SDL-Vita)
-                    button = KEY_JOY_FIRE4_DEFAULT; // PSP2_TRIANGLE (SDL-Vita)
+                case KEY_JOY_X_DEFAULT: // PSP2_SQUARE (SDL-Vita)
+                    button = KEY_JOY_Y_DEFAULT; // PSP2_TRIANGLE (SDL-Vita)
                     break;
-                case KEY_JOY_FIRE4_DEFAULT: // PSP2_TRIANGLE (SDL-Vita)
-                    button = KEY_JOY_FIRE2_DEFAULT; // PSP2_CIRCLE (SDL-Vita)
+                case KEY_JOY_Y_DEFAULT: // PSP2_TRIANGLE (SDL-Vita)
+                    button = KEY_JOY_B_DEFAULT; // PSP2_CIRCLE (SDL-Vita)
                     break;
-                case KEY_JOY_FIRE2_DEFAULT: // PSP2_CIRCLE (SDL-Vita)
-                    button = KEY_JOY_FIRE1_DEFAULT; // PSP2_CROSS (SDL-Vita)
+                case KEY_JOY_B_DEFAULT: // PSP2_CIRCLE (SDL-Vita)
+                    button = KEY_JOY_A_DEFAULT; // PSP2_CROSS (SDL-Vita)
                     break;
                 default:
                     break;
@@ -292,70 +236,80 @@ void SDL2Input::process_buttons(Input::Player &player, int rotate) {
         }
 #endif
 
-        if (SDL_JoystickGetButton((SDL_Joystick *) player.data, button)) {
-            if (rotate && key_id[i] == Input::Key::Up) {
+        // process shoulder buttons if any
+        if (button == ((int) SDL_CONTROLLER_AXIS_TRIGGERLEFT + 100)
+            || button == ((int) SDL_CONTROLLER_AXIS_TRIGGERRIGHT + 100)) {
+            bool pressed = SDL_GameControllerGetAxis(pad, (SDL_GameControllerAxis) (button - 100)) > player.dz;
+            if (pressed > 0) {
+                player.buttons |= buttonMap.button;
+            }
+            continue;
+        }
+
+        if (SDL_GameControllerGetButton(pad, (SDL_GameControllerButton) button)) {
+            if (rotate && buttonMap.button == Input::Button::Up) {
                 if (rotate == 1) {
-                    player.keys |= Input::Key::Right;
+                    player.buttons |= Input::Button::Right;
                 } else if (rotate == 3) {
-                    player.keys |= Input::Key::Left;
+                    player.buttons |= Input::Button::Left;
                 }
-            } else if (rotate && key_id[i] == Input::Key::Down) {
+            } else if (rotate && buttonMap.button == Input::Button::Down) {
                 if (rotate == 1) {
-                    player.keys |= Input::Key::Left;
+                    player.buttons |= Input::Button::Left;
                 } else if (rotate == 3) {
-                    player.keys |= Input::Key::Right;
+                    player.buttons |= Input::Button::Right;
                 }
-            } else if (rotate && key_id[i] == Input::Key::Left) {
+            } else if (rotate && buttonMap.button == Input::Button::Left) {
                 if (rotate == 1) {
-                    player.keys |= Input::Key::Up;
+                    player.buttons |= Input::Button::Up;
                 } else if (rotate == 3) {
-                    player.keys |= Input::Key::Down;
+                    player.buttons |= Input::Button::Down;
                 }
-            } else if (rotate && key_id[i] == Input::Key::Right) {
+            } else if (rotate && buttonMap.button == Input::Button::Right) {
                 if (rotate == 1) {
-                    player.keys |= Input::Key::Down;
+                    player.buttons |= Input::Button::Down;
                 } else if (rotate == 3) {
-                    player.keys |= Input::Key::Up;
+                    player.buttons |= Input::Button::Up;
                 }
             } else {
-                player.keys |= key_id[i];
+                player.buttons |= buttonMap.button;
             }
         }
     }
 }
 
 void SDL2Input::process_keyboard(Input::Player &player, int rotate) {
-#ifndef __SWITCH__
+#ifndef NO_KEYBOARD
     const Uint8 *keys = SDL_GetKeyboardState(nullptr);
 
-    for (int i = 0; i < KEY_COUNT; i++) {
-        if (keys[keyboard.mapping[i]]) {
-            if (rotate && key_id[i] == Input::Key::Up) {
+    for (const auto &buttonMap: player.mapping) {
+        if (keys[buttonMap.value]) {
+            if (rotate && buttonMap.button == Input::Button::Up) {
                 if (rotate == 1) {
-                    player.keys |= Input::Key::Right;
+                    player.buttons |= Input::Button::Right;
                 } else if (rotate == 3) {
-                    player.keys |= Input::Key::Left;
+                    player.buttons |= Input::Button::Left;
                 }
-            } else if (rotate && key_id[i] == Input::Key::Down) {
+            } else if (rotate && buttonMap.button == Input::Button::Down) {
                 if (rotate == 1) {
-                    player.keys |= Input::Key::Left;
+                    player.buttons |= Input::Button::Left;
                 } else if (rotate == 3) {
-                    player.keys |= Input::Key::Right;
+                    player.buttons |= Input::Button::Right;
                 }
-            } else if (rotate && key_id[i] == Input::Key::Left) {
+            } else if (rotate && buttonMap.button == Input::Button::Left) {
                 if (rotate == 1) {
-                    player.keys |= Input::Key::Up;
+                    player.buttons |= Input::Button::Up;
                 } else if (rotate == 3) {
-                    player.keys |= Input::Key::Down;
+                    player.buttons |= Input::Button::Down;
                 }
-            } else if (rotate && key_id[i] == Input::Key::Right) {
+            } else if (rotate && buttonMap.button == Input::Button::Right) {
                 if (rotate == 1) {
-                    player.keys |= Input::Key::Down;
+                    player.buttons |= Input::Button::Down;
                 } else if (rotate == 3) {
-                    player.keys |= Input::Key::Up;
+                    player.buttons |= Input::Button::Up;
                 }
             } else {
-                player.keys |= key_id[i];
+                player.buttons |= buttonMap.button;
             }
         }
     }
@@ -370,6 +324,6 @@ void SDL2Input::process_touch(Input::Player &player) {
     if (SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
         player.touch.x = (float) x;
         player.touch.y = (float) y;
-        player.keys |= Input::Key::Touch;
+        player.buttons |= Input::Button::Touch;
     }
 }

@@ -16,21 +16,23 @@ namespace c2d {
 
         ~SDL2Input() override;
 
-        bool waitKey(unsigned int *key, int player = 0) override;
+        bool waitButton(unsigned int *key, int player = 0) override;
 
         Player *update(int rotate = 0) override;
 
-    private:
+    protected:
 
         virtual void process_axis(Input::Player &player, int rotate);
-
-        virtual void process_hat(Input::Player &player, int rotate);
 
         virtual void process_buttons(Input::Player &player, int rotate);
 
         virtual void process_keyboard(Input::Player &player, int rotate);
 
         virtual void process_touch(Input::Player &player);
+
+#ifdef SDL2_INPUT_OLD_API
+        virtual void process_hat(Input::Player &player, int rotate);
+#endif
     };
 }
 

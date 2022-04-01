@@ -120,26 +120,26 @@ int MessageBox::show(const std::string &txt, const std::string &msg,
             }
 
             if (pressed != nullptr) {
-                if (input->waitKey(&key)) {
+                if (input->waitButton(&key)) {
                     setVisibility(Visibility::Hidden);
                     break;
                 }
             } else {
-                key = input->update()->keys;
-                if (key > 0 && key != Input::Key::Delay) {
-                    if (key & Input::Key::Left) {
+                key = input->update()->buttons;
+                if (key > 0 && key != Input::Button::Delay) {
+                    if (key & Input::Button::Left) {
                         if (index > 0) {
                             index--;
                         }
-                    } else if (key & Input::Key::Right) {
+                    } else if (key & Input::Button::Right) {
                         if (index < choices - 1) {
                             index++;
                         }
-                    } else if (key & Input::Key::Fire1) {
+                    } else if (key & Input::Button::A) {
                         setVisibility(Visibility::Hidden);
                         ret = index == 1 ? RIGHT : LEFT;
                         break;
-                    } else if (key & Input::Key::Fire2) {
+                    } else if (key & Input::Button::B) {
                         setVisibility(Visibility::Hidden);
                         ret = CANCEL;
                         break;

@@ -6,28 +6,58 @@
 
 using namespace c2d;
 
-static int key_id[KEY_COUNT]{
-        Input::Key::Up,
-        Input::Key::Down,
-        Input::Key::Left,
-        Input::Key::Right,
-        Input::Key::Select,
-        Input::Key::Start,
-        Input::Key::Fire1,
-        Input::Key::Fire2,
-        Input::Key::Fire3,
-        Input::Key::Fire4,
-        Input::Key::Fire5,
-        Input::Key::Fire6,
-        Input::Key::Fire7,
-        Input::Key::Fire8,
-        Input::Key::Menu1,
-        Input::Key::Menu2
-};
-
 SWITCHInput::SWITCHInput() : SDL2Input() {
     padConfigureInput(8, HidNpadStyleSet_NpadStandard);
     padInitializeAny(&pad);
+
+    //int mapLeft[KEY_COUNT] = {18, 16, 17, 19, 11, 6, 15, 12, 14, 13, 24, 25, 4, 8, 8, 4};
+    //int mapRight[KEY_COUNT] = {20, 22, 23, 21, 10, 7, 2, 0, 3, 1, 26, 27, 5, 9, 9, 5};
+
+    // TODO
+    // set left joycon mapping
+    mapLeft = {
+            {Button::Up,     KEY_JOY_UP_DEFAULT},
+            {Button::Down,   KEY_JOY_DOWN_DEFAULT},
+            {Button::Left,   KEY_JOY_LEFT_DEFAULT},
+            {Button::Right,  KEY_JOY_RIGHT_DEFAULT},
+            {Button::Select, KEY_JOY_SELECT_DEFAULT},
+            {Button::Start,  KEY_JOY_START_DEFAULT},
+            {Button::A,      KEY_JOY_A_DEFAULT},
+            {Button::B,      KEY_JOY_B_DEFAULT},
+            {Button::X,      KEY_JOY_X_DEFAULT},
+            {Button::Y,      KEY_JOY_Y_DEFAULT},
+            {Button::LT,     KEY_JOY_LT_DEFAULT},
+            {Button::RT,     KEY_JOY_RT_DEFAULT},
+            {Button::LB,     KEY_JOY_LB_DEFAULT},
+            {Button::RB,     KEY_JOY_RB_DEFAULT},
+            {Button::LS,     KEY_JOY_LS_DEFAULT},
+            {Button::RS,     KEY_JOY_RS_DEFAULT},
+            {Button::Menu1,  KEY_JOY_MENU1_DEFAULT},
+            {Button::Menu2,  KEY_JOY_MENU2_DEFAULT}
+    };
+
+    // TODO
+    // set right joycon mapping
+    mapRight = {
+            {Button::Up,     KEY_JOY_UP_DEFAULT},
+            {Button::Down,   KEY_JOY_DOWN_DEFAULT},
+            {Button::Left,   KEY_JOY_LEFT_DEFAULT},
+            {Button::Right,  KEY_JOY_RIGHT_DEFAULT},
+            {Button::Select, KEY_JOY_SELECT_DEFAULT},
+            {Button::Start,  KEY_JOY_START_DEFAULT},
+            {Button::A,      KEY_JOY_A_DEFAULT},
+            {Button::B,      KEY_JOY_B_DEFAULT},
+            {Button::X,      KEY_JOY_X_DEFAULT},
+            {Button::Y,      KEY_JOY_Y_DEFAULT},
+            {Button::LT,     KEY_JOY_LT_DEFAULT},
+            {Button::RT,     KEY_JOY_RT_DEFAULT},
+            {Button::LB,     KEY_JOY_LB_DEFAULT},
+            {Button::RB,     KEY_JOY_RB_DEFAULT},
+            {Button::LS,     KEY_JOY_LS_DEFAULT},
+            {Button::RS,     KEY_JOY_RS_DEFAULT},
+            {Button::Menu1,  KEY_JOY_MENU1_DEFAULT},
+            {Button::Menu2,  KEY_JOY_MENU2_DEFAULT}
+    };
 }
 
 Input::Player *SWITCHInput::update(int rotate) {
@@ -35,14 +65,14 @@ Input::Player *SWITCHInput::update(int rotate) {
 
     padUpdate(&pad);
 
-    // handle joycon's states (@ rsn8887)
+    // handle joycon's states (@ rsn8887 && R-YaTian)
     static int previous_single_joycon_mode = -1;
     static int previous_handheld_mode = -1;
     handheld_mode = padIsHandheld(&pad);
 
-    if ((single_joycon_mode != previous_single_joycon_mode) || (handheld_mode != previous_handheld_mode)) {
+    if ((single_joy_mode != previous_single_joycon_mode) || (handheld_mode != previous_handheld_mode)) {
         if (!handheld_mode) {
-            if (single_joycon_mode) {
+            if (single_joy_mode) {
                 hidSetNpadJoyHoldType(HidNpadJoyHoldType_Horizontal);
                 for (int id = 0; id < 8; id++)
                     hidSetNpadJoyAssignmentModeSingleByDefault((HidNpadIdType) id);
@@ -55,126 +85,58 @@ Input::Player *SWITCHInput::update(int rotate) {
             }
         }
         previous_handheld_mode = handheld_mode;
-        previous_single_joycon_mode = single_joycon_mode;
+        previous_single_joycon_mode = single_joy_mode;
     }
 
     return players;
 }
 
-void SWITCHInput::setSingleJoyconMode(bool enable) {
-    single_joycon_mode = enable;
+void SWITCHInput::setSingleJoyMode(bool enable) {
+    single_joy_mode = enable;
 }
 
 void SWITCHInput::process_axis(Input::Player &player, int rotate) {
-    if (!player.enabled || !player.data || (single_joycon_mode && !handheld_mode)) {
+    if (!player.enabled || !player.data || (single_joy_mode && !handheld_mode)) {
         return;
     }
 
-    float analogX, analogY;
-    auto deadZone = (float) player.dead_zone;
-    float scalingFactor, magnitude;
-    bool up = false, down = false, left = false, right = false;
-    Axis *currentStickXAxis = nullptr;
-    Axis *currentStickYAxis = nullptr;
-    float slope = 0.414214f; // tangent of 22.5 degrees for size of angular zones
-
-    for (int i = 0; i <= 1; i++) {
-
-        if (i == 0) {
-            // left stick
-            currentStickXAxis = &(player.lx);
-            currentStickYAxis = &(player.ly);
-        } else {
-            // right stick
-            currentStickXAxis = &(player.rx);
-            currentStickYAxis = &(player.ry);
-        }
-        analogX = (float) (SDL_JoystickGetAxis((SDL_Joystick *) player.data, currentStickXAxis->id));
-        analogY = (float) (SDL_JoystickGetAxis((SDL_Joystick *) player.data, currentStickYAxis->id));
-
-        //radial and scaled deadzone
-        //http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
-
-        if ((magnitude = std::sqrt(analogX * analogX + analogY * analogY)) >= deadZone) {
-
-            // analog control
-            scalingFactor = 32767.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
-            currentStickXAxis->value = (short) (analogX * scalingFactor);
-            currentStickYAxis->value = (short) (analogY * scalingFactor);
-
-            // symmetric angular zones for all eight digital directions
-            analogY = -analogY;
-            if (analogY > 0 && analogX > 0) {
-                // upper right quadrant
-                if (analogY > slope * analogX)
-                    up = true;
-                if (analogX > slope * analogY)
-                    right = true;
-            } else if (analogY > 0 && analogX <= 0) {
-                // upper left quadrant
-                if (analogY > slope * (-analogX))
-                    up = true;
-                if ((-analogX) > slope * analogY)
-                    left = true;
-            } else if (analogY <= 0 && analogX > 0) {
-                // lower right quadrant
-                if ((-analogY) > slope * analogX)
-                    down = true;
-                if (analogX > slope * (-analogY))
-                    right = true;
-            } else if (analogY <= 0 && analogX <= 0) {
-                // lower left quadrant
-                if ((-analogY) > slope * (-analogX))
-                    down = true;
-                if ((-analogX) > slope * (-analogY))
-                    left = true;
-            }
-
-            if (right)
-                player.keys |= Input::Key::Right;
-            if (left)
-                player.keys |= Input::Key::Left;
-            if (up)
-                player.keys |= Input::Key::Up;
-            if (down)
-                player.keys |= Input::Key::Down;
-        } else {
-            currentStickXAxis->value = 0;
-            currentStickYAxis->value = 0;
-        }
-    }
+    SDL2Input::process_axis(player, rotate);
 }
 
 void SWITCHInput::process_buttons(Input::Player &player, int rotate) {
-    if (!player.enabled || player.data == nullptr) {
+    if (!player.enabled || !player.data) {
         return;
     }
 
-    int mapLeft[KEY_COUNT] = {18, 16, 17, 19, 11, 6, 15, 12, 14, 13, 24, 25, 4, 8, 8, 4};
-    int mapRight[KEY_COUNT] = {20, 22, 23, 21, 10, 7, 2, 0, 3, 1, 26, 27, 5, 9, 9, 5};
-    bool joyLeft, joyRight;
-    joyLeft = joyRight = false;
-    int mapping;
+    int button;
+    std::vector<ButtonMapping> *map = &player.mapping;
+    auto gc = (SDL_GameController *) player.data;
+    auto joy = SDL_GameControllerGetJoystick(gc);
 
-    if (single_joycon_mode && !handheld_mode) {
-        auto joystick = (SDL_Joystick *) player.data;
-        int index = (int) SDL_JoystickInstanceID(joystick);
+    if (single_joy_mode && !handheld_mode) {
+        int index = (int) SDL_JoystickInstanceID(joy);
         if (hidGetNpadDeviceType((HidNpadIdType) index) & HidDeviceTypeBits_JoyLeft) {
-            joyLeft = true;
+            map = &mapLeft;
         } else if (hidGetNpadDeviceType((HidNpadIdType) index) & HidDeviceTypeBits_JoyRight) {
-            joyRight = true;
+            map = &mapRight;
         }
     }
 
-    for (int i = 0; i < KEY_COUNT; i++) {
-        if (joyLeft) {
-            mapping = mapLeft[i];
-        } else if (joyRight) {
-            mapping = mapRight[i];
-        } else {
-            mapping = player.mapping[i];
+    for (const auto &buttonMap: *map) {
+        button = buttonMap.value;
+
+        // process shoulder buttons, this is a special case on switch as they are treated has digital buttons
+        // SDL2 do not seem to handle this, so we use joystick code
+        if (button == ((int) SDL_CONTROLLER_AXIS_TRIGGERLEFT + 100)) {
+            if (SDL_JoystickGetButton(joy, 8)) {
+                player.buttons |= buttonMap.button;
+            }
+        } else if (button == ((int) SDL_CONTROLLER_AXIS_TRIGGERRIGHT + 100)) {
+            if (SDL_JoystickGetButton(joy, 9)) {
+                player.buttons |= buttonMap.button;
+            }
+        } else if (SDL_GameControllerGetButton(gc, (SDL_GameControllerButton) button)) {
+            player.buttons |= buttonMap.button;
         }
-        if (SDL_JoystickGetButton((SDL_Joystick *) player.data, mapping))
-            player.keys |= key_id[i];
     }
 }

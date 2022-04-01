@@ -13,10 +13,6 @@
 #endif
 
 #define PLAYER_MAX 4
-#define KEY_COUNT 16
-
-#define EV_RESIZE   BIT(1)
-#define EV_QUIT     BIT(2)
 
 namespace c2d {
 
@@ -24,25 +20,33 @@ namespace c2d {
 
     public:
 
-        enum Key : unsigned int {
-            Up = BIT(3),
-            Down = BIT(4),
-            Left = BIT(5),
-            Right = BIT(6),
-            Select = BIT(7),
-            Start = BIT(8),
-            Fire1 = BIT(9),
-            Fire2 = BIT(10),
-            Fire3 = BIT(11),
-            Fire4 = BIT(12),
-            Fire5 = BIT(13),
-            Fire6 = BIT(14),
-            Fire7 = BIT(15),
-            Fire8 = BIT(16),
+        enum Button : unsigned int {
+            Up = BIT(1),
+            Down = BIT(2),
+            Left = BIT(3),
+            Right = BIT(4),
+            Select = BIT(5),
+            Start = BIT(6),
+            A = BIT(7),
+            B = BIT(8),
+            X = BIT(9),
+            Y = BIT(10),
+            LT = BIT(11),
+            RT = BIT(12),
+            LB = BIT(13),
+            RB = BIT(14),
+            LS = BIT(15),
+            RS = BIT(16),
             Menu1 = BIT(17),
             Menu2 = BIT(18),
             Touch = BIT(19),
-            Delay = BIT(20)
+            Delay = BIT(20),
+            Quit = BIT(21)
+        };
+
+        struct ButtonMapping {
+            Button button;
+            int value;
         };
 
         struct Axis {
@@ -51,13 +55,13 @@ namespace c2d {
         };
 
         struct Player {
-            int mapping[KEY_COUNT]{};
-            Axis lx{0, 0};
-            Axis ly{1, 0};
-            Axis rx{2, 0};
-            Axis ry{3, 0};
-            unsigned int keys = 0;
-            int dead_zone = 8000;
+            std::vector<ButtonMapping> mapping;
+            Axis lx{};
+            Axis ly{};
+            Axis rx{};
+            Axis ry{};
+            unsigned int buttons = 0;
+            int dz = 8000;
             bool enabled = false;
             void *data = nullptr;
             int id = 0;
@@ -67,7 +71,7 @@ namespace c2d {
 
         // map keyboard to player 0
         struct Keyboard {
-            int mapping[KEY_COUNT];
+            std::vector<ButtonMapping> mapping;
         };
 
         explicit Input();
@@ -76,9 +80,9 @@ namespace c2d {
 
         virtual Player *update(int rotate = 0); // to implement
 
-        virtual bool waitKey(unsigned int *key, int player = 0) { return false; }; // to implement
+        virtual bool waitButton(unsigned int *key, int player = 0) { return false; }; // to implement
 
-        virtual unsigned int getKeys(int player = 0);
+        virtual unsigned int getButtons(int player = 0);
 
         virtual Player *getPlayer(int player = 0);
 
@@ -90,11 +94,10 @@ namespace c2d {
 
         virtual int getRepeatDelay();
 
-        // see C2D_DEFAULT_JOY_KEYS in c2d.h for mapping "struct"
-        virtual void setJoystickMapping(int player, const int *mapping, int deadzone = 8000);
+        virtual void setJoystickMapping(int player, const std::vector<ButtonMapping> &mapping,
+                                        int lx, int ly, int rx, int ry, int dz);
 
-        // see C2D_DEFAULT_KB_KEYS in c2d.h for mapping "struct"
-        virtual void setKeyboardMapping(const int *mapping);
+        virtual void setKeyboardMapping(const std::vector<ButtonMapping> &mapping);
 
         Player players[PLAYER_MAX];
         Keyboard keyboard{};

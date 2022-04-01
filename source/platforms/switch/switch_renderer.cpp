@@ -6,16 +6,8 @@
 
 using namespace c2d;
 
-void initNxLink();
-
-void deinitNxLink();
-
 SWITCHRenderer::SWITCHRenderer(const Vector2f &size) : SDL2Renderer(size) {
-
-    initNxLink();
-
     printf("SWITCHRenderer(%ix%i)\n", (int) size.x, (int) size.y);
-
 #ifdef NDEBUG
     if (hosversionBefore(8, 0, 0)) {
         if (R_SUCCEEDED(pcvInitialize())) {
@@ -37,9 +29,7 @@ SWITCHRenderer::SWITCHRenderer(const Vector2f &size) : SDL2Renderer(size) {
 }
 
 SWITCHRenderer::~SWITCHRenderer() {
-
     printf("~SWITCHRenderer()\n");
-
 #ifdef NDEBUG
     printf("SWITCHRenderer(): previous clocks: cpu=%i, gpu=%i, emc=%i\n",
            SwitchSys::getClock(SwitchSys::Module::Cpu),
@@ -75,6 +65,4 @@ SWITCHRenderer::~SWITCHRenderer() {
         clkrstExit();
     }
 #endif
-
-    deinitNxLink();
 }

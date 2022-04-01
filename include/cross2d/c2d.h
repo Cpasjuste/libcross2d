@@ -46,6 +46,33 @@
 // for internal usage
 extern c2d::Renderer *c2d_renderer;
 
+#if defined(__SDL2__) || defined(__PSP2__)
+#ifndef SDL2_INPUT_OLD_API
+#define KEY_JOY_UP_DEFAULT      SDL_CONTROLLER_BUTTON_DPAD_UP
+#define KEY_JOY_DOWN_DEFAULT    SDL_CONTROLLER_BUTTON_DPAD_DOWN
+#define KEY_JOY_LEFT_DEFAULT    SDL_CONTROLLER_BUTTON_DPAD_LEFT
+#define KEY_JOY_RIGHT_DEFAULT   SDL_CONTROLLER_BUTTON_DPAD_RIGHT
+#define KEY_JOY_A_DEFAULT       SDL_CONTROLLER_BUTTON_A
+#define KEY_JOY_B_DEFAULT       SDL_CONTROLLER_BUTTON_B
+#define KEY_JOY_X_DEFAULT       SDL_CONTROLLER_BUTTON_X
+#define KEY_JOY_Y_DEFAULT       SDL_CONTROLLER_BUTTON_Y
+#define KEY_JOY_LT_DEFAULT      (SDL_CONTROLLER_AXIS_TRIGGERLEFT + 100)     // axis id should not conflict with button id
+#define KEY_JOY_RT_DEFAULT      (SDL_CONTROLLER_AXIS_TRIGGERRIGHT + 100)    // axis id should not conflict with button id
+#define KEY_JOY_LB_DEFAULT      SDL_CONTROLLER_BUTTON_LEFTSHOULDER
+#define KEY_JOY_RB_DEFAULT      SDL_CONTROLLER_BUTTON_RIGHTSHOULDER
+#define KEY_JOY_LS_DEFAULT      SDL_CONTROLLER_BUTTON_LEFTSTICK
+#define KEY_JOY_RS_DEFAULT      SDL_CONTROLLER_BUTTON_RIGHTSTICK
+#define KEY_JOY_SELECT_DEFAULT  SDL_CONTROLLER_BUTTON_BACK
+#define KEY_JOY_START_DEFAULT   SDL_CONTROLLER_BUTTON_START
+#define KEY_JOY_MENU1_DEFAULT   SDL_CONTROLLER_BUTTON_START
+#define KEY_JOY_MENU2_DEFAULT   SDL_CONTROLLER_BUTTON_BACK
+#define KEY_JOY_AXIS_LX         SDL_CONTROLLER_AXIS_LEFTX
+#define KEY_JOY_AXIS_LY         SDL_CONTROLLER_AXIS_LEFTY
+#define KEY_JOY_AXIS_RX         SDL_CONTROLLER_AXIS_RIGHTX
+#define KEY_JOY_AXIS_RY         SDL_CONTROLLER_AXIS_RIGHTY
+#endif
+#endif
+
 #ifdef __PSP2__
 #define NO_KEYBOARD 1
 
@@ -73,26 +100,6 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DMutex SDL2Mutex
 #define C2DCond SDL2Cond
 
-#define KEY_JOY_UP_DEFAULT      8
-#define KEY_JOY_DOWN_DEFAULT    6
-#define KEY_JOY_LEFT_DEFAULT    7
-#define KEY_JOY_RIGHT_DEFAULT   9
-#define KEY_JOY_FIRE1_DEFAULT   2
-#define KEY_JOY_FIRE2_DEFAULT   1
-#define KEY_JOY_FIRE3_DEFAULT   3
-#define KEY_JOY_FIRE4_DEFAULT   0
-#define KEY_JOY_FIRE5_DEFAULT   4
-#define KEY_JOY_FIRE6_DEFAULT   5
-#define KEY_JOY_FIRE7_DEFAULT   (-1)
-#define KEY_JOY_FIRE8_DEFAULT   (-1)
-#define KEY_JOY_COIN1_DEFAULT   10
-#define KEY_JOY_START1_DEFAULT  11
-#define KEY_JOY_MENU1_DEFAULT   11
-#define KEY_JOY_MENU2_DEFAULT   10
-#define KEY_JOY_AXIS_LX         0
-#define KEY_JOY_AXIS_LY         1
-#define KEY_JOY_AXIS_RX         2
-#define KEY_JOY_AXIS_RY         3
 #elif __PS4__
 #ifndef NDEBUG
 
@@ -111,26 +118,6 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DIo PS4Io
 #define C2DClock PS4Clock
 
-#define KEY_JOY_UP_DEFAULT      11
-#define KEY_JOY_DOWN_DEFAULT    12
-#define KEY_JOY_LEFT_DEFAULT    13
-#define KEY_JOY_RIGHT_DEFAULT   14
-#define KEY_JOY_FIRE1_DEFAULT   0
-#define KEY_JOY_FIRE2_DEFAULT   1
-#define KEY_JOY_FIRE3_DEFAULT   2
-#define KEY_JOY_FIRE4_DEFAULT   3
-#define KEY_JOY_FIRE5_DEFAULT   15
-#define KEY_JOY_FIRE6_DEFAULT   16
-#define KEY_JOY_FIRE7_DEFAULT   9
-#define KEY_JOY_FIRE8_DEFAULT   10
-#define KEY_JOY_COIN1_DEFAULT   7
-#define KEY_JOY_START1_DEFAULT  8
-#define KEY_JOY_MENU1_DEFAULT   10
-#define KEY_JOY_MENU2_DEFAULT   9
-#define KEY_JOY_AXIS_LX         0
-#define KEY_JOY_AXIS_LY         1
-#define KEY_JOY_AXIS_RX         2
-#define KEY_JOY_AXIS_RY         3
 #elif __3DS__
 #define NO_KEYBOARD 1
 
@@ -200,32 +187,6 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DInput SWITCHInput
 #undef C2DIo
 #define C2DIo NXIo
-
-// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
-#define KEY_JOY_UP_DEFAULT      13          // KEY_DUP
-#define KEY_JOY_DOWN_DEFAULT    15          // KEY_DDOWN
-#define KEY_JOY_LEFT_DEFAULT    12          // KEY_DLEFT
-#define KEY_JOY_RIGHT_DEFAULT   14          // KEY_DRIGHT
-#define KEY_JOY_FIRE1_DEFAULT   0           // KEY_A
-#define KEY_JOY_FIRE2_DEFAULT   1           // KEY_B
-#define KEY_JOY_FIRE3_DEFAULT   2           // KEY_X
-#define KEY_JOY_FIRE4_DEFAULT   3           // KEY_Y
-#define KEY_JOY_FIRE5_DEFAULT   8           // KEY_ZL
-#define KEY_JOY_FIRE6_DEFAULT   9           // KEY_ZR
-#define KEY_JOY_FIRE7_DEFAULT   6           // KEY_L
-#define KEY_JOY_FIRE8_DEFAULT   7           // KEY_R
-#define KEY_JOY_COIN1_DEFAULT   11          // KEY_MINUS
-#define KEY_JOY_START1_DEFAULT  10          // KEY_PLUS
-#define KEY_JOY_MENU1_DEFAULT   7           // KEY_R
-#define KEY_JOY_MENU2_DEFAULT   6           // KEY_L
-// switch special keys
-#define KEY_JOY_LSTICK_DEFAULT  4           // KEY_LSTICK
-#define KEY_JOY_RSTICK_DEFAULT  5           // KEY_RSTICK
-// joysticks axis
-#define KEY_JOY_AXIS_LX         0
-#define KEY_JOY_AXIS_LY         1
-#define KEY_JOY_AXIS_RX         2
-#define KEY_JOY_AXIS_RY         3
 #elif __SDL2__
 
 #if __GL1__
@@ -245,7 +206,7 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
 
-// "Hori GEM Xbox controller"
+#ifdef SDL2_INPUT_OLD_API
 #define KEY_JOY_UP_DEFAULT      23  // TODO
 #define KEY_JOY_DOWN_DEFAULT    20  // TODO
 #define KEY_JOY_LEFT_DEFAULT    21  // TODO
@@ -266,6 +227,7 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_LY         1
 #define KEY_JOY_AXIS_RX         3
 #define KEY_JOY_AXIS_RY         4
+#endif
 
 #elif __SDL1__
 
@@ -432,22 +394,24 @@ extern c2d::Renderer *c2d_renderer;
 #ifndef NO_KEYBOARD
 #if defined(__SDL2__)
 // SDL key.keysym.scancode
-#define KEY_KB_UP_DEFAULT      SDL_SCANCODE_UP
-#define KEY_KB_DOWN_DEFAULT    SDL_SCANCODE_DOWN
-#define KEY_KB_LEFT_DEFAULT    SDL_SCANCODE_LEFT
-#define KEY_KB_RIGHT_DEFAULT   SDL_SCANCODE_RIGHT
-#define KEY_KB_FIRE1_DEFAULT   SDL_SCANCODE_A
-#define KEY_KB_FIRE2_DEFAULT   SDL_SCANCODE_S
-#define KEY_KB_FIRE3_DEFAULT   SDL_SCANCODE_Q
-#define KEY_KB_FIRE4_DEFAULT   SDL_SCANCODE_W
-#define KEY_KB_FIRE5_DEFAULT   SDL_SCANCODE_E
-#define KEY_KB_FIRE6_DEFAULT   SDL_SCANCODE_D
-#define KEY_KB_FIRE7_DEFAULT   SDL_SCANCODE_R
-#define KEY_KB_FIRE8_DEFAULT   SDL_SCANCODE_F
-#define KEY_KB_COIN1_DEFAULT   SDL_SCANCODE_SPACE
-#define KEY_KB_START1_DEFAULT  SDL_SCANCODE_RETURN
-#define KEY_KB_MENU1_DEFAULT   SDL_SCANCODE_RETURN
-#define KEY_KB_MENU2_DEFAULT   SDL_SCANCODE_SPACE
+#define KEY_KB_UP_DEFAULT       SDL_SCANCODE_UP
+#define KEY_KB_DOWN_DEFAULT     SDL_SCANCODE_DOWN
+#define KEY_KB_LEFT_DEFAULT     SDL_SCANCODE_LEFT
+#define KEY_KB_RIGHT_DEFAULT    SDL_SCANCODE_RIGHT
+#define KEY_KB_A_DEFAULT        SDL_SCANCODE_A
+#define KEY_KB_B_DEFAULT        SDL_SCANCODE_S
+#define KEY_KB_X_DEFAULT        SDL_SCANCODE_Q
+#define KEY_KB_Y_DEFAULT        SDL_SCANCODE_W
+#define KEY_KB_LT_DEFAULT       SDL_SCANCODE_E
+#define KEY_KB_RT_DEFAULT       SDL_SCANCODE_D
+#define KEY_KB_LB_DEFAULT       SDL_SCANCODE_R
+#define KEY_KB_RB_DEFAULT       SDL_SCANCODE_F
+#define KEY_KB_LS_DEFAULT       SDL_SCANCODE_T
+#define KEY_KB_RS_DEFAULT       SDL_SCANCODE_G
+#define KEY_KB_SELECT_DEFAULT   SDL_SCANCODE_SPACE
+#define KEY_KB_START_DEFAULT    SDL_SCANCODE_RETURN
+#define KEY_KB_MENU1_DEFAULT    SDL_SCANCODE_RETURN
+#define KEY_KB_MENU2_DEFAULT    SDL_SCANCODE_SPACE
 #elif defined(__SDL1__)
 // SDLKey from :
 #include <SDL/SDL_keysym.h>
@@ -482,37 +446,6 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_KB_MENU1_DEFAULT   58
 #define KEY_KB_MENU2_DEFAULT   36
 #endif
-#endif
-
-const int C2D_DEFAULT_JOY_KEYS[]{
-        // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
-        KEY_JOY_UP_DEFAULT, KEY_JOY_DOWN_DEFAULT, KEY_JOY_LEFT_DEFAULT, KEY_JOY_RIGHT_DEFAULT,
-        KEY_JOY_COIN1_DEFAULT, KEY_JOY_START1_DEFAULT,
-        KEY_JOY_FIRE1_DEFAULT, KEY_JOY_FIRE2_DEFAULT,
-        KEY_JOY_FIRE3_DEFAULT, KEY_JOY_FIRE4_DEFAULT,
-        KEY_JOY_FIRE5_DEFAULT, KEY_JOY_FIRE6_DEFAULT,
-        KEY_JOY_FIRE7_DEFAULT, KEY_JOY_FIRE8_DEFAULT,
-        KEY_JOY_MENU1_DEFAULT, KEY_JOY_MENU2_DEFAULT,
-        KEY_JOY_AXIS_LX, KEY_JOY_AXIS_LY, KEY_JOY_AXIS_RX, KEY_JOY_AXIS_RY,
-        0
-};
-
-#ifndef NO_KEYBOARD
-const int C2D_DEFAULT_KB_KEYS[]{
-        // UP, DOWN, LEFT, RIGHT, COINS (SELECT), START, ..., // QUIT
-        KEY_KB_UP_DEFAULT, KEY_KB_DOWN_DEFAULT, KEY_KB_LEFT_DEFAULT, KEY_KB_RIGHT_DEFAULT,
-        KEY_KB_COIN1_DEFAULT, KEY_KB_START1_DEFAULT,
-        KEY_KB_FIRE1_DEFAULT, KEY_KB_FIRE2_DEFAULT,
-        KEY_KB_FIRE3_DEFAULT, KEY_KB_FIRE4_DEFAULT,
-        KEY_KB_FIRE5_DEFAULT, KEY_KB_FIRE6_DEFAULT,
-        KEY_KB_FIRE7_DEFAULT, KEY_KB_FIRE8_DEFAULT,
-        KEY_KB_MENU1_DEFAULT, KEY_KB_MENU2_DEFAULT,
-        0
-};
-#else
-const int C2D_DEFAULT_KB_KEYS[]{
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
 #endif
 
 #endif //__C2D_H__
