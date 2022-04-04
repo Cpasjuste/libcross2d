@@ -247,6 +247,14 @@ Input::Player *Input::getPlayers() {
     return players;
 }
 
+std::vector<Input::ButtonMapping> Input::getKeyboardMapping() {
+    return keyboard.mapping;
+}
+
+std::vector<Input::ButtonMapping> Input::getKeyboardMappingDefault() {
+    return keyboard.mapping_default;
+}
+
 unsigned int Input::getButtonRotation(unsigned int button) {
     if (m_rotation == R90) {
         if (button & Button::Up) {
