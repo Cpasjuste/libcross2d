@@ -304,7 +304,7 @@ unsigned int Input::getButtonRotation(unsigned int button) {
         }
     }
 
-    return 0;
+    return button;
 }
 
 Input::~Input() {
