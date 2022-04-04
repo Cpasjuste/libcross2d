@@ -33,7 +33,7 @@ Input::Input() {
                 i, joy_mapping,
                 {KEY_JOY_AXIS_LX, KEY_JOY_AXIS_LY},
                 {KEY_JOY_AXIS_RX, KEY_JOY_AXIS_RY}, 8000);
-        players[i].mapping_default = joy_mapping;
+        m_players[i].mapping_default = joy_mapping;
     }
 
 #ifndef NO_KEYBOARD
@@ -59,7 +59,7 @@ Input::Input() {
             {Button::Menu2,  KEY_KB_MENU2_DEFAULT}
     };
     Input::setKeyboardMapping(kb_mapping);
-    keyboard.mapping_default = kb_mapping;
+    m_keyboard.mapping_default = kb_mapping;
 #endif
 
     // auto repeat timer
@@ -69,7 +69,7 @@ Input::Input() {
 Input::Player *Input::update() {
     int elapsed = m_repeatClock->getElapsedTime().asMilliseconds();
 
-    for (auto &player: players) {
+    for (auto &player: m_players) {
         if (!player.enabled || !player.data) {
             continue;
         }
@@ -144,45 +144,48 @@ Input::Player *Input::update() {
         /// process buttons
         for (const auto &buttonMap: player.mapping) {
             if (getButtonState(player, buttonMap.value)) {
-                player.buttons |= getButtonRotation(buttonMap.button);
+                player.buttons |= buttonMap.button;
             }
         }
+
+        /// apply rotation if needed
+        applyRotation(&player);
     }
 
     /// process keyboard
-    for (const auto &keyMap: keyboard.mapping) {
+    for (const auto &keyMap: m_keyboard.mapping) {
         if (getKeyState(keyMap.value)) {
-            players[0].buttons |= keyMap.button;
+            m_players[0].buttons |= keyMap.button;
         }
     }
 
     /// process touch
-    players[0].touch = getTouch();
-    if (players[0].touch != Vector2f()) {
-        players[0].buttons |= Input::Button::Touch;
+    m_players[0].touch = getTouch();
+    if (m_players[0].touch != Vector2f()) {
+        m_players[0].buttons |= Input::Button::Touch;
     }
 
     /// process auto repeat
-    if (!m_repeat || players[0].buttons & Input::Button::Quit) {
-        m_stateOld = players[0].buttons;
-        return players;
+    if (!m_repeat || m_players[0].buttons & Input::Button::Quit) {
+        m_stateOld = m_players[0].buttons;
+        return m_players;
     }
 
     if (elapsed >= m_repeatDelay) {
         m_repeatClock->restart();
-        m_stateOld = players[0].buttons;
-        return players;
+        m_stateOld = m_players[0].buttons;
+        return m_players;
     } else {
-        unsigned int diff = m_stateOld ^ players[0].buttons;
-        m_stateOld = players[0].buttons;
+        unsigned int diff = m_stateOld ^ m_players[0].buttons;
+        m_stateOld = m_players[0].buttons;
         if (diff > 0) {
             m_repeatClock->restart();
         } else {
-            players[0].buttons = Button::Delay;
+            m_players[0].buttons = Button::Delay;
         }
     }
 
-    return players;
+    return m_players;
 }
 
 void Input::setRepeatDelay(int ms) {
@@ -208,111 +211,132 @@ int Input::clear(int player) {
 void Input::setJoystickMapping(int player, const std::vector<ButtonMapping> &mapping,
                                const Vector2i &leftAxis, const Vector2i &rightAxis, int dz) {
     if (player < PLAYER_MAX) {
-        players[player].mapping = mapping;
-        players[player].lx.id = leftAxis.x;
-        players[player].ly.id = leftAxis.y;
-        players[player].rx.id = rightAxis.x;
-        players[player].ry.id = rightAxis.y;
-        players[player].dz = dz;
+        m_players[player].mapping = mapping;
+        m_players[player].lx.id = leftAxis.x;
+        m_players[player].ly.id = leftAxis.y;
+        m_players[player].rx.id = rightAxis.x;
+        m_players[player].ry.id = rightAxis.y;
+        m_players[player].dz = dz;
     }
 }
 
-void Input::setRotation(const Input::Rotation &rotation) {
-    m_rotation = rotation;
-}
-
-Input::Rotation Input::getRotation() {
-    return m_rotation;
-}
-
 void Input::setKeyboardMapping(const std::vector<ButtonMapping> &mapping) {
-    keyboard.mapping = mapping;
+    m_keyboard.mapping = mapping;
+}
+
+std::vector<Input::ButtonMapping> Input::getKeyboardMapping() {
+    return m_keyboard.mapping;
+}
+
+std::vector<Input::ButtonMapping> Input::getKeyboardMappingDefault() {
+    return m_keyboard.mapping_default;
+}
+
+void Input::setRotation(const Rotation &dirRotation, const Rotation &buttonRotation) {
+    m_dir_rotation = dirRotation;
+    m_button_rotation = buttonRotation;
+}
+
+Input::Rotation Input::getDirRotation() {
+    return m_dir_rotation;
+}
+
+Input::Rotation Input::getButtonRotation() {
+    return m_button_rotation;
 }
 
 unsigned int Input::getButtons(int player) {
     if (player < PLAYER_MAX) {
-        return players[player].buttons;
+        return m_players[player].buttons;
     }
     return 0;
 }
 
 Input::Player *Input::getPlayer(int player) {
     if (player < PLAYER_MAX) {
-        return &players[player];
+        return &m_players[player];
     }
     return nullptr;
 }
 
 Input::Player *Input::getPlayers() {
-    return players;
+    return m_players;
 }
 
-std::vector<Input::ButtonMapping> Input::getKeyboardMapping() {
-    return keyboard.mapping;
-}
+void Input::applyRotation(Player *player) {
+    unsigned int buttons = player->buttons;
 
-std::vector<Input::ButtonMapping> Input::getKeyboardMappingDefault() {
-    return keyboard.mapping_default;
-}
-
-unsigned int Input::getButtonRotation(unsigned int button) {
-    if (m_rotation == R90) {
-        if (button & Button::Up) {
-            return Button::Left;
-        } else if (button & Button::Right) {
-            return Button::Up;
-        } else if (button & Button::Down) {
-            return Button::Right;
-        } else if (button & Button::Left) {
-            return Button::Down;
-        } else if (button & Button::Y) {
-            return Button::X;
-        } else if (button & Button::B) {
-            return Button::Y;
-        } else if (button & Button::A) {
-            return Button::B;
-        } else if (button & Button::X) {
-            return Button::A;
-        }
-    } else if (m_rotation == R180) {
-        if (button & Button::Up) {
-            return Button::Down;
-        } else if (button & Button::Right) {
-            return Button::Left;
-        } else if (button & Button::Down) {
-            return Button::Up;
-        } else if (button & Button::Left) {
-            return Button::Right;
-        } else if (button & Button::Y) {
-            return Button::A;
-        } else if (button & Button::B) {
-            return Button::X;
-        } else if (button & Button::A) {
-            return Button::Y;
-        } else if (button & Button::X) {
-            return Button::B;
-        }
-    } else if (m_rotation == R270) {
-        if (button & Button::Up) {
-            return Button::Right;
-        } else if (button & Button::Right) {
-            return Button::Down;
-        } else if (button & Button::Down) {
-            return Button::Left;
-        } else if (button & Button::Left) {
-            return Button::Up;
-        } else if (button & Button::Y) {
-            return Button::B;
-        } else if (button & Button::B) {
-            return Button::A;
-        } else if (button & Button::A) {
-            return Button::X;
-        } else if (button & Button::X) {
-            return Button::Y;
+    // handle directional rotation
+    if (m_dir_rotation != Input::Rotation::R0) {
+        player->buttons &= ~Input::Button::Up;
+        player->buttons &= ~Input::Button::Right;
+        player->buttons &= ~Input::Button::Down;
+        player->buttons &= ~Input::Button::Left;
+        if (m_dir_rotation == R90) {
+            if (buttons & Button::Up)
+                player->buttons |= Button::Left;
+            if (buttons & Button::Right)
+                player->buttons |= Button::Up;
+            if (buttons & Button::Down)
+                player->buttons |= Button::Right;
+            if (buttons & Button::Left)
+                player->buttons |= Button::Down;
+        } else if (m_dir_rotation == R180) {
+            if (buttons & Button::Up)
+                player->buttons |= Button::Down;
+            if (buttons & Button::Right)
+                player->buttons |= Button::Left;
+            if (buttons & Button::Down)
+                player->buttons |= Button::Up;
+            if (buttons & Button::Left)
+                player->buttons |= Button::Right;
+        } else if (m_dir_rotation == R270) {
+            if (buttons & Button::Up)
+                player->buttons |= Button::Right;
+            if (buttons & Button::Right)
+                player->buttons |= Button::Down;
+            if (buttons & Button::Down)
+                player->buttons |= Button::Left;
+            if (buttons & Button::Left)
+                player->buttons |= Button::Up;
         }
     }
 
-    return button;
+    // handle buttons rotation
+    if (m_button_rotation != Input::Rotation::R0) {
+        player->buttons &= ~Input::Button::A;
+        player->buttons &= ~Input::Button::B;
+        player->buttons &= ~Input::Button::X;
+        player->buttons &= ~Input::Button::Y;
+        if (m_dir_rotation == R90) {
+            if (buttons & Button::Y)
+                player->buttons |= Button::X;
+            if (buttons & Button::B)
+                player->buttons |= Button::Y;
+            if (buttons & Button::A)
+                player->buttons |= Button::B;
+            if (buttons & Button::X)
+                player->buttons |= Button::A;
+        } else if (m_dir_rotation == R180) {
+            if (buttons & Button::Y)
+                player->buttons |= Button::A;
+            if (buttons & Button::B)
+                player->buttons |= Button::X;
+            if (buttons & Button::A)
+                player->buttons |= Button::Y;
+            if (buttons & Button::X)
+                player->buttons |= Button::B;
+        } else if (m_dir_rotation == R270) {
+            if (buttons & Button::Y)
+                player->buttons |= Button::B;
+            if (buttons & Button::B)
+                player->buttons |= Button::A;
+            if (buttons & Button::A)
+                player->buttons |= Button::X;
+            if (buttons & Button::X)
+                player->buttons |= Button::Y;
+        }
+    }
 }
 
 Input::~Input() {

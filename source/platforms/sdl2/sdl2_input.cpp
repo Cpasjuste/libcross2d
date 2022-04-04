@@ -31,13 +31,13 @@ SDL2Input::SDL2Input() : Input() {
                    SDL_GameControllerName(pad), mapping);
             SDL_free(mapping);
 
-            players[i].data = pad;
-            players[i].id = i;
-            players[i].enabled = true;
+            m_players[i].data = pad;
+            m_players[i].id = i;
+            m_players[i].enabled = true;
         }
     } else {
         // allow keyboard mapping to player1
-        players[0].enabled = true;
+        m_players[0].enabled = true;
     }
 }
 

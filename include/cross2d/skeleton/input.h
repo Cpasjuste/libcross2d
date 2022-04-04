@@ -108,9 +108,11 @@ namespace c2d {
 
         virtual int getRepeatDelay();
 
-        virtual void setRotation(const Rotation &rotation);
+        virtual void setRotation(const Rotation &dirRotation, const Rotation &buttonRotation);
 
-        virtual Rotation getRotation();
+        virtual Rotation getDirRotation();
+
+        virtual Rotation getButtonRotation();
 
         virtual void setJoystickMapping(int player, const std::vector<ButtonMapping> &mapping,
                                         const Vector2i &leftAxis, const Vector2i &rightAxis, int dz);
@@ -126,17 +128,18 @@ namespace c2d {
 
         virtual Vector2f getTouch() { return {}; };
 
-        virtual unsigned int getButtonRotation(unsigned int button);
+        virtual void applyRotation(Player *player);
 
-        Player players[PLAYER_MAX];
-        Keyboard keyboard{};
+        Player m_players[PLAYER_MAX];
+        Keyboard m_keyboard{};
 
     private:
         Clock *m_repeatClock;
         int m_repeatDelay = 150;
         bool m_repeat = false;
         unsigned int m_stateOld = 0;
-        Rotation m_rotation = R0;
+        Rotation m_dir_rotation = R0;
+        Rotation m_button_rotation = R0;
     };
 }
 
