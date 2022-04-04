@@ -63,7 +63,8 @@ namespace c2d {
         };
 
         struct Player {
-            std::vector<ButtonMapping> mapping;
+            std::vector<ButtonMapping> mapping{};
+            std::vector<ButtonMapping> mapping_default{};
             Axis lx{};
             Axis ly{};
             Axis rx{};
@@ -80,6 +81,7 @@ namespace c2d {
         // map keyboard to player 0
         struct Keyboard {
             std::vector<ButtonMapping> mapping;
+            std::vector<ButtonMapping> mapping_default{};
         };
 
         explicit Input();
@@ -107,7 +109,7 @@ namespace c2d {
         virtual Rotation getRotation();
 
         virtual void setJoystickMapping(int player, const std::vector<ButtonMapping> &mapping,
-                                        int lx, int ly, int rx, int ry, int dz);
+                                        const Vector2i &leftAxis, const Vector2i &rightAxis, int dz);
 
         virtual void setKeyboardMapping(const std::vector<ButtonMapping> &mapping);
 

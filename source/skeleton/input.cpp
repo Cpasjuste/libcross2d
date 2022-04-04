@@ -31,7 +31,9 @@ Input::Input() {
     for (int i = 0; i < PLAYER_MAX; i++) {
         Input::setJoystickMapping(
                 i, joy_mapping,
-                KEY_JOY_AXIS_LX, KEY_JOY_AXIS_LY, KEY_JOY_AXIS_RX, KEY_JOY_AXIS_RY, 8000);
+                {KEY_JOY_AXIS_LX, KEY_JOY_AXIS_LY},
+                {KEY_JOY_AXIS_RX, KEY_JOY_AXIS_RY}, 8000);
+        players[i].mapping_default = joy_mapping;
     }
 
 #ifndef NO_KEYBOARD
@@ -57,6 +59,7 @@ Input::Input() {
             {Button::Menu2,  KEY_KB_MENU2_DEFAULT}
     };
     Input::setKeyboardMapping(kb_mapping);
+    keyboard.mapping_default = kb_mapping;
 #endif
 
     // auto repeat timer
@@ -203,13 +206,13 @@ int Input::clear(int player) {
 }
 
 void Input::setJoystickMapping(int player, const std::vector<ButtonMapping> &mapping,
-                               int lx, int ly, int rx, int ry, int dz) {
+                               const Vector2i &leftAxis, const Vector2i &rightAxis, int dz) {
     if (player < PLAYER_MAX) {
         players[player].mapping = mapping;
-        players[player].lx.id = lx;
-        players[player].ly.id = ly;
-        players[player].rx.id = rx;
-        players[player].ry.id = ry;
+        players[player].lx.id = leftAxis.x;
+        players[player].ly.id = leftAxis.y;
+        players[player].rx.id = rightAxis.x;
+        players[player].ry.id = rightAxis.y;
         players[player].dz = dz;
     }
 }
