@@ -5,6 +5,7 @@
 #ifndef __C2D_INPUT_H__
 #define __C2D_INPUT_H__
 
+#include <string>
 #include "cross2d/skeleton/sfml/Clock.hpp"
 #include "cross2d/skeleton/sfml/Vector2.hpp"
 
@@ -19,6 +20,13 @@ namespace c2d {
     class Input {
 
     public:
+
+        enum Rotation {
+            R0,
+            R90,
+            R180,
+            R270
+        };
 
         enum Button : unsigned int {
             Up = BIT(1),
@@ -78,9 +86,9 @@ namespace c2d {
 
         virtual ~Input();
 
-        virtual Player *update(int rotate = 0); // to implement
+        virtual Player *update();
 
-        virtual bool waitButton(unsigned int *key, int player = 0) { return false; }; // to implement
+        virtual bool waitButton(unsigned int *key, int player = 0) { return false; };
 
         virtual unsigned int getButtons(int player = 0);
 
@@ -94,20 +102,35 @@ namespace c2d {
 
         virtual int getRepeatDelay();
 
+        virtual void setRotation(const Rotation &rotation);
+
+        virtual Rotation getRotation();
+
         virtual void setJoystickMapping(int player, const std::vector<ButtonMapping> &mapping,
                                         int lx, int ly, int rx, int ry, int dz);
 
         virtual void setKeyboardMapping(const std::vector<ButtonMapping> &mapping);
 
+    protected:
+        virtual Vector2f getAxisState(const Player &player, int xAxis, int yAxis) { return {}; };
+
+        virtual int getButtonState(const Player &player, int button) { return false; };
+
+        virtual int getKeyState(int key) { return false; };
+
+        virtual Vector2f getTouch() { return {}; };
+
+        virtual unsigned int getButtonRotation(unsigned int button);
+
         Player players[PLAYER_MAX];
         Keyboard keyboard{};
 
     private:
-
-        Clock *repeatClock;
-        int repeatDelay = 150;
-        bool repeat = false;
-        unsigned int stateOld = 0;
+        Clock *m_repeatClock;
+        int m_repeatDelay = 150;
+        bool m_repeat = false;
+        unsigned int m_stateOld = 0;
+        Rotation m_rotation = R0;
     };
 }
 

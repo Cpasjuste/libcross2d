@@ -16,19 +16,18 @@ namespace c2d {
 
         ~SDL2Input() override;
 
+        Player *update() override;
+
         bool waitButton(unsigned int *key, int player = 0) override;
 
-        Player *update(int rotate = 0) override;
-
     protected:
+        Vector2f getAxisState(const Player &player, int xAxis, int yAxis) override;
 
-        virtual void process_axis(Input::Player &player, int rotate);
+        int getButtonState(const Player &player, int button) override;
 
-        virtual void process_buttons(Input::Player &player, int rotate);
+        int getKeyState(int key) override;
 
-        virtual void process_keyboard(Input::Player &player, int rotate);
-
-        virtual void process_touch(Input::Player &player);
+        Vector2f getTouch() override;
 
 #ifdef SDL2_INPUT_OLD_API
         virtual void process_hat(Input::Player &player, int rotate);

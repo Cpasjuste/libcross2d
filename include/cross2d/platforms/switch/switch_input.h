@@ -14,14 +14,12 @@ namespace c2d {
     public:
         SWITCHInput();
 
-        Player *update(int rotate = 0) override;
+        Player *update() override;
 
         void setSingleJoyMode(bool enable);
 
     private:
-        void process_axis(Input::Player &player, int rotate) override;
-
-        void process_buttons(Input::Player &player, int rotate) override;
+        Vector2f getAxisState(const Player &player, int xAxis, int yAxis) override;
 
         PadState pad;
         int handheld_mode = 1;

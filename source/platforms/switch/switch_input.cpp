@@ -60,8 +60,8 @@ SWITCHInput::SWITCHInput() : SDL2Input() {
     };
 }
 
-Input::Player *SWITCHInput::update(int rotate) {
-    Input::Player *players = SDL2Input::update(rotate);
+Input::Player *SWITCHInput::update() {
+    Input::Player *players = SDL2Input::update();
 
     padUpdate(&pad);
 
@@ -95,14 +95,16 @@ void SWITCHInput::setSingleJoyMode(bool enable) {
     single_joy_mode = enable;
 }
 
-void SWITCHInput::process_axis(Input::Player &player, int rotate) {
+Vector2f SWITCHInput::getAxisState(const Player &player, int xAxis, int yAxis) {
     if (!player.enabled || !player.data || (single_joy_mode && !handheld_mode)) {
-        return;
+        return {};
     }
 
-    SDL2Input::process_axis(player, rotate);
+    return SDL2Input::getAxisState(player, xAxis, yAxis);
 }
 
+// TODO
+#if 0
 void SWITCHInput::process_buttons(Input::Player &player, int rotate) {
     if (!player.enabled || !player.data) {
         return;
@@ -140,3 +142,4 @@ void SWITCHInput::process_buttons(Input::Player &player, int rotate) {
         }
     }
 }
+#endif

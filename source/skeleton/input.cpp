@@ -60,26 +60,120 @@ Input::Input() {
 #endif
 
     // auto repeat timer
-    repeatClock = new C2DClock();
+    m_repeatClock = new C2DClock();
 }
 
-Input::Player *Input::update(int rotate) {
-    int elapsed = repeatClock->getElapsedTime().asMilliseconds();
+Input::Player *Input::update() {
+    int elapsed = m_repeatClock->getElapsedTime().asMilliseconds();
 
-    if (!repeat || players[0].buttons & Input::Button::Quit) {
-        stateOld = players[0].buttons;
+    for (auto &player: players) {
+        if (!player.enabled || !player.data) {
+            continue;
+        }
+
+        // reset buttons state
+        player.buttons = 0;
+
+        /// process axis (@ rsn8887)
+        Vector2f analogState;
+        auto deadZone = (float) player.dz;
+        float scalingFactor, magnitude;
+        Axis *currentStickXAxis;
+        Axis *currentStickYAxis;
+        float slope = 0.414214f; // tangent of 22.5 degrees for size of angular zones
+
+        // process directional axis
+        for (int i = 0; i < 2; i++) {
+            if (i == 0) {
+                // left stick
+                currentStickXAxis = &(player.lx);
+                currentStickYAxis = &(player.ly);
+            } else {
+                // right stick
+                currentStickXAxis = &(player.rx);
+                currentStickYAxis = &(player.ry);
+            }
+
+            analogState = getAxisState(player, currentStickXAxis->id, currentStickYAxis->id);
+
+            // radial and scaled deadzone
+            // http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
+
+            if ((magnitude = std::sqrt(analogState.x * analogState.x + analogState.y * analogState.y)) >= deadZone) {
+                // analog control
+                scalingFactor = 32767.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
+                currentStickXAxis->value = (short) (analogState.x * scalingFactor);
+                currentStickYAxis->value = (short) (analogState.y * scalingFactor);
+
+                // symmetric angular zones for all eight digital directions
+                analogState.y = -analogState.y;
+                if (analogState.y > 0 && analogState.x > 0) {
+                    // upper right quadrant
+                    if (analogState.y > slope * analogState.x)
+                        player.buttons |= Input::Button::Up;
+                    if (analogState.x > slope * analogState.y)
+                        player.buttons |= Input::Button::Right;
+                } else if (analogState.y > 0 && analogState.x <= 0) {
+                    // upper left quadrant
+                    if (analogState.y > slope * (-analogState.x))
+                        player.buttons |= Input::Button::Up;
+                    if ((-analogState.x) > slope * analogState.y)
+                        player.buttons |= Input::Button::Left;
+                } else if (analogState.y <= 0 && analogState.x > 0) {
+                    // lower right quadrant
+                    if ((-analogState.y) > slope * analogState.x)
+                        player.buttons |= Input::Button::Down;
+                    if (analogState.x > slope * (-analogState.y))
+                        player.buttons |= Input::Button::Right;
+                } else if (analogState.y <= 0 && analogState.x <= 0) {
+                    // lower left quadrant
+                    if ((-analogState.y) > slope * (-analogState.x))
+                        player.buttons |= Input::Button::Down;
+                    if ((-analogState.x) > slope * (-analogState.y))
+                        player.buttons |= Input::Button::Left;
+                }
+            } else {
+                currentStickXAxis->value = 0;
+                currentStickYAxis->value = 0;
+            }
+        }
+
+        /// process buttons
+        for (const auto &buttonMap: player.mapping) {
+            if (getButtonState(player, buttonMap.value)) {
+                player.buttons |= getButtonRotation(buttonMap.button);
+            }
+        }
+    }
+
+    /// process keyboard
+    for (const auto &keyMap: keyboard.mapping) {
+        if (getKeyState(keyMap.value)) {
+            players[0].buttons |= keyMap.button;
+        }
+    }
+
+    /// process touch
+    players[0].touch = getTouch();
+    if (players[0].touch != Vector2f()) {
+        players[0].buttons |= Input::Button::Touch;
+    }
+
+    /// process auto repeat
+    if (!m_repeat || players[0].buttons & Input::Button::Quit) {
+        m_stateOld = players[0].buttons;
         return players;
     }
 
-    if (elapsed >= repeatDelay) {
-        repeatClock->restart();
-        stateOld = players[0].buttons;
+    if (elapsed >= m_repeatDelay) {
+        m_repeatClock->restart();
+        m_stateOld = players[0].buttons;
         return players;
     } else {
-        unsigned int diff = stateOld ^ players[0].buttons;
-        stateOld = players[0].buttons;
+        unsigned int diff = m_stateOld ^ players[0].buttons;
+        m_stateOld = players[0].buttons;
         if (diff > 0) {
-            repeatClock->restart();
+            m_repeatClock->restart();
         } else {
             players[0].buttons = Button::Delay;
         }
@@ -89,17 +183,17 @@ Input::Player *Input::update(int rotate) {
 }
 
 void Input::setRepeatDelay(int ms) {
-    repeatDelay = ms;
-    repeat = ms > 0;
+    m_repeatDelay = ms;
+    m_repeat = ms > 0;
 }
 
 int Input::getRepeatDelay() {
-    return repeatDelay;
+    return m_repeatDelay;
 }
 
 int Input::clear(int player) {
     while (true) {
-        Player p = update(0)[player];
+        Player p = update()[player];
         if (!p.enabled || p.buttons == 0 || p.buttons & Input::Button::Quit) {
             break;
         }
@@ -118,6 +212,14 @@ void Input::setJoystickMapping(int player, const std::vector<ButtonMapping> &map
         players[player].ry.id = ry;
         players[player].dz = dz;
     }
+}
+
+void Input::setRotation(const Input::Rotation &rotation) {
+    m_rotation = rotation;
+}
+
+Input::Rotation Input::getRotation() {
+    return m_rotation;
 }
 
 void Input::setKeyboardMapping(const std::vector<ButtonMapping> &mapping) {
@@ -142,6 +244,66 @@ Input::Player *Input::getPlayers() {
     return players;
 }
 
+unsigned int Input::getButtonRotation(unsigned int button) {
+    if (m_rotation == R90) {
+        if (button & Button::Up) {
+            return Button::Left;
+        } else if (button & Button::Right) {
+            return Button::Up;
+        } else if (button & Button::Down) {
+            return Button::Right;
+        } else if (button & Button::Left) {
+            return Button::Down;
+        } else if (button & Button::Y) {
+            return Button::X;
+        } else if (button & Button::B) {
+            return Button::Y;
+        } else if (button & Button::A) {
+            return Button::B;
+        } else if (button & Button::X) {
+            return Button::A;
+        }
+    } else if (m_rotation == R180) {
+        if (button & Button::Up) {
+            return Button::Down;
+        } else if (button & Button::Right) {
+            return Button::Left;
+        } else if (button & Button::Down) {
+            return Button::Up;
+        } else if (button & Button::Left) {
+            return Button::Right;
+        } else if (button & Button::Y) {
+            return Button::A;
+        } else if (button & Button::B) {
+            return Button::X;
+        } else if (button & Button::A) {
+            return Button::Y;
+        } else if (button & Button::X) {
+            return Button::B;
+        }
+    } else if (m_rotation == R270) {
+        if (button & Button::Up) {
+            return Button::Right;
+        } else if (button & Button::Right) {
+            return Button::Down;
+        } else if (button & Button::Down) {
+            return Button::Left;
+        } else if (button & Button::Left) {
+            return Button::Up;
+        } else if (button & Button::Y) {
+            return Button::B;
+        } else if (button & Button::B) {
+            return Button::A;
+        } else if (button & Button::A) {
+            return Button::X;
+        } else if (button & Button::X) {
+            return Button::Y;
+        }
+    }
+
+    return 0;
+}
+
 Input::~Input() {
-    delete (repeatClock);
+    delete (m_repeatClock);
 }
