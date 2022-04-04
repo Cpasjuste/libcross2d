@@ -237,8 +237,8 @@ if (PLATFORM_VITA)
             SDL2 vita2d jpeg png box2d
             SceDisplay_stub SceGxm_stub SceSysmodule_stub
             SceAppMgr_stub SceCtrl_stub SceCommonDialog_stub
-            SceAudio_stub SceTouch_stub SceHid_stub SceMotion_stub
-            ScePower_stub SceAppUtil_stub
+            SceAudio_stub SceAudioIn_stub SceTouch_stub SceHid_stub
+            SceMotion_stub ScePower_stub SceAppUtil_stub
             z c stdc++ pthread m
             )
 
