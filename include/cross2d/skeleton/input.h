@@ -98,6 +98,10 @@ namespace c2d {
 
         virtual Player *getPlayers();
 
+        virtual std::vector<ButtonMapping> getKeyboardMapping();
+
+        virtual std::vector<ButtonMapping> getKeyboardMappingDefault();
+
         virtual int clear(int player = 0);
 
         virtual void setRepeatDelay(int ms);
