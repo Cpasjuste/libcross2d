@@ -92,33 +92,24 @@ Vector2f SDL2Input::getTouch() {
     return {};
 }
 
-bool SDL2Input::waitButton(unsigned int *key, int player) {
+int SDL2Input::waitButton(int player) {
     SDL_Event event = {};
 
     while (SDL_PollEvent(&event) != 0) {
         if (event.type == SDL_CONTROLLERBUTTONDOWN) {
-            if (key) {
-                *key = event.cbutton.button;
-            }
-            return true;
+            return event.cbutton.button;
         } else if (event.type == SDL_CONTROLLERAXISMOTION) {
             if ((event.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT ||
                  event.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT)
                 && (event.caxis.value < -16000 || event.caxis.value > 16000)) {
-                if (key) {
-                    *key = event.caxis.axis + 100;
-                }
-                return true;
+                return event.caxis.axis + 100;
             }
         } else if (event.type == SDL_KEYDOWN) {
-            if (key) {
-                *key = event.key.keysym.scancode;
-            }
-            return true;
+            return event.key.keysym.scancode;
         }
     }
 
-    return false;
+    return -1;
 }
 
 SDL2Input::~SDL2Input() {

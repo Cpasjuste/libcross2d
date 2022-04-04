@@ -90,7 +90,7 @@ namespace c2d {
 
         virtual Player *update();
 
-        virtual bool waitButton(unsigned int *key, int player = 0) { return false; };
+        virtual int waitButton(int player = 0) { return -1; };
 
         virtual unsigned int getButtons(int player = 0);
 

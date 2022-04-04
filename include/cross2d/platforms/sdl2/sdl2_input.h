@@ -18,7 +18,7 @@ namespace c2d {
 
         Player *update() override;
 
-        bool waitButton(unsigned int *key, int player = 0) override;
+        int waitButton(int player = 0) override;
 
     protected:
         Vector2f getAxisState(const Player &player, int xAxis, int yAxis) override;

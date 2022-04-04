@@ -56,6 +56,7 @@ int MessageBox::show(const std::string &txt, const std::string &msg,
 
     int ret = 0, index = 0, choices = 0;
     unsigned int key = 0;
+    int button = 0;
     C2DClock clock;
 
     title->setString(txt);
@@ -120,7 +121,8 @@ int MessageBox::show(const std::string &txt, const std::string &msg,
             }
 
             if (pressed != nullptr) {
-                if (input->waitButton(&key)) {
+                button = input->waitButton();
+                if (button > -1) {
                     setVisibility(Visibility::Hidden);
                     break;
                 }
@@ -167,7 +169,7 @@ int MessageBox::show(const std::string &txt, const std::string &msg,
         }
 
         if (pressed != nullptr) {
-            *pressed = (int) key;
+            *pressed = button;
         }
 
         input->clear();
