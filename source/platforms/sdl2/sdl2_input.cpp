@@ -78,8 +78,9 @@ int SDL2Input::getButtonState(const Player &player, int button) {
 int SDL2Input::getKeyState(int key) {
 #ifndef NO_KEYBOARD
     return SDL_GetKeyboardState(nullptr)[key] > 0;
-#endif
+#else
     return 0;
+#endif
 }
 
 Vector2f SDL2Input::getTouch() {

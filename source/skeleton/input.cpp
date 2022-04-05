@@ -67,10 +67,8 @@ Input::Input() {
 }
 
 Input::Player *Input::update() {
-    int elapsed = m_repeatClock->getElapsedTime().asMilliseconds();
-
     for (auto &player: m_players) {
-        if (!player.enabled || !player.data) {
+        if (!player.enabled) {
             continue;
         }
 
@@ -171,7 +169,7 @@ Input::Player *Input::update() {
         return m_players;
     }
 
-    if (elapsed >= m_repeatDelay) {
+    if (m_repeatClock->getElapsedTime().asMilliseconds() >= m_repeatDelay) {
         m_repeatClock->restart();
         m_stateOld = m_players[0].buttons;
         return m_players;
