@@ -13,7 +13,7 @@
 #define BIT(n) (1U<<(n))
 #endif
 
-#define PLAYER_MAX 4
+#define PLAYER_MAX 8
 
 namespace c2d {
 

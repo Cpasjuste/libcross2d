@@ -172,7 +172,6 @@ extern c2d::Renderer *c2d_renderer;
 
 #elif __SWITCH__
 #define NO_KEYBOARD 1
-#define GL_ABGR_EXT 0x8000
 
 #include <switch.h>
 
@@ -184,14 +183,11 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/switch/switch_renderer.h"
 #include "platforms/switch/switch_io.h"
 #include "platforms/switch/switch_sys.h"
-#include "platforms/switch/switch_input.h"
 
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
 #undef C2DRenderer
 #define C2DRenderer SWITCHRenderer
-#undef C2DInput
-#define C2DInput SWITCHInput
 #undef C2DIo
 #define C2DIo NXIo
 #elif __SDL2__
