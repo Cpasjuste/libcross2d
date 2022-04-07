@@ -11,6 +11,14 @@ using namespace c2d;
     GX_TRANSFER_IN_FORMAT(inFmt) | GX_TRANSFER_OUT_FORMAT(outFmt) | \
     GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 
+void *linear_realloc(void *mem, size_t size) {
+    if (mem) {
+        linearFree(mem);
+    }
+    mem = linearAlloc(size);
+    return mem;
+}
+
 // Grabbed from Citra Emulator (citra/src/video_core/utils.h)
 static inline u32 morton_interleave(u32 x, u32 y) {
     u32 i = (x & 7) | ((y & 7) << 8); // ---- -210
@@ -78,19 +86,18 @@ void CTRTexture::unlock(int rowLength) {
 }
 
 void CTRTexture::upload() {
-    // TODO: m_unlock_rect
-    // TODO: take a look at https://github.com/xerpi/sf2dlib/blob/9c183f6b802ef7fcd292528de1d86a8bc96cb277/libsf2d/source/sf2d_texture.c#L84
-    uint8_t *src = m_pixels + m_unlock_rect.top * m_pitch + m_unlock_rect.left * m_bpp;
-    uint8_t *dst = (uint8_t *) m_tex->data + m_unlock_rect.top * m_pitch + m_unlock_rect.left * m_bpp;
-    GX_TRANSFER_FORMAT fmt = m_format == Format::RGB565 ? GX_TRANSFER_FMT_RGB565 : GX_TRANSFER_FMT_RGBA8;
-    GSPGPU_FlushDataCache(m_pixels, (u32) m_tex->height * m_pitch);
-    C3D_SyncDisplayTransfer(
-            (u32 *) src,
-            (u32) GX_BUFFER_DIM(m_unlock_rect.width, m_unlock_rect.height),
-            (u32 *) dst,
-            (u32) GX_BUFFER_DIM(m_unlock_rect.width, m_unlock_rect.height),
-            (u32) TILE_FLAGS(fmt, fmt)
-    );
+    if (m_tex && m_pixels) {
+        uint8_t *src = m_pixels + m_unlock_rect.top * m_pitch + m_unlock_rect.left * m_bpp;
+        GX_TRANSFER_FORMAT fmt = m_format == Format::RGB565 ? GX_TRANSFER_FMT_RGB565 : GX_TRANSFER_FMT_RGBA8;
+        GSPGPU_FlushDataCache(m_pixels, (u32) m_tex->height * m_pitch);
+        C3D_SyncDisplayTransfer(
+                (u32 *) src,
+                (u32) GX_BUFFER_DIM(m_unlock_rect.width, m_unlock_rect.height),
+                (u32 *) m_tex->data,
+                (u32) GX_BUFFER_DIM(m_tex_size.x, m_tex_size.y),
+                (u32) TILE_FLAGS(fmt, fmt)
+        );
+    }
 }
 
 void CTRTexture::uploadSoft() {
@@ -151,7 +158,7 @@ int CTRTexture::resize(const Vector2i &size, bool copyPixels) {
         }
     }
 
-    auto *new_pixels = (uint8_t *) malloc(size.x * size.y * m_bpp);
+    auto *new_pixels = (uint8_t *) linearAlloc(size.x * size.y * m_bpp);
 
     if (copyPixels) {
         auto *src = m_pixels;
@@ -167,7 +174,7 @@ int CTRTexture::resize(const Vector2i &size, bool copyPixels) {
     }
 
     // replace pixels
-    free(m_pixels);
+    linearFree(m_pixels);
     m_pixels = new_pixels;
 
     // update texture parameters
@@ -198,9 +205,5 @@ CTRTexture::~CTRTexture() {
     if (m_tex) {
         C3D_TexDelete(m_tex);
         delete (m_tex);
-    }
-    if (m_pixels) {
-        linearFree(m_pixels);
-        m_pixels = nullptr;
     }
 }

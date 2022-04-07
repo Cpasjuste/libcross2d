@@ -7,6 +7,17 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
+#ifdef __3DS__
+#define STBI_MALLOC linearAlloc
+#define STBI_REALLOC linear_realloc
+#define STBI_FREE linearFree
+#define MALLOC linearAlloc
+#define FREE linearFree
+#else
+#define MALLOC malloc
+#define FREE free
+#endif
+
 #include "cross2d/skeleton/stb_image.h"
 #include "cross2d/skeleton/stb_image_write.h"
 
@@ -22,6 +33,7 @@ Texture::Texture(const std::string &p) : RectangleShape({0, 0}) {
     // load pixels buffer
     m_pixels = stbi_load(m_path.c_str(), &w, &h, &n, m_bpp);
     if (!m_pixels) {
+        printf("Texture(%p): stbi_load failed (%s): %s\n", this, m_path.c_str(), stbi_failure_reason());
         return;
     }
 
@@ -82,7 +94,7 @@ Texture::Texture(const Vector2i &size, Format format) : RectangleShape(Vector2f{
     m_format = format;
     m_bpp = format == Format::RGB565 ? 2 : 4;
 
-    m_pixels = (uint8_t *) malloc(size.x * size.y * m_bpp);
+    m_pixels = (uint8_t *) MALLOC(size.x * size.y * m_bpp);
     if (!m_pixels) {
         return;
     }
@@ -136,7 +148,7 @@ int Texture::save(const std::string &path) {
 
     if (m_bpp == 2) {
         // convert rgb565 to bgr888
-        auto *tmp = (unsigned char *) malloc((size_t) width * (size_t) height * 3);
+        auto *tmp = (unsigned char *) MALLOC((size_t) width * (size_t) height * 3);
         for (int i = 0; i < width * height; i++) {
             signed short nColour = ((signed short *) m_pixels)[i];
             *(tmp + i * 3 + 2) = (unsigned char) ((nColour & 0x1F) << 3);
@@ -147,7 +159,7 @@ int Texture::save(const std::string &path) {
             *(tmp + i * 3 + 0) |= *(tmp + i * 3 + 2) >> 5;
         }
         res = stbi_write_png(path.c_str(), width, height, 3, tmp, width * 3);
-        free(tmp);
+        FREE(tmp);
     } else {
         res = stbi_write_png(path.c_str(), width, height, m_bpp, m_pixels, m_pitch);
     }
@@ -157,9 +169,10 @@ int Texture::save(const std::string &path) {
 
 void Texture::pixelsToPot(int w, int h) {
     m_tex_size = {Utility::pow2(w), Utility::pow2(h)};
-    auto *pixels = (uint8_t *) malloc(m_tex_size.x * m_tex_size.y * m_bpp);
+    auto *pixels = (uint8_t *) MALLOC(m_tex_size.x * m_tex_size.y * m_bpp);
+
     if (!pixels) {
-        free(m_pixels);
+        FREE(m_pixels);
         m_pixels = nullptr;
         return;
     }
@@ -174,7 +187,8 @@ void Texture::pixelsToPot(int w, int h) {
         dst += dst_pitch;
         src += src_pitch;
     }
-    free(m_pixels);
+
+    FREE(m_pixels);
     m_pixels = pixels;
 }
 
@@ -199,7 +213,6 @@ void Texture::setShader(const std::string &shaderName) {
 Texture::~Texture() {
     printf("~Texture(%p)\n", this);
     if (m_pixels) {
-        free(m_pixels);
+        FREE(m_pixels);
     }
 }
-
