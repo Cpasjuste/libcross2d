@@ -18,26 +18,24 @@ namespace c2d {
 
         explicit CTRTexture(const unsigned char *buffer, int bufferSize);
 
-        explicit CTRTexture(const Vector2f &size = Vector2f(0, 0), Format format = Format::RGBA8);
+        explicit CTRTexture(const Vector2i &size = Vector2i(), Format format = Format::RGBA8);
 
         ~CTRTexture() override;
 
-        int lock(FloatRect *rect, void **pixels, int *pitch) override;
+        void unlock(int rowLength = 0) override;
 
-        void unlock(void *data = nullptr) override;
+        int resize(const Vector2i &size, bool keepPixels = false) override;
 
         void setFilter(Filter filter) override;
 
-        C3D_Tex tex;
+        C3D_Tex *m_tex = nullptr;
+
     private:
+        int createTexture();
 
         void upload();
 
         void uploadSoft();
-
-        unsigned char *getPixels(int *w, int *h, const unsigned char *buffer = nullptr, int bufferSize = 0);
-
-        u8 *pixels = nullptr;
     };
 }
 

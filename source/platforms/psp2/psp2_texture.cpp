@@ -75,8 +75,7 @@ int PSP2Texture::resize(const Vector2i &size, bool copyPixels) {
         auto *src = (unsigned char *) vita2d_texture_get_datap(m_tex);
         auto *dst = (unsigned char *) vita2d_texture_get_datap(tex_new);
         int dst_pitch = (int) vita2d_texture_get_stride(tex_new);
-        Vector2i dst_size = {size.x, size.y};
-        for (int i = 0; i < dst_size.y; i++) {
+        for (int i = 0; i < m_tex_size.y; i++) {
             memcpy(dst, src, m_pitch);
             src += m_pitch;
             dst += dst_pitch;

@@ -25,9 +25,15 @@ Texture::Texture(const std::string &p) : RectangleShape({0, 0}) {
         return;
     }
 
+    // handle pot textures
+    if (m_pot) {
+        pixelsToPot(w, h);
+    } else {
+        m_tex_size = {w, h};
+    }
+
     // set texture parameters
     m_pitch = w * m_bpp;
-    m_tex_size = {w, h};
     m_unlock_rect = {0, 0, w, h};
     Texture::setSize((float) w, (float) h);
     Texture::setTexture(this);
@@ -51,9 +57,15 @@ Texture::Texture(const unsigned char *buffer, int bufferSize) : RectangleShape({
         return;
     }
 
+    // handle pot textures
+    if (m_pot) {
+        pixelsToPot(w, h);
+    } else {
+        m_tex_size = {w, h};
+    }
+
     // set texture parameters
     m_pitch = w * m_bpp;
-    m_tex_size = {w, h};
     m_unlock_rect = {0, 0, w, h};
     Texture::setSize((float) w, (float) h);
     Texture::setTexture(this);
@@ -141,6 +153,29 @@ int Texture::save(const std::string &path) {
     }
 
     return res;
+}
+
+void Texture::pixelsToPot(int w, int h) {
+    m_tex_size = {Utility::pow2(w), Utility::pow2(h)};
+    auto *pixels = (uint8_t *) malloc(m_tex_size.x * m_tex_size.y * m_bpp);
+    if (!pixels) {
+        free(m_pixels);
+        m_pixels = nullptr;
+        return;
+    }
+
+    memset(pixels, 0, m_tex_size.x * m_tex_size.y * m_bpp);
+    uint8_t *dst = pixels;
+    int dst_pitch = m_tex_size.x * m_bpp;
+    uint8_t *src = m_pixels;
+    int src_pitch = w * m_bpp;
+    for (int i = 0; i < h; i++) {
+        memcpy(dst, src, src_pitch);
+        dst += dst_pitch;
+        src += src_pitch;
+    }
+    free(m_pixels);
+    m_pixels = pixels;
 }
 
 void Texture::setShader(int shaderIndex) {

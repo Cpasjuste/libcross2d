@@ -60,8 +60,15 @@ namespace c2d {
         uint8_t *m_pixels = nullptr;
 
     protected:
+        void pixelsToPot(int w, int h);
+
         Vector2i m_tex_size;
         IntRect m_unlock_rect = IntRect();
+#ifdef __3DS__
+        bool m_pot = true;
+#else
+        bool m_pot = false;
+#endif
     };
 }
 

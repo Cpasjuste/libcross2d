@@ -16,15 +16,18 @@ namespace c2d {
 
         explicit CTRInput();
 
-        ~CTRInput() override;
+        Player *update() override;
 
-        Player *update(int rotate = 0) override;
-
-        bool waitKey(unsigned int *key, int player = 0) override;
+        // TODO: int waitButton(int player = 0) override;
 
     private:
-        void process_buttons(Input::Player &player, int rotate = 0);
+        // TODO: Vector2f getAxisState(const Player &player, int xAxis, int yAxis) override;
 
+        int getButtonState(const Player &player, int button) override;
+
+        // TODO: int getKeyState(int key) override;
+
+        Vector2f getTouch() override;
     };
 }
 

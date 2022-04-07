@@ -104,6 +104,9 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projMtx, &s_projTop);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_mdlvMtx, &ctx.mdlvMtx);
 
+    // dummy shader list
+    m_shaderList = new ShaderList();
+
     consoleInit(GFX_BOTTOM, nullptr);
     //consoleDebugInit(debugDevice_SVC);
     //stdout = stderr;
@@ -139,7 +142,7 @@ void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
     }
 
     if (tex) {
-        C3D_TexBind(0, &tex->tex);
+        C3D_TexBind(0, tex->m_tex);
     }
 
     C3D_TexEnvSrc(C3D_GetTexEnv(0), C3D_Both,
