@@ -5,26 +5,6 @@
 #ifndef SDL_RENDERER_H
 #define SDL_RENDERER_H
 
-#if __GLAD__
-
-#include "glad/glad.h"
-
-#endif
-
-#if defined(__GL1__)
-
-#include "cross2d/platforms/gl1/gl_renderer.h"
-#include "cross2d/platforms/gl1/gl_texture.h"
-
-#else
-
-#include "cross2d/platforms/gl2/gl_renderer.h"
-#include "cross2d/platforms/gl2/gl_shaders.h"
-#include "cross2d/platforms/gl2/gl_texture.h"
-#include "cross2d/platforms/gl2/gl_texture_buffer.h"
-
-#endif
-
 namespace c2d {
 
     class SDL1Renderer : public GLRenderer {

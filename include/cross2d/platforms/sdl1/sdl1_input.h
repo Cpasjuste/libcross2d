@@ -16,18 +16,18 @@ namespace c2d {
 
         ~SDL1Input() override;
 
-        bool waitKey(unsigned int *key, int player = 0) override;
+        Player *update() override;
 
-        Player *update(int rotate = 0) override;
+        int waitButton(int player = 0) override;
 
-    private:
-        virtual void process_axis(Input::Player &player, int rotate);
+    protected:
+        Vector2f getAxisState(const Player &player, int xAxis, int yAxis) override;
 
-        virtual void process_hat(Input::Player &player, int rotate);
+        int getButtonState(const Player &player, int button) override;
 
-        virtual void process_buttons(Input::Player &player, int rotate);
+        int getKeyState(int key) override;
 
-        virtual void process_keyboard(Input::Player &player, int rotate);
+        Vector2f getTouch() override;
 
     };
 }

@@ -226,24 +226,28 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
 
-#define KEY_JOY_UP_DEFAULT      -1  // use hat
-#define KEY_JOY_DOWN_DEFAULT    -1  // use hat
-#define KEY_JOY_LEFT_DEFAULT    -1  // use hat
-#define KEY_JOY_RIGHT_DEFAULT   -1  // use hat
-#define KEY_JOY_FIRE1_DEFAULT   0
-#define KEY_JOY_FIRE2_DEFAULT   1
-#define KEY_JOY_FIRE3_DEFAULT   2
-#define KEY_JOY_FIRE4_DEFAULT   3
-#define KEY_JOY_FIRE5_DEFAULT   4
-#define KEY_JOY_FIRE6_DEFAULT   5
-#define KEY_JOY_COIN1_DEFAULT   6
-#define KEY_JOY_START1_DEFAULT  7
+#define KEY_JOY_UP_DEFAULT      30  // TODO
+#define KEY_JOY_DOWN_DEFAULT    31  // TODO
+#define KEY_JOY_LEFT_DEFAULT    32  // TODO
+#define KEY_JOY_RIGHT_DEFAULT   33  // TODO
+#define KEY_JOY_A_DEFAULT       0
+#define KEY_JOY_B_DEFAULT       1
+#define KEY_JOY_X_DEFAULT       2
+#define KEY_JOY_Y_DEFAULT       3
+#define KEY_JOY_LT_DEFAULT      4
+#define KEY_JOY_RT_DEFAULT      5
+#define KEY_JOY_LB_DEFAULT      34  // TODO
+#define KEY_JOY_RB_DEFAULT      35  // TODO
+#define KEY_JOY_LS_DEFAULT      36  // TODO
+#define KEY_JOY_RS_DEFAULT      37  // TODO
+#define KEY_JOY_SELECT_DEFAULT  6
+#define KEY_JOY_START_DEFAULT   7
 #define KEY_JOY_MENU1_DEFAULT   7
 #define KEY_JOY_MENU2_DEFAULT   6
 #define KEY_JOY_AXIS_LX         0
 #define KEY_JOY_AXIS_LY         1
-#define KEY_JOY_AXIS_RX         4
-#define KEY_JOY_AXIS_RY         5
+#define KEY_JOY_AXIS_RX         3
+#define KEY_JOY_AXIS_RY         4
 
 #elif __DREAMCAST__
 
@@ -329,44 +333,6 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_LY         1
 #define KEY_JOY_AXIS_RX         2
 #define KEY_JOY_AXIS_RY         3
-
-#elif __SFML__
-
-#include "platforms/sfml/sfml_renderer.h"
-#include "platforms/sfml/sfml_texture.h"
-#include "platforms/sfml/sfml_input.h"
-#include "platforms/sdl2/sdl2_audio.h"
-#include "platforms/posix/posix_io.h"
-
-#define C2DRenderer SFMLRenderer
-#define C2DTexture SFMLTexture
-#define C2DRectangle Rectangle
-#define C2DLine Line
-#define C2DFont Font
-#define C2DText Text
-#define C2DInput SFMLInput
-#define C2DAudio SDL2Audio
-#define C2DIo POSIXIo
-
-#define KEY_JOY_UP_DEFAULT      -1  // use hat
-#define KEY_JOY_DOWN_DEFAULT    -1  // use hat
-#define KEY_JOY_LEFT_DEFAULT    -1  // use hat
-#define KEY_JOY_RIGHT_DEFAULT   -1  // use hat
-#define KEY_JOY_FIRE1_DEFAULT   0
-#define KEY_JOY_FIRE2_DEFAULT   1
-#define KEY_JOY_FIRE3_DEFAULT   2
-#define KEY_JOY_FIRE4_DEFAULT   3
-#define KEY_JOY_FIRE5_DEFAULT   4
-#define KEY_JOY_FIRE6_DEFAULT   5
-#define KEY_JOY_COIN1_DEFAULT   6
-#define KEY_JOY_START1_DEFAULT  7
-#define KEY_JOY_MENU1_DEFAULT   7
-#define KEY_JOY_MENU2_DEFAULT   6
-#define KEY_JOY_AXIS_LX         0
-#define KEY_JOY_AXIS_LY         1
-#define KEY_JOY_AXIS_RX         4
-#define KEY_JOY_AXIS_RY         5
-
 #endif
 
 #ifndef NO_KEYBOARD
@@ -394,35 +360,24 @@ extern c2d::Renderer *c2d_renderer;
 // SDLKey from :
 #include <SDL/SDL_keysym.h>
 
-#define KEY_KB_UP_DEFAULT      SDLK_UP
-#define KEY_KB_DOWN_DEFAULT    SDLK_DOWN
-#define KEY_KB_LEFT_DEFAULT    SDLK_LEFT
-#define KEY_KB_RIGHT_DEFAULT   SDLK_RIGHT
-#define KEY_KB_FIRE1_DEFAULT   SDLK_a
-#define KEY_KB_FIRE2_DEFAULT   SDLK_z
-#define KEY_KB_FIRE3_DEFAULT   SDLK_e
-#define KEY_KB_FIRE4_DEFAULT   SDLK_q
-#define KEY_KB_FIRE5_DEFAULT   SDLK_s
-#define KEY_KB_FIRE6_DEFAULT   SDLK_d
-#define KEY_KB_COIN1_DEFAULT   SDLK_SPACE
-#define KEY_KB_START1_DEFAULT  SDLK_RETURN
-#define KEY_KB_MENU1_DEFAULT   SDLK_SPACE
-#define KEY_KB_MENU2_DEFAULT   SDLK_RETURN
-#elif __SFML__
-#define KEY_KB_UP_DEFAULT      73
-#define KEY_KB_DOWN_DEFAULT    74
-#define KEY_KB_LEFT_DEFAULT    71
-#define KEY_KB_RIGHT_DEFAULT   72
-#define KEY_KB_FIRE1_DEFAULT   76
-#define KEY_KB_FIRE2_DEFAULT   77
-#define KEY_KB_FIRE3_DEFAULT   78
-#define KEY_KB_FIRE4_DEFAULT   79
-#define KEY_KB_FIRE5_DEFAULT   80
-#define KEY_KB_FIRE6_DEFAULT   81
-#define KEY_KB_COIN1_DEFAULT   36
-#define KEY_KB_START1_DEFAULT  58
-#define KEY_KB_MENU1_DEFAULT   58
-#define KEY_KB_MENU2_DEFAULT   36
+#define KEY_KB_UP_DEFAULT       SDLK_UP
+#define KEY_KB_DOWN_DEFAULT     SDLK_DOWN
+#define KEY_KB_LEFT_DEFAULT     SDLK_LEFT
+#define KEY_KB_RIGHT_DEFAULT    SDLK_RIGHT
+#define KEY_KB_A_DEFAULT        SDLK_a
+#define KEY_KB_B_DEFAULT        SDLK_s
+#define KEY_KB_X_DEFAULT        SDLK_q
+#define KEY_KB_Y_DEFAULT        SDLK_w
+#define KEY_KB_LT_DEFAULT       SDLK_e
+#define KEY_KB_RT_DEFAULT       SDLK_d
+#define KEY_KB_LB_DEFAULT       SDLK_r
+#define KEY_KB_RB_DEFAULT       SDLK_f
+#define KEY_KB_LS_DEFAULT       SDLK_t
+#define KEY_KB_RS_DEFAULT       SDLK_g
+#define KEY_KB_SELECT_DEFAULT   SDLK_SPACE
+#define KEY_KB_START_DEFAULT    SDLK_RETURN
+#define KEY_KB_MENU1_DEFAULT    SDLK_SPACE
+#define KEY_KB_MENU2_DEFAULT    SDLK_RETURN
 #endif
 #endif
 
