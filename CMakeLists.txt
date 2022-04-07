@@ -173,6 +173,7 @@ endif ()
 # gl1
 if (OPTION_RENDER_GL1)
     file(GLOB GL_SRC source/platforms/gl1/*.c*)
+    list(APPEND GL_SRC source/platforms/gl2/gl_texture.cpp)
     list(APPEND C2D_SOURCES ${GL_SRC})
     list(APPEND C2D_CFLAGS -D__GL1__)
 endif ()

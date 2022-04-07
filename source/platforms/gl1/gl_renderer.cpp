@@ -14,10 +14,10 @@ using namespace c2d;
 
 GLRenderer::GLRenderer(const Vector2f &size) : Renderer(size) {
     printf("GL1Renderer\n");
+    m_shaderList = (ShaderList *) new ShaderList();
 }
 
 void GLRenderer::initGL() {
-
     printf("GL vendor   : %s\n", glGetString(GL_VENDOR));
     printf("GL renderer : %s\n", glGetString(GL_RENDERER));
     printf("GL version  : %s\n", glGetString(GL_VERSION));
@@ -39,8 +39,7 @@ void GLRenderer::initGL() {
     glLoadIdentity();
 }
 
-void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture, Sprite *sprite) {
-
+void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {
     Vertex *vertices;
     size_t vertexCount;
 
@@ -58,10 +57,10 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
         glLoadMatrixf(transform.getMatrix());
     }
 
-    GLTexture *tex = sprite != nullptr ? (GLTexture *) sprite->getTexture() : (GLTexture *) texture;
+    auto tex = (GLTexture *) texture;
     if (tex && tex->available) {
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, tex->texID);
+        glBindTexture(GL_TEXTURE_2D, tex->m_texID);
 #ifndef __GL1_IMMEDIATE__
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif
@@ -71,10 +70,10 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 #endif
     }
 #if BLEND_TEST
-        else if (vertices[0].color.a < 255) {
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
+    else if (vertices[0].color.a < 255) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
 #endif
 
     GLenum mode = modes[vertexArray->getPrimitiveType()];
@@ -125,7 +124,6 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 }
 
 void GLRenderer::clear() {
-
     glClearColor((float) m_clearColor.r / 255.0f,
                  (float) m_clearColor.g / 255.0f,
                  (float) m_clearColor.b / 255.0f,
@@ -135,7 +133,6 @@ void GLRenderer::clear() {
 }
 
 void GLRenderer::flip(bool draw, bool inputs) {
-
     // call base class (draw childs)
     Renderer::flip(draw, inputs);
 }

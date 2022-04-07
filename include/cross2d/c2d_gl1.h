@@ -16,7 +16,7 @@
 #endif
 
 #include "cross2d/platforms/gl1/gl_renderer.h"
-#include "cross2d/platforms/gl1/gl_texture.h"
+#include "cross2d/platforms/gl2/gl_texture.h"
 
 #define C2DTexture GLTexture
 
