@@ -18,10 +18,6 @@ namespace c2d {
             romfsInit();
         };
 
-        ~CTRIo() override {
-            romfsExit();
-        }
-
         std::string getRomFsPath() override {
             return "romfs:/";
         }
