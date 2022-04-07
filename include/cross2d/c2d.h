@@ -47,7 +47,6 @@
 extern c2d::Renderer *c2d_renderer;
 
 #if defined(__SDL2__) || defined(__PSP2__)
-#ifndef SDL2_INPUT_OLD_API
 #define KEY_JOY_UP_DEFAULT      SDL_CONTROLLER_BUTTON_DPAD_UP
 #define KEY_JOY_DOWN_DEFAULT    SDL_CONTROLLER_BUTTON_DPAD_DOWN
 #define KEY_JOY_LEFT_DEFAULT    SDL_CONTROLLER_BUTTON_DPAD_LEFT
@@ -77,7 +76,6 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_LY         SDL_CONTROLLER_AXIS_LEFTY
 #define KEY_JOY_AXIS_RX         SDL_CONTROLLER_AXIS_RIGHTX
 #define KEY_JOY_AXIS_RY         SDL_CONTROLLER_AXIS_RIGHTY
-#endif
 #endif
 
 #ifdef __PSP2__
@@ -208,29 +206,6 @@ extern c2d::Renderer *c2d_renderer;
 
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
-
-#ifdef SDL2_INPUT_OLD_API
-#define KEY_JOY_UP_DEFAULT      23  // TODO
-#define KEY_JOY_DOWN_DEFAULT    20  // TODO
-#define KEY_JOY_LEFT_DEFAULT    21  // TODO
-#define KEY_JOY_RIGHT_DEFAULT   22  // TODO
-#define KEY_JOY_FIRE1_DEFAULT   0
-#define KEY_JOY_FIRE2_DEFAULT   1
-#define KEY_JOY_FIRE3_DEFAULT   2
-#define KEY_JOY_FIRE4_DEFAULT   3
-#define KEY_JOY_FIRE5_DEFAULT   4
-#define KEY_JOY_FIRE6_DEFAULT   5
-#define KEY_JOY_FIRE7_DEFAULT   26  // TODO
-#define KEY_JOY_FIRE8_DEFAULT   27  // TODO
-#define KEY_JOY_COIN1_DEFAULT   6
-#define KEY_JOY_START1_DEFAULT  7
-#define KEY_JOY_MENU1_DEFAULT   7
-#define KEY_JOY_MENU2_DEFAULT   6
-#define KEY_JOY_AXIS_LX         0
-#define KEY_JOY_AXIS_LY         1
-#define KEY_JOY_AXIS_RX         3
-#define KEY_JOY_AXIS_RY         4
-#endif
 
 #elif __SDL1__
 

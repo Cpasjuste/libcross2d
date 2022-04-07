@@ -28,10 +28,6 @@ namespace c2d {
         int getKeyState(int key) override;
 
         Vector2f getTouch() override;
-
-#ifdef SDL2_INPUT_OLD_API
-        virtual void process_hat(Input::Player &player, int rotate);
-#endif
     };
 }
 
