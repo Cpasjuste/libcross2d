@@ -20,11 +20,11 @@ float Utility::random(float min, float max) {
     return distribution(randomEngine);
 }
 
-int Utility::pow2(int i) {
+int Utility::pow2(int i, int min) {
     if (i == 0) return 0;
     int n = 2;
     while (i > n) n <<= 1;
-    return n;
+    return n > min ? n : min;
 }
 
 std::string Utility::toLower(const std::string &str) {
