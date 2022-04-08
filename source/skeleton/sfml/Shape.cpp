@@ -78,10 +78,22 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Shape::setTextureRect(const IntRect &rect) {
+        m_textureRect = rect;
+
         if (m_texture) {
             m_texture->m_pitch = rect.width * m_texture->m_bpp;
+            if (m_texture->isPot()) {
+                // calculate texture offset for pot textures
+                Vector2i offset = {
+                        m_texture->getTextureSize().x - m_texture->getImageSize().x,
+                        m_texture->getTextureSize().y - m_texture->getImageSize().y
+                };
+                m_textureRect = {
+                        rect.left, rect.top, rect.width - offset.x, rect.height - offset.y
+                };
+            }
         }
-        m_textureRect = rect;
+
         m_shape_dirty = true;
     }
 

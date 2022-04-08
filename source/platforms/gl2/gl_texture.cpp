@@ -87,7 +87,7 @@ int GLTexture::resize(const Vector2i &size, bool keepPixels) {
 
     // update texture information
     m_pitch = dst_pitch;
-    m_tex_size = {size.x, size.y};
+    m_tex_size = m_image_size = {size.x, size.y};
     m_unlock_rect = {0, 0, size.x, size.y};
     setSize({(float) size.x, (float) size.y});
     setTextureRect(m_unlock_rect);

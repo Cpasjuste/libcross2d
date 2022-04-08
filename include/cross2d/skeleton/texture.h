@@ -47,8 +47,16 @@ namespace c2d {
 
         virtual void setShader(const std::string &shaderName);
 
+        virtual Vector2i getImageSize() {
+            return m_image_size;
+        }
+
         virtual Vector2i getTextureSize() {
             return m_tex_size;
+        }
+
+        virtual bool isPot() {
+            return m_pot;
         }
 
         std::string m_path;
@@ -63,6 +71,7 @@ namespace c2d {
         void pixelsToPot(int w, int h);
 
         Vector2i m_tex_size;
+        Vector2i m_image_size;
         IntRect m_unlock_rect = IntRect();
 #ifdef __3DS__
         bool m_pot = true;

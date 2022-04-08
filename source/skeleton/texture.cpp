@@ -46,6 +46,7 @@ Texture::Texture(const std::string &p) : RectangleShape({0, 0}) {
 
     // set texture parameters
     m_pitch = w * m_bpp;
+    m_image_size = {w, h};
     m_unlock_rect = {0, 0, w, h};
     Texture::setSize((float) w, (float) h);
     Texture::setTexture(this);
@@ -78,6 +79,7 @@ Texture::Texture(const unsigned char *buffer, int bufferSize) : RectangleShape({
 
     // set texture parameters
     m_pitch = w * m_bpp;
+    m_image_size = {w, h};
     m_unlock_rect = {0, 0, w, h};
     Texture::setSize((float) w, (float) h);
     Texture::setTexture(this);
@@ -103,7 +105,7 @@ Texture::Texture(const Vector2i &size, Format format) : RectangleShape(Vector2f{
 
     // set texture parameters
     m_pitch = size.x * m_bpp;
-    m_tex_size = {size.x, size.y};
+    m_tex_size = m_image_size = {size.x, size.y};
     m_unlock_rect = {0, 0, size.x, size.y};
     Texture::setSize((float) size.x, (float) size.y);
     Texture::setTexture(this);
