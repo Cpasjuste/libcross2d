@@ -6,6 +6,9 @@
 
 using namespace c2d;
 
+#define linearAlloc malloc
+#define linearFree free
+
 #define TILE_FLAGS(inFmt, outFmt) \
     (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) | \
     GX_TRANSFER_IN_FORMAT(inFmt) | GX_TRANSFER_OUT_FORMAT(outFmt) | \
@@ -182,7 +185,7 @@ int CTRTexture::resize(const Vector2i &size, bool copyPixels) {
     delete (m_tex);
     m_tex = tex_new;
     m_pitch = size.x * m_bpp;
-    m_tex_size = size;
+    m_tex_size = m_image_size = size;
     setSize({(float) size.x, (float) size.y});
     setTextureRect(IntRect(0, 0, (int) size.x, (int) size.y));
     setFilter(m_filter);

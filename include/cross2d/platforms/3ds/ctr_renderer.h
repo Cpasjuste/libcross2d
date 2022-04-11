@@ -55,6 +55,9 @@ namespace c2d {
 
         C3D_Mtx s_projTop;
         int uLoc_mdlvMtx, uLoc_projMtx;
+#ifndef NDEBUG
+        int link_sock = -1;
+#endif
     };
 }
 

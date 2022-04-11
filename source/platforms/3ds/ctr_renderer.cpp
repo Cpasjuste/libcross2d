@@ -6,6 +6,15 @@
 #include "cross2d/platforms/3ds/ctr_renderer.h"
 #include "vshader_shbin.h"
 
+#ifndef NDEBUG
+
+#include <malloc.h>
+#include <sys/unistd.h>
+
+#define SOC_ALIGN       0x1000
+#define SOC_BUFFER_SIZE 0x100000
+#endif
+
 using namespace c2d;
 
 CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
@@ -107,9 +116,14 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     // dummy shader list
     m_shaderList = new ShaderList();
 
-    consoleInit(GFX_BOTTOM, nullptr);
+#ifndef NDEBUG
+    //consoleInit(GFX_BOTTOM, nullptr);
     //consoleDebugInit(debugDevice_SVC);
     //stdout = stderr;
+    u32 *buffer = (u32 *) memalign(SOC_ALIGN, SOC_BUFFER_SIZE);
+    socInit(buffer, SOC_BUFFER_SIZE);
+    link_sock = link3dsStdio();
+#endif
 
     available = true;
 }
@@ -198,4 +212,11 @@ CTRRenderer::~CTRRenderer() {
     linearFree(ctx.vtxBuf);
     C3D_Fini();
     gfxExit();
+    romfsExit();
+#ifndef NDEBUG
+    if (link_sock) {
+        close(link_sock);
+    }
+    socExit();
+#endif
 }

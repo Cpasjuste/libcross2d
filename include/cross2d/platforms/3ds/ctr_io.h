@@ -15,6 +15,7 @@ namespace c2d {
     public:
 
         CTRIo() {
+            romfsExit();
             romfsInit();
         };
 
