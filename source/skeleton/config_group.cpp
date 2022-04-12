@@ -62,7 +62,7 @@ bool Group::removeOption(int i) {
 
 Option *Group::getOption(const std::string &n) {
 
-    for (Option &option : options) {
+    for (Option &option: options) {
         if (option.getName() == n) {
             return &option;
         }
@@ -73,7 +73,7 @@ Option *Group::getOption(const std::string &n) {
 
 Option *Group::getOption(int i) {
 
-    for (Option &option : options) {
+    for (Option &option: options) {
         if (option.getId() == i) {
             return &option;
         }
@@ -144,7 +144,7 @@ Group *Group::getGroup(const std::string &name) {
         return this;
     }
 
-    for (Group &group : groups) {
+    for (Group &group: groups) {
         Group *s = group.getGroup(name);
         if (s != nullptr) {
             return s;
@@ -161,7 +161,7 @@ Group *Group::getGroup(int id) {
         return this;
     }
 
-    for (Group &group : groups) {
+    for (Group &group: groups) {
         Group *s = group.getGroup(id);
         if (s != nullptr) {
             return s;
@@ -180,7 +180,6 @@ std::vector<Group> *Group::getGroups() {
 /// PROTECTED
 ///
 bool Group::load(config_setting_t *parent) {
-
     if (!savable) {
         return true;
     }
@@ -196,72 +195,84 @@ bool Group::load(config_setting_t *parent) {
         return false;
     }
 
-    for (auto &option : options) {
+    for (auto &option: options) {
+        bool found = false;
         if (!option.isSavable()) {
             continue;
         }
+
         if (option.getType() == Option::Type::String) {
             const char *value;
-            if (config_setting_lookup_string(settings, option.getName().c_str(), &value) == CONFIG_FALSE) {
-                //printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
-                continue;
+            if (config_setting_lookup_string(settings, option.getName().c_str(), &value)) {
+                option.setString(value);
+                found = true;
             }
-            option.setString(value);
         } else if (option.getType() == Option::Type::Integer) {
             int value = 0;
-            if (config_setting_lookup_int(settings, option.getName().c_str(), &value) == CONFIG_FALSE) {
-                //printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
-                continue;
+            if (config_setting_lookup_int(settings, option.getName().c_str(), &value)) {
+                option.setInteger(value);
+                found = true;
             }
-            option.setInteger(value);
         } else if (option.getType() == Option::Type::Float) {
             double value = 0;
-            if (config_setting_lookup_float(settings, option.getName().c_str(), &value) == CONFIG_FALSE) {
-                //printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
-                continue;
+            if (config_setting_lookup_float(settings, option.getName().c_str(), &value)) {
+                option.setFloat((float) value);
+                found = true;
             }
-            option.setFloat((float) value);
         } else if (option.getType() == Option::Type::Vector2f) {
             std::vector<float> values = {option.getVector2f().x, option.getVector2f().y};
             config_setting_t *sub = config_setting_lookup(settings, option.getName().c_str());
-            if (sub != nullptr) {
+            if (sub && sub->type == CONFIG_TYPE_ARRAY) {
                 for (int i = 0; i < 2; i++) {
                     values[i] = (float) config_setting_get_float_elem(sub, i);
                 }
+                option.setVector2f({values[0], values[1]});
+                found = true;
             }
-            option.setVector2f({values[0], values[1]});
         } else if (option.getType() == Option::Type::FloatRect) {
             FloatRect r = option.getFloatRect();
             std::vector<float> values = {r.left, r.top, r.width, r.height};
             config_setting_t *sub = config_setting_lookup(settings, option.getName().c_str());
-            if (sub != nullptr) {
+            if (sub && sub->type == CONFIG_TYPE_ARRAY) {
                 for (int i = 0; i < 4; i++) {
                     values[i] = (float) config_setting_get_float_elem(sub, i);
                 }
+                option.setFloatRect({values[0], values[1], values[2], values[3]});
+                found = true;
             }
-            option.setFloatRect({values[0], values[1], values[2], values[3]});
         } else if (option.getType() == Option::Type::Color) {
             FloatRect r = option.getFloatRect();
             std::vector<uint8_t> values = {(uint8_t) r.left, (uint8_t) r.top, (uint8_t) r.width, (uint8_t) r.height};
             config_setting_t *sub = config_setting_lookup(settings, option.getName().c_str());
-            if (sub != nullptr) {
+            if (sub && sub->type == CONFIG_TYPE_ARRAY) {
                 for (int i = 0; i < 4; i++) {
                     values[i] = (uint8_t) config_setting_get_int_elem(sub, i);
                 }
+                option.setColor({values[0], values[1], values[2], values[3]});
+                found = true;
             }
-            option.setColor({values[0], values[1], values[2], values[3]});
         } else if (option.getType() == Option::Type::Choice) {
             int value = 0;
-            if (config_setting_lookup_int(settings, option.getName().c_str(), &value) == CONFIG_FALSE) {
-                //printf("Config::Group::load: option not found, skipping: %s\n", option.getName().c_str());
-                continue;
+            if (config_setting_lookup_int(settings, option.getName().c_str(), &value)) {
+                option.setChoicesIndex(value);
+                found = true;
             }
-            option.setChoicesIndex(value);
+        }
+
+        // fallback to string type...
+        if (!found) {
+            // fallback to string type
+            const char *value;
+            if (config_setting_lookup_string(settings, option.getName().c_str(), &value)) {
+                //printf("%s: %s (fallback)\n", name.c_str(), value);
+                option.setType(Option::Type::String);
+                option.setString(value);
+            }
         }
     }
 
     // load childs, if any
-    for (Group &group : groups) {
+    for (Group &group: groups) {
         group.load(settings);
     }
 
@@ -280,7 +291,7 @@ bool Group::save(config_setting_t *parent) {
     }
 
     config_setting_t *root = config_setting_add(parent, name.c_str(), CONFIG_TYPE_GROUP);
-    for (Option &option : options) {
+    for (Option &option: options) {
 
         if (option.getType() == Option::Type::String) {
             config_setting_t *setting = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_STRING);
@@ -324,7 +335,7 @@ bool Group::save(config_setting_t *parent) {
     }
 
     // save childs, if any
-    for (Group &group : groups) {
+    for (Group &group: groups) {
         group.save(root);
     }
 
