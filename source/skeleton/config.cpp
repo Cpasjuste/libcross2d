@@ -7,38 +7,51 @@
 using namespace c2d::config;
 
 Config::Config(const std::string &name, const std::string &path, int version) : Group(name) {
-
     this->path = path;
     this->version = version;
-    config_init(&config);
 }
 
-bool Config::load() {
+bool Config::load(const std::string &overridePath) {
+    bool ret;
+    std::string p = overridePath.empty() ? path : overridePath;
+    printf("Config::load: %s\n", p.c_str());
 
-    printf("Config::load: %s\n", path.c_str());
-    if (config_read_file(&config, path.c_str()) == CONFIG_FALSE) {
-        printf("Config::load: file not found: %s\n", path.c_str());
+    config_t config;
+    config_init(&config);
+
+    if (config_read_file(&config, p.c_str()) == CONFIG_FALSE) {
+        printf("Config::load: file not found: %s\n", p.c_str());
+        config_destroy(&config);
         return false;
     }
 
-    return Group::load(config_root_setting(&config));
+    ret = Group::load(config_root_setting(&config));
+    config_destroy(&config);
+
+    return ret;
 }
 
 bool Config::loadFromString(const std::string &str) {
-
     //printf("Config::loadFromString: %s\n", str.c_str());
+
+    config_t config;
+    config_init(&config);
+
     if (config_read_string(&config, str.c_str()) == CONFIG_FALSE) {
         printf("Config::loadFromString: error\n");
+        config_destroy(&config);
         return false;
     }
 
-    return Group::load(config_root_setting(&config));
+    bool ret = Group::load(config_root_setting(&config));
+    config_destroy(&config);
+
+    return ret;
 }
 
 bool Config::save() {
-
     // generate new config
-    config_destroy(&config);
+    config_t config;
     config_init(&config);
 
     // create root
@@ -54,7 +67,10 @@ bool Config::save() {
     */
     Group::save(root);
 
-    return config_write_file(&config, path.c_str()) == 1;
+    bool ret = config_write_file(&config, path.c_str()) == 1;
+    config_destroy(&config);
+
+    return ret;
 }
 
 int Config::getVersion() {
@@ -65,10 +81,6 @@ void Config::setVersion(int v) {
     version = v;
 }
 
-std::string Config::getPath() const {
+std::string Config::getPath() {
     return path;
-}
-
-Config::~Config() {
-    config_destroy(&config);
 }
