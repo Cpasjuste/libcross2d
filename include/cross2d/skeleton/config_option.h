@@ -112,10 +112,6 @@ namespace c2d {
 
             void setType(Option::Type type);
 
-            bool isSavable() const;
-
-            void setSavable(bool savable);
-
             void *getUserData();
 
             void setUserData(void *data);
@@ -132,7 +128,6 @@ namespace c2d {
             std::string info;
             Type type;
             int id = -1;
-            bool savable = true;
             void *user_data = nullptr;
         };
     }

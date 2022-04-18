@@ -180,26 +180,19 @@ std::vector<Group> *Group::getGroups() {
 /// PROTECTED
 ///
 bool Group::load(config_setting_t *parent) {
-    if (!savable) {
-        return true;
-    }
-
-    if (parent == nullptr) {
-        //printf("Config::Group::load: could not find root config: %s\n", name.c_str());
+    if (!parent) {
+        printf("Config::Group::load: could not find root config: %s\n", name.c_str());
         return false;
     }
 
     config_setting_t *settings = config_setting_lookup(parent, name.c_str());
-    if (settings == nullptr) {
-        //printf("Config::Group::load: group not found, skipping: %s\n", name.c_str());
+    if (!settings) {
+        printf("Config::Group::load: group not found, skipping: %s\n", name.c_str());
         return false;
     }
 
     for (auto &option: options) {
         bool found = false;
-        if (!option.isSavable()) {
-            continue;
-        }
 
         if (option.getType() == Option::Type::String) {
             const char *value;
@@ -280,12 +273,7 @@ bool Group::load(config_setting_t *parent) {
 }
 
 bool Group::save(config_setting_t *parent) {
-
-    if (!savable) {
-        return true;
-    }
-
-    if (parent == nullptr) {
+    if (!parent) {
         //printf("Config::Group::save: could not save group (%s), no parent\n", name.c_str());
         return false;
     }
@@ -342,10 +330,3 @@ bool Group::save(config_setting_t *parent) {
     return true;
 }
 
-bool Group::isSavable() const {
-    return savable;
-}
-
-void Group::setSavable(bool s) {
-    savable = s;
-}

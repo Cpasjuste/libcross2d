@@ -57,10 +57,6 @@ namespace c2d {
 
             std::vector<Group> *getGroups();
 
-            bool isSavable() const;
-
-            void setSavable(bool savable);
-
         protected:
 
             bool load(config_setting_t *root);
@@ -72,7 +68,6 @@ namespace c2d {
             std::string name;
             std::vector<Group> groups;
             std::vector<Option> options;
-            bool savable = true;
             int id = 0;
         };
     }

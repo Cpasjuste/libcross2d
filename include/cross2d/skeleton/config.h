@@ -21,6 +21,8 @@ namespace c2d {
 
             Config(const std::string &name, const std::string &path, int version = 1);
 
+            ~Config();
+
             bool load(const std::string &overridePath = {});
 
             bool loadFromString(const std::string &str);
@@ -37,6 +39,7 @@ namespace c2d {
 
             int version;
             std::string path;
+            config_t config;
         };
     }
 }

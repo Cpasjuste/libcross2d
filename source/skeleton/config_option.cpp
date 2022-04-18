@@ -94,14 +94,6 @@ void Option::setType(Option::Type type) {
     this->type = type;
 }
 
-bool Option::isSavable() const {
-    return savable;
-}
-
-void Option::setSavable(bool s) {
-    savable = s;
-}
-
 void *Option::getUserData() {
     return user_data;
 }
