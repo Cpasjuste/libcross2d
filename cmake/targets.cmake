@@ -26,10 +26,12 @@ add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}.data)
 # Linux/Win64 targets
 ########################
 if (PLATFORM_LINUX OR PLATFORM_WINDOWS)
-    # romfs
-    include(${cross2d_SOURCE_DIR}/cmake/romfs.cmake)
-    add_romfs(${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/data_romfs)
-    add_dependencies(${PROJECT_NAME}-romfs ${PROJECT_NAME}.data)
+    if (NOT PLATFORM_WINDOWS)
+        # romfs
+        include(${cross2d_SOURCE_DIR}/cmake/romfs.cmake)
+        add_romfs(${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/data_romfs)
+        add_dependencies(${PROJECT_NAME}-romfs ${PROJECT_NAME}.data)
+    endif ()
     # release
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
     add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release

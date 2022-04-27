@@ -199,11 +199,11 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     const Glyph &BMFont::getGlyph(uint32_t codePoint, unsigned int characterSize,
                                   bool bold, float outlineThickness) const {
-        if (m_bmfont.glyphs.count((key_t) codePoint)) {
+        if (m_bmfont.glyphs.count((int) codePoint)) {
             if ((int16_t) characterSize == m_bmfont.info.fontSize) {
-                return m_bmfont.glyphs.at((key_t) codePoint);
+                return m_bmfont.glyphs.at((int) codePoint);
             } else {
-                Glyph glyph = m_bmfont.glyphs.at((key_t) codePoint);
+                Glyph glyph = m_bmfont.glyphs.at((int) codePoint);
                 float scaling = (float) characterSize / (float) m_bmfont.info.fontSize;
                 m_glyph.advance = glyph.advance * scaling;
                 m_glyph.bounds.left = glyph.bounds.left * scaling;

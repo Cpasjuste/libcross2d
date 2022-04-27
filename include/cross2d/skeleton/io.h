@@ -52,21 +52,15 @@ namespace c2d {
         virtual ~Io() = default;
 
         ///
-        /// \return home path
-        virtual std::string getHomePath() {
-            return "./";
-        }
-
-        ///
         /// \return read only data path
         virtual std::string getRomFsPath() {
-            return getHomePath();
+            return "./";
         }
 
         ///
         /// \return read write data path
         virtual std::string getDataPath() {
-            return getHomePath();
+            return "./";
         }
 
         virtual File getFile(const std::string &path) {

@@ -341,34 +341,30 @@ elseif (PLATFORM_DREAMCAST)
     ########################
 elseif (PLATFORM_LINUX)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
-
-    # romfs: fuse-zip
-    pkg_search_module(LIBZIP REQUIRED libzip)
-    pkg_search_module(LIBFUSE REQUIRED fuse)
-    list(APPEND C2D_INCLUDES ${LIBZIP_INCLUDE_DIRS} ${LIBFUSE_INCLUDE_DIRS})
-    list(APPEND C2D_LDFLAGS ${LIBZIP_LIBRARIES} ${LIBFUSE_LIBRARIES})
-    list(APPEND C2D_CFLAGS -D__FUZE_FS__ ${LIBFUSE_CFLAGS})
-    list(APPEND PLATFORM_SOURCES
-            source/skeleton/romfs/fuse-zip/lib/bigBuffer.cpp
-            source/skeleton/romfs/fuse-zip/lib/dataNode.cpp
-            source/skeleton/romfs/fuse-zip/lib/extraField.cpp
-            source/skeleton/romfs/fuse-zip/lib/fileNode.cpp
-            source/skeleton/romfs/fuse-zip/lib/fuse-zip.cpp
-            source/skeleton/romfs/fuse-zip/lib/fuseZipData.cpp
-            source/skeleton/romfs/fuse-zip/lib/util.cpp
-            )
-    # romfs: fuse-zip
-
     if (NOT PLATFORM_WINDOWS)
-        list(APPEND C2D_CFLAGS -D__LINUX__)
-    endif ()
+        # romfs: fuse-zip
+        pkg_search_module(LIBZIP REQUIRED libzip)
+        pkg_search_module(LIBFUSE REQUIRED fuse)
+        list(APPEND C2D_INCLUDES ${LIBZIP_INCLUDE_DIRS} ${LIBFUSE_INCLUDE_DIRS})
+        list(APPEND C2D_LDFLAGS ${LIBZIP_LIBRARIES} ${LIBFUSE_LIBRARIES})
+        list(APPEND C2D_CFLAGS -D__FUZE_FS__ ${LIBFUSE_CFLAGS})
+        list(APPEND PLATFORM_SOURCES
+                source/skeleton/romfs/fuse-zip/lib/bigBuffer.cpp
+                source/skeleton/romfs/fuse-zip/lib/dataNode.cpp
+                source/skeleton/romfs/fuse-zip/lib/extraField.cpp
+                source/skeleton/romfs/fuse-zip/lib/fileNode.cpp
+                source/skeleton/romfs/fuse-zip/lib/fuse-zip.cpp
+                source/skeleton/romfs/fuse-zip/lib/fuseZipData.cpp
+                source/skeleton/romfs/fuse-zip/lib/util.cpp
+                )
+        # romfs: fuse-zip
 
-    if (PLATFORM_WINDOWS)
-        # hum... static linking, not easy on mingw64 :)
-        list(APPEND C2D_LDFLAGS freetype brotlidec-static brotlicommon-static
+        list(APPEND C2D_CFLAGS -D__LINUX__)
+    elseif (PLATFORM_WINDOWS)
+        list(APPEND C2D_LDFLAGS
+                freetype brotlidec brotlicommon
                 harfbuzz graphite2 rpcrt4 dwrite bz2 png z
                 ole32 oleaut32 imm32 winmm version setupapi gdi32 opengl32)
-        # TODO: fix zip path...
         set(ZIP "C:\\msys64\\usr\\bin\\zip.exe" CACHE STRING "zip executable path" FORCE)
     endif ()
 endif ()

@@ -38,12 +38,14 @@ POSIXIo::POSIXIo() : Io() {
 std::string POSIXIo::getRomFsPath() {
 #ifdef __FUZE_FS__
     return "/tmp/c2d_romfs/";
+#elif __WINDOWS__
+    return getDataPath() + "data_romfs/";
 #else
     return Io::getRomFsPath();
 #endif
 }
 
-std::string POSIXIo::getHomePath() {
+std::string POSIXIo::getDataPath() {
 #if defined(__PSP2__)
     return getDataPath();
 #else
@@ -62,7 +64,7 @@ std::string POSIXIo::getHomePath() {
         return str;
     }
 
-    return Io::getHomePath();
+    return Io::getDataPath();
 #endif
 }
 
