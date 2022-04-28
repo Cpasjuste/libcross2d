@@ -13,13 +13,6 @@ option(PLATFORM_PS4 "Sony PS4 target platform" OFF)
 option(PLATFORM_PS3 "Sony PS3 target platform" OFF)
 option(PLATFORM_DREAMCAST "Sega Dreamcast platform target" OFF)
 
-if (NOT PLATFORM_LINUX AND NOT PLATFORM_WINDOWS
-        AND NOT PLATFORM_SWITCH AND NOT PLATFORM_3DS
-        AND NOT PLATFORM_VITA AND NOT PLATFORM_PS3
-        AND NOT PLATFORM_PS4 AND NOT PLATFORM_DREAMCAST)
-    set(PLATFORM_LINUX "Linux target platform" CACHE INTERNAL ON)
-endif ()
-
 # setup target toolchain
 include(cmake/toolchain.cmake)
 
@@ -337,35 +330,48 @@ elseif (PLATFORM_DREAMCAST)
         list(APPEND C2D_LDFLAGS freetype)
     endif ()
     ########################
-    # LINUX PLATORM
+    # LINUX PLATFORM
     ########################
 elseif (PLATFORM_LINUX)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
-    if (NOT PLATFORM_WINDOWS)
-        # romfs: fuse-zip
-        pkg_search_module(LIBZIP REQUIRED libzip)
-        pkg_search_module(LIBFUSE REQUIRED fuse)
-        list(APPEND C2D_INCLUDES ${LIBZIP_INCLUDE_DIRS} ${LIBFUSE_INCLUDE_DIRS})
-        list(APPEND C2D_LDFLAGS ${LIBZIP_LIBRARIES} ${LIBFUSE_LIBRARIES})
-        list(APPEND C2D_CFLAGS -D__FUZE_FS__ ${LIBFUSE_CFLAGS})
-        list(APPEND PLATFORM_SOURCES
-                source/skeleton/romfs/fuse-zip/lib/bigBuffer.cpp
-                source/skeleton/romfs/fuse-zip/lib/dataNode.cpp
-                source/skeleton/romfs/fuse-zip/lib/extraField.cpp
-                source/skeleton/romfs/fuse-zip/lib/fileNode.cpp
-                source/skeleton/romfs/fuse-zip/lib/fuse-zip.cpp
-                source/skeleton/romfs/fuse-zip/lib/fuseZipData.cpp
-                source/skeleton/romfs/fuse-zip/lib/util.cpp
-                )
-        # romfs: fuse-zip
-
-        list(APPEND C2D_CFLAGS -D__LINUX__)
-    elseif (PLATFORM_WINDOWS)
-        list(APPEND C2D_LDFLAGS
-                freetype brotlidec brotlicommon
-                harfbuzz graphite2 rpcrt4 dwrite bz2 png z
-                ole32 oleaut32 imm32 winmm version setupapi gdi32 opengl32)
-        set(ZIP "C:\\msys64\\usr\\bin\\zip.exe" CACHE STRING "zip executable path" FORCE)
+    # romfs: fuse-zip
+    pkg_search_module(LIBZIP REQUIRED libzip)
+    pkg_search_module(LIBFUSE REQUIRED fuse)
+    list(APPEND C2D_INCLUDES ${LIBZIP_INCLUDE_DIRS} ${LIBFUSE_INCLUDE_DIRS})
+    list(APPEND C2D_LDFLAGS ${LIBZIP_LIBRARIES} ${LIBFUSE_LIBRARIES})
+    list(APPEND C2D_CFLAGS -D__FUZE_FS__ ${LIBFUSE_CFLAGS})
+    list(APPEND PLATFORM_SOURCES
+            source/skeleton/romfs/fuse-zip/lib/bigBuffer.cpp
+            source/skeleton/romfs/fuse-zip/lib/dataNode.cpp
+            source/skeleton/romfs/fuse-zip/lib/extraField.cpp
+            source/skeleton/romfs/fuse-zip/lib/fileNode.cpp
+            source/skeleton/romfs/fuse-zip/lib/fuse-zip.cpp
+            source/skeleton/romfs/fuse-zip/lib/fuseZipData.cpp
+            source/skeleton/romfs/fuse-zip/lib/util.cpp
+            )
+    # romfs: fuse-zip
+    list(APPEND C2D_CFLAGS -D__LINUX__)
+    ########################
+    # WIN64 PLATFORM
+    ########################
+elseif (PLATFORM_WINDOWS)
+    file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
+    # get msys root path
+    if (${MSYS})
+        # build from "MSYS2 MinGW x64" shell
+        set(MSYS_ROOT "/" CACHE STRING "msys root path" FORCE)
+    else ()
+        # built with ninja from clion
+        string(REPLACE "mingw64/bin/cc.exe" "" MSYS_ROOT_TEMP ${CMAKE_C_COMPILER})
+        set(MSYS_ROOT ${MSYS_ROOT_TEMP} CACHE STRING "msys root path" FORCE)
+        set(ZIP "${MSYS_ROOT}/usr/bin/zip.exe" CACHE STRING "zip executable path" FORCE)
+    endif ()
+    list(APPEND C2D_LDFLAGS
+            freetype brotlidec brotlicommon
+            harfbuzz graphite2 rpcrt4 dwrite bz2 png z
+            ole32 oleaut32 imm32 winmm version setupapi gdi32 opengl32)
+    if (${CMAKE_BUILD_TYPE} MATCHES "Release")
+        list(APPEND C2D_LDFLAGS -mwindows)
     endif ()
 endif ()
 

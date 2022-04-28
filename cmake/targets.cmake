@@ -25,15 +25,13 @@ add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}.data)
 ########################
 # Linux/Win64 targets
 ########################
-if (PLATFORM_LINUX OR PLATFORM_WINDOWS)
-    if (NOT PLATFORM_WINDOWS)
-        # romfs
-        include(${cross2d_SOURCE_DIR}/cmake/romfs.cmake)
-        add_romfs(${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/data_romfs)
-        add_dependencies(${PROJECT_NAME}-romfs ${PROJECT_NAME}.data)
-    endif ()
-    # release
+
+if (PLATFORM_LINUX)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
+    # romfs
+    include(${cross2d_SOURCE_DIR}/cmake/romfs.cmake)
+    add_romfs(${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/data_romfs)
+    add_dependencies(${PROJECT_NAME}-romfs ${PROJECT_NAME}.data)
     add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
             DEPENDS ${PROJECT_NAME}
             COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip
@@ -41,6 +39,29 @@ if (PLATFORM_LINUX OR PLATFORM_WINDOWS)
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
             COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX} ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
             COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_datadir -D DST=${CMAKE_BINARY_DIR}/release/${PROJECT_NAME} -P ${CMAKE_CURRENT_LIST_DIR}/copy_directory_custom.cmake
+            COMMAND cd ${CMAKE_BINARY_DIR}/release && ${ZIP} -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip ${PROJECT_NAME}
+            )
+endif ()
+
+###################################
+# Win64 targets (MSYS2 MinGW x64)
+###################################
+if (PLATFORM_WINDOWS)
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${MSYS_ROOT}usr/bin/bash -l ${cross2d_SOURCE_DIR}/cmake/mingw_copy_libs.sh "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
+            COMMENT "Copying required mingw dependencies...")
+    add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
+            DEPENDS ${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data_romfs
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data_romfs
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX} ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
+            COMMAND ${MSYS_ROOT}usr/bin/bash -l ${cross2d_SOURCE_DIR}/cmake/mingw_copy_libs.sh "${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
+            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_datadir -D DST=${CMAKE_BINARY_DIR}/release/${PROJECT_NAME} -P ${CMAKE_CURRENT_LIST_DIR}/copy_directory_custom.cmake
+            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_romfs -D DST=${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/data_romfs -P ${CMAKE_CURRENT_LIST_DIR}/copy_directory_custom.cmake
             COMMAND cd ${CMAKE_BINARY_DIR}/release && ${ZIP} -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip ${PROJECT_NAME}
             )
 endif ()
@@ -180,4 +201,3 @@ if (PLATFORM_DREAMCAST)
             COMMAND cdi4dc ${PROJECT_NAME}.iso ${PROJECT_NAME}.cdi -d >> cdi4dc.log
             )
 endif (PLATFORM_DREAMCAST)
-
