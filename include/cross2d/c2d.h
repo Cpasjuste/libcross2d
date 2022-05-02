@@ -219,6 +219,10 @@ extern c2d::Renderer *c2d_renderer;
 #define C2DIo POSIXIo
 #define C2DClock POSIXClock
 
+#if ANDROID
+#define printf SDL_Log
+#endif
+
 #elif __SDL1__
 
 #if __GL1__

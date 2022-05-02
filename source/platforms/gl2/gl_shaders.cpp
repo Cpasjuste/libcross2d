@@ -308,6 +308,7 @@ GLShaderList::GLShaderList() : ShaderList() {
     color = new GLShader("c2d-color", c2d_color_shader, c2d_color_shader_length, version);
     add(new GLShader("c2d-texture", c2d_texture_shader, c2d_texture_shader_length, version));
 
+#ifndef ANDROID
     // crt shaders
     add(new GLShader("crt-aperture", c2d_crt_aperture_shader, c2d_crt_aperture_shader_length, version));
 #ifndef __PS4__
@@ -365,6 +366,7 @@ GLShaderList::GLShaderList() : ShaderList() {
     add(new GLShader("sharp-xbrz-freescale", c2d_sharp_xbrz_freescale_shader, c2d_sharp_xbrz_freescale_shader_length,
                      version));
 #endif //__PS4__
+#endif // ANDROID
 #endif //__PS4__ / GL_SHADERS_BINARY
 }
 
