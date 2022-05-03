@@ -19,13 +19,12 @@ GLRenderer::GLRenderer(const Vector2f &size) : Renderer(size) {
 }
 
 void GLRenderer::initGL() {
-
     printf("GL vendor   : %s\n", glGetString(GL_VENDOR));
     printf("GL renderer : %s\n", glGetString(GL_RENDERER));
     printf("GL version  : %s\n", glGetString(GL_VERSION));
     printf("GL glsl     : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-#ifdef glBindVertexArray
+#ifdef glGenVertexArrays
     // vao
     GL_CHECK(glGenVertexArrays(1, &vao));
 #endif
@@ -37,7 +36,6 @@ void GLRenderer::initGL() {
 }
 
 void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Texture *texture) {
-
     Vertex *vertices;
     size_t vertexCount;
     GLTexture *tex;
@@ -104,8 +102,10 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
                                        (void *) offsetof(Vertex, texCoords)));
         // set retroarch shader params
         textureSize = {(float) texture->getTextureSize().x, (float) texture->getTextureSize().y};
-        inputSize = {(float) texture->getTextureRect().width, (float) texture->getTextureRect().height};
-        outputSize = {texture->getSize().x * texture->getScale().x, texture->getSize().y * texture->getScale().y};
+        inputSize = {(float) texture->getTextureRect().width,
+                     (float) texture->getTextureRect().height};
+        outputSize = {texture->getSize().x * texture->getScale().x,
+                      texture->getSize().y * texture->getScale().y};
         shader->SetUniform("InputSize", inputSize);
         shader->SetUniform("TextureSize", textureSize);
         shader->SetUniform("OutputSize", outputSize);
@@ -149,7 +149,6 @@ void GLRenderer::draw(VertexArray *vertexArray, const Transform &transform, Text
 }
 
 void GLRenderer::clear() {
-
     // clear screen
     GL_CHECK(glClearColor(m_clearColor.r / 255.0f,
                           m_clearColor.g / 255.0f,
@@ -159,14 +158,13 @@ void GLRenderer::clear() {
 }
 
 void GLRenderer::flip(bool draw, bool inputs) {
-
     // call base class (draw childs)
     Renderer::flip(draw, inputs);
 }
 
 GLRenderer::~GLRenderer() {
     printf("~GL2Renderer\n");
-#ifdef glBindVertexArray
+#ifdef glIsVertexArray
     if (glIsVertexArray(vao)) {
         GL_CHECK(glDeleteVertexArrays(1, &vao));
     }

@@ -157,7 +157,7 @@ GLShader::GLShader(const std::string &n, const char *source, int size,
         GL_CHECK(glDeleteShader(vsh));
         GL_CHECK(glDeleteShader(fsh));
     } else {
-#ifndef __PS4__
+#if !defined(__PS4__) && defined(glProgramBinary)
         // use binary program (we should not reach this on ps4)
         GL_CHECK(glProgramBinary(program, GL_PROGRAM_BINARY_FMT, source, size));
 #endif

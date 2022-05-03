@@ -18,11 +18,16 @@
 #if defined(__SDL2__) && defined(__GLES2__)
 #ifndef __GLAD__
 
-#ifdef __PSP2__
 #define GL_GLEXT_PROTOTYPES
-#endif
 
 #include <SDL2/SDL_opengles2.h>
+
+#ifdef ANDROID
+#define glGenVertexArrays glGenVertexArraysOES
+#define glBindVertexArray glBindVertexArrayOES
+#define glDeleteVertexArrays glDeleteVertexArraysOES
+#define glIsVertexArray glIsVertexArrayOES
+#endif
 
 #endif
 // ?!
