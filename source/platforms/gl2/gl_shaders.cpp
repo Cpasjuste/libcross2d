@@ -89,9 +89,9 @@ GLShader::GLShader(const std::string &n, const char *vertex, const char *fragmen
     GL_CHECK(program = glCreateProgram());
     GL_CHECK(glAttachShader(program, vsh));
     GL_CHECK(glAttachShader(program, fsh));
-    GL_CHECK(glBindAttribLocation(program, 0, "a_position"));
-    GL_CHECK(glBindAttribLocation(program, 1, "a_color"));
-    GL_CHECK(glBindAttribLocation(program, 2, "a_texCoord"));
+    GL_CHECK(glBindAttribLocation(program, 0, "VertexCoord"));
+    GL_CHECK(glBindAttribLocation(program, 1, "COLOR"));
+    GL_CHECK(glBindAttribLocation(program, 2, "TexCoord"));
     GL_CHECK(glLinkProgram(program));
     GL_CHECK(glGetProgramiv(program, GL_LINK_STATUS, &link_result));
     if (!link_result) {
@@ -144,9 +144,9 @@ GLShader::GLShader(const std::string &n, const char *source, int size,
         }
         GL_CHECK(glAttachShader(program, vsh));
         GL_CHECK(glAttachShader(program, fsh));
-        GL_CHECK(glBindAttribLocation(program, 0, "a_position"));
-        GL_CHECK(glBindAttribLocation(program, 1, "a_color"));
-        GL_CHECK(glBindAttribLocation(program, 2, "a_texCoord"));
+        GL_CHECK(glBindAttribLocation(program, 0, "VertexCoord"));
+        GL_CHECK(glBindAttribLocation(program, 1, "COLOR"));
+        GL_CHECK(glBindAttribLocation(program, 2, "TexCoord"));
         GL_CHECK(glLinkProgram(program));
 #ifdef GL_DUMP_SHADERS
 #ifdef __PS4__
