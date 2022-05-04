@@ -40,6 +40,13 @@ std::string POSIXIo::getRomFsPath() {
     return "/tmp/c2d_romfs/";
 #elif __WINDOWS__
     return getDataPath() + "data_romfs/";
+#elif ANDROID
+    int state = SDL_AndroidGetExternalStorageState();
+    if (state & SDL_ANDROID_EXTERNAL_STORAGE_READ) {
+        return std::string(SDL_AndroidGetExternalStoragePath()) + "/romfs/";
+    } else {
+        return std::string(SDL_AndroidGetInternalStoragePath()) + "/romfs/";
+    }
 #else
     return Io::getRomFsPath();
 #endif
@@ -48,6 +55,13 @@ std::string POSIXIo::getRomFsPath() {
 std::string POSIXIo::getDataPath() {
 #if defined(__PSP2__)
     return getDataPath();
+#elif ANDROID
+    int state = SDL_AndroidGetExternalStorageState();
+    if (state & SDL_ANDROID_EXTERNAL_STORAGE_WRITE) {
+        return std::string(SDL_AndroidGetExternalStoragePath()) + "/data/";
+    } else {
+        return std::string(SDL_AndroidGetInternalStoragePath()) + "/data/";
+    }
 #else
     char buf[1024];
     if (getcwd(buf, sizeof(buf)) != nullptr) {
@@ -133,7 +147,8 @@ bool POSIXIo::removeDir(const std::string &path) {
                 continue;
 
             std::string newPath =
-                    file.path + (Utility::endsWith(file.path, "/") ? "" : "/") + std::string(ent->d_name);
+                    file.path + (Utility::endsWith(file.path, "/") ? "" : "/") +
+                    std::string(ent->d_name);
 
             if (getType(newPath) == Type::Directory) {
                 if (!removeDir(newPath)) {
@@ -281,7 +296,8 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bo
 }
 
 Io::File POSIXIo::findFile(const std::string &path,
-                           const std::vector<std::string> &whitelist, const std::string &blacklist) {
+                           const std::vector<std::string> &whitelist,
+                           const std::string &blacklist) {
 
     struct dirent *ent;
     DIR *dir;
@@ -391,13 +407,15 @@ bool POSIXIo::_copy(const std::string &src, const std::string &dst,
                 continue;
 
             std::string newSrcPath =
-                    srcFile.path + (Utility::endsWith(dstFile.path, "/") ? "" : "/") + std::string(ent->d_name);
+                    srcFile.path + (Utility::endsWith(dstFile.path, "/") ? "" : "/") +
+                    std::string(ent->d_name);
             File newSrcFile = getFile(newSrcPath);
             File newDstFile = newSrcFile;
             newDstFile.path = dstFile.path;
 
             if (newSrcFile.type == Type::File) {
-                newDstFile.path += (Utility::endsWith(dstFile.path, "/") ? "" : "/") + std::string(ent->d_name);
+                newDstFile.path += (Utility::endsWith(dstFile.path, "/") ? "" : "/") +
+                                   std::string(ent->d_name);
                 bool success = _copyFile(newSrcFile, newDstFile, callback);
                 if (!success) {
                     if (callback != nullptr) {

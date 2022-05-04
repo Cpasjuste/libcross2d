@@ -66,6 +66,21 @@ if (PLATFORM_WINDOWS)
             )
 endif ()
 
+if (PLATFORM_ANDROID)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            # copy romfs to android assets
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${ANDROID_ASSETS_PATH}/romfs
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${ANDROID_ASSETS_PATH}/romfs
+            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_romfs -D DST=${ANDROID_ASSETS_PATH}/romfs -P ${CMAKE_CURRENT_LIST_DIR}/copy_directory_custom.cmake
+            COMMAND echo "${VERSION_MAJOR}.${VERSION_MINOR}" > ${ANDROID_ASSETS_PATH}/romfs/version
+            # copy datadir to android assets
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${ANDROID_ASSETS_PATH}/data
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${ANDROID_ASSETS_PATH}/data
+            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_datadir -D DST=${ANDROID_ASSETS_PATH}/data -P ${CMAKE_CURRENT_LIST_DIR}/copy_directory_custom.cmake
+            COMMAND echo "${VERSION_MAJOR}.${VERSION_MINOR}" > ${ANDROID_ASSETS_PATH}/data/version
+            COMMENT "Copying android assets...")
+endif ()
+
 ###########################
 # Nintendo Switch target
 ###########################

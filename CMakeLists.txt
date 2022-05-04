@@ -39,6 +39,7 @@ option(OPTION_BOX2D "Build with box2d support" OFF)
 option(OPTION_TEST "Build test executable" OFF)
 set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width")
 set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
+set(ANDROID_ASSETS_PATH "" CACHE STRING "Android assets path")
 
 ####################
 # SANITY CHECKS
