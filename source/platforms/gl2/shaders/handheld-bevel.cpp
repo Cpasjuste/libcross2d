@@ -16,11 +16,6 @@
 */
 
 const char *c2d_handheld_bevel_shader = R"text(
-// Parameter lines go here:
-#pragma parameter BEVEL_LEVEL "Bevel Level" 0.2 0.0 0.5 0.01
-#pragma parameter InputGamma "Input Gamma" 2.4 0.1 5.0 0.1
-#pragma parameter OutputGamma "Output Gamma" 2.2 0.1 5.0 0.1
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -103,15 +98,9 @@ COMPAT_VARYING vec4 TEX0;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-uniform COMPAT_PRECISION float BEVEL_LEVEL;
-uniform COMPAT_PRECISION float InputGamma;
-uniform COMPAT_PRECISION float OutputGamma;
-#else
 #define BEVEL_LEVEL 0.2
 #define InputGamma 2.4
 #define OutputGamma 2.2
-#endif
 
 #define GAMMA_IN(color)     pow(color, vec3(InputGamma, InputGamma, InputGamma))
 #define GAMMA_OUT(color)    pow(color, vec3(1.0 / OutputGamma, 1.0 / OutputGamma, 1.0 / OutputGamma))

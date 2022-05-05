@@ -12,9 +12,6 @@
 */
 
 const char *c2d_handheld_lcd1x_shader = R"text(
-#pragma parameter BRIGHTEN_SCANLINES "Brighten Scanlines" 16.0 1.0 32.0 0.5
-#pragma parameter BRIGHTEN_LCD "Brighten LCD" 4.0 1.0 12.0 0.1
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -84,14 +81,8 @@ uniform COMPAT_PRECISION vec2 InputSize;
 uniform sampler2D Texture;
 COMPAT_VARYING vec4 TEX0;
 
-#ifdef PARAMETER_UNIFORM
-// All parameter floats need to have COMPAT_PRECISION in front of them
-uniform COMPAT_PRECISION float BRIGHTEN_SCANLINES;
-uniform COMPAT_PRECISION float BRIGHTEN_LCD;
-#else
 #define BRIGHTEN_SCANLINES 16.0
 #define BRIGHTEN_LCD 4.0
-#endif
 
 // Magic Numbers
 #define PI 3.141592654

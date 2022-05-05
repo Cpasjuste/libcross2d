@@ -5,10 +5,6 @@
 
 
 const char *c2d_handheld_lcd3x_shader = R"text(
-// Parameter lines go here:
-#pragma parameter brighten_scanlines "Brighten Scanlines" 16.0 1.0 32.0 0.5
-#pragma parameter brighten_lcd "Brighten LCD" 4.0 1.0 12.0 0.1
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -85,14 +81,8 @@ COMPAT_VARYING vec4 TEX0;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-// All parameter floats need to have COMPAT_PRECISION in front of them
-uniform COMPAT_PRECISION float brighten_scanlines;
-uniform COMPAT_PRECISION float brighten_lcd;
-#else
 #define brighten_scanlines 16.0
 #define brighten_lcd 4.0
-#endif
 
 const vec3 offsets = vec3(3.141592654) * vec3(1.0/2.0,1.0/2.0 - 2.0/3.0,1.0/2.0-4.0/3.0);
 

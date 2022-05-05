@@ -15,9 +15,6 @@
 //        http://board.byuu.org/viewtopic.php?p=57295#p57295
 
 const char *c2d_interpolation_pixellate_shader = R"text(
-// Parameter lines go here:
-#pragma parameter INTERPOLATE_IN_LINEAR_GAMMA "Linear Gamma Weight" 1.0 0.0 1.0 1.0
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -99,11 +96,7 @@ COMPAT_VARYING vec4 TEX0;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-uniform COMPAT_PRECISION float INTERPOLATE_IN_LINEAR_GAMMA;
-#else
 #define INTERPOLATE_IN_LINEAR_GAMMA 1.0
-#endif
 
 void main()
 {

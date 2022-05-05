@@ -28,14 +28,6 @@ const char *c2d_crt_zfast_shader = R"text(
 //overlays.  But you can uncomment the below to black them out if necessary
 //#define BLACK_OUT_BORDER
 
-// Parameter lines go here:
-#pragma parameter BLURSCALEX "Blur Amount X-Axis" 0.30 0.0 1.0 0.05
-#pragma parameter LOWLUMSCAN "Scanline Darkness - Low" 6.0 0.0 10.0 0.5
-#pragma parameter HILUMSCAN "Scanline Darkness - High" 8.0 0.0 50.0 1.0
-#pragma parameter BRIGHTBOOST "Dark Pixel Brightness Boost" 1.25 0.5 1.5 0.05
-#pragma parameter MASK_DARK "Mask Effect Amount" 0.25 0.0 1.0 0.05
-#pragma parameter MASK_FADE "Mask/Scanline Fade" 0.8 0.0 1.0 0.05
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -75,16 +67,6 @@ uniform COMPAT_PRECISION vec2 InputSize;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define OutSize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-// All parameter floats need to have COMPAT_PRECISION in front of them
-uniform COMPAT_PRECISION float BLURSCALEX;
-//uniform COMPAT_PRECISION float BLURSCALEY;
-uniform COMPAT_PRECISION float LOWLUMSCAN;
-uniform COMPAT_PRECISION float HILUMSCAN;
-uniform COMPAT_PRECISION float BRIGHTBOOST;
-uniform COMPAT_PRECISION float MASK_DARK;
-uniform COMPAT_PRECISION float MASK_FADE;
-#else
 #define BLURSCALEX 0.45
 //#define BLURSCALEY 0.20
 #define LOWLUMSCAN 5.0
@@ -92,7 +74,6 @@ uniform COMPAT_PRECISION float MASK_FADE;
 #define BRIGHTBOOST 1.25
 #define MASK_DARK 0.25
 #define MASK_FADE 0.8
-#endif
 
 void main()
 {
@@ -144,16 +125,6 @@ COMPAT_VARYING vec2 invDims;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define OutSize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-// All parameter floats need to have COMPAT_PRECISION in front of them
-uniform COMPAT_PRECISION float BLURSCALEX;
-//uniform COMPAT_PRECISION float BLURSCALEY;
-uniform COMPAT_PRECISION float LOWLUMSCAN;
-uniform COMPAT_PRECISION float HILUMSCAN;
-uniform COMPAT_PRECISION float BRIGHTBOOST;
-uniform COMPAT_PRECISION float MASK_DARK;
-uniform COMPAT_PRECISION float MASK_FADE;
-#else
 #define BLURSCALEX 0.45
 //#define BLURSCALEY 0.20
 #define LOWLUMSCAN 5.0
@@ -161,7 +132,6 @@ uniform COMPAT_PRECISION float MASK_FADE;
 #define BRIGHTBOOST 1.25
 #define MASK_DARK 0.25
 #define MASK_FADE 0.8
-#endif
 
 void main()
 {

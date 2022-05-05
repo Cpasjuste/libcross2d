@@ -16,15 +16,6 @@ MASK_TYPE defines what, if any, shadow mask to use. MASK_BRIGHTNESS defines how 
 */
 
 const char *c2d_crt_pi_shader = R"text(
-#pragma parameter CURVATURE_X "Screen curvature - horizontal" 0.10 0.0 1.0 0.01
-#pragma parameter CURVATURE_Y "Screen curvature - vertical" 0.15 0.0 1.0 0.01
-#pragma parameter MASK_BRIGHTNESS "Mask brightness" 0.70 0.0 1.0 0.01
-#pragma parameter SCANLINE_WEIGHT "Scanline weight" 6.0 0.0 15.0 0.1
-#pragma parameter SCANLINE_GAP_BRIGHTNESS "Scanline gap brightness" 0.12 0.0 1.0 0.01
-#pragma parameter BLOOM_FACTOR "Bloom factor" 1.5 0.0 5.0 0.01
-#pragma parameter INPUT_GAMMA "Input gamma" 2.4 0.0 5.0 0.01
-#pragma parameter OUTPUT_GAMMA "Output gamma" 2.2 0.0 5.0 0.01
-
 // Haven't put these as parameters as it would slow the code down.
 #define SCANLINES
 #define MULTISAMPLE
@@ -43,16 +34,6 @@ precision mediump float;
 #define COMPAT_PRECISION
 #endif
 
-#ifdef PARAMETER_UNIFORM
-uniform COMPAT_PRECISION float CURVATURE_X;
-uniform COMPAT_PRECISION float CURVATURE_Y;
-uniform COMPAT_PRECISION float MASK_BRIGHTNESS;
-uniform COMPAT_PRECISION float SCANLINE_WEIGHT;
-uniform COMPAT_PRECISION float SCANLINE_GAP_BRIGHTNESS;
-uniform COMPAT_PRECISION float BLOOM_FACTOR;
-uniform COMPAT_PRECISION float INPUT_GAMMA;
-uniform COMPAT_PRECISION float OUTPUT_GAMMA;
-#else
 #define CURVATURE_X 0.10
 #define CURVATURE_Y 0.25
 #define MASK_BRIGHTNESS 0.70
@@ -61,7 +42,6 @@ uniform COMPAT_PRECISION float OUTPUT_GAMMA;
 #define BLOOM_FACTOR 1.5
 #define INPUT_GAMMA 2.4
 #define OUTPUT_GAMMA 2.2
-#endif
 
 /* COMPATIBILITY
    - GLSL compilers

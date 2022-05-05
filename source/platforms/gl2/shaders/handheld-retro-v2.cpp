@@ -16,10 +16,6 @@
 */
 
 const char *c2d_handheld_retro_v2_shader = R"text(
-// Parameter lines go here:
-#pragma parameter RETRO_PIXEL_SIZE "Retro Pixel Size" 0.84 0.0 1.0 0.01
-// ^^This value must be between 0.0 (totally black) and 1.0 (nearest neighbor)
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -101,11 +97,7 @@ COMPAT_VARYING vec4 TEX0;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-uniform COMPAT_PRECISION float RETRO_PIXEL_SIZE;
-#else
 #define RETRO_PIXEL_SIZE 0.84
-#endif
 
 void main()
 {

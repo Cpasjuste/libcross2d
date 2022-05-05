@@ -96,15 +96,6 @@
 
 
 const char *c2d_crt_lottes_fast_shader = R"text(
-#pragma parameter MASK "Mask Type" 1.0 0.0 3.0 1.0
-#pragma parameter MASK_INTENSITY "Mask Intensity" 0.5 0.0 1.0 0.05
-#pragma parameter SCANLINE_THINNESS "Scanline Intensity" 0.5 0.0 1.0 0.1
-#pragma parameter SCAN_BLUR "Sharpness" 2.5 1.0 3.0 0.1
-#pragma parameter CURVATURE "Curvature" 0.02 0.0 0.25 0.01
-#pragma parameter TRINITRON_CURVE "Trinitron-style Curve" 0.0 0.0 1.0 1.0
-#pragma parameter CORNER "Corner Round" 3.0 0.0 11.0 1.0
-#pragma parameter CRT_GAMMA "CRT Gamma" 2.4 0.0 51.0 0.1
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -187,16 +178,6 @@ COMPAT_VARYING vec4 TEX0;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define OutSize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-uniform COMPAT_PRECISION float CRT_GAMMA;
-uniform COMPAT_PRECISION float SCANLINE_THINNESS;
-uniform COMPAT_PRECISION float SCAN_BLUR;
-uniform COMPAT_PRECISION float MASK_INTENSITY;
-uniform COMPAT_PRECISION float CURVATURE;
-uniform COMPAT_PRECISION float CORNER;
-uniform COMPAT_PRECISION float MASK;
-uniform COMPAT_PRECISION float TRINITRON_CURVE;
-#else
 #define CRT_GAMMA 2.4
 #define SCANLINE_THINNESS 0.5
 #define SCAN_BLUR 2.5
@@ -205,7 +186,6 @@ uniform COMPAT_PRECISION float TRINITRON_CURVE;
 #define CORNER 3.0
 #define MASK 1.0
 #define TRINITRON_CURVE 0.0
-#endif
 
 //_____________________________/\_______________________________
 //==============================================================

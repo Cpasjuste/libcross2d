@@ -15,9 +15,6 @@
 */
 
 const char *c2d_crt_cgwg_fast_shader = R"text(
-// Parameter lines go here:
-#pragma parameter CRTCGWG_GAMMA "CRTcgwg Gamma" 2.7 0.0 10.0 0.01
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -130,13 +127,7 @@ COMPAT_VARYING vec2 ratio_scale;
 // compatibility #defines
 #define Source Texture
 
-
-#ifdef PARAMETER_UNIFORM
-// All parameter floats need to have COMPAT_PRECISION in front of them
-uniform COMPAT_PRECISION float CRTCGWG_GAMMA;
-#else
 #define CRTCGWG_GAMMA 2.7
-#endif
 
 #define TEX2D(c) COMPAT_TEXTURE(Source ,(c))
 #define PI 3.141592653589

@@ -11,11 +11,6 @@
 */
 
 const char *c2d_interpolation_sharp_bilinear_scanlines_shader = R"text(
-// Parameter lines go here:
-#pragma parameter SCANLINE_BASE_BRIGHTNESS "Scanline Base Brightness" 0.60 0.0 1.0 0.01
-#pragma parameter SCANLINE_HORIZONTAL_MODULATION "Scanline Horizontal Modulation" 0.0 0.0 2.00 0.01
-#pragma parameter SCANLINE_VERTICAL_MODULATION "Scanline Vertical Modulation" 0.75 0.0 2.0 0.01
-
 #define pi 3.141592654
 
 #if defined(VERTEX)
@@ -108,16 +103,9 @@ COMPAT_VARYING vec2 omega;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-// All parameter floats need to have COMPAT_PRECISION in front of them
-uniform COMPAT_PRECISION float SCANLINE_BASE_BRIGHTNESS;
-uniform COMPAT_PRECISION float SCANLINE_HORIZONTAL_MODULATION;
-uniform COMPAT_PRECISION float SCANLINE_VERTICAL_MODULATION;
-#else
 #define SCANLINE_BASE_BRIGHTNESS 0.60
 #define SCANLINE_HORIZONTAL_MODULATION 0.0
 #define SCANLINE_VERTICAL_MODULATION 0.75
-#endif
 
 COMPAT_VARYING vec2 precalc_texel;
 COMPAT_VARYING vec2 precalc_scale;

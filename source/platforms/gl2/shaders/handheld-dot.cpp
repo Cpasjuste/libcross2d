@@ -4,11 +4,6 @@
 */
 
 const char *c2d_handheld_dot_shader = R"text(
-// Parameter lines go here:
-#pragma parameter gamma "Dot Gamma" 2.4 0.0 5.0 0.05
-#pragma parameter shine "Dot Shine" 0.05 0.0 0.5 0.01
-#pragma parameter blend "Dot Blend" 0.65 0.0 1.0 0.01
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -113,16 +108,9 @@ COMPAT_VARYING vec2 pixel_no;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-// All parameter floats need to have COMPAT_PRECISION in front of them
-uniform COMPAT_PRECISION float gamma;
-uniform COMPAT_PRECISION float shine;
-uniform COMPAT_PRECISION float blend;
-#else
 #define gamma 2.4
 #define shine 0.05
 #define blend 0.65
-#endif
 
 COMPAT_PRECISION float dist(vec2 coord, vec2 source)
 {

@@ -1,9 +1,4 @@
 const char *c2d_crt_nes_mini_shader = R"text(
-// Parameter lines go here:
-#pragma parameter SCANTHICK "Scanline Thickness" 2.0 2.0 4.0 2.0
-#pragma parameter INTENSITY "Scanline Intensity" 0.15 0.0 1.0 0.01
-#pragma parameter BRIGHTBOOST "Luminance Boost" 0.15 0.0 1.0 0.01
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -81,16 +76,9 @@ COMPAT_VARYING vec4 TEX0;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define OutputSize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-// All parameter floats need to have COMPAT_PRECISION in front of them
-uniform COMPAT_PRECISION float SCANTHICK;
-uniform COMPAT_PRECISION float INTENSITY;
-uniform COMPAT_PRECISION float BRIGHTBOOST;
-#else
 #define SCANTHICK 2.0
 #define INTENSITY 0.15
 #define BRIGHTBOOST 0.15
-#endif
 
 void main()
 {

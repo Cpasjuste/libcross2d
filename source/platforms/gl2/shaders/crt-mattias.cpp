@@ -3,9 +3,6 @@
 // https://www.shadertoy.com/view/lsB3DV
 
 const char *c2d_crt_mattias_shader = R"text(
-#pragma parameter CURVATURE "Curvature" 0.5 0.0 1.0 0.05
-#pragma parameter SCANSPEED "Scanline Crawl Speed" 1.0 0.0 10.0 0.5
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -89,12 +86,8 @@ COMPAT_VARYING vec4 TEX0;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define OutSize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-uniform COMPAT_PRECISION float CURVATURE, SCANSPEED;
-#else
 #define CURVATURE 0.5
 #define SCANSPEED 1.0
-#endif
 
 #define iChannel0 Texture
 #define iTime (float(FrameCount) / 60.0)

@@ -20,20 +20,6 @@
 */
 
 const char *c2d_crt_hyllian_shader = R"text(
-#pragma parameter PHOSPHOR "CRT - Phosphor ON/OFF" 1.0 0.0 1.0 1.0
-#pragma parameter VSCANLINES "CRT - Scanlines Direction" 0.0 0.0 1.0 1.0
-#pragma parameter InputGamma "CRT - Input gamma" 2.4 0.0 5.0 0.1
-#pragma parameter OutputGamma "CRT - Output Gamma" 2.2 0.0 5.0 0.1
-#pragma parameter SHARPNESS "CRT - Sharpness Hack" 1.0 1.0 5.0 1.0
-#pragma parameter COLOR_BOOST "CRT - Color Boost" 1.5 1.0 2.0 0.05
-#pragma parameter RED_BOOST "CRT - Red Boost" 1.0 1.0 2.0 0.01
-#pragma parameter GREEN_BOOST "CRT - Green Boost" 1.0 1.0 2.0 0.01
-#pragma parameter BLUE_BOOST "CRT - Blue Boost" 1.0 1.0 2.0 0.01
-#pragma parameter SCANLINES_STRENGTH "CRT - Scanline Strength" 0.72 0.0 1.0 0.02
-#pragma parameter BEAM_MIN_WIDTH "CRT - Min Beam Width" 0.86 0.0 1.0 0.02
-#pragma parameter BEAM_MAX_WIDTH "CRT - Max Beam Width" 1.0 0.0 1.0 0.02
-#pragma parameter CRT_ANTI_RINGING "CRT - Anti-Ringing" 0.8 0.0 1.0 0.1
-
 #define GAMMA_IN(color)     pow(color, vec4(InputGamma, InputGamma, InputGamma, InputGamma))
 #define GAMMA_OUT(color)    pow(color, vec4(1.0 / OutputGamma, 1.0 / OutputGamma, 1.0 / OutputGamma, 1.0 / OutputGamma))
 
@@ -124,21 +110,6 @@ uniform PRECISION vec2 InputSize;
 uniform sampler2D s_p;
 IN vec2 texCoord;
 
-#ifdef PARAMETER_UNIFORM
-uniform PRECISION float PHOSPHOR;
-uniform PRECISION float VSCANLINES;
-uniform PRECISION float InputGamma;
-uniform PRECISION float OutputGamma;
-uniform PRECISION float SHARPNESS;
-uniform PRECISION float COLOR_BOOST;
-uniform PRECISION float RED_BOOST;
-uniform PRECISION float GREEN_BOOST;
-uniform PRECISION float BLUE_BOOST;
-uniform PRECISION float SCANLINES_STRENGTH;
-uniform PRECISION float BEAM_MIN_WIDTH;
-uniform PRECISION float BEAM_MAX_WIDTH;
-uniform PRECISION float CRT_ANTI_RINGING;
-#else
 #define PHOSPHOR 1.0
 #define VSCANLINES 0.0
 #define InputGamma 2.4
@@ -152,7 +123,6 @@ uniform PRECISION float CRT_ANTI_RINGING;
 #define BEAM_MIN_WIDTH 0.86
 #define BEAM_MAX_WIDTH 1.0
 #define CRT_ANTI_RINGING 0.8
-#endif
 // END PARAMETERS //
 
 // Change these params to configure the horizontal filter.

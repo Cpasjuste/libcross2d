@@ -3,13 +3,6 @@
 // Licensed MIT
 
 const char *c2d_interpolation_aann_shader = R"text(
-// Parameter lines go here:
-// set to true to interpolate in sRGB instead of a pseudo-perceptual colorspace
-#pragma parameter NOGAMMA "Interpolate in sRGB" 0.0 0.0 1.0 1.0
-
-// Do bilinear filtering instead of anti-aliased nearest neighbor filtering (used for debugging color)
-#pragma parameter BILINEAR "Force Bilinear Filtering" 0.0 0.0 1.0 1.0
-
 // http://i.imgur.com/kzwZkVf.png
 
 #define NOT(fl) (1.-fl)
@@ -96,13 +89,8 @@ COMPAT_VARYING vec4 TEX0;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-uniform COMPAT_PRECISION float NOGAMMA;
-uniform COMPAT_PRECISION float BILINEAR;
-#else
 #define NOGAMMA 0.0
 #define BILINEAR 0.0
-#endif
 
 // http://entropymine.com/imageworsener/srgbformula/
 vec3 srgb2linear(vec3 srgb) {

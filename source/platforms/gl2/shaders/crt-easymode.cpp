@@ -21,25 +21,6 @@
 */
 
 const char *c2d_crt_easymode_shader = R"text(
-// Parameter lines go here:
-#pragma parameter SHARPNESS_H "Sharpness Horizontal" 0.5 0.0 1.0 0.05
-#pragma parameter SHARPNESS_V "Sharpness Vertical" 1.0 0.0 1.0 0.05
-#pragma parameter MASK_STRENGTH "Mask Strength" 0.3 0.0 1.0 0.01
-#pragma parameter MASK_DOT_WIDTH "Mask Dot Width" 1.0 1.0 100.0 1.0
-#pragma parameter MASK_DOT_HEIGHT "Mask Dot Height" 1.0 1.0 100.0 1.0
-#pragma parameter MASK_STAGGER "Mask Stagger" 0.0 0.0 100.0 1.0
-#pragma parameter MASK_SIZE "Mask Size" 1.0 1.0 100.0 1.0
-#pragma parameter SCANLINE_STRENGTH "Scanline Strength" 1.0 0.0 1.0 0.05
-#pragma parameter SCANLINE_BEAM_WIDTH_MIN "Scanline Beam Width Min." 1.5 0.5 5.0 0.5
-#pragma parameter SCANLINE_BEAM_WIDTH_MAX "Scanline Beam Width Max." 1.5 0.5 5.0 0.5
-#pragma parameter SCANLINE_BRIGHT_MIN "Scanline Brightness Min." 0.35 0.0 1.0 0.05
-#pragma parameter SCANLINE_BRIGHT_MAX "Scanline Brightness Max." 0.65 0.0 1.0 0.05
-#pragma parameter SCANLINE_CUTOFF "Scanline Cutoff" 400.0 1.0 1000.0 1.0
-#pragma parameter GAMMA_INPUT "Gamma Input" 2.0 0.1 5.0 0.1
-#pragma parameter GAMMA_OUTPUT "Gamma Output" 1.8 0.1 5.0 0.1
-#pragma parameter BRIGHT_BOOST "Brightness Boost" 1.2 1.0 2.0 0.01
-#pragma parameter DILATION "Dilation" 1.0 0.0 1.0 1.0
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -123,26 +104,6 @@ COMPAT_VARYING vec4 TEX0;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define outsize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-// All parameter floats need to have COMPAT_PRECISION in front of them
-uniform COMPAT_PRECISION float SHARPNESS_H;
-uniform COMPAT_PRECISION float SHARPNESS_V;
-uniform COMPAT_PRECISION float MASK_STRENGTH;
-uniform COMPAT_PRECISION float MASK_DOT_WIDTH;
-uniform COMPAT_PRECISION float MASK_DOT_HEIGHT;
-uniform COMPAT_PRECISION float MASK_STAGGER;
-uniform COMPAT_PRECISION float MASK_SIZE;
-uniform COMPAT_PRECISION float SCANLINE_STRENGTH;
-uniform COMPAT_PRECISION float SCANLINE_BEAM_WIDTH_MIN;
-uniform COMPAT_PRECISION float SCANLINE_BEAM_WIDTH_MAX;
-uniform COMPAT_PRECISION float SCANLINE_BRIGHT_MIN;
-uniform COMPAT_PRECISION float SCANLINE_BRIGHT_MAX;
-uniform COMPAT_PRECISION float SCANLINE_CUTOFF;
-uniform COMPAT_PRECISION float GAMMA_INPUT;
-uniform COMPAT_PRECISION float GAMMA_OUTPUT;
-uniform COMPAT_PRECISION float BRIGHT_BOOST;
-uniform COMPAT_PRECISION float DILATION;
-#else
 #define SHARPNESS_H 0.5
 #define SHARPNESS_V 1.0
 #define MASK_STRENGTH 0.3
@@ -160,7 +121,6 @@ uniform COMPAT_PRECISION float DILATION;
 #define GAMMA_OUTPUT 1.8
 #define BRIGHT_BOOST 1.2
 #define DILATION 1.0
-#endif
 
 // Set to 0 to use linear filter and gain speed
 #define ENABLE_LANCZOS 1

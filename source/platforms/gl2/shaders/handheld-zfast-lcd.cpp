@@ -26,9 +26,6 @@ const char *c2d_handheld_zfast_lcd_shader = R"text(
 
 #define BLACK_OUT_BORDER
 
-#pragma parameter BORDERMULT "Border Multiplier" 14.0 -40.0 40.0 1.0
-#pragma parameter GBAGAMMA "GBA Gamma Hack" 1.0 0.0 1.0 1.0
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -71,13 +68,8 @@ uniform COMPAT_PRECISION vec2 InputSize;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define OutSize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-uniform COMPAT_PRECISION float BORDERMULT;
-uniform COMPAT_PRECISION float GBAGAMMA;
-#else
 #define BORDERMULT 14.0
 #define GBAGAMMA 1.0
-#endif
 
 void main()
 {

@@ -17,18 +17,6 @@ const char *c2d_crt_fakelottes_shader = R"text(
 //////////////////////////  END SETTINGS  //////////////////////////
 ////////////////////////////////////////////////////////////////////
 
-///////////////////////  Runtime Parameters  ///////////////////////
-#pragma parameter shadowMask "shadowMask" 1.0 0.0 4.0 1.0
-#pragma parameter SCANLINE_SINE_COMP_B "Scanline Intensity" 0.40 0.0 1.0 0.05
-#pragma parameter warpX "warpX" 0.031 0.0 0.125 0.01
-#pragma parameter warpY "warpY" 0.041 0.0 0.125 0.01
-#pragma parameter maskDark "maskDark" 0.5 0.0 2.0 0.1
-#pragma parameter maskLight "maskLight" 1.5 0.0 2.0 0.1
-#pragma parameter crt_gamma "CRT Gamma" 2.5 1.0 4.0 0.05
-#pragma parameter monitor_gamma "Monitor Gamma" 2.2 1.0 4.0 0.05
-#pragma parameter SCANLINE_SINE_COMP_A "Scanline Sine Comp A" 0.0 0.0 0.10 0.01
-#pragma parameter SCANLINE_BASE_BRIGHTNESS "Scanline Base Brightness" 0.95 0.0 1.0 0.01
-
 // prevent stupid behavior
 #if defined ROTATE_SCANLINES && !defined SCANLINES
 	#define SCANLINES
@@ -122,18 +110,6 @@ COMPAT_VARYING vec4 TEX0;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define OutSize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-uniform COMPAT_PRECISION float SCANLINE_BASE_BRIGHTNESS;
-uniform COMPAT_PRECISION float SCANLINE_SINE_COMP_A;
-uniform COMPAT_PRECISION float SCANLINE_SINE_COMP_B;
-uniform COMPAT_PRECISION float warpX;
-uniform COMPAT_PRECISION float warpY;
-uniform COMPAT_PRECISION float maskDark;
-uniform COMPAT_PRECISION float maskLight;
-uniform COMPAT_PRECISION float shadowMask;
-uniform COMPAT_PRECISION float crt_gamma;
-uniform COMPAT_PRECISION float monitor_gamma;
-#else
 #define SCANLINE_BASE_BRIGHTNESS 0.95
 #define SCANLINE_SINE_COMP_A 0.0
 #define SCANLINE_SINE_COMP_B 0.40
@@ -144,7 +120,6 @@ uniform COMPAT_PRECISION float monitor_gamma;
 #define shadowMask 1.0
 #define crt_gamma 2.5
 #define monitor_gamma 2.2
-#endif
 
 vec4 scanline(vec2 coord, vec4 frame)
 {

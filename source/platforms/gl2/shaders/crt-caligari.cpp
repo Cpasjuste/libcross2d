@@ -15,17 +15,6 @@
 */
 
 const char *c2d_crt_caligari_shader = R"text(
-// Parameter lines go here:
-// 0.5 = the spot stays inside the original pixel
-// 1.0 = the spot bleeds up to the center of next pixel
-#pragma parameter SPOT_WIDTH "CRTCaligari Spot Width" 0.9 0.1 1.5 0.05
-#pragma parameter SPOT_HEIGHT "CRTCaligari Spot Height" 0.65 0.1 1.5 0.05
-// Used to counteract the desaturation effect of weighting.
-#pragma parameter COLOR_BOOST "CRTCaligari Color Boost" 1.45 1.0 2.0 0.05
-// Constants used with gamma correction.
-#pragma parameter InputGamma "CRTCaligari Input Gamma" 2.4 0.0 5.0 0.1
-#pragma parameter OutputGamma "CRTCaligari Output Gamma" 2.2 0.0 5.0 0.1
-
 #if defined(VERTEX)
 
 #if __VERSION__ >= 130
@@ -111,20 +100,11 @@ COMPAT_VARYING vec2 oney;
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define OutputSize vec4(OutputSize, 1.0 / OutputSize)
 
-#ifdef PARAMETER_UNIFORM
-// All parameter floats need to have COMPAT_PRECISION in front of them
-uniform COMPAT_PRECISION float SPOT_WIDTH;
-uniform COMPAT_PRECISION float SPOT_HEIGHT;
-uniform COMPAT_PRECISION float COLOR_BOOST;
-uniform COMPAT_PRECISION float InputGamma;
-uniform COMPAT_PRECISION float OutputGamma;
-#else
 #define SPOT_WIDTH 0.9
 #define SPOT_HEIGHT 0.65
 #define COLOR_BOOST 1.45
 #define InputGamma 2.4
 #define OutputGamma 2.2
-#endif
 
 #define GAMMA_IN(color)     pow(color,vec4(InputGamma))
 #define GAMMA_OUT(color)    pow(color, vec4(1.0 / OutputGamma))

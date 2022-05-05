@@ -4,23 +4,6 @@
 */
 
 const char *c2d_crt_aperture_shader = R"text(
-#pragma parameter SHARPNESS_IMAGE "Sharpness Image" 1.0 1.0 5.0 1.0
-#pragma parameter SHARPNESS_EDGES "Sharpness Edges" 3.0 1.0 5.0 1.0
-#pragma parameter GLOW_WIDTH "Glow Width" 0.5 0.05 0.65 0.05
-#pragma parameter GLOW_HEIGHT "Glow Height" 0.5 0.05 0.65 0.05
-#pragma parameter GLOW_HALATION "Glow Halation" 0.1 0.0 1.0 0.01
-#pragma parameter GLOW_DIFFUSION "Glow Diffusion" 0.05 0.0 1.0 0.01
-#pragma parameter MASK_COLORS "Mask Colors" 2.0 2.0 3.0 1.0
-#pragma parameter MASK_STRENGTH "Mask Strength" 0.3 0.0 1.0 0.05
-#pragma parameter MASK_SIZE "Mask Size" 1.0 1.0 9.0 1.0
-#pragma parameter SCANLINE_SIZE_MIN "Scanline Size Min." 0.5 0.5 1.5 0.05
-#pragma parameter SCANLINE_SIZE_MAX "Scanline Size Max." 1.5 0.5 1.5 0.05
-#pragma parameter SCANLINE_SHAPE "Scanline Shape" 2.5 1.0 100.0 0.1
-#pragma parameter SCANLINE_OFFSET "Scanline Offset" 1.0 0.0 1.0 1.0
-#pragma parameter GAMMA_INPUT "Gamma Input" 2.4 1.0 5.0 0.1
-#pragma parameter GAMMA_OUTPUT "Gamma Output" 2.4 1.0 5.0 0.1
-#pragma parameter BRIGHTNESS "Brightness" 1.5 0.0 2.0 0.05
-
 #define Coord TEX0
 
 #if defined(VERTEX)
@@ -92,24 +75,6 @@ uniform PRECISION vec2 InputSize;
 uniform sampler2D Texture;
 IN vec2 Coord;
 
-#ifdef PARAMETER_UNIFORM
-uniform PRECISION float SHARPNESS_IMAGE;
-uniform PRECISION float SHARPNESS_EDGES;
-uniform PRECISION float GLOW_WIDTH;
-uniform PRECISION float GLOW_HEIGHT;
-uniform PRECISION float GLOW_HALATION;
-uniform PRECISION float GLOW_DIFFUSION;
-uniform PRECISION float MASK_COLORS;
-uniform PRECISION float MASK_STRENGTH;
-uniform PRECISION float MASK_SIZE;
-uniform PRECISION float SCANLINE_SIZE_MIN;
-uniform PRECISION float SCANLINE_SIZE_MAX;
-uniform PRECISION float SCANLINE_SHAPE;
-uniform PRECISION float SCANLINE_OFFSET;
-uniform PRECISION float GAMMA_INPUT;
-uniform PRECISION float GAMMA_OUTPUT;
-uniform PRECISION float BRIGHTNESS;
-#else
 #define SHARPNESS_IMAGE 1.0
 #define SHARPNESS_EDGES 3.0
 #define GLOW_WIDTH 0.5
@@ -126,7 +91,6 @@ uniform PRECISION float BRIGHTNESS;
 #define GAMMA_INPUT 2.4
 #define GAMMA_OUTPUT 2.4
 #define BRIGHTNESS 1.5
-#endif
 
 #define FIX(c) max(abs(c), 1e-5)
 #define PI 3.141592653589
