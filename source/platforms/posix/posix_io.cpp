@@ -116,7 +116,7 @@ bool POSIXIo::create(const std::string &path) {
         if (dir) {
             *dir = 0;
         }
-        mkdir(p, 0700);
+        mkdir(p, 0777);
         if (dir) {
             *dir++ = '/';
         }
