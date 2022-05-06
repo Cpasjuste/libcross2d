@@ -81,7 +81,9 @@ namespace c2d {
         m_textureRect = rect;
 
         if (m_texture) {
+#ifndef __VITA__
             m_texture->m_pitch = rect.width * m_texture->m_bpp;
+#endif
             if (m_texture->isPot()) {
                 // calculate texture offset for pot textures
                 Vector2i offset = {
