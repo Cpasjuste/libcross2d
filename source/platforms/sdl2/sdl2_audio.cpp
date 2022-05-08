@@ -60,7 +60,7 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
     // adjust to obtained values
     m_samples = obtained.samples;
     m_samples_size = m_samples * channels * (int) sizeof(int16_t);
-    m_buffer->resize(m_samples * channels * 10);
+    m_buffer->resize(m_samples * channels * 4);
 
     printf("SDL2Audio: rate = %i, samples = %i, samples size = %i (sdl samples size: %i)\n",
            m_sample_rate, m_samples, m_samples_size, obtained.size);

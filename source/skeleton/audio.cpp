@@ -15,7 +15,7 @@ Audio::Audio(int rate, int samples, C2DAudioCallback cb) {
     m_samples_size = m_samples * channels * (int) sizeof(int16_t);
 
     m_buffer = new SampleBuffer();
-    m_buffer->resize(m_samples * channels * 10);
+    m_buffer->resize(m_samples * channels * 4);
 
     callback = cb;
     available = true;
@@ -30,9 +30,18 @@ void Audio::play(const void *data, int samples, bool sync) {
             pause(0);
         }
 
-        if (callback != nullptr) {
+        if (callback) {
             return;
         }
+
+        // be sure we have enough space and add some margin (should not happen)
+        if (getSampleBufferCapacity() < samples * channels) {
+            m_buffer->resize(samples * channels * 4);
+        }
+
+        lock();
+        m_buffer->push((int16_t *) data, samples * channels);
+        unlock();
 
         //printf("play: samples: %i, queued: %i\n", samples * channels, getSampleBufferQueued());
         if (sync) {
@@ -43,10 +52,6 @@ void Audio::play(const void *data, int samples, bool sync) {
             }
         }
         //printf("play (done): queued: %i\n", getSampleBufferQueued());
-
-        lock();
-        m_buffer->push((int16_t *) data, samples * channels);
-        unlock();
     }
 }
 
