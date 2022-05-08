@@ -39,10 +39,6 @@ void Audio::play(const void *data, int samples, bool sync) {
             m_buffer->resize(samples * channels * 4);
         }
 
-        lock();
-        m_buffer->push((int16_t *) data, samples * channels);
-        unlock();
-
         //printf("play: samples: %i, queued: %i\n", samples * channels, getSampleBufferQueued());
         if (sync) {
             while (getSampleBufferQueued() >= getSamples() * channels) {
@@ -52,6 +48,10 @@ void Audio::play(const void *data, int samples, bool sync) {
             }
         }
         //printf("play (done): queued: %i\n", getSampleBufferQueued());
+        
+        lock();
+        m_buffer->push((int16_t *) data, samples * channels);
+        unlock();
     }
 }
 
