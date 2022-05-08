@@ -25,9 +25,7 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
         return;
     }
 
-#ifdef __WINDOWS__
-    SDL_setenv("SDL_AUDIODRIVER", "winmm", 1);
-#elif ANDROID
+#if ANDROID
     SDL_setenv("SDL_AUDIODRIVER", "openslES", 1);
 #endif
 
