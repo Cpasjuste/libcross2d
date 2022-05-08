@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ####################
 # TARGET PLATFORM
@@ -72,6 +72,7 @@ endif ()
 
 if (PLATFORM_VITA)
     message(STATUS "C2D: Ps Vita with Gxm support enabled")
+    set(OPTION_SDL2 ON CACHE BOOL "SDL2 support" FORCE)
     set(OPTION_BOX2D ON CACHE BOOL "Build with box2d support" FORCE)
     set(OPTION_SCREEN_WIDTH 960 CACHE STRING "Custom screen width" FORCE)
     set(OPTION_SCREEN_HEIGHT 544 CACHE STRING "Custom screen height" FORCE)
@@ -149,7 +150,9 @@ endif ()
 if (OPTION_SDL2)
     pkg_search_module(SDL2 REQUIRED sdl2)
     list(APPEND C2D_INCLUDES ${SDL2_INCLUDE_DIRS})
-    list(APPEND C2D_CFLAGS -D__SDL2__)
+    if (NOT PLATFORM_VITA)
+        list(APPEND C2D_CFLAGS -D__SDL2__)
+    endif ()
     list(APPEND C2D_LDFLAGS ${SDL2_LIBRARIES})
     file(GLOB SDL2_SRC source/platforms/sdl2/*.c*)
     list(APPEND C2D_SOURCES ${SDL2_SRC})
@@ -234,20 +237,11 @@ if (PLATFORM_VITA)
     file(GLOB PLATFORM_SOURCES
             source/platforms/posix/posix_io.cpp
             source/platforms/psp2/*.c*
-            source/platforms/sdl2/sdl2_audio.cpp
-            source/platforms/sdl2/sdl2_input.cpp
-            source/platforms/sdl2/sdl2_thread.cpp
-            source/platforms/sdl2/sdl2_mutex.cpp
-            source/platforms/sdl2/sdl2_cond.cpp
             )
+    list(REMOVE_ITEM C2D_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/sdl2/sdl2_renderer.cpp)
     list(APPEND C2D_LDFLAGS
             ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/vita-shader-collection/lib/libvitashaders.a
-            SDL2 vita2d jpeg png box2d
-            SceDisplay_stub SceGxm_stub SceSysmodule_stub
-            SceAppMgr_stub SceCtrl_stub SceCommonDialog_stub
-            SceAudio_stub SceAudioIn_stub SceTouch_stub SceHid_stub
-            SceMotion_stub ScePower_stub SceAppUtil_stub
-            z c stdc++ pthread m
+            vita2d box2d ScePower_stub
             )
 
     list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
@@ -416,14 +410,3 @@ if (OPTION_TEST)
     #############
     include(cmake/targets.cmake)
 endif ()
-
-#############
-# install
-#############
-#install(
-#        FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}
-#        PERMISSIONS OWNER_EXECUTE OWNER_READ
-#        DESTINATION bin
-#)
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libcross2d.a DESTINATION lib)
-#install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/cross2d DESTINATION include)
