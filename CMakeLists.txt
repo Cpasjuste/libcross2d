@@ -241,7 +241,7 @@ if (PLATFORM_VITA)
     list(REMOVE_ITEM C2D_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/sdl2/sdl2_renderer.cpp)
     list(APPEND C2D_LDFLAGS
             ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/vita-shader-collection/lib/libvitashaders.a
-            vita2d box2d ScePower_stub
+            vita2d box2d SceGxm_stub ScePower_stub
             )
 
     list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
