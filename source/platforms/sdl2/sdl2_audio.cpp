@@ -17,6 +17,8 @@ static void audioThread(void *data, Uint8 *stream, int len) {
         audio->getSampleBuffer()->pull((int16_t *) stream, samples);
         audio->unlock();
         //printf("c2d::sdl2audio::thread: queued: %i\n", audio->getSampleBufferQueued());
+    } else {
+        memset(stream, 0, len);
     }
 }
 
