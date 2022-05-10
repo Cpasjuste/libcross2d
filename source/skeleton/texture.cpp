@@ -151,19 +151,16 @@ int Texture::save(const std::string &path) {
     }
 
     if (m_bpp == 2) {
-        // convert rgb565 to bgr888
-        auto *tmp = (unsigned char *) MALLOC((size_t) width * (size_t) height * 3);
-        for (int i = 0; i < width * height; i++) {
-            signed short nColour = ((signed short *) m_pixels)[i];
-            *(tmp + i * 3 + 2) = (unsigned char) ((nColour & 0x1F) << 3);
-            *(tmp + i * 3 + 2) |= *(tmp + 3 * i + 0) >> 5;
-            *(tmp + i * 3 + 1) = (unsigned char) (((nColour >> 5) & 0x3F) << 2);
-            *(tmp + i * 3 + 1) |= *(tmp + i * 3 + 1) >> 6;
-            *(tmp + i * 3 + 0) = (unsigned char) (((nColour >> 11) & 0x1F) << 3);
-            *(tmp + i * 3 + 0) |= *(tmp + i * 3 + 2) >> 5;
+        // convert RGB565 to RGB888
+        auto *dst = new std::byte[(width * height * 3) / 2 * 3];
+        for (int i = 0, j = 0; i < width * height * 3; i += 2) {
+            int c = m_pixels[i] + (m_pixels[i + 1] << 8);
+            dst[j++] = std::byte(((c & 0xF800) >> 11) << 3);
+            dst[j++] = std::byte(((c & 0x7E0) >> 5) << 2);
+            dst[j++] = std::byte(((c & 0x1F)) << 3);
         }
-        res = stbi_write_png(path.c_str(), width, height, 3, tmp, width * 3);
-        FREE(tmp);
+        res = stbi_write_png(path.c_str(), width, height, 3, dst, m_pitch);
+        delete[] (dst);
     } else {
         res = stbi_write_png(path.c_str(), width, height, m_bpp, m_pixels, m_pitch);
     }
