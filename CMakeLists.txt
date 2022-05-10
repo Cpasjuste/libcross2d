@@ -243,11 +243,17 @@ if (PLATFORM_VITA)
             ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/vita-shader-collection/lib/libvitashaders.a
             vita2d box2d SceGxm_stub ScePower_stub
             )
-
     list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
-            -g -mtune=cortex-a9 -march=armv7-a -mfpu=neon -mfloat-abi=hard
+            -mtune=cortex-a9 -march=armv7-a -mfpu=neon -mfloat-abi=hard
             -ffast-math -mword-relocations -fno-optimize-sibling-calls
             )
+    if (CMAKE_BUILD_TYPE STREQUAL "Release")
+        list(APPEND C2D_CFLAGS
+                -fno-asynchronous-unwind-tables -funroll-loops -fno-unwind-tables
+                -mvectorize-with-neon-quad -funsafe-math-optimizations
+                -mlittle-endian -munaligned-access -fsingle-precision-constant
+                )
+    endif ()
 elseif (PLATFORM_PS4)
     #####################
     # PS4 PLATORM
