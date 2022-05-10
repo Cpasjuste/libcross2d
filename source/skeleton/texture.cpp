@@ -159,7 +159,7 @@ int Texture::save(const std::string &path) {
             dst[j++] = std::byte(((c & 0x7E0) >> 5) << 2);
             dst[j++] = std::byte(((c & 0x1F)) << 3);
         }
-        res = stbi_write_png(path.c_str(), width, height, 3, dst, m_pitch);
+        res = stbi_write_png(path.c_str(), width, height, 3, dst, width * 3);
         delete[] (dst);
     } else {
         res = stbi_write_png(path.c_str(), width, height, m_bpp, m_pixels, m_pitch);
