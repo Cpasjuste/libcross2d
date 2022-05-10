@@ -171,7 +171,9 @@ void PSP2Renderer::flip(bool draw, bool inputs) {
         Rectangle::onDraw(trans, draw);
 
         vita2d_end_drawing();
-        vita2d_wait_rendering_done();
+        if (m_wait_rendering) {
+            vita2d_wait_rendering_done();
+        }
         vita2d_swap_buffers();
     }
 }
@@ -182,6 +184,10 @@ void PSP2Renderer::delay(unsigned int ms) {
         ms = max_delay;
     }
     sceKernelDelayThreadCB(ms * 1000);
+}
+
+void PSP2Renderer::setWaitRendering(bool wait) {
+    m_wait_rendering = wait;
 }
 
 PSP2Renderer::~PSP2Renderer() {

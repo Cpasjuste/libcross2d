@@ -24,6 +24,11 @@ namespace c2d {
         void flip(bool draw = true, bool inputs = true) override;
 
         void delay(unsigned int ms) override;
+
+        void setWaitRendering(bool wait);
+
+    private:
+        bool m_wait_rendering = true;
     };
 }
 
