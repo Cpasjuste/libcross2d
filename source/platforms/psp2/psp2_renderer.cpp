@@ -167,7 +167,6 @@ void PSP2Renderer::flip(bool draw, bool inputs) {
 
         // call base class (draw childs)
         Transform trans = Transform::Identity;
-        m_draw_calls_batched = m_draw_calls = 0;
         Rectangle::onDraw(trans, draw);
 
         vita2d_end_drawing();
