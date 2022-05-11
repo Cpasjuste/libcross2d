@@ -15,7 +15,7 @@ Audio::Audio(int rate, int samples, C2DAudioCallback cb) {
     m_samples_size = m_samples * channels * (int) sizeof(int16_t);
 
     m_buffer = new SampleBuffer();
-    m_buffer->resize(m_samples * channels * 4);
+    m_buffer->resize(m_samples * channels * 3);
 
     callback = cb;
     available = true;
@@ -24,7 +24,7 @@ Audio::Audio(int rate, int samples, C2DAudioCallback cb) {
            rate, samples, m_samples_size);
 }
 
-void Audio::play(const void *data, int samples, bool sync) {
+void Audio::play(const void *data, int samples, SyncMode syncMode) {
     if (available) {
         if (paused) {
             pause(0);
@@ -34,21 +34,34 @@ void Audio::play(const void *data, int samples, bool sync) {
             return;
         }
 
-        // be sure we have enough space and add some margin (should not happen)
-        if (getSampleBufferCapacity() < samples * channels) {
-            m_buffer->resize(samples * channels * 4);
-        }
-
-        //printf("play: samples: %i, queued: %i\n", samples * channels, getSampleBufferQueued());
-        if (sync) {
-            while (getSampleBufferQueued() >= getSamples() * channels) {
+        if (syncMode == LowLatency) {
+            lock();
+            int queued = getSampleBufferQueued();
+            unlock();
+            while (queued > 0) {
+                if (!available) return;
+                if (c2d_renderer) c2d_renderer->delay(1);
+                lock();
+                queued = getSampleBufferQueued();
+                unlock();
+            }
+        } else if (syncMode == Safe) {
+            //printf("play: samples: %i, queued: %i, available: %i\n",
+            //     samples * channels, getSampleBufferQueued(), getSampleBufferAvailable());
+            lock();
+            int space = getSampleBufferAvailable();
+            unlock();
+            while (space < samples * channels) {
                 //printf("play (delay): samples: %i, queued: %i\n", getSamples() * channels, getSampleBufferQueued());
                 if (!available) return;
                 if (c2d_renderer) c2d_renderer->delay(1);
+                lock();
+                space = getSampleBufferAvailable();
+                unlock();
             }
+            //printf("play (done): queued: %i\n", getSampleBufferQueued());
         }
-        //printf("play (done): queued: %i\n", getSampleBufferQueued());
-        
+
         lock();
         m_buffer->push((int16_t *) data, samples * channels);
         unlock();

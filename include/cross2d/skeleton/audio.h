@@ -15,13 +15,19 @@ namespace c2d {
 
     public:
 
+        enum SyncMode {
+            None = 0,
+            LowLatency = 1,
+            Safe = 2
+        };
+
         typedef void (*C2DAudioCallback)(void *data, unsigned char *stream, int len);
 
-        Audio(int rate = 48000, int samples = 2048, C2DAudioCallback cb = nullptr);
+        Audio(int rate = 48000, int samples = 1024, C2DAudioCallback cb = nullptr);
 
         virtual ~Audio();
 
-        virtual void play(const void *data, int samples, bool sync = false);
+        virtual void play(const void *data, int samples, SyncMode syncMode = None);
 
         virtual void pause(int pause);
 

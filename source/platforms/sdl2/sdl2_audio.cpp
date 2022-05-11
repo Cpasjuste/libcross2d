@@ -11,7 +11,7 @@ static void audioThread(void *data, Uint8 *stream, int len) {
     auto audio = (SDL2Audio *) data;
     int samples = len >> 1;
 
-    //printf("c2d::sdl2audio::thread: want: %i, queued: %i\n", samples, audio->getSampleBufferQueued());
+    //printf("c2d::sdl2audio::thread: want: %i (len: %i), queued: %i\n", samples, len, audio->getSampleBufferQueued());
     if (audio->getSampleBufferQueued() >= samples) {
         audio->lock();
         audio->getSampleBuffer()->pull((int16_t *) stream, samples);
@@ -62,7 +62,7 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
     // adjust to obtained values
     m_samples = obtained.samples;
     m_samples_size = m_samples * channels * (int) sizeof(int16_t);
-    m_buffer->resize(m_samples * channels * 4);
+    m_buffer->resize(m_samples * channels * 3);
 
     printf("SDL2Audio: rate = %i, samples = %i, samples size = %i (sdl samples size: %i)\n",
            m_sample_rate, m_samples, m_samples_size, obtained.size);
