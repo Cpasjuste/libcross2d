@@ -80,14 +80,6 @@ namespace c2d {
             m_stats_print = enable;
         }
 
-        virtual int getDrawCalls() {
-            return m_draw_calls;
-        }
-
-        virtual int getDrawCallsBatched() {
-            return m_draw_calls_batched;
-        }
-
     protected:
 
         void onUpdate() override;
@@ -98,12 +90,10 @@ namespace c2d {
         Io *m_io = nullptr;
         Font *m_font = nullptr;
         ShaderList *m_shaderList = nullptr;
-        Clock *m_elapsedClock, *m_deltaClock;
-        Time m_deltaTime, m_statsTime;
-        float m_fps = 0, m_fpsStats = 0;
-        int m_frames = 0;
-        int m_draw_calls;
-        int m_draw_calls_batched;
+        Clock *m_elapsedClock, *m_deltaClock, *m_fpsClock;
+        Time m_deltaTime;
+        float m_fps = 0;
+        float m_frames = 0;
         bool m_stats_print = false;
     };
 }

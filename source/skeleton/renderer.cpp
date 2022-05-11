@@ -37,25 +37,12 @@ Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
     m_font->loadDefault();
     m_elapsedClock = new C2DClock();
     m_deltaClock = new C2DClock();
+    m_fpsClock = new C2DClock();
 }
 
 void Renderer::onUpdate() {
     // time
     m_deltaTime = m_deltaClock->restart();
-
-    // stats
-    m_fpsStats += 1.f / m_deltaTime.asSeconds();
-    m_statsTime += m_deltaTime;
-    if (m_statsTime.asSeconds() >= 1) {
-        m_fps = m_fpsStats / (float) m_frames;
-        if (m_stats_print) {
-            printf("fps: %f\n", m_fps);
-        }
-        m_statsTime = Time::Zero_;
-        m_fpsStats = 0;
-        m_frames = 0;
-    }
-    m_frames++;
 
     // input
     if (m_process_inputs) {
@@ -80,11 +67,18 @@ void Renderer::flip(bool draw, bool inputs) {
     if (draw) {
         clear();
         Transform trans = Transform::Identity;
-        m_draw_calls_batched = m_draw_calls = 0;
         Rectangle::onDraw(trans, draw);
-        //printf("time: %f, draw call: %i, batched: %i\n",
-        //       drawTimer->getElapsedTime().asSeconds(), draw_calls, draw_calls_batched);
     }
+
+    if (m_fpsClock->getElapsedTime().asSeconds() >= 1) {
+        m_fps = m_frames / m_fpsClock->getElapsedTime().asSeconds();
+        m_fpsClock->restart();
+        m_frames = 0;
+        if (m_stats_print) {
+            printf("fps: %f\n", m_fps);
+        }
+    }
+    m_frames++;
 }
 
 void Renderer::setClearColor(const Color &color) {
@@ -124,8 +118,9 @@ Renderer::~Renderer() {
 
     delete (m_elapsedClock);
     delete (m_deltaClock);
+    delete (m_fpsClock);
 
-    if (m_shaderList != nullptr) {
+    if (m_shaderList) {
         delete (m_shaderList);
     }
 
