@@ -57,11 +57,11 @@ void Renderer::onUpdate() {
 
     // input
     if (m_process_inputs) {
-        m_input->update();
+        auto players = m_input->update();
         for (int i = 0; i < PLAYER_MAX; i++) {
-            unsigned int keys = m_input->getPlayer(i)->buttons;
-            if (keys > 0 && keys != Input::Button::Delay) {
-                onInput(m_input->getPlayers());
+            unsigned int buttons = players[i].buttons;
+            if (buttons > 0 && buttons != Input::Button::Delay) {
+                onInput(players);
                 break;
             }
         }

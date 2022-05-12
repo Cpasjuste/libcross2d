@@ -42,14 +42,20 @@ SDL2Input::SDL2Input() : Input() {
 }
 
 Input::Player *SDL2Input::update() {
-    Player *players = Input::update();
+    bool quit = false;
 
+    // be sure sdl events are "pumped/cleared" before calling Input::update
     SDL_Event event = {};
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
-            players[0].buttons |= Input::Button::Quit;
-            return players;
+            quit = true;
+            break;
         }
+    }
+
+    Player *players = Input::update();
+    if (quit) {
+        players[0].buttons |= Input::Button::Quit;
     }
 
     return players;
