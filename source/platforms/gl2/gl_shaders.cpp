@@ -329,8 +329,10 @@ GLShaderList::GLShaderList() : ShaderList() {
     add(new GLShader("crt-mattias", c2d_crt_mattias_shader, c2d_crt_mattias_shader_length, version));
 #endif //__PS4__
     add(new GLShader("crt-nes-mini", c2d_crt_nes_mini_shader, c2d_crt_nes_mini_shader_length, version));
+#ifndef __SWITCH__
     add(new GLShader("crt-pi", c2d_crt_pi_shader, c2d_crt_pi_shader_length, version));
     add(new GLShader("crt-pi-flat", c2d_crt_pi_flat_shader, c2d_crt_pi_flat_shader_length, version));
+#endif
     add(new GLShader("crt-zfast", c2d_crt_zfast_shader, c2d_crt_zfast_shader_length, version));
 
     // handheld shaders
