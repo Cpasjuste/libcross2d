@@ -44,6 +44,17 @@ void Renderer::onUpdate() {
     // time
     m_deltaTime = m_deltaClock->restart();
 
+    // fps
+    if (m_fpsClock->getElapsedTime().asSeconds() >= 1) {
+        m_fps = m_frames / m_fpsClock->getElapsedTime().asSeconds();
+        m_fpsClock->restart();
+        m_frames = 0;
+        if (m_stats_print) {
+            printf("fps: %f\n", m_fps);
+        }
+    }
+    m_frames++;
+
     // input
     if (m_process_inputs) {
         m_input->update();
@@ -69,16 +80,6 @@ void Renderer::flip(bool draw, bool inputs) {
         Transform trans = Transform::Identity;
         Rectangle::onDraw(trans, draw);
     }
-
-    if (m_fpsClock->getElapsedTime().asSeconds() >= 1) {
-        m_fps = m_frames / m_fpsClock->getElapsedTime().asSeconds();
-        m_fpsClock->restart();
-        m_frames = 0;
-        if (m_stats_print) {
-            printf("fps: %f\n", m_fps);
-        }
-    }
-    m_frames++;
 }
 
 void Renderer::setClearColor(const Color &color) {
