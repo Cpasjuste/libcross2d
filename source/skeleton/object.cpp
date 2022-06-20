@@ -8,7 +8,7 @@ using namespace c2d;
 
 void C2DObject::add(C2DObject *object) {
     if (object) {
-        //printf("C2DObject(%p): add(%p)\n", this, C2DObject);
+        //printf("C2DObject(%p): add(%p)\n", this, object);
         object->parent = this;
         object->setLayer(object->getLayer());
         object->transformation = transformation * ((Transformable *) this)->getTransform();
@@ -156,6 +156,19 @@ void C2DObject::setLayer(int l) {
 
 std::vector<C2DObject *> C2DObject::getChilds() {
     return childs;
+}
+
+C2DObject *C2DObject::getChild(const std::string &name) {
+    C2DObject *object = nullptr;
+
+    for (const auto &child: childs) {
+        if (child->m_name == name) {
+            return child;
+        }
+        object = child->getChild(name);
+    }
+
+    return object;
 }
 
 Type C2DObject::getType() const {

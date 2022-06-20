@@ -66,6 +66,8 @@ namespace c2d {
 
         virtual std::vector<C2DObject *> getChilds();
 
+        virtual C2DObject *getChild(const std::string &name);
+
         Type getType() const;
 
         bool available = false;
@@ -127,6 +129,10 @@ namespace c2d {
 
         virtual void setAlpha(uint8_t alpha, bool recursive = false);
 
+        virtual void setName(const std::string &name) { m_name = name; };
+
+        virtual std::string getName() { return m_name; };
+
     protected:
 
         // always called, even if the object is hidden
@@ -142,6 +148,7 @@ namespace c2d {
     private:
 
         int layer = 0;
+        std::string m_name;
         C2DObject *parent = nullptr;
         std::vector<Tween *> tweens;
         std::vector<C2DObject *> childs;
