@@ -159,16 +159,17 @@ std::vector<C2DObject *> C2DObject::getChilds() {
 }
 
 C2DObject *C2DObject::getChild(const std::string &name) {
-    C2DObject *object = nullptr;
-
     for (const auto &child: childs) {
         if (child->m_name == name) {
             return child;
         }
-        object = child->getChild(name);
+        C2DObject *obj = child->getChild(name);
+        if (obj) {
+            return obj;
+        }
     }
 
-    return object;
+    return nullptr;
 }
 
 Type C2DObject::getType() const {
