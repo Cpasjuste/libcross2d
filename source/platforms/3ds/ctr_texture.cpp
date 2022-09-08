@@ -6,21 +6,10 @@
 
 using namespace c2d;
 
-#define linearAlloc malloc
-#define linearFree free
-
 #define TILE_FLAGS(inFmt, outFmt) \
     (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) | \
     GX_TRANSFER_IN_FORMAT(inFmt) | GX_TRANSFER_OUT_FORMAT(outFmt) | \
     GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
-
-void *linear_realloc(void *mem, size_t size) {
-    if (mem) {
-        linearFree(mem);
-    }
-    mem = linearAlloc(size);
-    return mem;
-}
 
 // Grabbed from Citra Emulator (citra/src/video_core/utils.h)
 static inline u32 morton_interleave(u32 x, u32 y) {
