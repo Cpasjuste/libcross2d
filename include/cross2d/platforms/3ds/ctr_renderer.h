@@ -39,22 +39,33 @@ namespace c2d {
             C3D_AttrInfo attrInfo;
             C3D_BufInfo bufInfo;
             C3D_ProcTex ptBlend;
+            C3D_ProcTex ptCircle;
             C3D_ProcTexLut ptBlendLut;
+            C3D_ProcTexLut ptCircleLut;
+            u32 sceneW, sceneH;
 
             C2Di_Vertex *vtxBuf;
+            u16 *idxBuf;
+
             size_t vtxBufSize;
             size_t vtxBufPos;
-            size_t vtxBufLastPos;
+
+            size_t idxBufSize;
+            size_t idxBufPos;
+            size_t idxBufLastPos;
 
             u32 flags;
             C3D_Mtx projMtx;
             C3D_Mtx mdlvMtx;
+            C3D_Tex *curTex;
+            u32 fadeClr;
         } C2Di_Context;
 
         C2Di_Context ctx;
 
         C3D_Mtx s_projTop;
         int uLoc_mdlvMtx, uLoc_projMtx;
+        size_t vtxBufLastPos = 0;
 #ifndef NDEBUG
         int link_sock = -1;
 #endif

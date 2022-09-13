@@ -103,7 +103,7 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     }
 
     ctx.vtxBufPos = 0;
-    ctx.vtxBufLastPos = 0;
+    vtxBufLastPos = 0;
     Mtx_Identity(&ctx.projMtx);
     Mtx_Identity(&ctx.mdlvMtx);
 
@@ -113,8 +113,7 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projMtx, &s_projTop);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_mdlvMtx, &ctx.mdlvMtx);
 
-    // dummy shader list
-    m_shaderList = new ShaderList();
+    //C3D_FrameEndHook(nullptr, nullptr);
 
 #ifndef NDEBUG
     //consoleInit(GFX_BOTTOM, nullptr);
@@ -178,9 +177,10 @@ void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
         vtx->color = v.color.toABGR();
     }
 
-    if (ctx.vtxBufPos - ctx.vtxBufLastPos) {
-        C3D_DrawArrays(type, (int) ctx.vtxBufLastPos, (int) (ctx.vtxBufPos - ctx.vtxBufLastPos));
-        ctx.vtxBufLastPos = ctx.vtxBufPos;
+    size_t len = ctx.vtxBufPos - vtxBufLastPos;
+    if (len > 0) {
+        C3D_DrawArrays(type, (int) vtxBufLastPos, (int) len);
+        vtxBufLastPos = ctx.vtxBufPos;
     }
 }
 
@@ -195,9 +195,9 @@ void CTRRenderer::flip(bool draw, bool inputs) {
     Renderer::flip(draw, inputs);
 
     if (draw) {
-        C3D_FrameEnd(0);
         ctx.vtxBufPos = 0;
-        ctx.vtxBufLastPos = 0;
+        vtxBufLastPos = 0;
+        C3D_FrameEnd(0);
     }
 }
 

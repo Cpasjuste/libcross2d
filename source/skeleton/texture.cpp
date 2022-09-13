@@ -7,18 +7,16 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
-/*
 #ifdef __3DS__
-#define STBI_MALLOC linearAlloc
-#define STBI_REALLOC linear_realloc
-#define STBI_FREE linearFree
+//#define STBI_MALLOC linearAlloc
+//#define STBI_REALLOC linearRealloc
+//#define STBI_FREE linearFree
 #define MALLOC linearAlloc
 #define FREE linearFree
 #else
-*/
 #define MALLOC malloc
 #define FREE free
-//#endif
+#endif
 
 #include "cross2d/skeleton/stb_image.h"
 #include "cross2d/skeleton/stb_image_write.h"
@@ -103,11 +101,17 @@ Texture::Texture(const Vector2i &size, Format format) : RectangleShape(Vector2f{
         return;
     }
 
+    // handle pot textures
+    if (m_pot) {
+        pixelsToPot(size.x, size.y);
+    } else {
+        m_tex_size = m_image_size = {size.x, size.y};
+    }
+
     memset(m_pixels, 0, size.x * size.y * m_bpp);
 
     // set texture parameters
     m_pitch = size.x * m_bpp;
-    m_tex_size = m_image_size = {size.x, size.y};
     m_unlock_rect = {0, 0, size.x, size.y};
     Texture::setSize((float) size.x, (float) size.y);
     Texture::setTexture(this);
@@ -170,6 +174,7 @@ int Texture::save(const std::string &path) {
 
 void Texture::pixelsToPot(int w, int h) {
     m_tex_size = {Utility::pow2(w), Utility::pow2(h)};
+    m_image_size = {w, h};
     auto *pixels = (uint8_t *) MALLOC(m_tex_size.x * m_tex_size.y * m_bpp);
 
     if (!pixels) {
@@ -195,19 +200,23 @@ void Texture::pixelsToPot(int w, int h) {
 
 void Texture::setShader(int shaderIndex) {
     ShaderList *shaderList = c2d_renderer->getShaderList();
-    m_shader = shaderList->get(shaderIndex);
-    if (!m_shader) {
-        //printf("Texture::setShader: shader not found (%i)\n", shaderIndex);
-        m_shader = shaderList->get(0);
+    if (shaderList) {
+        m_shader = shaderList->get(shaderIndex);
+        if (!m_shader) {
+            //printf("Texture::setShader: shader not found (%i)\n", shaderIndex);
+            m_shader = shaderList->get(0);
+        }
     }
 }
 
 void Texture::setShader(const std::string &shaderName) {
     ShaderList *shaderList = c2d_renderer->getShaderList();
-    m_shader = shaderList->get(shaderName);
-    if (!m_shader) {
-        //printf("Texture::setShader: shader not found (%s)\n", shaderName.c_str());
-        m_shader = shaderList->get(0);
+    if (shaderList) {
+        m_shader = shaderList->get(shaderName);
+        if (!m_shader) {
+            //printf("Texture::setShader: shader not found (%s)\n", shaderName.c_str());
+            m_shader = shaderList->get(0);
+        }
     }
 }
 
