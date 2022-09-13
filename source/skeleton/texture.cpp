@@ -50,12 +50,12 @@ Texture::Texture(const std::string &p) : RectangleShape({0, 0}) {
     m_unlock_rect = {0, 0, w, h};
     Texture::setSize((float) w, (float) h);
     Texture::setTexture(this);
-    Texture::setTextureRect({0, 0, w, h});
     Texture::setFillColor(Color::White);
     Texture::setShader(0);
 
-    printf("Texture(%p): size: %ix%i, bpp: %i, pitch: %i, path: %s\n",
-           this, m_tex_size.x, m_tex_size.y, m_bpp, m_pitch, m_path.c_str());
+    printf("Texture(%p): tex: %ix%i (img: %ix%i, rect: %ix%i), bpp: %i, pitch: %i, path: %s\n",
+           this, m_tex_size.x, m_tex_size.y, m_image_size.x, m_image_size.y,
+           m_textureRect.width, m_textureRect.height, m_bpp, m_pitch, m_path.c_str());
 }
 
 Texture::Texture(const unsigned char *buffer, int bufferSize) : RectangleShape({0, 0}) {
@@ -83,7 +83,6 @@ Texture::Texture(const unsigned char *buffer, int bufferSize) : RectangleShape({
     m_unlock_rect = {0, 0, w, h};
     Texture::setSize((float) w, (float) h);
     Texture::setTexture(this);
-    Texture::setTextureRect({0, 0, w, h});
     Texture::setFillColor(Color::White);
     Texture::setShader(0);
 
@@ -115,7 +114,6 @@ Texture::Texture(const Vector2i &size, Format format) : RectangleShape(Vector2f{
     m_unlock_rect = {0, 0, size.x, size.y};
     Texture::setSize((float) size.x, (float) size.y);
     Texture::setTexture(this);
-    Texture::setTextureRect({0, 0, size.x, size.y});
     Texture::setFillColor(Color::White);
     Texture::setShader(0);
 

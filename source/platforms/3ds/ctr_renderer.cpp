@@ -117,11 +117,11 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
 
 #ifndef NDEBUG
     //consoleInit(GFX_BOTTOM, nullptr);
-    //consoleDebugInit(debugDevice_SVC);
-    //stdout = stderr;
-    u32 *buffer = (u32 *) memalign(SOC_ALIGN, SOC_BUFFER_SIZE);
-    socInit(buffer, SOC_BUFFER_SIZE);
-    link_sock = link3dsStdio();
+    consoleDebugInit(debugDevice_SVC);
+    stdout = stderr;
+    //u32 *buffer = (u32 *) memalign(SOC_ALIGN, SOC_BUFFER_SIZE);
+    //socInit(buffer, SOC_BUFFER_SIZE);
+    //link_sock = link3dsStdio();
 #endif
 
     available = true;
