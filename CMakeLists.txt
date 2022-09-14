@@ -297,6 +297,7 @@ elseif (PLATFORM_3DS)
     #####################
     # 3DS PLATORM
     #####################
+    enable_language(ASM)
     set(OPTION_SCREEN_WIDTH 400 CACHE STRING "" FORCE)
     set(OPTION_SCREEN_HEIGHT 240 CACHE STRING "" FORCE)
     set(PLATFORM_INCLUDES
@@ -305,11 +306,14 @@ elseif (PLATFORM_3DS)
             )
     file(GLOB PLATFORM_SOURCES
             source/platforms/3ds/*.c*
-            source/platforms/3ds/vshader_shbin.o
+            source/platforms/3ds/*.s
             source/platforms/posix/*.c*
             )
     list(APPEND C2D_LDFLAGS citro3d ctru m)
     list(APPEND C2D_CFLAGS -DARM11 -D__3DS__)
+    # TODO
+    #ctr_add_shader_library(${PROJECT_NAME}.pica ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/3ds/vshader.pica)
+    #dkp_add_embedded_binary_library(${PROJECT_NAME}.pica.h "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pica.shbin")
     #####################
     # SWITCH PLATORM
     #####################

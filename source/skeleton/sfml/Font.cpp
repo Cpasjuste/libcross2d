@@ -432,7 +432,7 @@ namespace c2d {
 
         // Convert the glyph to a bitmap (i.e. rasterize it)
         if (FT_Glyph_To_Bitmap(&glyphDesc, FT_RENDER_MODE_NORMAL, nullptr, 1)) {
-            printf("Font::loadGlyph: FT_Glyph_To_Bitmap error\n");
+            printf("Font::loadGlyph(%lu): FT_Glyph_To_Bitmap error\n", codePoint);
             FT_Done_Glyph(glyphDesc);
             return glyph;
         }

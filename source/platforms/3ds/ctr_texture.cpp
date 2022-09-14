@@ -49,7 +49,7 @@ int CTRTexture::createTexture() {
     if (m_format == Format::RGB565) {
         // TODO: test vram performance on unlock
         if (!C3D_TexInitVRAM(m_tex, (u16) m_tex_size.x, (u16) m_tex_size.y, GPU_RGB565)) {
-            printf("CTRTexture::createTexture: C3D_TexInit failed\n");
+            printf("CTRTexture::createTexture: C3D_TexInitVRAM failed\n");
             delete (m_tex);
             return -1;
         }

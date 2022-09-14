@@ -23,13 +23,13 @@ namespace c2d {
 
         void delay(unsigned int ms) override;
 
-        C3D_RenderTarget *target;
+        C3D_RenderTarget *m_top;
 
     private:
         typedef struct {
             float pos[3];
             float texcoord[2];
-            float blend[2];
+            float ptcoord[2];
             u32 color;
         } C2Di_Vertex;
 

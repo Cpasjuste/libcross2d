@@ -86,8 +86,9 @@ Texture::Texture(const unsigned char *buffer, int bufferSize) : RectangleShape({
     Texture::setFillColor(Color::White);
     Texture::setShader(0);
 
-    printf("Texture(%p): size: %ix%i, bpp: %i, pitch: %i\n",
-           this, m_tex_size.x, m_tex_size.y, m_bpp, m_pitch);
+    printf("Texture(%p): tex: %ix%i (img: %ix%i, rect: %ix%i), bpp: %i, pitch: %i\n",
+           this, m_tex_size.x, m_tex_size.y, m_image_size.x, m_image_size.y,
+           m_textureRect.width, m_textureRect.height, m_bpp, m_pitch);
 }
 
 Texture::Texture(const Vector2i &size, Format format) : RectangleShape(Vector2f{0, 0}) {
@@ -117,8 +118,9 @@ Texture::Texture(const Vector2i &size, Format format) : RectangleShape(Vector2f{
     Texture::setFillColor(Color::White);
     Texture::setShader(0);
 
-    printf("Texture(%p): size: %ix%i, bpp: %i, pitch: %i\n",
-           this, m_tex_size.x, m_tex_size.y, m_bpp, m_pitch);
+    printf("Texture(%p): tex: %ix%i (img: %ix%i, rect: %ix%i), bpp: %i, pitch: %i\n",
+           this, m_tex_size.x, m_tex_size.y, m_image_size.x, m_image_size.y,
+           m_textureRect.width, m_textureRect.height, m_bpp, m_pitch);
 }
 
 int Texture::lock(uint8_t **pixels, int *pitch, IntRect rect) {

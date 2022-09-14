@@ -4,7 +4,7 @@
 
 #include "cross2d/platforms/3ds/ctr_texture.h"
 #include "cross2d/platforms/3ds/ctr_renderer.h"
-#include "vshader_shbin.h"
+#include "vshader.pica.shbin.h"
 
 #ifndef NDEBUG
 
@@ -21,6 +21,7 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     osSetSpeedupEnable(true);
 
     gfxInitDefault();
+    gfxSet3D(false);
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 
     /// from citro2d (init)
@@ -30,7 +31,7 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
         return;
     }
 
-    ctx.shader = DVLB_ParseFile((u32 *) render2d_shbin, render2d_shbin_size);
+    ctx.shader = DVLB_ParseFile((u32 *) cross2d_pica_shbin, cross2d_pica_shbin_size);
     if (!ctx.shader) {
         linearFree(ctx.vtxBuf);
         return;
@@ -93,9 +94,9 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     // Don't cull anything
     C3D_CullFace(GPU_CULL_NONE);
 
-    target = C3D_RenderTargetCreate((int) size.y, (int) size.x, GPU_RB_RGBA8, GPU_RB_DEPTH16);
-    if (target) {
-        C3D_RenderTargetSetOutput(target, GFX_TOP, GFX_LEFT,
+    m_top = C3D_RenderTargetCreate((int) size.y, (int) size.x, GPU_RB_RGBA8, GPU_RB_DEPTH16);
+    if (m_top) {
+        C3D_RenderTargetSetOutput(m_top, GFX_TOP, GFX_LEFT,
                                   GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) |
                                   GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) |
                                   GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |
@@ -171,9 +172,9 @@ void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
         vtx->pos[2] = 0.5f;
         vtx->texcoord[0] = v.texCoords.x;
         vtx->texcoord[1] = v.texCoords.y;
-        vtx->blend[0] = 0;
         blend = v.color.r == 255 && v.color.g == 255 && v.color.b == 255 ? 0 : 1;
-        vtx->blend[1] = tex ? blend : 1.0f;
+        vtx->ptcoord[0] = 0;
+        vtx->ptcoord[1] = tex ? blend : 1.0f;
         vtx->color = v.color.toABGR();
     }
 
@@ -187,9 +188,8 @@ void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
 void CTRRenderer::flip(bool draw, bool inputs) {
     if (draw) {
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-        C3D_FrameSplit(0);
-        C3D_RenderTargetClear(target, C3D_CLEAR_ALL, m_clearColor.toRGBA(), 0);
-        C3D_FrameDrawOn(target);
+        C3D_FrameDrawOn(m_top);
+        C3D_RenderTargetClear(m_top, C3D_CLEAR_ALL, m_clearColor.toRGBA(), 0);
     }
 
     Renderer::flip(draw, inputs);
@@ -207,6 +207,7 @@ void CTRRenderer::delay(unsigned int ms) {
 }
 
 CTRRenderer::~CTRRenderer() {
+    C3D_RenderTargetDelete(m_top);
     shaderProgramFree(&ctx.program);
     DVLB_Free(ctx.shader);
     linearFree(ctx.vtxBuf);
