@@ -77,7 +77,6 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     env = C3D_GetTexEnv(0);
     C3D_TexEnvInit(env);
     C3D_TexEnvFunc(env, C3D_Both, GPU_REPLACE);
-    C3D_TexEnvColor(env, 0xFFFFFFFF);
 
     // Set texenv1 to blend the output of texenv0 with the primary color
     env = C3D_GetTexEnv(1);
@@ -87,6 +86,10 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     C3D_TexEnvSrc(env, C3D_Alpha, GPU_PREVIOUS, GPU_PRIMARY_COLOR, (GPU_TEVSRC) 0);
     C3D_TexEnvFunc(env, C3D_RGB, GPU_INTERPOLATE);
     C3D_TexEnvFunc(env, C3D_Alpha, GPU_MODULATE);
+
+    // Reset unused texenv stages
+    C3D_TexEnvInit(C3D_GetTexEnv(2));
+    C3D_TexEnvInit(C3D_GetTexEnv(3));
 
     // Configure depth test to overwrite pixels with the same depth (needed to draw overlapping sprites)
     C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
@@ -109,12 +112,10 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     Mtx_Identity(&ctx.mdlvMtx);
 
     // uniforms
-    uLoc_mdlvMtx = shaderInstanceGetUniformLocation(ctx.program.vertexShader, "mdlvMtx");
-    uLoc_projMtx = shaderInstanceGetUniformLocation(ctx.program.vertexShader, "projMtx");
+    uLoc_mdlvMtx = (u8) shaderInstanceGetUniformLocation(ctx.program.vertexShader, "mdlvMtx");
+    uLoc_projMtx = (u8) shaderInstanceGetUniformLocation(ctx.program.vertexShader, "projMtx");
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projMtx, &s_projTop);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_mdlvMtx, &ctx.mdlvMtx);
-
-    //C3D_FrameEndHook(nullptr, nullptr);
 
 #ifndef NDEBUG
     //consoleInit(GFX_BOTTOM, nullptr);
@@ -186,15 +187,18 @@ void CTRRenderer::draw(VertexArray *vertexArray, const Transform &transform, Tex
 }
 
 void CTRRenderer::flip(bool draw, bool inputs) {
+    m_process_inputs = inputs;
+    onUpdate();
+
     if (draw) {
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
         C3D_FrameDrawOn(m_top);
         C3D_RenderTargetClear(m_top, C3D_CLEAR_ALL, m_clearColor.toRGBA(), 0);
-    }
 
-    Renderer::flip(draw, inputs);
+        // call base class (draw childs)
+        Transform trans = Transform::Identity;
+        Rectangle::onDraw(trans, draw);
 
-    if (draw) {
         ctx.vtxBufPos = 0;
         vtxBufLastPos = 0;
         C3D_FrameEnd(0);

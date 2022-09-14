@@ -45,7 +45,6 @@ int CTRTexture::createTexture() {
     }
 
     m_tex = new C3D_Tex();
-
     if (m_format == Format::RGB565) {
         // TODO: test vram performance on unlock
         if (!C3D_TexInitVRAM(m_tex, (u16) m_tex_size.x, (u16) m_tex_size.y, GPU_RGB565)) {
@@ -96,9 +95,7 @@ void CTRTexture::uploadSoft() {
     if (m_tex && m_pixels) {
         //printf("CTRTexture::uploadSoft(%p): rect: {%i, %i, %i, %i}, pixels: %p\n",
         //     this, m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height, m_pixels);
-
         // TODO: handle unlock rect...
-#if 1
         int x, y, w = m_tex->width, h = m_tex->height;
         for (x = 0; x < h; x++) {
             for (y = 0; y < w; y++) {
@@ -108,21 +105,6 @@ void CTRTexture::uploadSoft() {
                 *(u32 *) ((u32) m_tex->data + dst_offset) = __builtin_bswap32(v); // RGBA8 -> ABGR8
             }
         }
-#else
-        //GSPGPU_FlushDataCache(m_pixels, (u32) m_tex_size.y * m_pitch);
-        //GSPGPU_FlushDataCache(m_tex.data, (u32) m_tex.size);
-        u32 *src = (u32 *) m_pixels + m_unlock_rect.top * m_pitch + m_unlock_rect.left * m_bpp;
-
-        for (int y = 0; y < m_unlock_rect.height; y++) {
-            for (int x = 0; x < m_unlock_rect.width; x++) {
-                u32 coarse_y = (u32) (m_unlock_rect.top + y) & ~7;
-                u32 dst_offset =
-                        get_morton_offset(m_unlock_rect.left + x, m_unlock_rect.top + y, m_bpp) + coarse_y * m_tex_size.x * m_bpp;
-                u32 v = src[x + (m_unlock_rect.height - 1 - y) * m_unlock_rect.width];
-                *(u32 *) ((u32) m_tex.data + dst_offset) = __builtin_bswap32(v); // RGBA8 -> ABGR8
-            }
-        }
-#endif
     }
 }
 
