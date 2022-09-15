@@ -161,10 +161,10 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_DOWN_DEFAULT    KEY_DOWN
 #define KEY_JOY_LEFT_DEFAULT    KEY_LEFT
 #define KEY_JOY_RIGHT_DEFAULT   KEY_RIGHT
-#define KEY_JOY_A_DEFAULT       KEY_A
-#define KEY_JOY_B_DEFAULT       KEY_B
-#define KEY_JOY_X_DEFAULT       KEY_X
-#define KEY_JOY_Y_DEFAULT       KEY_Y
+#define KEY_JOY_A_DEFAULT       KEY_B
+#define KEY_JOY_B_DEFAULT       KEY_A
+#define KEY_JOY_X_DEFAULT       KEY_Y
+#define KEY_JOY_Y_DEFAULT       KEY_X
 #define KEY_JOY_LT_DEFAULT      KEY_L
 #define KEY_JOY_RT_DEFAULT      KEY_R
 #define KEY_JOY_LB_DEFAULT      KEY_ZL
