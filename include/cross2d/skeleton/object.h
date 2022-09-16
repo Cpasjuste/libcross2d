@@ -77,7 +77,7 @@ namespace c2d {
             return {v2_dummy.x, v2_dummy.x, v2_dummy.x, v2_dummy.x};
         };
 
-        virtual const c2d::Vector2f &getSize() const { return v2_dummy; };
+        virtual c2d::Vector2f getSize() { return v2_dummy; };
 
         virtual void setSize(const c2d::Vector2f &size) {};
 

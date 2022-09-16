@@ -19,7 +19,6 @@ using namespace c2d;
 
 CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     osSetSpeedupEnable(true);
-
     gfxInitDefault();
     gfxSet3D(false);
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);

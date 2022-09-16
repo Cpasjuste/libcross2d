@@ -42,7 +42,7 @@ namespace c2d {
     Sprite::Sprite(Texture *texture, const IntRect &rectangle)
             : RectangleShape({(float) rectangle.left, (float) rectangle.top,
                               (float) rectangle.width, (float) rectangle.height}) {
-        m_textureRect = rectangle;
+        m_tex_rect = rectangle;
         Shape::setTextureRect(rectangle);
         setTexture(texture);
     }

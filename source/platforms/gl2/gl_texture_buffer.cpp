@@ -7,26 +7,28 @@
 #include "cross2d/c2d.h"
 #include "cross2d/platforms/gl2/gl_texture_buffer.h"
 
-
 #define GL_ABGR_EXT 0x8000
 
 using namespace c2d;
 
 // TODO: fix npot textures (vita)
 
-int GLTextureBuffer::createTexture(const Vector2i &size, Texture::Format format) {
+GLTextureBuffer::GLTextureBuffer(const Vector2i &size, Format format) : Texture(size, format) {
+    createTexture(format);
+}
+
+int GLTextureBuffer::createTexture(Texture::Format format) {
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
     glGenTextures(1, &texID);
 
     if (texID) {
         glBindTexture(GL_TEXTURE_2D, texID);
         if (format == Format::RGBA8) {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) size.x, (GLsizei) size.y, 0,
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) m_tex_size_pot.x, (GLsizei) m_tex_size_pot.y, 0,
                          GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
         } else {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, (GLsizei) size.x, (GLsizei) size.y, 0,
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, (GLsizei) m_tex_size_pot.x, (GLsizei) m_tex_size_pot.y, 0,
                          GL_RGB, GL_UNSIGNED_SHORT_5_6_5, nullptr);
         }
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -36,9 +38,6 @@ int GLTextureBuffer::createTexture(const Vector2i &size, Texture::Format format)
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             printf("GLTextureBuffer(%p): couldn't create texture buffer", this);
         } else {
-            m_tex_size = size;
-            Texture::setSize((float) size.x, (float) size.y);
-            Texture::setTexture(this, true);
             available = true;
         }
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -66,18 +65,16 @@ void GLTextureBuffer::deleteTexture() {
     }
 }
 
-GLTextureBuffer::GLTextureBuffer(const Vector2i &size, Format format) : Texture(size, format) {
-    createTexture(size, format);
-}
-
 int GLTextureBuffer::resize(const Vector2i &size, bool keepPixels) {
     printf("GLTextureBuffer::resize: %i x %i\n", (int) size.x, (int) size.y);
-    if (size.x == getTextureRect().width && size.y == getTextureRect().height) {
+    if (size.x == m_tex_size.x && size.y == m_tex_size.y) {
         return -1;
     }
 
     deleteTexture();
-    createTexture({(float) size.x, (float) size.y}, m_format);
+    m_tex_size = size;
+    m_tex_size_pot = isPot() ? Vector2i{Utility::pow2(size.x), Utility::pow2(size.y)} : size;
+    createTexture(m_format);
 
     return 0;
 }

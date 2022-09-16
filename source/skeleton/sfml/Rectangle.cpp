@@ -53,7 +53,7 @@ namespace c2d {
     }
 
 ////////////////////////////////////////////////////////////
-    const Vector2f &Rectangle::getSize() const {
+    Vector2f Rectangle::getSize() {
         return m_size;
     }
 

@@ -28,8 +28,6 @@
 
 #include "cross2d/skeleton/sfml/RectangleShape.hpp"
 
-using namespace c2d;
-
 namespace c2d {
 
 ////////////////////////////////////////////////////////////
@@ -55,7 +53,7 @@ namespace c2d {
     }
 
 ////////////////////////////////////////////////////////////
-    const Vector2f &RectangleShape::getSize() const {
+    Vector2f RectangleShape::getSize() {
         return m_size;
     }
 

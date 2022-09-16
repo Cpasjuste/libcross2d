@@ -345,7 +345,7 @@ namespace c2d {
         // Member data
         ////////////////////////////////////////////////////////////
         Texture *m_texture = nullptr;          ///< Texture of the shape
-        IntRect m_textureRect;      ///< Rectangle defining the area of the source texture to display
+        IntRect m_tex_rect;      ///< Rectangle defining the area of the source texture to display
         Color m_fillColor;        ///< Fill color
         Color m_outlineColor;     ///< Outline color
         float m_outlineThickness; ///< Thickness of the shape's outline

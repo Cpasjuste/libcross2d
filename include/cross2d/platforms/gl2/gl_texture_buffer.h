@@ -25,7 +25,7 @@ namespace c2d {
         unsigned int fbo = 0;
 
     private:
-        int createTexture(const Vector2i &size = Vector2i(0, 0), Format format = Format::RGBA8);
+        int createTexture(Format format = Format::RGBA8);
 
         void deleteTexture();
     };

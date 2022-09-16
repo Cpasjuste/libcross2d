@@ -28,7 +28,7 @@ void GradientRectangle::setSize(float width, float height) {
     updatePositions();
 }
 
-const Vector2f &GradientRectangle::getSize() const {
+Vector2f GradientRectangle::getSize() {
     return m_size;
 }
 

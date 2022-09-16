@@ -349,7 +349,7 @@ namespace c2d {
 
         Origin getOrigin() const override;
 
-        c2d::Vector2f &getSize() const override;
+        c2d::Vector2f getSize() override;
 
         void setPosition(float x, float y) override;
 

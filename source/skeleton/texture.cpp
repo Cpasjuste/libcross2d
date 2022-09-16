@@ -8,9 +8,6 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
 #ifdef __3DS__
-//#define STBI_MALLOC linearAlloc
-//#define STBI_REALLOC linearRealloc
-//#define STBI_FREE linearFree
 #define MALLOC linearAlloc
 #define FREE linearFree
 #else
@@ -39,23 +36,23 @@ Texture::Texture(const std::string &p) : RectangleShape({0, 0}) {
 
     // handle pot textures
     if (m_pot) {
-        pixelsToPot(w, h);
+        toPot(w, h);
     } else {
-        m_tex_size = {w, h};
+        m_tex_size_pot = {w, h};
     }
 
     // set texture parameters
-    m_pitch = w * m_bpp;
-    m_image_size = {w, h};
+    m_pitch = m_tex_size_pot.x * m_bpp;
+    m_tex_size = {w, h};
     m_unlock_rect = {0, 0, w, h};
     Texture::setSize((float) w, (float) h);
     Texture::setTexture(this);
     Texture::setFillColor(Color::White);
     Texture::setShader(0);
 
-    printf("Texture(%p): tex: %ix%i (img: %ix%i, rect: %ix%i), bpp: %i, pitch: %i, path: %s\n",
-           this, m_tex_size.x, m_tex_size.y, m_image_size.x, m_image_size.y,
-           m_textureRect.width, m_textureRect.height, m_bpp, m_pitch, m_path.c_str());
+    printf("Texture(%p): tex: %ix%i (pot: %ix%i, rect: %ix%i), bpp: %i, pitch: %i, path: %s\n",
+           this, m_tex_size.x, m_tex_size.y, m_tex_size_pot.x, m_tex_size_pot.y,
+           m_tex_rect.width, m_tex_rect.height, m_bpp, m_pitch, m_path.c_str());
 }
 
 Texture::Texture(const unsigned char *buffer, int bufferSize) : RectangleShape({0, 0}) {
@@ -72,23 +69,23 @@ Texture::Texture(const unsigned char *buffer, int bufferSize) : RectangleShape({
 
     // handle pot textures
     if (m_pot) {
-        pixelsToPot(w, h);
+        toPot(w, h);
     } else {
-        m_tex_size = {w, h};
+        m_tex_size_pot = {w, h};
     }
 
     // set texture parameters
-    m_pitch = w * m_bpp;
-    m_image_size = {w, h};
+    m_pitch = m_tex_size_pot.x * m_bpp;
+    m_tex_size = {w, h};
     m_unlock_rect = {0, 0, w, h};
     Texture::setSize((float) w, (float) h);
     Texture::setTexture(this);
     Texture::setFillColor(Color::White);
     Texture::setShader(0);
 
-    printf("Texture(%p): tex: %ix%i (img: %ix%i, rect: %ix%i), bpp: %i, pitch: %i\n",
-           this, m_tex_size.x, m_tex_size.y, m_image_size.x, m_image_size.y,
-           m_textureRect.width, m_textureRect.height, m_bpp, m_pitch);
+    printf("Texture(%p): tex: %ix%i (pot: %ix%i, rect: %ix%i), bpp: %i, pitch: %i\n",
+           this, m_tex_size.x, m_tex_size.y, m_tex_size_pot.x, m_tex_size_pot.y,
+           m_tex_rect.width, m_tex_rect.height, m_bpp, m_pitch);
 }
 
 Texture::Texture(const Vector2i &size, Format format) : RectangleShape(Vector2f{0, 0}) {
@@ -96,36 +93,36 @@ Texture::Texture(const Vector2i &size, Format format) : RectangleShape(Vector2f{
     m_format = format;
     m_bpp = format == Format::RGB565 ? 2 : 4;
 
-    m_pixels = (uint8_t *) MALLOC(size.x * size.y * m_bpp);
+    // handle pot textures
+    if (m_pot) {
+        m_tex_size_pot = {Utility::pow2(size.x), Utility::pow2(size.y)};
+    } else {
+        m_tex_size_pot = {size.x, size.y};
+    }
+
+    m_pixels = (uint8_t *) MALLOC(m_tex_size_pot.x * m_tex_size_pot.y * m_bpp);
     if (!m_pixels) {
         return;
     }
-
-    // handle pot textures
-    if (m_pot) {
-        pixelsToPot(size.x, size.y);
-    } else {
-        m_tex_size = m_image_size = {size.x, size.y};
-    }
-
-    memset(m_pixels, 0, size.x * size.y * m_bpp);
+    memset(m_pixels, 0, m_tex_size_pot.x * m_tex_size_pot.y * m_bpp);
 
     // set texture parameters
-    m_pitch = size.x * m_bpp;
+    m_pitch = m_tex_size_pot.x * m_bpp;
+    m_tex_size = {size.x, size.y};
     m_unlock_rect = {0, 0, size.x, size.y};
     Texture::setSize((float) size.x, (float) size.y);
     Texture::setTexture(this);
     Texture::setFillColor(Color::White);
     Texture::setShader(0);
 
-    printf("Texture(%p): tex: %ix%i (img: %ix%i, rect: %ix%i), bpp: %i, pitch: %i\n",
-           this, m_tex_size.x, m_tex_size.y, m_image_size.x, m_image_size.y,
-           m_textureRect.width, m_textureRect.height, m_bpp, m_pitch);
+    printf("Texture(%p): tex: %ix%i (pot: %ix%i, rect: %ix%i), bpp: %i, pitch: %i\n",
+           this, m_tex_size.x, m_tex_size.y, m_tex_size_pot.x, m_tex_size_pot.y,
+           m_tex_rect.width, m_tex_rect.height, m_bpp, m_pitch);
 }
 
 int Texture::lock(uint8_t **pixels, int *pitch, IntRect rect) {
     if (rect == IntRect()) {
-        m_unlock_rect = {0, 0, getTextureRect().width, getTextureRect().height};
+        m_unlock_rect = m_tex_rect;
     } else {
         m_unlock_rect = rect;
     }
@@ -144,8 +141,8 @@ int Texture::lock(uint8_t **pixels, int *pitch, IntRect rect) {
 
 int Texture::save(const std::string &path) {
     int res;
-    int width = getTextureRect().width;
-    int height = getTextureRect().height;
+    int width = m_tex_rect.width;
+    int height = m_tex_rect.height;
 
     printf("Texture::save(%p): %ix%i, bpp: %i, pitch: %i\n",
            this, width, height, m_bpp, m_pitch);
@@ -172,20 +169,19 @@ int Texture::save(const std::string &path) {
     return res;
 }
 
-void Texture::pixelsToPot(int w, int h) {
-    m_tex_size = {Utility::pow2(w), Utility::pow2(h)};
-    m_image_size = {w, h};
-    auto *pixels = (uint8_t *) MALLOC(m_tex_size.x * m_tex_size.y * m_bpp);
+void Texture::toPot(int w, int h) {
+    m_tex_size_pot = {Utility::pow2(w), Utility::pow2(h)};
 
+    auto *pixels = (uint8_t *) MALLOC(m_tex_size_pot.x * m_tex_size_pot.y * m_bpp);
     if (!pixels) {
         FREE(m_pixels);
         m_pixels = nullptr;
         return;
     }
 
-    memset(pixels, 0, m_tex_size.x * m_tex_size.y * m_bpp);
+    memset(pixels, 0, m_tex_size_pot.x * m_tex_size_pot.y * m_bpp);
     uint8_t *dst = pixels;
-    int dst_pitch = m_tex_size.x * m_bpp;
+    int dst_pitch = m_tex_size_pot.x * m_bpp;
     uint8_t *src = m_pixels;
     int src_pitch = w * m_bpp;
     for (int i = 0; i < h; i++) {

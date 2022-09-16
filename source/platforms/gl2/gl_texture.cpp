@@ -31,10 +31,10 @@ int GLTexture::createTexture() {
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 #endif
     if (m_format == Format::RGBA8) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_tex_size.x, m_tex_size.y,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_tex_size_pot.x, m_tex_size_pot.y,
                      0, GL_RGBA, GL_UNSIGNED_BYTE, m_pixels);
     } else {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, m_tex_size.x, m_tex_size.y,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, m_tex_size_pot.x, m_tex_size_pot.y,
                      0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, m_pixels);
     }
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -44,6 +44,7 @@ int GLTexture::createTexture() {
     return 0;
 }
 
+// TODO: handle pot textures
 int GLTexture::resize(const Vector2i &size, bool keepPixels) {
     printf("GLTexture::resize: %ix%i > %ix%i\n",
            m_tex_size.x, m_tex_size.y, (int) size.x, (int) size.y);
@@ -91,7 +92,7 @@ int GLTexture::resize(const Vector2i &size, bool keepPixels) {
 
     // update texture information
     m_pitch = dst_pitch;
-    m_tex_size = m_image_size = {size.x, size.y};
+    m_tex_size = {size.x, size.y};
     m_unlock_rect = {0, 0, size.x, size.y};
     setSize({(float) size.x, (float) size.y});
     setTextureRect(m_unlock_rect);

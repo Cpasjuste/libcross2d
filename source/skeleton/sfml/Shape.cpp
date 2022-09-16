@@ -61,9 +61,10 @@ namespace c2d {
         if (texture) {
             m_texture = texture;
             // Recompute the texture area if requested, or if there was no texture & rect before
-            if (resetRect || m_textureRect == IntRect()) {
-                setTextureRect(IntRect(0, 0,
-                                       (int) m_texture->getTextureSize().x, (int) m_texture->getTextureSize().y));
+            if (resetRect || m_tex_rect == IntRect()) {
+                setTextureRect(IntRect(
+                        0, 0,
+                        (int) m_texture->getTextureSize().x, (int) m_texture->getTextureSize().y));
             }
             m_shape_dirty = true;
         }
@@ -78,31 +79,19 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Shape::setTextureRect(const IntRect &rect) {
-        m_textureRect = rect;
-
+        m_tex_rect = rect;
         if (m_texture) {
-#ifndef __VITA__
+#if !defined(__VITA__) && !defined(__3DS__)
             m_texture->m_pitch = rect.width * m_texture->m_bpp;
 #endif
-            if (m_texture->isPot()) {
-                // calculate texture offset for pot textures
-                Vector2i offset = {
-                        m_texture->getTextureSize().x - m_texture->getImageSize().x,
-                        m_texture->getTextureSize().y - m_texture->getImageSize().y
-                };
-                m_textureRect = {
-                        rect.left, rect.top, rect.width - offset.x, rect.height - offset.y
-                };
-            }
         }
-
         m_shape_dirty = true;
     }
 
 
 ////////////////////////////////////////////////////////////
     const IntRect &Shape::getTextureRect() const {
-        return m_textureRect;
+        return m_tex_rect;
     }
 
 
@@ -230,7 +219,7 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     Shape::Shape() :
             m_texture(nullptr),
-            m_textureRect(),
+            m_tex_rect(),
             m_fillColor(255, 255, 255),
             m_outlineColor(255, 255, 255),
             m_outlineThickness(0),
@@ -243,7 +232,6 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Shape::update() {
-
         // Get the total number of points of the shape
         std::size_t count = getPointCount();
         if (count < 3) {
@@ -285,7 +273,6 @@ namespace c2d {
     }
 
     void Shape::onDraw(Transform &transform, bool draw) {
-
         if (m_shape_dirty) {
             update();
         }
@@ -321,7 +308,6 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void Shape::updateTexCoords() {
-
         if (m_texture == nullptr) {
             return;
         }
@@ -334,9 +320,11 @@ namespace c2d {
                     m_insideBounds.height > 0 ?
                     (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height : 0;
             m_vertices[i].texCoords.x =
-                    (m_textureRect.left + m_textureRect.width * xratio) / m_texture->getTextureSize().x;
+                    ((float) (m_tex_rect.left + m_tex_rect.width) * xratio) /
+                    (float) m_texture->getTextureSizePot().x;
             m_vertices[i].texCoords.y =
-                    (m_textureRect.top + m_textureRect.height * yratio) / m_texture->getTextureSize().y;
+                    ((float) (m_tex_rect.top + m_tex_rect.height) * yratio) /
+                    (float) m_texture->getTextureSizePot().y;
 #ifdef __BOX2D__
 #ifndef __PSP2__ // TODO: fixme
             if (m_body) {

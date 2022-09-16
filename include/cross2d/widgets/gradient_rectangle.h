@@ -22,7 +22,7 @@ namespace c2d {
 
         void setSize(float width, float height) override;
 
-        const Vector2f &getSize() const override;
+        Vector2f getSize() override;
 
         FloatRect getLocalBounds() const override;
 

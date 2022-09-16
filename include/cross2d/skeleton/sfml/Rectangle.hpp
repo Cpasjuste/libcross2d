@@ -68,7 +68,7 @@ namespace c2d {
         /// \see setSize
         ///
         ////////////////////////////////////////////////////////////
-        const c2d::Vector2f &getSize() const override;
+        c2d::Vector2f getSize() override;
 
         FloatRect getLocalBounds() const override;
 
