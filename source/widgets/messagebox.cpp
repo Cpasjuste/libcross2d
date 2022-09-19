@@ -8,20 +8,20 @@ using namespace c2d;
 
 MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *ipt,
                        c2d::Font *font, int fontSize) : RectangleShape(rect) {
-
     input = ipt;
 
-    title = new Text("TITLE", fontSize, font);
-    title->setPosition(16, 16);
+    float ratio = (float) fontSize / (float) C2D_DEFAULT_CHAR_SIZE;
+    title = new Text("TITLE", (unsigned int) ((float) fontSize + (10 * ratio)), font);
+    title->setPosition(16 * ratio, 16 * ratio);
     title->setSizeMax(rect.width - (float) fontSize * 2, (float) fontSize + 4);
     title->setOutlineColor(Color::Black);
     title->setOutlineThickness(2);
     add(title);
 
     message = new Text("MESSAGE", fontSize, font);
-    message->setPosition(16, (float) fontSize + 64);
+    message->setPosition(16 * ratio, (float) fontSize + (64 * ratio));
     message->setSizeMax(rect.width - (float) fontSize * 2, rect.height * 0.6f);
-    message->setLineSpacingModifier(6);
+    message->setLineSpacingModifier(6 * ratio);
     message->setOverflow(Text::Overflow::NewLine);
     message->setOutlineColor(Color::Black);
     message->setOutlineThickness(2);
@@ -41,10 +41,10 @@ MessageBox::MessageBox(const c2d::FloatRect &rect, c2d::Input *ipt,
     timeout = new Text("9", fontSize, font);
     timeout->setOutlineColor(Color::Black);
     timeout->setOutlineThickness(1);
-    timeout->setSize(rect.width - 16, 0);
-    timeout->setPosition(rect.width / 2, rect.height - buttons[0]->getSize().y - 16);
+    timeout->setSize(rect.width - (16 * ratio), 0);
+    timeout->setPosition(rect.width / 2, rect.height - buttons[0]->getSize().y - (16 * ratio));
     timeout->setOrigin(Origin::Center);
-    timeout->setLineSpacingModifier(4);
+    timeout->setLineSpacingModifier(4 * ratio);
     add(timeout);
 
     setVisibility(Visibility::Hidden);

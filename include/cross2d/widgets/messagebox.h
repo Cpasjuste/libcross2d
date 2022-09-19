@@ -6,9 +6,7 @@
 #define C2D_MESSAGEBOX_H
 
 namespace c2d {
-
     class MessageBox : public RectangleShape {
-
     public:
 
         enum MessageBoxResult : int {
@@ -40,7 +38,6 @@ namespace c2d {
         void setSize(float width, float height) override;
 
     private:
-
         c2d::Input *input = nullptr;
         c2d::Text *title = nullptr;
         c2d::Text *message = nullptr;
