@@ -93,6 +93,8 @@ CTRAudio::CTRAudio(int rate, int samples, C2DAudioCallback cb) : Audio(rate, sam
     // Set the ndsp sound frame callback which signals our audioThread
     ndspSetCallback(audioCallback, nullptr);
 
+    // start audio thread callback
+    s_quit = false;
     thread = new C2DThread(audioThread, this);
 
     available = true;
