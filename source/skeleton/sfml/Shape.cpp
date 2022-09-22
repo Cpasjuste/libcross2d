@@ -62,9 +62,7 @@ namespace c2d {
             m_texture = texture;
             // Recompute the texture area if requested, or if there was no texture & rect before
             if (resetRect || m_tex_rect == IntRect()) {
-                setTextureRect(IntRect(
-                        0, 0,
-                        (int) m_texture->getTextureSize().x, (int) m_texture->getTextureSize().y));
+                setTextureRect(IntRect({0, 0}, Vector2i(m_texture->getSize())));
             }
             m_shape_dirty = true;
         }

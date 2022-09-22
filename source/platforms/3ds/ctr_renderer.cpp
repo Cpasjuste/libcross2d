@@ -5,6 +5,7 @@
 #include "cross2d/platforms/3ds/ctr_texture.h"
 #include "cross2d/platforms/3ds/ctr_renderer.h"
 #include "vshader.pica.shbin.h"
+#include "ctr_sys.h"
 
 #ifndef NDEBUG
 
@@ -123,6 +124,8 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     u32 *buffer = (u32 *) memalign(SOC_ALIGN, SOC_BUFFER_SIZE);
     socInit(buffer, SOC_BUFFER_SIZE);
     link_sock = link3dsStdio();
+
+    printf(">> heap: %lu\n", ctr_get_heap_space());
 #endif
 
     available = true;

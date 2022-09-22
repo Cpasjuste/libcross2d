@@ -8,8 +8,6 @@
 #include "cross2d/skeleton/texture.h"
 #include "citro3d.h"
 
-void *linear_realloc(void *mem, size_t size);
-
 namespace c2d {
 
     class CTRTexture : public Texture {
