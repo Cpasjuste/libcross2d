@@ -5,6 +5,9 @@
 #include <3ds.h>
 #include "ctr_sys.h"
 
+// minimize linear heap as possible to get a bigger (non-linear) heap size
+__attribute__((weak)) u32 __ctru_linear_heap_size = 0x800000;
+
 u32 ctr_get_heap_space() {
     s64 mem_used;
     //u32 app_memory = *((u32 *) 0x1FF80040);

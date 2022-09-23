@@ -28,10 +28,16 @@ static inline u32 get_morton_offset(u32 x, u32 y, u32 bytes_per_pixel) {
 
 CTRTexture::CTRTexture(const std::string &path) : Texture(path) {
     available = createTexture() == 0;
+    // no need to keep pixels data anymore (3ds low mem)
+    linearFree(m_pixels);
+    m_pixels = nullptr;
 }
 
 CTRTexture::CTRTexture(const unsigned char *buffer, int bufferSize) : Texture(buffer, bufferSize) {
     available = createTexture() == 0;
+    // no need to keep pixels data anymore (3ds low mem)
+    linearFree(m_pixels);
+    m_pixels = nullptr;
 }
 
 CTRTexture::CTRTexture(const Vector2i &size, Format format) : Texture(size, format) {
@@ -46,7 +52,6 @@ int CTRTexture::createTexture() {
 
     m_tex = new C3D_Tex();
     if (m_format == Format::RGB565) {
-        // TODO: test vram performance on unlock
         if (!C3D_TexInitVRAM(m_tex, (u16) m_tex_size_pot.x, (u16) m_tex_size_pot.y, GPU_RGB565)) {
             printf("CTRTexture::createTexture: C3D_TexInitVRAM failed\n");
             delete (m_tex);
