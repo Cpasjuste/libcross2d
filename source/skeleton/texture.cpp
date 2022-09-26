@@ -8,6 +8,9 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
 #ifdef __3DS__
+//#define STBI_MALLOC linearAlloc
+//#define STBI_REALLOC linearRealloc
+//#define STBI_FREE linearFree
 #define MALLOC linearAlloc
 #define FREE linearFree
 #else

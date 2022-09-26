@@ -22,6 +22,7 @@ float Utility::random(float min, float max) {
 
 int Utility::pow2(int i, int min) {
     if (i == 0) return 0;
+    if ((i & (i - 1)) == 0) return i;
     int n = 2;
     while (i > n) n <<= 1;
     return n > min ? n : min;
