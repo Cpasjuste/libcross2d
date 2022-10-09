@@ -27,7 +27,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.Selection;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
@@ -59,8 +61,8 @@ import java.util.Locale;
 
 
 /**
- SDL Activity
- */
+    SDL Activity
+*/
 public class SDLActivity extends Activity implements View.OnSystemUiVisibilityChangeListener {
     private static final String TAG = "SDL";
 /*
@@ -94,9 +96,11 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
         s2 = s_copy & InputDevice.SOURCE_ANY; // keep source only, no class;
 
-        tst = InputDevice.SOURCE_BLUETOOTH_STYLUS;
-        if ((s & tst) == tst) src += " BLUETOOTH_STYLUS";
-        s2 &= ~tst;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            tst = InputDevice.SOURCE_BLUETOOTH_STYLUS;
+            if ((s & tst) == tst) src += " BLUETOOTH_STYLUS";
+            s2 &= ~tst;
+        }
 
         tst = InputDevice.SOURCE_DPAD;
         if ((s & tst) == tst) src += " DPAD";
@@ -106,9 +110,11 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         if ((s & tst) == tst) src += " GAMEPAD";
         s2 &= ~tst;
 
-        tst = InputDevice.SOURCE_HDMI;
-        if ((s & tst) == tst) src += " HDMI";
-        s2 &= ~tst;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tst = InputDevice.SOURCE_HDMI;
+            if ((s & tst) == tst) src += " HDMI";
+            s2 &= ~tst;
+        }
 
         tst = InputDevice.SOURCE_JOYSTICK;
         if ((s & tst) == tst) src += " JOYSTICK";
@@ -143,9 +149,11 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         if ((s & tst) == tst) src += " TOUCHSCREEN";
         s2 &= ~tst;
 
-        tst = InputDevice.SOURCE_TOUCH_NAVIGATION;
-        if ((s & tst) == tst) src += " TOUCH_NAVIGATION";
-        s2 &= ~tst;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            tst = InputDevice.SOURCE_TOUCH_NAVIGATION;
+            if ((s & tst) == tst) src += " TOUCH_NAVIGATION";
+            s2 &= ~tst;
+        }
 
         tst = InputDevice.SOURCE_TRACKBALL;
         if ((s & tst) == tst) src += " TRACKBALL";
@@ -193,7 +201,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
     // Handle the state of the native layer
     public enum NativeState {
-        INIT, RESUMED, PAUSED
+           INIT, RESUMED, PAUSED
     }
 
     public static NativeState mNextNativeState;
@@ -264,20 +272,20 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
      */
     protected String[] getLibraries() {
         return new String[] {
-                "SDL2",
-                // "SDL2_image",
-                // "SDL2_mixer",
-                // "SDL2_net",
-                // "SDL2_ttf",
-                "main"
+            "SDL2",
+            // "SDL2_image",
+            // "SDL2_mixer",
+            // "SDL2_net",
+            // "SDL2_ttf",
+            "main"
         };
     }
 
     // Load the .so
     public void loadLibraries() {
-        for (String lib : getLibraries()) {
-            SDL.loadLibrary(lib);
-        }
+       for (String lib : getLibraries()) {
+          SDL.loadLibrary(lib);
+       }
     }
 
     /**
@@ -341,22 +349,22 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
             mSingleton = this;
             AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
             dlgAlert.setMessage("An error occurred while trying to start the application. Please try again and/or reinstall."
-                    + System.getProperty("line.separator")
-                    + System.getProperty("line.separator")
-                    + "Error: " + errorMsgBrokenLib);
+                  + System.getProperty("line.separator")
+                  + System.getProperty("line.separator")
+                  + "Error: " + errorMsgBrokenLib);
             dlgAlert.setTitle("SDL Error");
             dlgAlert.setPositiveButton("Exit",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog,int id) {
-                            // if this button is clicked, close current activity
-                            SDLActivity.mSingleton.finish();
-                        }
-                    });
-            dlgAlert.setCancelable(false);
-            dlgAlert.create().show();
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, close current activity
+                        SDLActivity.mSingleton.finish();
+                    }
+                });
+           dlgAlert.setCancelable(false);
+           dlgAlert.create().show();
 
-            return;
+           return;
         }
 
         // Set up JNI
@@ -395,7 +403,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
         setContentView(mLayout);
 
-        setWindowStyle(true);
+        setWindowStyle(false);
 
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
 
@@ -426,7 +434,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         mIsResumedCalled = true;
 
         if (SDLActivity.mBrokenLibraries) {
-            return;
+           return;
         }
 
         SDLActivity.handleNativeState();
@@ -513,23 +521,23 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         Log.v(TAG, "onWindowFocusChanged(): " + hasFocus);
 
         if (SDLActivity.mBrokenLibraries) {
-            return;
+           return;
         }
 
         mHasFocus = hasFocus;
         if (hasFocus) {
-            mNextNativeState = NativeState.RESUMED;
-            SDLActivity.getMotionListener().reclaimRelativeMouseModeIfNeeded();
+           mNextNativeState = NativeState.RESUMED;
+           SDLActivity.getMotionListener().reclaimRelativeMouseModeIfNeeded();
 
-            SDLActivity.handleNativeState();
-            nativeFocusChanged(true);
+           SDLActivity.handleNativeState();
+           nativeFocusChanged(true);
 
         } else {
-            nativeFocusChanged(false);
-            if (!mHasMultiWindow) {
-                mNextNativeState = NativeState.PAUSED;
-                SDLActivity.handleNativeState();
-            }
+           nativeFocusChanged(false);
+           if (!mHasMultiWindow) {
+               mNextNativeState = NativeState.PAUSED;
+               SDLActivity.handleNativeState();
+           }
         }
     }
 
@@ -539,7 +547,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         super.onLowMemory();
 
         if (SDLActivity.mBrokenLibraries) {
-            return;
+           return;
         }
 
         SDLActivity.nativeLowMemory();
@@ -551,7 +559,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         super.onConfigurationChanged(newConfig);
 
         if (SDLActivity.mBrokenLibraries) {
-            return;
+           return;
         }
 
         if (mCurrentLocale == null || !mCurrentLocale.equals(newConfig.locale)) {
@@ -570,8 +578,8 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         }
 
         if (SDLActivity.mBrokenLibraries) {
-            super.onDestroy();
-            return;
+           super.onDestroy();
+           return;
         }
 
         if (SDLActivity.mSDLThread != null) {
@@ -637,17 +645,17 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     public boolean dispatchKeyEvent(KeyEvent event) {
 
         if (SDLActivity.mBrokenLibraries) {
-            return false;
+           return false;
         }
 
         int keyCode = event.getKeyCode();
         // Ignore certain special keys so they're handled by Android
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
-                keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
-                keyCode == KeyEvent.KEYCODE_CAMERA ||
-                keyCode == KeyEvent.KEYCODE_ZOOM_IN || /* API 11 */
-                keyCode == KeyEvent.KEYCODE_ZOOM_OUT /* API 11 */
-        ) {
+            keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
+            keyCode == KeyEvent.KEYCODE_CAMERA ||
+            keyCode == KeyEvent.KEYCODE_ZOOM_IN || /* API 11 */
+            keyCode == KeyEvent.KEYCODE_ZOOM_OUT /* API 11 */
+            ) {
             return false;
         }
         return super.dispatchKeyEvent(event);
@@ -739,75 +747,75 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
                 return;
             }
             switch (msg.arg1) {
-                case COMMAND_CHANGE_TITLE:
-                    if (context instanceof Activity) {
-                        ((Activity) context).setTitle((String)msg.obj);
-                    } else {
-                        Log.e(TAG, "error handling message, getContext() returned no Activity");
-                    }
-                    break;
-                case COMMAND_CHANGE_WINDOW_STYLE:
-                    if (Build.VERSION.SDK_INT >= 19) {
-                        if (context instanceof Activity) {
-                            Window window = ((Activity) context).getWindow();
-                            if (window != null) {
-                                if ((msg.obj instanceof Integer) && ((Integer) msg.obj != 0)) {
-                                    int flags = View.SYSTEM_UI_FLAG_FULLSCREEN |
-                                            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                                            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
-                                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.INVISIBLE;
-                                    window.getDecorView().setSystemUiVisibility(flags);
-                                    window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                                    window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-                                    SDLActivity.mFullscreenModeActive = true;
-                                } else {
-                                    int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_VISIBLE;
-                                    window.getDecorView().setSystemUiVisibility(flags);
-                                    window.addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-                                    window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                                    SDLActivity.mFullscreenModeActive = false;
-                                }
-                            }
-                        } else {
-                            Log.e(TAG, "error handling message, getContext() returned no Activity");
-                        }
-                    }
-                    break;
-                case COMMAND_TEXTEDIT_HIDE:
-                    if (mTextEdit != null) {
-                        // Note: On some devices setting view to GONE creates a flicker in landscape.
-                        // Setting the View's sizes to 0 is similar to GONE but without the flicker.
-                        // The sizes will be set to useful values when the keyboard is shown again.
-                        mTextEdit.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
-
-                        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(mTextEdit.getWindowToken(), 0);
-
-                        mScreenKeyboardShown = false;
-
-                        mSurface.requestFocus();
-                    }
-                    break;
-                case COMMAND_SET_KEEP_SCREEN_ON:
-                {
+            case COMMAND_CHANGE_TITLE:
+                if (context instanceof Activity) {
+                    ((Activity) context).setTitle((String)msg.obj);
+                } else {
+                    Log.e(TAG, "error handling message, getContext() returned no Activity");
+                }
+                break;
+            case COMMAND_CHANGE_WINDOW_STYLE:
+                if (Build.VERSION.SDK_INT >= 19) {
                     if (context instanceof Activity) {
                         Window window = ((Activity) context).getWindow();
                         if (window != null) {
                             if ((msg.obj instanceof Integer) && ((Integer) msg.obj != 0)) {
-                                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                                int flags = View.SYSTEM_UI_FLAG_FULLSCREEN |
+                                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
+                                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.INVISIBLE;
+                                window.getDecorView().setSystemUiVisibility(flags);
+                                window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                                window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+                                SDLActivity.mFullscreenModeActive = true;
                             } else {
-                                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                                int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_VISIBLE;
+                                window.getDecorView().setSystemUiVisibility(flags);
+                                window.addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+                                window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                                SDLActivity.mFullscreenModeActive = false;
                             }
                         }
+                    } else {
+                        Log.e(TAG, "error handling message, getContext() returned no Activity");
                     }
-                    break;
                 }
-                default:
-                    if ((context instanceof SDLActivity) && !((SDLActivity) context).onUnhandledMessage(msg.arg1, msg.obj)) {
-                        Log.e(TAG, "error handling message, command is " + msg.arg1);
+                break;
+            case COMMAND_TEXTEDIT_HIDE:
+                if (mTextEdit != null) {
+                    // Note: On some devices setting view to GONE creates a flicker in landscape.
+                    // Setting the View's sizes to 0 is similar to GONE but without the flicker.
+                    // The sizes will be set to useful values when the keyboard is shown again.
+                    mTextEdit.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
+
+                    InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mTextEdit.getWindowToken(), 0);
+
+                    mScreenKeyboardShown = false;
+
+                    mSurface.requestFocus();
+                }
+                break;
+            case COMMAND_SET_KEEP_SCREEN_ON:
+            {
+                if (context instanceof Activity) {
+                    Window window = ((Activity) context).getWindow();
+                    if (window != null) {
+                        if ((msg.obj instanceof Integer) && ((Integer) msg.obj != 0)) {
+                            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                        } else {
+                            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                        }
                     }
+                }
+                break;
+            }
+            default:
+                if ((context instanceof SDLActivity) && !((SDLActivity) context).onUnhandledMessage(msg.arg1, msg.obj)) {
+                    Log.e(TAG, "error handling message, command is " + msg.arg1);
+                }
             }
         }
     }
@@ -1206,7 +1214,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
             /* environment variables set! */
             return true;
         } catch (Exception e) {
-            Log.v(TAG, "exception " + e.toString());
+           Log.v(TAG, "exception " + e.toString());
         }
         return false;
     }
@@ -1628,42 +1636,42 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     public static boolean setSystemCursor(int cursorID) {
         int cursor_type = 0; //PointerIcon.TYPE_NULL;
         switch (cursorID) {
-            case SDL_SYSTEM_CURSOR_ARROW:
-                cursor_type = 1000; //PointerIcon.TYPE_ARROW;
-                break;
-            case SDL_SYSTEM_CURSOR_IBEAM:
-                cursor_type = 1008; //PointerIcon.TYPE_TEXT;
-                break;
-            case SDL_SYSTEM_CURSOR_WAIT:
-                cursor_type = 1004; //PointerIcon.TYPE_WAIT;
-                break;
-            case SDL_SYSTEM_CURSOR_CROSSHAIR:
-                cursor_type = 1007; //PointerIcon.TYPE_CROSSHAIR;
-                break;
-            case SDL_SYSTEM_CURSOR_WAITARROW:
-                cursor_type = 1004; //PointerIcon.TYPE_WAIT;
-                break;
-            case SDL_SYSTEM_CURSOR_SIZENWSE:
-                cursor_type = 1017; //PointerIcon.TYPE_TOP_LEFT_DIAGONAL_DOUBLE_ARROW;
-                break;
-            case SDL_SYSTEM_CURSOR_SIZENESW:
-                cursor_type = 1016; //PointerIcon.TYPE_TOP_RIGHT_DIAGONAL_DOUBLE_ARROW;
-                break;
-            case SDL_SYSTEM_CURSOR_SIZEWE:
-                cursor_type = 1014; //PointerIcon.TYPE_HORIZONTAL_DOUBLE_ARROW;
-                break;
-            case SDL_SYSTEM_CURSOR_SIZENS:
-                cursor_type = 1015; //PointerIcon.TYPE_VERTICAL_DOUBLE_ARROW;
-                break;
-            case SDL_SYSTEM_CURSOR_SIZEALL:
-                cursor_type = 1020; //PointerIcon.TYPE_GRAB;
-                break;
-            case SDL_SYSTEM_CURSOR_NO:
-                cursor_type = 1012; //PointerIcon.TYPE_NO_DROP;
-                break;
-            case SDL_SYSTEM_CURSOR_HAND:
-                cursor_type = 1002; //PointerIcon.TYPE_HAND;
-                break;
+        case SDL_SYSTEM_CURSOR_ARROW:
+            cursor_type = 1000; //PointerIcon.TYPE_ARROW;
+            break;
+        case SDL_SYSTEM_CURSOR_IBEAM:
+            cursor_type = 1008; //PointerIcon.TYPE_TEXT;
+            break;
+        case SDL_SYSTEM_CURSOR_WAIT:
+            cursor_type = 1004; //PointerIcon.TYPE_WAIT;
+            break;
+        case SDL_SYSTEM_CURSOR_CROSSHAIR:
+            cursor_type = 1007; //PointerIcon.TYPE_CROSSHAIR;
+            break;
+        case SDL_SYSTEM_CURSOR_WAITARROW:
+            cursor_type = 1004; //PointerIcon.TYPE_WAIT;
+            break;
+        case SDL_SYSTEM_CURSOR_SIZENWSE:
+            cursor_type = 1017; //PointerIcon.TYPE_TOP_LEFT_DIAGONAL_DOUBLE_ARROW;
+            break;
+        case SDL_SYSTEM_CURSOR_SIZENESW:
+            cursor_type = 1016; //PointerIcon.TYPE_TOP_RIGHT_DIAGONAL_DOUBLE_ARROW;
+            break;
+        case SDL_SYSTEM_CURSOR_SIZEWE:
+            cursor_type = 1014; //PointerIcon.TYPE_HORIZONTAL_DOUBLE_ARROW;
+            break;
+        case SDL_SYSTEM_CURSOR_SIZENS:
+            cursor_type = 1015; //PointerIcon.TYPE_VERTICAL_DOUBLE_ARROW;
+            break;
+        case SDL_SYSTEM_CURSOR_SIZEALL:
+            cursor_type = 1020; //PointerIcon.TYPE_GRAB;
+            break;
+        case SDL_SYSTEM_CURSOR_NO:
+            cursor_type = 1012; //PointerIcon.TYPE_NO_DROP;
+            break;
+        case SDL_SYSTEM_CURSOR_HAND:
+            cursor_type = 1002; //PointerIcon.TYPE_HAND;
+            break;
         }
         if (Build.VERSION.SDK_INT >= 24) {
             try {
@@ -1770,8 +1778,8 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 }
 
 /**
- Simple runnable to start the SDL application
- */
+    Simple runnable to start the SDL application
+*/
 class SDLMain implements Runnable {
     @Override
     public void run() {
@@ -1803,13 +1811,13 @@ class SDLMain implements Runnable {
 
 
 /**
- SDLSurface. This is what we draw on, so we need to know when it's created
- in order to do anything useful.
+    SDLSurface. This is what we draw on, so we need to know when it's created
+    in order to do anything useful.
 
- Because of this, that's where we set up the SDL thread
- */
+    Because of this, that's where we set up the SDL thread
+*/
 class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
-        View.OnKeyListener, View.OnTouchListener, SensorEventListener  {
+    View.OnKeyListener, View.OnTouchListener, SensorEventListener  {
 
     // Sensors
     protected SensorManager mSensorManager;
@@ -1865,14 +1873,6 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.v("SDL", "surfaceCreated()");
-        // cap to 60 fps
-        if (Build.VERSION.SDK_INT >= 31) {
-            getHolder().getSurface().setFrameRate(
-                    60, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT, Surface.CHANGE_FRAME_RATE_ALWAYS);
-        } else if (Build.VERSION.SDK_INT >= 30) {
-            getHolder().getSurface().setFrameRate(
-                    60, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT);
-        }
         SDLActivity.onNativeSurfaceCreated();
     }
 
@@ -1931,23 +1931,23 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
 
         if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT) {
             if (mWidth > mHeight) {
-                skip = true;
+               skip = true;
             }
         } else if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE) {
             if (mWidth < mHeight) {
-                skip = true;
+               skip = true;
             }
         }
 
         // Special Patch for Square Resolution: Black Berry Passport
         if (skip) {
-            double min = Math.min(mWidth, mHeight);
-            double max = Math.max(mWidth, mHeight);
+           double min = Math.min(mWidth, mHeight);
+           double max = Math.max(mWidth, mHeight);
 
-            if (max / min < 1.20) {
-                Log.v("SDL", "Don't skip on such aspect-ratio. Could be a square resolution.");
-                skip = false;
-            }
+           if (max / min < 1.20) {
+              Log.v("SDL", "Don't skip on such aspect-ratio. Could be a square resolution.");
+              skip = false;
+           }
         }
 
         // Don't skip in MultiWindow.
@@ -1961,9 +1961,9 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         }
 
         if (skip) {
-            Log.v("SDL", "Skip .. Surface is not ready.");
-            mIsSurfaceReady = false;
-            return;
+           Log.v("SDL", "Skip .. Surface is not ready.");
+           mIsSurfaceReady = false;
+           return;
         }
 
         /* If the surface has been previously destroyed by onNativeSurfaceDestroyed, recreate it here */
@@ -2034,11 +2034,11 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             // they are ignored here because sending them as mouse input to SDL is messy
             if ((keyCode == KeyEvent.KEYCODE_BACK) || (keyCode == KeyEvent.KEYCODE_FORWARD)) {
                 switch (event.getAction()) {
-                    case KeyEvent.ACTION_DOWN:
-                    case KeyEvent.ACTION_UP:
-                        // mark the event as handled or it will be handled by system
-                        // handling KEYCODE_BACK by system will call onBackPressed()
-                        return true;
+                case KeyEvent.ACTION_DOWN:
+                case KeyEvent.ACTION_UP:
+                    // mark the event as handled or it will be handled by system
+                    // handling KEYCODE_BACK by system will call onBackPressed()
+                    return true;
                 }
             }
         }
@@ -2149,18 +2149,18 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         }
 
         return true;
-    }
+   }
 
     // Sensor events
     public void enableSensor(int sensortype, boolean enabled) {
         // TODO: This uses getDefaultSensor - what if we have >1 accels?
         if (enabled) {
             mSensorManager.registerListener(this,
-                    mSensorManager.getDefaultSensor(sensortype),
-                    SensorManager.SENSOR_DELAY_GAME, null);
+                            mSensorManager.getDefaultSensor(sensortype),
+                            SensorManager.SENSOR_DELAY_GAME, null);
         } else {
             mSensorManager.unregisterListener(this,
-                    mSensorManager.getDefaultSensor(sensortype));
+                            mSensorManager.getDefaultSensor(sensortype));
         }
     }
 
@@ -2208,8 +2208,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             }
 
             SDLActivity.onNativeAccel(-x / SensorManager.GRAVITY_EARTH,
-                    y / SensorManager.GRAVITY_EARTH,
-                    event.values[2] / SensorManager.GRAVITY_EARTH);
+                                      y / SensorManager.GRAVITY_EARTH,
+                                      event.values[2] / SensorManager.GRAVITY_EARTH);
 
 
         }
@@ -2316,7 +2316,7 @@ class DummyEdit extends View implements View.OnKeyListener {
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
         ic = new SDLInputConnection(this, true);
 
-        outAttrs.inputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
+        outAttrs.inputType = InputType.TYPE_CLASS_TEXT;
         outAttrs.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI
                 | EditorInfo.IME_FLAG_NO_FULLSCREEN /* API 11 */;
 
@@ -2358,6 +2358,29 @@ class SDLInputConnection extends BaseInputConnection {
     @Override
     public boolean commitText(CharSequence text, int newCursorPosition) {
 
+        /* Generate backspaces for the text we're going to replace */
+        final Editable content = getEditable();
+        if (content != null) {
+            int a = getComposingSpanStart(content);
+            int b = getComposingSpanEnd(content);
+            if (a == -1 || b == -1) {
+                a = Selection.getSelectionStart(content);
+                b = Selection.getSelectionEnd(content);
+            }
+            if (a < 0) a = 0;
+            if (b < 0) b = 0;
+            if (b < a) {
+                int tmp = a;
+                a = b;
+                b = tmp;
+            }
+            int backspaces = (b - a);
+
+            for (int i = 0; i < backspaces; i++) {
+                nativeGenerateScancodeForUnichar('\b');
+            }
+        }
+
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c == '\n') {
@@ -2392,14 +2415,11 @@ class SDLInputConnection extends BaseInputConnection {
         // Workaround to capture backspace key. Ref: http://stackoverflow.com/questions/14560344/android-backspace-in-webview-baseinputconnection
         // and https://bugzilla.libsdl.org/show_bug.cgi?id=2265
         if (beforeLength > 0 && afterLength == 0) {
-            boolean ret = true;
             // backspace(s)
             while (beforeLength-- > 0) {
-                boolean ret_key = sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
-                        && sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL));
-                ret = ret && ret_key;
+                nativeGenerateScancodeForUnichar('\b');
             }
-            return ret;
+            return true;
         }
 
         return super.deleteSurroundingText(beforeLength, afterLength);
@@ -2407,17 +2427,17 @@ class SDLInputConnection extends BaseInputConnection {
 }
 
 class SDLClipboardHandler implements
-        ClipboardManager.OnPrimaryClipChangedListener {
+    ClipboardManager.OnPrimaryClipChangedListener {
 
     protected ClipboardManager mClipMgr;
 
     SDLClipboardHandler() {
-        mClipMgr = (ClipboardManager) SDL.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        mClipMgr.addPrimaryClipChangedListener(this);
+       mClipMgr = (ClipboardManager) SDL.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+       mClipMgr.addPrimaryClipChangedListener(this);
     }
 
     public boolean clipboardHasText() {
-        return mClipMgr.hasPrimaryClip();
+       return mClipMgr.hasPrimaryClip();
     }
 
     public String clipboardGetText() {
@@ -2435,10 +2455,10 @@ class SDLClipboardHandler implements
     }
 
     public void clipboardSetText(String string) {
-        mClipMgr.removePrimaryClipChangedListener(this);
-        ClipData clip = ClipData.newPlainText(null, string);
-        mClipMgr.setPrimaryClip(clip);
-        mClipMgr.addPrimaryClipChangedListener(this);
+       mClipMgr.removePrimaryClipChangedListener(this);
+       ClipData clip = ClipData.newPlainText(null, string);
+       mClipMgr.setPrimaryClip(clip);
+       mClipMgr.addPrimaryClipChangedListener(this);
     }
 
     @Override
@@ -2446,3 +2466,4 @@ class SDLClipboardHandler implements
         SDLActivity.onNativeClipboardChanged();
     }
 }
+
