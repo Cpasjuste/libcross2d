@@ -403,7 +403,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
         setContentView(mLayout);
 
-        setWindowStyle(false);
+        setWindowStyle(true);
 
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
 
@@ -1873,6 +1873,16 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.v("SDL", "surfaceCreated()");
+
+        // cap to 60 fps
+        if (Build.VERSION.SDK_INT >= 31) {
+            getHolder().getSurface().setFrameRate(
+                    60, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT, Surface.CHANGE_FRAME_RATE_ALWAYS);
+        } else if (Build.VERSION.SDK_INT >= 30) {
+            getHolder().getSurface().setFrameRate(
+                    60, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT);
+        }
+        
         SDLActivity.onNativeSurfaceCreated();
     }
 
