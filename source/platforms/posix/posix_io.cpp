@@ -40,13 +40,6 @@ std::string POSIXIo::getRomFsPath() {
     return "/tmp/c2d_romfs/";
 #elif __WINDOWS__
     return getDataPath() + "data_romfs/";
-#elif ANDROID
-    int state = SDL_AndroidGetExternalStorageState();
-    if (state & SDL_ANDROID_EXTERNAL_STORAGE_READ) {
-        return std::string(SDL_AndroidGetExternalStoragePath()) + "/romfs/";
-    } else {
-        return std::string(SDL_AndroidGetInternalStoragePath()) + "/romfs/";
-    }
 #else
     return Io::getRomFsPath();
 #endif
@@ -55,13 +48,6 @@ std::string POSIXIo::getRomFsPath() {
 std::string POSIXIo::getDataPath() {
 #if defined(__PSP2__)
     return getDataPath();
-#elif ANDROID
-    int state = SDL_AndroidGetExternalStorageState();
-    if (state & SDL_ANDROID_EXTERNAL_STORAGE_WRITE) {
-        return std::string(SDL_AndroidGetExternalStoragePath()) + "/data/";
-    } else {
-        return std::string(SDL_AndroidGetInternalStoragePath()) + "/data/";
-    }
 #else
     char buf[1024];
     if (getcwd(buf, sizeof(buf)) != nullptr) {

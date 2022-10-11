@@ -1882,7 +1882,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             getHolder().getSurface().setFrameRate(
                     60, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT);
         }
-        
+
         SDLActivity.onNativeSurfaceCreated();
     }
 

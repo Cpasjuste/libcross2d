@@ -28,7 +28,12 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
     }
 
 #if ANDROID
-    SDL_setenv("SDL_AUDIODRIVER", "openslES", 1);
+    for (int i = 0; i < SDL_GetNumAudioDrivers(); ++i) {
+        printf("SDL2Audio: available audio drivers %d: %s\n", i, SDL_GetAudioDriver(i));
+    }
+    //SDL_setenv("SDL_AUDIODRIVER", "AAudio", 1);
+    //SDL_setenv("SDL_AUDIODRIVER", "openslES", 1);
+    //SDL_setenv("SDL_AUDIODRIVER", "android", 1);
 #endif
 
     if (!SDL_WasInit(SDL_INIT_AUDIO)) {
@@ -43,7 +48,19 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
     wanted.freq = freq;
     wanted.format = AUDIO_S16SYS;
     wanted.channels = (Uint8) channels;
+#ifdef ANDROID
+    if (samples <= 512) {
+        wanted.samples = 512;
+    } else if (samples <= 1024) {
+        wanted.samples = 1024;
+    } else if (samples <= 2048) {
+        wanted.samples = 2048;
+    } else {
+        wanted.samples = samples;
+    }
+#else
     wanted.samples = samples;
+#endif
     wanted.callback = cb ? cb : audioThread;
     wanted.userdata = this;
 
@@ -54,15 +71,18 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
         return;
     }
 
+#if ANDROID
+    printf("SDL2Audio: driver: %s\n", SDL_GetCurrentAudioDriver());
+#endif
     printf("SDL2Audio: format %d (wanted: %d)\n", obtained.format, wanted.format);
     printf("SDL2Audio: frequency %d (wanted: %d)\n", obtained.freq, wanted.freq);
-    printf("SDL2Audio: samples %d (wanted: %d)\n", obtained.samples, wanted.samples);
+    printf("SDL2Audio: samples %d (wanted: %d)\n", obtained.samples, samples);
     printf("SDL2Audio: channels %d (wanted: %d)\n", obtained.channels, wanted.channels);
 
     // adjust to obtained values
-    m_samples = obtained.samples;
-    m_samples_size = m_samples * channels * (int) sizeof(int16_t);
-    m_buffer->resize(m_samples * channels * 3);
+    m_samples = samples;
+    m_samples_size = samples * channels * (int) sizeof(int16_t);
+    m_buffer->resize(obtained.samples * channels * 5);
 
     printf("SDL2Audio: rate = %i, samples = %i, samples size = %i (sdl samples size: %i)\n",
            m_sample_rate, m_samples, m_samples_size, obtained.size);

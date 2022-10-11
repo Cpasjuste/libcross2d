@@ -12,7 +12,7 @@ option(PLATFORM_VITA "Sony PS Vita target platform" OFF)
 option(PLATFORM_PS4 "Sony PS4 target platform" OFF)
 option(PLATFORM_PS3 "Sony PS3 target platform" OFF)
 option(PLATFORM_DREAMCAST "Sega Dreamcast platform target" OFF)
-option(PLATFORM_ANDROID "Android platform target (aarch64)" OFF)
+option(PLATFORM_ANDROID "Android platform target" OFF)
 
 # setup target toolchain
 include(cmake/toolchain.cmake)
@@ -405,6 +405,8 @@ elseif (PLATFORM_WINDOWS)
     endif ()
 elseif (PLATFORM_ANDROID)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
+    list(APPEND PLATFORM_SOURCES source/platforms/android/android_io.cpp)
+    list(APPEND PLATFORM_SOURCES source/platforms/android/android_device.cpp)
 endif ()
 
 list(APPEND C2D_CFLAGS -DC2D_SCREEN_WIDTH=${OPTION_SCREEN_WIDTH} -DC2D_SCREEN_HEIGHT=${OPTION_SCREEN_HEIGHT})

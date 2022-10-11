@@ -25,6 +25,7 @@
 #include "cross2d/skeleton/thread.h"
 #include "cross2d/skeleton/mutex.h"
 #include "cross2d/skeleton/cond.h"
+#include "cross2d/skeleton/device.h"
 #include "cross2d/widgets/button.h"
 #include "cross2d/widgets/textbox.h"
 #include "cross2d/widgets/listbox.h"
@@ -38,6 +39,7 @@
 
 #include "cross2d/widgets/messagebox.h"
 
+#define C2DDevice Device
 #define C2DRectangle RectangleShape
 #define C2DCircle CircleShape
 #define C2DFont Font
@@ -213,15 +215,24 @@ extern c2d::Renderer *c2d_renderer;
 #endif
 
 #include "c2d_sdl2.h"
-#include "cross2d/platforms/posix/posix_io.h"
-#include "cross2d/platforms/posix/posix_clock.h"
-
-#define C2DIo POSIXIo
-#define C2DClock POSIXClock
 
 #if ANDROID
+#include "cross2d/platforms/android/android_device.h"
+#undef C2DDevice
+#define C2DDevice ANDROIDDevice
+#include "cross2d/platforms/android/android_io.h"
+#define C2DIo AndroidIo
+
+#define NO_KEYBOARD
 #define printf SDL_Log
+#else
+#include "cross2d/platforms/posix/posix_io.h"
+#define C2DIo POSIXIo
 #endif
+
+#include "cross2d/platforms/posix/posix_clock.h"
+
+#define C2DClock POSIXClock
 
 #elif __SDL1__
 

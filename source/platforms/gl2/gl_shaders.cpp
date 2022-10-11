@@ -308,10 +308,18 @@ GLShaderList::GLShaderList() : ShaderList() {
     color = new GLShader("c2d-color", c2d_color_shader, c2d_color_shader_length, version);
     add(new GLShader("c2d-texture", c2d_texture_shader, c2d_texture_shader_length, version));
 
+    // that's all for the "retroid pocket 2"
+    std::string device = C2DDevice::getName();
+    if (device == "pocket2") {
+        return;
+    }
+
     // crt shaders
     add(new GLShader("crt-aperture", c2d_crt_aperture_shader, c2d_crt_aperture_shader_length, version));
 #ifndef __PS4__
+#ifndef ANDROID // TODO: disable for armv7 devices only, gles2 devices?
     add(new GLShader("crt-caligari", c2d_crt_caligari_shader, c2d_crt_caligari_shader_length, version));
+#endif
 #endif //__PS4__
     add(new GLShader("crt-cgwg-fast", c2d_crt_cgwg_fast_shader, c2d_crt_cgwg_fast_shader_length, version));
     add(new GLShader("crt-easymode", c2d_crt_easymode_shader, c2d_crt_easymode_shader_length, version));
