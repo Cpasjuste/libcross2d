@@ -24,11 +24,15 @@ void deinitNxLink();
 #endif
 
 Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
+#if defined(__LINUX__) && !defined(NDEBUG)
+    Renderer::setSize(1280, 720);
+#endif
 #ifdef __SWITCH__
     initNxLink();
 #endif
     printf("Renderer(%p)\n", this);
 
+    // set static access to renderer (TODO: handle this in a smarter way)
     c2d_renderer = this;
 
     m_input = new C2DInput();

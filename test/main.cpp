@@ -9,7 +9,7 @@ using namespace c2d;
 int main(int argc, char *argv[]) {
 
     // create main renderer
-    auto renderer = new C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT));
+    auto renderer = new C2DRenderer();
     renderer->setPrintStats(true);
     renderer->setClearColor(Color::Black);
 

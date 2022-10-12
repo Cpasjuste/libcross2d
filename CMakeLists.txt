@@ -37,8 +37,6 @@ option(OPTION_BUILTIN_LIBCONFIG "Build libconfig from sources" OFF)
 option(OPTION_FREETYPE "Build with freetype support" ON)
 option(OPTION_BOX2D "Build with box2d support" OFF)
 option(OPTION_TEST "Build test executable" OFF)
-set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width")
-set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height")
 set(ANDROID_ASSETS_PATH "" CACHE STRING "Android assets path")
 
 ####################
@@ -57,16 +55,12 @@ if (PLATFORM_ANDROID)
     set(OPTION_SDL2 ON CACHE BOOL "SDL2 support" FORCE)
     set(OPTION_RENDER_GLES2 ON CACHE BOOL "OpenGLES 2.0 rendering" FORCE)
     set(OPTION_LOADER_GLAD OFF CACHE BOOL "Glad OpenGL loader" FORCE)
-    set(OPTION_SCREEN_WIDTH 1920 CACHE STRING "Custom screen width" FORCE)
-    set(OPTION_SCREEN_HEIGHT 1080 CACHE STRING "Custom screen height" FORCE)
 endif ()
 
 if (PLATFORM_SWITCH)
     message(STATUS "C2D: Nintendo Switch with OpenGL 3.3 support enabled")
     set(OPTION_SDL2 ON CACHE BOOL "SDL2 support" FORCE)
     set(OPTION_RENDER_GL2 ON CACHE BOOL "OpenGL 3.3 rendering" FORCE)
-    set(OPTION_SCREEN_WIDTH 1280 CACHE STRING "Custom screen width" FORCE)
-    set(OPTION_SCREEN_HEIGHT 720 CACHE STRING "Custom screen height" FORCE)
     set(OPTION_BOX2D ON CACHE BOOL "Build with box2d support" FORCE)
 endif ()
 
@@ -74,8 +68,6 @@ if (PLATFORM_VITA)
     message(STATUS "C2D: Ps Vita with Gxm support enabled")
     set(OPTION_SDL2 ON CACHE BOOL "SDL2 support" FORCE)
     set(OPTION_BOX2D ON CACHE BOOL "Build with box2d support" FORCE)
-    set(OPTION_SCREEN_WIDTH 960 CACHE STRING "Custom screen width" FORCE)
-    set(OPTION_SCREEN_HEIGHT 544 CACHE STRING "Custom screen height" FORCE)
 endif ()
 
 if (PLATFORM_PS4)
@@ -83,15 +75,11 @@ if (PLATFORM_PS4)
     set(OPTION_SDL2 ON CACHE BOOL "OpenGLES 2.0 rendering" FORCE)
     set(OPTION_RENDER_GLES2 ON CACHE BOOL "OpenGLES 2.0 rendering" FORCE)
     set(OPTION_LOADER_GLAD OFF CACHE BOOL "Glad OpenGL loader" FORCE)
-    set(OPTION_SCREEN_WIDTH 1920 CACHE STRING "Custom screen width" FORCE)
-    set(OPTION_SCREEN_HEIGHT 1080 CACHE STRING "Custom screen height" FORCE)
 endif ()
 
 if (PLATFORM_DREAMCAST)
     message(STATUS "C2D: DREAMCAST OpenGL 1.2 support enabled")
     set(OPTION_RENDER_GL1 ON CACHE BOOL "OpenGL 1.2 rendering" FORCE)
-    set(OPTION_SCREEN_WIDTH 640 CACHE STRING "Custom screen width" FORCE)
-    set(OPTION_SCREEN_HEIGHT 480 CACHE STRING "Custom screen height" FORCE)
 endif ()
 
 if (PLATFORM_PS3)
@@ -298,8 +286,6 @@ elseif (PLATFORM_3DS)
     # 3DS PLATORM
     #####################
     enable_language(ASM)
-    set(OPTION_SCREEN_WIDTH 400 CACHE STRING "" FORCE)
-    set(OPTION_SCREEN_HEIGHT 240 CACHE STRING "" FORCE)
     set(PLATFORM_INCLUDES
             source/platforms/3ds
             source/platforms/posix
@@ -408,8 +394,6 @@ elseif (PLATFORM_ANDROID)
     list(APPEND PLATFORM_SOURCES source/platforms/android/android_io.cpp)
     list(APPEND PLATFORM_SOURCES source/platforms/android/android_device.cpp)
 endif ()
-
-list(APPEND C2D_CFLAGS -DC2D_SCREEN_WIDTH=${OPTION_SCREEN_WIDTH} -DC2D_SCREEN_HEIGHT=${OPTION_SCREEN_HEIGHT})
 
 add_library(${PROJECT_NAME} STATIC ${C2D_SOURCES} ${LIBCONFIG_SOURCES} ${PLATFORM_SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${C2D_INCLUDES} ${LIBCONFIG_INCLUDES} ${PLATFORM_INCLUDES})

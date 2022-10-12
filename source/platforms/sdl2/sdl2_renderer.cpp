@@ -10,7 +10,7 @@ static SDL_Window *window = nullptr;
 static SDL_GLContext context = nullptr;
 
 SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
-    Vector2i reqSize = {(int) s.x, (int) s.y};
+    // disable mouse cursor
     SDL_ShowCursor(SDL_DISABLE);
 
 #ifdef __PS4__
@@ -25,13 +25,15 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
         return;
     }
 
+    Vector2i size = {(int) Renderer::getSize().x, (int) Renderer::getSize().y};
     Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
-#ifdef ANDROID
-    reqSize = {0, 0}; // force fullscreen
-#endif
-    if (reqSize.x <= 0 || reqSize.y <= 0) { // force fullscreen if window size == 0
+#ifndef ANDROID
+    if (size.x <= 0 || size.y <= 0) { // force fullscreen if window size == 0
         flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
+#else
+    flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+#endif
 
 #ifdef __GLES2__
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
@@ -59,16 +61,16 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
     window = SDL_CreateWindow(
             "CROSS2D_SDL2_GL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            reqSize.x, reqSize.y, flags);
+            size.x, size.y, flags);
     if (!window) {
         printf("Couldn't SDL_CreateWindow: %s\n", SDL_GetError());
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
         return;
     }
 
-    if (reqSize.x <= 0 || reqSize.y <= 0) {
-        SDL_GetWindowSize(window, &reqSize.x, &reqSize.y);
-        SDL2Renderer::setSize((float) reqSize.x, (float) reqSize.y);
+    SDL_GetWindowSize(window, &size.x, &size.y);
+    if (size.x != (int) Renderer::getSize().x || size.y != (int) Renderer::getSize().y) {
+        SDL2Renderer::setSize((float) size.x, (float) size.y);
     }
 
     context = SDL_GL_CreateContext(window);
