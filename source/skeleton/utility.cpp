@@ -172,3 +172,23 @@ std::string Utility::baseName(const std::string &path) {
     }
     return name;
 }
+
+std::string Utility::getSizeString(size_t size) {
+    char output[200];
+    const char *suffix[] = {"B", "KB", "MB", "GB", "TB"};
+    char length = sizeof(suffix) / sizeof(suffix[0]);
+    auto dblBytes = (double) size;
+    int i;
+
+    if (size <= 0) {
+        return "0 B";
+    } else {
+        if (size > 1024) {
+            for (i = 0; (size / 1024) > 0 && i < length - 1; i++, size /= 1024)
+                dblBytes = (double) size / 1024.0;
+        }
+
+        sprintf(output, "%.02lf %s", dblBytes, suffix[i]);
+        return output;
+    }
+}

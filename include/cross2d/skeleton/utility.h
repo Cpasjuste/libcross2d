@@ -48,8 +48,9 @@ namespace c2d {
         static std::string removeExt(const std::string &str);
 
         static std::string baseName(const std::string &path);
-    };
 
+        static std::string getSizeString(size_t size);
+    };
 }
 
 #endif //C2D_UTILITY_H
