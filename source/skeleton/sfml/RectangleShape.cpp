@@ -42,14 +42,18 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void RectangleShape::setSize(const Vector2f &size) {
-        m_size = size;
-        update();
+        if (m_size != size) {
+            m_size = size;
+            update();
+        }
     }
 
     void RectangleShape::setSize(float width, float height) {
-        m_size.x = width;
-        m_size.y = height;
-        update();
+        if (width != m_size.x || height != m_size.y) {
+            m_size.x = width;
+            m_size.y = height;
+            update();
+        }
     }
 
 ////////////////////////////////////////////////////////////
@@ -59,8 +63,10 @@ namespace c2d {
 
     ////////////////////////////////////////////////////////////
     void RectangleShape::setCornersRadius(float radius) {
-        m_radius = radius;
-        update();
+        if (m_radius != radius) {
+            m_radius = radius;
+            update();
+        }
     }
 
 ////////////////////////////////////////////////////////////
@@ -70,8 +76,10 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     void RectangleShape::setCornerPointCount(unsigned int count) {
-        m_corner_point_count = count;
-        update();
+        if (m_corner_point_count != count) {
+            m_corner_point_count = count;
+            update();
+        }
     }
 
 ////////////////////////////////////////////////////////////
