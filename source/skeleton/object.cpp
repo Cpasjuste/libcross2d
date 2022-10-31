@@ -94,6 +94,10 @@ Visibility C2DObject::getVisibility() {
 }
 
 void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
+    if (v == visibility_wanted) {
+        return;
+    }
+
     if (tweenPlay && !tweens.empty()) {
         if (v == Visibility::Visible) {
             // we want the object to be visible (drawn) immediately

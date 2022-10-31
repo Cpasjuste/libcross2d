@@ -203,7 +203,8 @@ namespace c2d {
                 Transformable::setOriginVector(0, m_bounds.height);
                 break;
             case Origin::Center:
-                Transformable::setOriginVector(m_bounds.width / 2, m_bounds.height / 2);
+                Transformable::setOriginVector(m_bounds.width / 2 - getOutlineThickness(),
+                                               m_bounds.height / 2 - getOutlineThickness());
                 break;
             default:
                 break;
