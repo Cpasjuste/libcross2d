@@ -75,22 +75,11 @@ void C2DObject::onDraw(Transform &transform, bool draw) {
 
     Transform combinedTransform = transformation = transform;
     combinedTransform *= ((Transformable *) this)->getTransform();
-
     for (auto &child: childs) {
-        if (child) {
-            if (child->visibility_current == Visibility::Visible) {
-                child->onDraw(combinedTransform, draw);
-            }
+        if (child && child->visibility_current == Visibility::Visible) {
+            child->onDraw(combinedTransform, draw);
         }
     }
-}
-
-bool C2DObject::isVisible() {
-    return visibility_wanted == Visibility::Visible;
-}
-
-Visibility C2DObject::getVisibility() {
-    return visibility_wanted;
 }
 
 void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
@@ -119,6 +108,22 @@ void C2DObject::setVisibility(Visibility v, bool tweenPlay) {
             if (tween) {
                 tween->reset();
             }
+        }
+    }
+
+    // set child drawing state (for "isVisible")
+    setDrawingState(visibility_wanted == Visibility::Visible);
+}
+
+bool C2DObject::isVisible() {
+    return m_is_drawn && visibility_wanted == Visibility::Visible;
+}
+
+void C2DObject::setDrawingState(bool isDrawn) {
+    m_is_drawn = isDrawn;
+    for (auto &child: childs) {
+        if (child) {
+            child->setDrawingState(isDrawn);
         }
     }
 }

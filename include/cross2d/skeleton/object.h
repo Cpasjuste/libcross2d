@@ -51,8 +51,6 @@ namespace c2d {
         // visibility
         virtual bool isVisible();
 
-        virtual Visibility getVisibility();
-
         virtual void setVisibility(Visibility visibility, bool tweenPlay = false);
 
         // deletion mode
@@ -142,11 +140,12 @@ namespace c2d {
 
         virtual void onDraw(Transform &transform, bool draw = true);
 
+        virtual void setDrawingState(bool isDrawn);
+
         Type type = Type::Other;
         Transform transformation;
 
     private:
-
         int layer = 0;
         std::string m_name;
         C2DObject *parent = nullptr;
@@ -155,6 +154,7 @@ namespace c2d {
         DeleteMode deleteMode = DeleteMode::Auto;
         Visibility visibility_current = Visibility::Visible;
         Visibility visibility_wanted = Visibility::Visible;
+        bool m_is_drawn = true;
 
         Vector2f v2_dummy;
         Color col_dummy;
