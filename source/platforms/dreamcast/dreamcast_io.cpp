@@ -9,20 +9,6 @@
 
 using namespace c2d;
 
-std::string DCIo::getHomePath() {
-
-    char buf[1024];
-    if (getcwd(buf, sizeof(buf)) != nullptr) {
-        std::string home(buf);
-        if (!Utility::endsWith(home, "/")) {
-            home += "/";
-        }
-        return home;
-    }
-
-    return Io::getHomePath();
-}
-
 Io::File DCIo::getFile(const std::string &path) {
 
     File file{};

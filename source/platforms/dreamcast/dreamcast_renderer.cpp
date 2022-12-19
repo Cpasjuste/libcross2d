@@ -28,8 +28,7 @@ extern "C" void pvr_set_zclip(float zc);
 extern uint8 romdisk[];
 KOS_INIT_ROMDISK(romdisk);
 
-DCRenderer::DCRenderer(const Vector2f &s) : GLRenderer(s) {
-
+DCRenderer::DCRenderer(const Vector2f &s) : GLRenderer({640, 480}) {
     printf("DCRenderer\n");
 
 #if 0
@@ -42,20 +41,19 @@ DCRenderer::DCRenderer(const Vector2f &s) : GLRenderer(s) {
 #endif
 
 #if __GNUC__ < 6
-// OLD KOS (https://github.com/Cpasjuste/kos/tree/gcc-5.2.0)
-    pvr_set_zclip(0);
+    // OLD KOS (https://github.com/Cpasjuste/kos/tree/gcc-5.2.0)
+        pvr_set_zclip(0);
 #endif
 
     glKosInit();
-    initGL();
+    GLRenderer::initGL();
 
     available = true;
 
-    printf("DCRenderer(GL)(%p): %ix%i\n", this, (int) s.x, (int) s.y);
+    printf("DCRenderer(GL)(%p): %ix%i\n", this, (int) Renderer::getSize().x, (int) Renderer::getSize().y);
 }
 
 void DCRenderer::flip(bool draw, bool inputs) {
-
     // call base class (draw childs)
     GLRenderer::flip(draw, inputs);
 
@@ -69,7 +67,6 @@ void DCRenderer::delay(unsigned int ms) {
 }
 
 bool DCRenderer::mount(Device::Type type, Device::Flag flag) {
-
 #if 0
     kos_blockdev_t deviceBlock;
     uint8 deviceType;
@@ -118,7 +115,6 @@ bool DCRenderer::mount(Device::Type type, Device::Flag flag) {
 }
 
 void DCRenderer::unmount(Device::Type type) {
-
 #if 0
     Device *device = type == Device::Type::Sd ? &devices[0] : &devices[1];
     if (device->inited && device->mounted) {
@@ -135,7 +131,6 @@ void DCRenderer::unmount(Device::Type type) {
 }
 
 DCRenderer::~DCRenderer() {
-
     printf("~DCRenderer()\n");
 
 #if 0

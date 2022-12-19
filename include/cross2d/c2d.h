@@ -284,8 +284,9 @@ extern c2d::Renderer *c2d_renderer;
 #include <GL/glkos.h>
 
 #define GL_RGB565 GL_RGB
+#undef GL_UNPACK_ROW_LENGTH
 
-#include "platforms/gl1/gl_texture.h"
+#include "cross2d/c2d_gl1.h"
 #include "platforms/dreamcast/dreamcast_renderer.h"
 #include "platforms/dreamcast/dreamcast_clock.h"
 #include "platforms/dreamcast/dreamcast_input.h"
@@ -307,21 +308,24 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_DOWN_DEFAULT    CONT_DPAD_DOWN
 #define KEY_JOY_LEFT_DEFAULT    CONT_DPAD_LEFT
 #define KEY_JOY_RIGHT_DEFAULT   CONT_DPAD_RIGHT
-#define KEY_JOY_FIRE1_DEFAULT   CONT_A
-#define KEY_JOY_FIRE2_DEFAULT   CONT_B
-#define KEY_JOY_FIRE3_DEFAULT   CONT_X
-#define KEY_JOY_FIRE4_DEFAULT   CONT_Y
-#define KEY_JOY_FIRE5_DEFAULT   CONT_C
-#define KEY_JOY_FIRE6_DEFAULT   CONT_D
-#define KEY_JOY_COIN1_DEFAULT   -1
-#define KEY_JOY_START1_DEFAULT  CONT_START
-#define KEY_JOY_MENU1_DEFAULT   -1
-#define KEY_JOY_MENU2_DEFAULT   -1
+#define KEY_JOY_A_DEFAULT       CONT_A
+#define KEY_JOY_B_DEFAULT       CONT_B
+#define KEY_JOY_X_DEFAULT       CONT_X
+#define KEY_JOY_Y_DEFAULT       CONT_Y
+#define KEY_JOY_LT_DEFAULT      CONT_C
+#define KEY_JOY_RT_DEFAULT      CONT_D
+#define KEY_JOY_LB_DEFAULT      999
+#define KEY_JOY_RB_DEFAULT      999
+#define KEY_JOY_LS_DEFAULT      999
+#define KEY_JOY_RS_DEFAULT      999
+#define KEY_JOY_SELECT_DEFAULT  999
+#define KEY_JOY_START_DEFAULT   CONT_START
+#define KEY_JOY_MENU1_DEFAULT   999
+#define KEY_JOY_MENU2_DEFAULT   999
 #define KEY_JOY_AXIS_LX         0
 #define KEY_JOY_AXIS_LY         1
 #define KEY_JOY_AXIS_RX         2
 #define KEY_JOY_AXIS_RY         3
-
 #elif __PS3__
 
 #include "platforms/ps3/tiny3d_renderer.h"

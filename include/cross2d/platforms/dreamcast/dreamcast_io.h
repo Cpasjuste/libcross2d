@@ -43,8 +43,6 @@ namespace c2d {
 
         bool write(const std::string &file, const char *data, size_t size) override;
 
-        std::string getHomePath() override;
-
         std::string getRomFsPath() override {
             return "/rd/";
         }

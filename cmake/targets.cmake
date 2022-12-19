@@ -200,18 +200,17 @@ if (PLATFORM_DREAMCAST)
             dummy_romdisk ${CMAKE_BINARY_DIR}/romdisk.o
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/data_romfs
             COMMAND ${KOS_BASE}/utils/genromfs/genromfs -f ${CMAKE_BINARY_DIR}/romdisk.img -d ${CMAKE_CURRENT_BINARY_DIR}/data_romfs -v
-            COMMAND KOS_ARCH=${KOS_ARCH} KOS_AS=${KOS_AS} KOS_AFLAGS=${KOS_AFLAGS} KOS_LD=${KOS_LD} KOS_OBJCOPY=${KOS_OBJCOPY}
-            /bin/bash ${KOS_BASE}/utils/bin2o/bin2o ${CMAKE_BINARY_DIR}/romdisk.img romdisk ${CMAKE_BINARY_DIR}/romdisk.o
+            COMMAND KOS_ARCH=${KOS_ARCH} KOS_AS=${KOS_AS} KOS_AFLAGS=${KOS_AFLAGS} KOS_LD=${KOS_LD} KOS_OBJCOPY=${KOS_OBJCOPY} /bin/bash ${KOS_BASE}/utils/bin2o/bin2o ${CMAKE_BINARY_DIR}/romdisk.img romdisk ${CMAKE_BINARY_DIR}/romdisk.o
             )
     target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/romdisk.o)
     add_custom_target(${PROJECT_NAME}.bin
             DEPENDS ${PROJECT_NAME}
             DEPENDS ${PROJECT_NAME}.data
-            COMMAND ${CMAKE_OBJCOPY} -R .stack -O binary ${PROJECT_NAME}.elf ${PROJECT_NAME}.bin
+            COMMAND ${CMAKE_OBJCOPY} -R .stack -O binary ${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX} ${PROJECT_NAME}.bin
             )
     add_custom_target(${PROJECT_NAME}.cdi
             DEPENDS ${PROJECT_NAME}.bin
-            COMMAND scramble ${PROJECT_NAME}.bin 1DS_CORE.BIN
+            COMMAND ${KOS_BASE}/utils/scramble/scramble ${PROJECT_NAME}.bin 1DS_CORE.BIN
             COMMAND genisoimage -V ${PROJECT_NAME} -G ${CMAKE_SOURCE_DIR}/data/dreamcast/IP.BIN -joliet -rock -l -x .svn -o ${PROJECT_NAME}.iso 1DS_CORE.BIN ${CMAKE_CURRENT_BINARY_DIR}/data_datadir
             COMMAND cdi4dc ${PROJECT_NAME}.iso ${PROJECT_NAME}.cdi -d >> cdi4dc.log
             )
