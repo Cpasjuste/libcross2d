@@ -94,7 +94,6 @@ namespace c2d {
 
         Vector2f offset;
         Texture *m_texture = nullptr;
-        static Glyph m_glyph;
 
 #define BMFONT_BLOCK_TYPE_INFO 1
 #define BMFONT_BLOCK_TYPE_COMMON 2
@@ -192,7 +191,7 @@ namespace c2d {
             }
 
             int8_t getS8() {
-                int8_t value = currentU8();
+                auto value = (int8_t) currentU8();
                 pos += 1;
                 return value;
             }
@@ -202,7 +201,7 @@ namespace c2d {
             }
 
             int16_t getS16() {
-                int16_t value = currentU16();
+                auto value = (int16_t) currentU16();
                 pos += 2;
                 return value;
             }
@@ -213,7 +212,7 @@ namespace c2d {
             }
 
             int32_t getS32() {
-                int32_t value = currentU32();
+                auto value = (int32_t) currentU32();
                 pos += 4;
                 return value;
             }
@@ -226,7 +225,7 @@ namespace c2d {
                 pos += byteCount;
             }
 
-            bool isEOF() {
+            [[nodiscard]] bool isEOF() const {
                 return pos >= size;
             }
 

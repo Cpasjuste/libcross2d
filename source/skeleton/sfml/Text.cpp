@@ -427,11 +427,13 @@ namespace c2d {
             return;
         }
 
-        if (!m_font->isBmFont() && m_font->getTexture(m_characterSize)->getTextureSize() != m_textureSize) {
-            m_textureSize = m_font->getTexture(m_characterSize)->getTextureSize();
+        Vector2i texSize = m_font->getTexture(m_characterSize)->getTextureSize();
+        if (!m_font->isBmFont() && texSize != m_textureSize) {
+            m_textureSize = texSize;
             m_geometryNeedUpdate = true;
             ensureGeometryUpdate();
         } else {
+            m_textureSize = texSize;
             ensureGeometryUpdate();
         }
 

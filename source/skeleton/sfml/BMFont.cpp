@@ -46,7 +46,6 @@ namespace c2d {
 
 ////////////////////////////////////////////////////////////
     bool BMFont::loadFromFile(const std::string &fntPath) {
-
         char *fontData = nullptr;
         size_t fontSize = c2d_renderer->getIo()->read(fntPath, &fontData);
         if (!fontData || fontSize < 4) {
@@ -78,7 +77,6 @@ namespace c2d {
 ////////////////////////////////////////////////////////////
     bool BMFont::loadFromMemory(const char *fontData, size_t fontDataSize,
                                 const char *texData, size_t texDataSize) {
-
         if (!fontData || fontDataSize < 4) {
             printf("BMFont::loadFromMemory: invalid font data...\n");
             return false;
@@ -98,7 +96,7 @@ namespace c2d {
         stream.offsetBy(4);
         while (!stream.isEOF()) {
             uint8_t blockID = stream.getU8();
-            int32_t blockSize = stream.getU32();
+            uint32_t blockSize = stream.getU32();
             switch (blockID) {
                 case BMFONT_BLOCK_TYPE_INFO: {
                     m_bmfont.info.fontSize = stream.getS16();
@@ -145,7 +143,7 @@ namespace c2d {
                     break;
                 }
                 case BMFONT_BLOCK_TYPE_CHARS: {
-                    int32_t charCount = blockSize / 20;
+                    int32_t charCount = (int32_t) blockSize / 20;
                     for (int32_t index = 0; index < charCount; ++index) {
                         bmfont_char bmfChar = {};
                         bmfChar.id = stream.getU32();
@@ -160,20 +158,27 @@ namespace c2d {
                         bmfChar.chnl = stream.getU8();
 
                         Glyph glyph = {
+                                // advance
                                 (float) bmfChar.xadvance + ((float) m_bmfont.info.outline / 2),
+                                // bounds
                                 {
-                                        bmfChar.xoffset + m_bmfont.info.outline,
-                                        (bmfChar.yoffset - m_bmfont.common.lineHeight) + m_bmfont.info.outline,
+                                        (float) (bmfChar.xoffset + m_bmfont.info.outline),
+                                        (float) ((bmfChar.yoffset - m_bmfont.common.lineHeight) +
+                                                 m_bmfont.info.outline),
                                         bmfChar.width,
-                                        bmfChar.height},
-                                {bmfChar.x, bmfChar.y, bmfChar.width, bmfChar.height}
+                                        bmfChar.height
+                                },
+                                // texture rect
+                                {
+                                        bmfChar.x, bmfChar.y, bmfChar.width, bmfChar.height
+                                }
                         };
                         m_bmfont.glyphs.insert(std::map<int, Glyph>::value_type(bmfChar.id, glyph));
                     }
                     break;
                 }
                 case BMFONT_BLOCK_TYPE_KERNINGS: {
-                    int32_t kerningPairsCount = blockSize / 10;
+                    int32_t kerningPairsCount = (int32_t) blockSize / 10;
                     for (int32_t index = 0; index < kerningPairsCount; ++index) {
                         m_bmfont.kerningPairs.push_back({stream.getU32(), stream.getU32(), stream.getS16()});
                     }
@@ -184,8 +189,8 @@ namespace c2d {
             }
         }
 
-        m_texture = new C2DTexture((const unsigned char *) texData, texDataSize);
-        if (!m_texture || !m_texture->available) {
+        m_texture = new C2DTexture((const unsigned char *) texData, (int) texDataSize);
+        if (!m_texture->available) {
             printf("BMFont::loadFromMemory: could not create texture (%s)...\n", m_bmfont.pages[0].name);
             return false;
         }
@@ -196,6 +201,9 @@ namespace c2d {
         return true;
     }
 
+    // TODO: fixme
+    static Glyph s_glyph;
+
 ////////////////////////////////////////////////////////////
     const Glyph &BMFont::getGlyph(uint32_t codePoint, unsigned int characterSize,
                                   bool bold, float outlineThickness) const {
@@ -203,15 +211,15 @@ namespace c2d {
             if ((int16_t) characterSize == m_bmfont.info.fontSize) {
                 return m_bmfont.glyphs.at((int) codePoint);
             } else {
-                Glyph glyph = m_bmfont.glyphs.at((int) codePoint);
+                Glyph glyph = s_glyph = m_bmfont.glyphs.at((int) codePoint);
                 float scaling = (float) characterSize / (float) m_bmfont.info.fontSize;
-                m_glyph.advance = glyph.advance * scaling;
-                m_glyph.bounds.left = glyph.bounds.left * scaling;
-                m_glyph.bounds.top = glyph.bounds.top * scaling;
-                m_glyph.bounds.width = glyph.bounds.width * scaling;
-                m_glyph.bounds.height = glyph.bounds.height * scaling;
-                m_glyph.textureRect = glyph.textureRect;
-                return m_glyph;
+                s_glyph.advance = glyph.advance * scaling;
+                s_glyph.bounds.left = glyph.bounds.left * scaling;
+                s_glyph.bounds.top = glyph.bounds.top * scaling;
+                s_glyph.bounds.width = glyph.bounds.width * scaling;
+                s_glyph.bounds.height = glyph.bounds.height * scaling;
+                s_glyph.textureRect = glyph.textureRect;
+                return s_glyph;
             }
         }
 

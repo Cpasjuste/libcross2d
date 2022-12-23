@@ -7,11 +7,10 @@
 using namespace c2d;
 
 int main(int argc, char *argv[]) {
-
     // create main renderer
     auto renderer = new C2DRenderer();
     renderer->setPrintStats(true);
-    renderer->setClearColor(Color::Black);
+    renderer->setClearColor(Color::GrayLight);
 
     auto border = new C2DRectangle({2, 2,
                                     renderer->getSize().x - 4, renderer->getSize().y - 4});
@@ -42,6 +41,7 @@ int main(int argc, char *argv[]) {
         rect->add(tex);
     }
 
+#ifndef __NO_FREETYPE__
     // create a text
     auto text = new Text("libcross2d @ Cpasjuste");
     text->setOutlineThickness(2);
@@ -49,6 +49,15 @@ int main(int argc, char *argv[]) {
     text->setOrigin(Origin::BottomRight);
     text->setScale(scaling, scaling);
     rect->add(text);
+#else
+    // create a bitmap text (https://www.angelcode.com/products/bmfont/)
+    auto font = new BMFont();
+    font->loadFromFile(renderer->getIo()->getRomFsPath() + "04b_19.fnt");
+    auto text = new Text("libcross2d @ Cpasjuste", 24, font);
+    text->setPosition(renderer->getSize().x - 8 * scaling, renderer->getSize().y - 8 * scaling);
+    text->setOrigin(Origin::BottomRight);
+    renderer->add(text);
+#endif
 
     // add all this crap to the renderer
     renderer->add(rect);
