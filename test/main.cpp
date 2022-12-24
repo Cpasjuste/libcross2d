@@ -43,21 +43,23 @@ int main(int argc, char *argv[]) {
 
 #ifndef __NO_FREETYPE__
     // create a text
-    auto text = new Text("libcross2d @ Cpasjuste");
+    auto font = new Font();
+    font->loadFromFile(renderer->getIo()->getRomFsPath() + "future.ttf");
+    auto text = new Text("libcross2d @ Cpasjuste", 20, font);
     text->setOutlineThickness(2);
-    text->setPosition(rect->getSize().x - 16 * scaling, rect->getSize().y - 16 * scaling);
-    text->setOrigin(Origin::BottomRight);
-    text->setScale(scaling, scaling);
-    rect->add(text);
-#else
-    // create a bitmap text (https://www.angelcode.com/products/bmfont/)
-    auto font = new BMFont();
-    font->loadFromFile(renderer->getIo()->getRomFsPath() + "04b_19.fnt");
-    auto text = new Text("libcross2d @ Cpasjuste", 24, font);
-    text->setPosition(renderer->getSize().x - 8 * scaling, renderer->getSize().y - 8 * scaling);
+    text->setPosition(renderer->getSize().x - 8, renderer->getSize().y - 8);
     text->setOrigin(Origin::BottomRight);
     renderer->add(text);
 #endif
+
+    // create a bitmap text (https://www.angelcode.com/products/bmfont/)
+    auto bmFont = new BMFont();
+    bmFont->loadFromFile(renderer->getIo()->getRomFsPath() + "future.fnt");
+    auto bmText = new Text("libcross2d @ Cpasjuste", 20, bmFont);
+    bmText->setFillColor(Color::Red);
+    bmText->setPosition(renderer->getSize().x - 8, renderer->getSize().y - 40);
+    bmText->setOrigin(Origin::BottomRight);
+    renderer->add(bmText);
 
     // add all this crap to the renderer
     renderer->add(rect);
@@ -92,6 +94,11 @@ int main(int argc, char *argv[]) {
         // renderer everything
         renderer->flip();
     }
+
+#ifndef __NO_FREETYPE__
+    delete (font);
+#endif
+    delete (bmFont);
 
     // will delete child's (textures, shapes, text..)
     delete (renderer);

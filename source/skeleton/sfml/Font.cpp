@@ -205,6 +205,7 @@ namespace c2d {
         } else {
             // Not found: we have to load it
             Glyph glyph = loadGlyph(codePoint, characterSize, bold, outlineThickness);
+            //printf("Font::getGlyph(%c): advance: %f\n", codePoint, glyph.advance);
             return glyphs.emplace(key, glyph).first->second;
         }
     }
