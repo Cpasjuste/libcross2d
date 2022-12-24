@@ -45,7 +45,8 @@ int main(int argc, char *argv[]) {
     // create a text
     auto font = new Font();
     font->loadFromFile(renderer->getIo()->getRomFsPath() + "future.ttf");
-    auto text = new Text("libcross2d @ Cpasjuste", 20, font);
+    auto text = new Text("libcross2d @ Cpasjuste", 18, font);
+    text->setFillColor(Color::Yellow);
     text->setOutlineThickness(2);
     text->setPosition(renderer->getSize().x - 8, renderer->getSize().y - 8);
     text->setOrigin(Origin::BottomRight);
@@ -55,9 +56,9 @@ int main(int argc, char *argv[]) {
     // create a bitmap text (https://www.angelcode.com/products/bmfont/)
     auto bmFont = new BMFont();
     bmFont->loadFromFile(renderer->getIo()->getRomFsPath() + "future.fnt");
-    auto bmText = new Text("libcross2d @ Cpasjuste", 20, bmFont);
+    auto bmText = new Text("libcross2d @ Cpasjuste", 18, bmFont);
     bmText->setFillColor(Color::Red);
-    bmText->setPosition(renderer->getSize().x - 8, renderer->getSize().y - 40);
+    bmText->setPosition(renderer->getSize().x - 8, renderer->getSize().y - 36);
     bmText->setOrigin(Origin::BottomRight);
     renderer->add(bmText);
 
