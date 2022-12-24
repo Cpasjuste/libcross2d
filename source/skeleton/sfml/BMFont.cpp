@@ -170,7 +170,7 @@ namespace c2d {
                                 },
                                 // texture rect
                                 {
-                                        bmfChar.x + 1, bmfChar.y + 1, bmfChar.width - 2, bmfChar.height - 2
+                                        bmfChar.x, bmfChar.y, bmfChar.width, bmfChar.height
                                 }
                         };
                         m_bmfont.glyphs.insert(std::map<int, Glyph>::value_type(bmfChar.id, glyph));
