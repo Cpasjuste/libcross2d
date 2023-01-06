@@ -319,10 +319,10 @@ namespace c2d {
                     m_insideBounds.height > 0 ?
                     (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height : 0;
             m_vertices[i].texCoords.x =
-                    ((float) (m_tex_rect.left + m_tex_rect.width) * xratio) /
+                    ((float) m_tex_rect.left + (float) m_tex_rect.width * xratio) /
                     (float) m_texture->getTextureSizePot().x;
             m_vertices[i].texCoords.y =
-                    ((float) (m_tex_rect.top + m_tex_rect.height) * yratio) /
+                    ((float) m_tex_rect.top + (float) m_tex_rect.height * yratio) /
                     (float) m_texture->getTextureSizePot().y;
 #ifdef __BOX2D__
 #ifndef __PSP2__ // TODO: fixme
