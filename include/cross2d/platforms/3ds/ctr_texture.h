@@ -22,7 +22,7 @@ namespace c2d {
 
         ~CTRTexture() override;
 
-        void unlock(int rowLength = 0) override;
+        void unlock(uint8_t *pixels = nullptr) override;
 
         int resize(const Vector2i &size, bool keepPixels = false) override;
 

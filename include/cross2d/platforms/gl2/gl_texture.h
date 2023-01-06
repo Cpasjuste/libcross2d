@@ -22,7 +22,7 @@ namespace c2d {
 
         int resize(const Vector2i &size, bool keepPixels = false) override;
 
-        void unlock(int rowLength = 0) override;
+        void unlock(uint8_t *pixels = nullptr) override;
 
         void setFilter(Filter filter) override;
 

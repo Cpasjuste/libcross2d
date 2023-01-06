@@ -101,8 +101,8 @@ int GLTexture::resize(const Vector2i &size, bool keepPixels) {
     return 0;
 }
 
-void GLTexture::unlock(int rowLength) {
-    uint8_t *data = m_pixels + m_unlock_rect.top * m_pitch + m_unlock_rect.left * m_bpp;
+void GLTexture::unlock(uint8_t *pixels) {
+    uint8_t *data = (pixels ? pixels : m_pixels) + m_unlock_rect.top * m_pitch + m_unlock_rect.left * m_bpp;
 
     //printf("GLTexture::unlock(%p): rect: {%i, %i, %i, %i}, pixels: %p\n",
     //     this, m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height, data);
@@ -111,14 +111,15 @@ void GLTexture::unlock(int rowLength) {
 
 #ifndef GL_UNPACK_ROW_LENGTH
     IntRect rect = m_unlock_rect;
-    if (rowLength > 0) {
+    if (m_unpack_row_length > 0) {
         // fix missing GL_UNPACK_ROW_LENGTH support on ps4, used for fonts
-        data = m_pixels;
+        data = pixels ? pixels : m_pixels;
         m_unlock_rect = {0, 0, m_tex_size.x, m_tex_size.y};
     }
 #else
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, rowLength);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, m_unpack_row_length);
 #endif
+
     if (m_format == Format::RGBA8) {
         glTexSubImage2D(GL_TEXTURE_2D, 0,
                         m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height,
