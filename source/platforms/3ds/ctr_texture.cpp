@@ -70,7 +70,7 @@ int CTRTexture::createTexture() {
     return 0;
 }
 
-void CTRTexture::unlock(uint8_t *pixels = nullptr) {
+void CTRTexture::unlock(uint8_t *pixels) {
     // tile buffer for 3ds...
     if (m_tex && m_pixels) {
         if (m_format == Format::RGB565) {
