@@ -27,6 +27,10 @@ extern SceGxmProgramParameter *_vita2d_textureTintColorParam;
 }
 
 PSP2Renderer::PSP2Renderer(const Vector2f &size) : Renderer(size) {
+    if (size.x == 0 || size.y == 0) {
+        Renderer::setSize(960, 544);
+    }
+
     if ((SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE)) < 0) {
         printf("Couldn't init sdl: %s\n", SDL_GetError());
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't init sdl: %s\n", SDL_GetError());
