@@ -39,7 +39,12 @@ namespace c2d {
 
         virtual void flip(bool draw = true, bool process_inputs = true);
 
-        virtual void delay(unsigned int ms) {};
+        virtual void delay(unsigned int millis) {};
+
+        virtual void delayUs(unsigned int micros) {
+            if (micros < 1000) micros = 1000;
+            delay(micros / 1000);
+        };
 
         virtual ShaderList *getShaderList();
 

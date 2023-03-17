@@ -238,15 +238,8 @@ if (PLATFORM_VITA)
             )
     list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
             -mtune=cortex-a9 -march=armv7-a -mfpu=neon -mfloat-abi=hard
-            -ffast-math -mword-relocations -fno-optimize-sibling-calls
+            -ffast-math -fsingle-precision-constant
             )
-    if (CMAKE_BUILD_TYPE STREQUAL "Release")
-        list(APPEND C2D_CFLAGS
-                -fno-asynchronous-unwind-tables -funroll-loops -fno-unwind-tables
-                -mvectorize-with-neon-quad -funsafe-math-optimizations
-                -mlittle-endian -munaligned-access -fsingle-precision-constant
-                )
-    endif ()
 elseif (PLATFORM_PS4)
     #####################
     # PS4 PLATORM

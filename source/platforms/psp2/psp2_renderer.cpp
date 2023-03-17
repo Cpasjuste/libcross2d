@@ -189,6 +189,10 @@ void PSP2Renderer::delay(unsigned int ms) {
     sceKernelDelayThreadCB(ms * 1000);
 }
 
+void PSP2Renderer::delayUs(unsigned int micros) {
+    sceKernelDelayThreadCB(micros);
+}
+
 void PSP2Renderer::setWaitRendering(bool wait) {
     m_wait_rendering = wait;
 }

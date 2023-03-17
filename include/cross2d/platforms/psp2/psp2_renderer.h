@@ -25,6 +25,8 @@ namespace c2d {
 
         void delay(unsigned int ms) override;
 
+        void delayUs(unsigned int micros) override;
+
         void setWaitRendering(bool wait);
 
     private:

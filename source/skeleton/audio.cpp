@@ -38,9 +38,9 @@ void Audio::play(const void *data, int samples, SyncMode syncMode) {
             lock();
             int queued = getSampleBufferQueued();
             unlock();
-            while (queued > 0) {
+            while (queued >= getSamplesSize()) {
                 if (!available) return;
-                if (c2d_renderer) c2d_renderer->delay(1);
+                if (c2d_renderer) c2d_renderer->delayUs(1);
                 lock();
                 queued = getSampleBufferQueued();
                 unlock();
@@ -54,7 +54,7 @@ void Audio::play(const void *data, int samples, SyncMode syncMode) {
             while (space < samples * channels) {
                 //printf("play (delay): samples: %i, queued: %i\n", getSamples() * channels, getSampleBufferQueued());
                 if (!available) return;
-                if (c2d_renderer) c2d_renderer->delay(1);
+                if (c2d_renderer) c2d_renderer->delayUs(1);
                 lock();
                 space = getSampleBufferAvailable();
                 unlock();
