@@ -97,12 +97,12 @@ namespace c2d {
         }
 
         virtual std::vector<Io::File> getDirList(const std::string &path, bool sort = false, bool showHidden = false) {
-            return std::vector<Io::File>();
+            return {};
         };
 
-        virtual File findFile(const std::string &path,
-                              const std::vector<std::string> &whitelist, const std::string &blacklist = "") {
-            return File();
+        virtual std::vector<File> findFiles(const std::string &path, const std::vector<std::string> &whitelist,
+                                            const std::string &blacklist = "", bool stopOnFirst = true) {
+            return {};
         }
 
         virtual size_t read(const std::string &file, char **out, size_t size = 0, size_t offset = 0) {

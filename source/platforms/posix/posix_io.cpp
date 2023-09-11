@@ -281,16 +281,14 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bo
     return files;
 }
 
-Io::File POSIXIo::findFile(const std::string &path,
-                           const std::vector<std::string> &whitelist,
-                           const std::string &blacklist) {
-
+std::vector<Io::File> POSIXIo::findFiles(const std::string &path, const std::vector<std::string> &whitelist,
+                                         const std::string &blacklist, bool stopOnFirst) {
     struct dirent *ent;
     DIR *dir;
-    File file{};
+    std::vector<Io::File> files{};
 
     if (path.empty()) {
-        return file;
+        return files;
     }
 
     if ((dir = opendir(path.c_str())) != nullptr) {
@@ -300,6 +298,7 @@ Io::File POSIXIo::findFile(const std::string &path,
                     if (!blacklist.empty() && Utility::contains(ent->d_name, blacklist)) {
                         continue;
                     }
+                    Io::File file;
                     file.name = ent->d_name;
                     file.path = Utility::removeLastSlash(path) + "/" + file.name;
 #if 0
@@ -315,14 +314,15 @@ Io::File POSIXIo::findFile(const std::string &path,
                         file.type = S_ISDIR(st.st_mode) ? Type::Directory : Type::File;
                     }
 #endif
-                    break;
+                    files.emplace_back(file);
+                    if (stopOnFirst) break; else continue;
                 }
             }
         }
         closedir(dir);
     }
 
-    return file;
+    return files;
 }
 
 bool POSIXIo::copy(const std::string &src, const std::string &dst,

@@ -38,8 +38,8 @@ namespace c2d {
 
         std::vector<Io::File> getDirList(const std::string &path, bool sort, bool showHidden) override;
 
-        File findFile(const std::string &path,
-                      const std::vector<std::string> &whitelist, const std::string &blacklist) override;
+        std::vector<File> findFiles(const std::string &path, const std::vector<std::string> &whitelist,
+                                    const std::string &blacklist = "", bool stopOnFirst = true) override;
 
         size_t read(const std::string &file, char **out, size_t size = 0, size_t offset = 0) override;
 
