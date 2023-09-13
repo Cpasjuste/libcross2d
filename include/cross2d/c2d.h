@@ -108,6 +108,7 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/sdl2/sdl2_thread.h"
 #include "platforms/sdl2/sdl2_mutex.h"
 #include "platforms/sdl2/sdl2_cond.h"
+#include "platforms/sdl2/sdl2_device.h"
 
 #define C2DRenderer PSP2Renderer
 #define C2DTexture PSP2Texture
