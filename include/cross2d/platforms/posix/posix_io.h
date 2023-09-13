@@ -12,13 +12,6 @@ namespace c2d {
     class POSIXIo : public Io {
 
     public:
-
-#ifdef __FUZE_FS__
-
-        POSIXIo();
-
-#endif
-
         File getFile(const std::string &path) override;
 
         bool exist(const std::string &path) override;

@@ -226,20 +226,20 @@ if (PLATFORM_VITA)
             source/platforms/posix
             source/platforms/psp2
             source/platforms/psp2/vita-shader-collection/includes
-            )
+    )
     file(GLOB PLATFORM_SOURCES
             source/platforms/posix/posix_io.cpp
             source/platforms/psp2/*.c*
-            )
+    )
     list(REMOVE_ITEM C2D_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/sdl2/sdl2_renderer.cpp)
     list(APPEND C2D_LDFLAGS
             ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/vita-shader-collection/lib/libvitashaders.a
             vita2d box2d SceGxm_stub ScePower_stub
-            )
+    )
     list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
             -mtune=cortex-a9 -march=armv7-a -mfpu=neon -mfloat-abi=hard
             -ffast-math -fsingle-precision-constant
-            )
+    )
 elseif (PLATFORM_PS4)
     #####################
     # PS4 PLATORM
@@ -247,11 +247,11 @@ elseif (PLATFORM_PS4)
     set(PLATFORM_INCLUDES
             include/cross2d/platforms/ps4
             include/cross2d/platforms/posix
-            )
+    )
     file(GLOB PLATFORM_SOURCES
             source/platforms/ps4/*.c*
             source/platforms/posix/*.c*
-            )
+    )
     if (OPTION_GL_SHADERS_BINARY)
         file(GLOB SHADERS_SOURCES source/platforms/ps4/shaders/*.c*)
         list(APPEND PLATFORM_SOURCES ${SHADERS_SOURCES})
@@ -265,19 +265,19 @@ elseif (PLATFORM_PS3)
             include/cross2d/platforms/ps3/tiny3d
             source/platforms/posix
             ${PSL1GHT}/portlibs/ppu/include/freetype2
-            )
+    )
     file(GLOB PLATFORM_SOURCES
             source/platforms/ps3/*.c*
             source/platforms/ps3/tiny3d/source/*.c*
             source/platforms/ps3/tiny3d/source/*.S*
             source/platforms/posix/posix_io.cpp
-            )
+    )
     list(APPEND C2D_LDFLAGS
             rsx gcm_sys sysutil sysmodule rt lv2
             io audio
             freetype tiff jpeg pngdec
             m z
-            )
+    )
     list(APPEND C2D_CFLAGS -D__PS3__ -D__C2D_ARGB__ -DNO_KEYBOARD)
 elseif (PLATFORM_3DS)
     #####################
@@ -287,12 +287,12 @@ elseif (PLATFORM_3DS)
     set(PLATFORM_INCLUDES
             source/platforms/3ds
             source/platforms/posix
-            )
+    )
     file(GLOB PLATFORM_SOURCES
             source/platforms/3ds/*.c*
             source/platforms/3ds/*.s
             source/platforms/posix/*.c*
-            )
+    )
     list(APPEND C2D_LDFLAGS citro3d ctru m)
     list(APPEND C2D_CFLAGS -DARM11 -D__3DS__)
     # TODO
@@ -327,37 +327,6 @@ elseif (PLATFORM_DREAMCAST)
     ########################
 elseif (PLATFORM_LINUX)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
-    # romfs: fuse-zip (static library not available on ubuntu, use sources...)
-    #pkg_search_module(LIBZIP REQUIRED libzip)
-    set(ENABLE_COMMONCRYPTO OFF CACHE BOOL "")
-    set(ENABLE_GNUTLS OFF CACHE BOOL "")
-    set(ENABLE_MBEDTLS OFF CACHE BOOL "")
-    set(ENABLE_OPENSSL ON CACHE BOOL "")
-    set(ENABLE_WINDOWS_CRYPTO OFF CACHE BOOL "")
-    set(ENABLE_BZIP2 OFF CACHE BOOL "")
-    set(ENABLE_LZMA OFF CACHE BOOL "")
-    set(ENABLE_ZSTD OFF CACHE BOOL "")
-    set(BUILD_DOC OFF CACHE BOOL "")
-    set(BUILD_TOOLS OFF CACHE BOOL "")
-    set(BUILD_REGRESS OFF CACHE BOOL "")
-    set(BUILD_EXAMPLES OFF CACHE BOOL "")
-    set(BUILD_SHARED_LIBS OFF CACHE BOOL "")
-    add_subdirectory(source/skeleton/romfs/libzip EXCLUDE_FROM_ALL)
-
-    pkg_search_module(LIBFUSE REQUIRED fuse)
-    list(APPEND C2D_INCLUDES source/skeleton/romfs/libzip/lib ${LIBFUSE_INCLUDE_DIRS})
-    list(APPEND C2D_LDFLAGS zip ${LIBFUSE_LIBRARIES})
-    list(APPEND C2D_CFLAGS -D__FUZE_FS__ ${LIBFUSE_CFLAGS})
-    list(APPEND PLATFORM_SOURCES
-            source/skeleton/romfs/fuse-zip/lib/bigBuffer.cpp
-            source/skeleton/romfs/fuse-zip/lib/dataNode.cpp
-            source/skeleton/romfs/fuse-zip/lib/extraField.cpp
-            source/skeleton/romfs/fuse-zip/lib/fileNode.cpp
-            source/skeleton/romfs/fuse-zip/lib/fuse-zip.cpp
-            source/skeleton/romfs/fuse-zip/lib/fuseZipData.cpp
-            source/skeleton/romfs/fuse-zip/lib/util.cpp
-            )
-    # romfs: fuse-zip
     list(APPEND C2D_CFLAGS -D__LINUX__)
     ########################
     # WIN64 PLATFORM

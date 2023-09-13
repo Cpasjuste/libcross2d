@@ -18,27 +18,8 @@
 
 using namespace c2d;
 
-#ifdef __FUZE_FS__
-
-#include "cross2d/platforms/posix/posix_romfs.h"
-
-extern POSIXRomFs *c2d_romFs;
-
-POSIXIo::POSIXIo() : Io() {
-    // we don't want multiple instances of fuse-zip.
-    // romFs (fuse-zip) will be deleted from renderer
-    if (!c2d_romFs) {
-        POSIXIo::create(POSIXIo::getRomFsPath());
-        c2d_romFs = new POSIXRomFs(POSIXIo::getRomFsPath());
-    }
-}
-
-#endif
-
 std::string POSIXIo::getRomFsPath() {
-#ifdef __FUZE_FS__
-    return "/tmp/c2d_romfs/";
-#elif __WINDOWS__
+#if defined(__WINDOWS__) || defined(__LINUX__)
     return getDataPath() + "data_romfs/";
 #else
     return Io::getRomFsPath();

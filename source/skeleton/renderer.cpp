@@ -8,13 +8,6 @@ using namespace c2d;
 
 Renderer *c2d_renderer = nullptr;
 
-#ifdef __FUZE_FS__
-
-#include "cross2d/platforms/posix/posix_romfs.h"
-
-POSIXRomFs *c2d_romFs = nullptr;
-#endif
-
 #ifdef __SWITCH__
 
 void initNxLink();
@@ -125,12 +118,6 @@ Renderer::~Renderer() {
     if (m_shaderList) {
         delete (m_shaderList);
     }
-
-#ifdef __FUZE_FS__
-    if (c2d_romFs) {
-        delete (c2d_romFs);
-    }
-#endif
 
 #ifdef __SWITCH__
     deinitNxLink();
