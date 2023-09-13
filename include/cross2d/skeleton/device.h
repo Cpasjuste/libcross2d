@@ -10,7 +10,9 @@ namespace c2d {
     class Device {
 
     public:
-        static std::string getName();
+        static std::string getName() { return {}; }
+
+        static Vector2i getDisplaySize() { return {}; }
     };
 }
 
