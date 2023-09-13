@@ -364,7 +364,6 @@ elseif (PLATFORM_LINUX)
     ########################
 elseif (PLATFORM_WINDOWS)
     file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
-    list(APPEND PLATFORM_SOURCES source/platforms/windows/windows_device.cpp)
     # get msys root path
     if (${MSYS})
         # build from "MSYS2 MinGW x64" shell

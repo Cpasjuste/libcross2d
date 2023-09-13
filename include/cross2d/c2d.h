@@ -92,12 +92,6 @@ extern c2d::Renderer *c2d_renderer;
 #define KEY_JOY_AXIS_RY         SDL_CONTROLLER_AXIS_RIGHTY
 #endif
 
-#ifdef __WINDOWS__
-#undef C2DDevice
-#define C2DDevice WindowsDevice
-#include "cross2d/platforms/windows/windows_device.h"
-#endif
-
 #ifdef __PSP2__
 #define NO_KEYBOARD 1
 

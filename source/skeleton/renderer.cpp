@@ -24,11 +24,6 @@ void deinitNxLink();
 #endif
 
 Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
-#if defined(__LINUX__) && !defined(NDEBUG)
-    if (size.x == 0 || size.y == 0) {
-        Renderer::setSize(1280, 720);
-    }
-#endif
 #ifdef __SWITCH__
     initNxLink();
 #endif

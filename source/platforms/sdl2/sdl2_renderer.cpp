@@ -98,7 +98,10 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 
     available = true;
 
-    printf("SDLRenderer(SDL2)(%p): %ix%i\n", this, (int) m_size.x, (int) m_size.y);
+    auto display = C2DDevice::getDisplaySize();
+    printf("SDL2Renderer(%p): platform: %s, resolution: %i x %i, display: %i x %i\n",
+           this, C2DDevice::getName().c_str(),
+           (int) m_size.x, (int) m_size.y, display.x, display.y);
 }
 
 void SDL2Renderer::flip(bool draw, bool inputs) {
