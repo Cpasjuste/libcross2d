@@ -13,52 +13,60 @@
 using namespace c2d;
 using namespace c2d::config;
 
-Option::Option(const std::string &name, const std::string &value, int id) {
+Option::Option(const std::string &name, const std::string &value, int id, const std::string &comment) {
     setName(name);
     setId(id);
     setString(value);
+    setComment(comment);
     setType(Type::String);
 }
 
-Option::Option(const std::string &name, int value, int id) {
+Option::Option(const std::string &name, int value, int id, const std::string &comment) {
     setName(name);
     setId(id);
     setInteger(value);
+    setComment(comment);
     setType(Type::Integer);
 }
 
-Option::Option(const std::string &name, float value, int id) {
+Option::Option(const std::string &name, float value, int id, const std::string &comment) {
     setName(name);
     setId(id);
     setFloat(value);
+    setComment(comment);
     setType(Type::Float);
 }
 
-Option::Option(const std::string &name, const c2d::Vector2f &value, int id) {
+Option::Option(const std::string &name, const c2d::Vector2f &value, int id, const std::string &comment) {
     setName(name);
     setId(id);
     setVector2f(value);
+    setComment(comment);
     setType(Type::Vector2f);
 }
 
-Option::Option(const std::string &name, const c2d::FloatRect &value, int id) {
+Option::Option(const std::string &name, const c2d::FloatRect &value, int id, const std::string &comment) {
     setName(name);
     setId(id);
     setFloatRect(value);
+    setComment(comment);
     setType(Type::FloatRect);
 }
 
-Option::Option(const std::string &name, const Color &value, int id) {
+Option::Option(const std::string &name, const Color &value, int id, const std::string &comment) {
     setName(name);
     setId(id);
     setColor(value);
+    setComment(comment);
     setType(Type::Color);
 }
 
-Option::Option(const std::string &name, const std::vector<std::string> &values, int index, int id) {
+Option::Option(const std::string &name, const std::vector<std::string> &values, int index, int id,
+               const std::string &comment) {
     setName(name);
     setId(id);
     setChoices(values, index);
+    setComment(comment);
     setType(Type::Choice);
 }
 

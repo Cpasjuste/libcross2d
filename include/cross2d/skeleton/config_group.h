@@ -11,66 +11,60 @@
 
 #include "cross2d/skeleton/config_option.h"
 
-namespace c2d {
+namespace c2d::config {
+    class Group {
+    public:
+        explicit Group(const std::string &name = "none", int id = -1);
 
-    namespace config {
+        [[nodiscard]] std::string getName() const;
 
-        class Group {
+        [[nodiscard]] int getId() const;
 
-        public:
+        void setId(int id);
 
-            explicit Group(const std::string &name = "none", int id = -1);
+        // child options
+        void addOption(const Option &option);
 
-            std::string getName() const;
+        bool removeOption(const std::string &name);
 
-            int getId() const;
+        bool removeOption(int id);
 
-            void setId(int id);
+        Option *getOption(const std::string &name);
 
-            // child options
-            void addOption(const Option &option);
+        Option *getOption(int id);
 
-            bool removeOption(const std::string &name);
+        Option *getOption(const std::string &groupName, const std::string &optionName);
 
-            bool removeOption(int id);
+        Option *getOption(int groupId, int optionId);
 
-            Option *getOption(const std::string &name);
+        std::vector<Option> *getOptions();
 
-            Option *getOption(int id);
+        // child groups
+        void addGroup(const Group &group);
 
-            Option *getOption(const std::string &groupName, const std::string &optionName);
+        bool removeGroup(const std::string &name);
 
-            Option *getOption(int groupId, int optionId);
+        bool removeGroup(int id);
 
-            std::vector<Option> *getOptions();
+        Group *getGroup(const std::string &name);
 
-            // child groups
-            void addGroup(const Group &group);
+        Group *getGroup(int id);
 
-            bool removeGroup(const std::string &name);
+        std::vector<Group> *getGroups();
 
-            bool removeGroup(int id);
+        void copy(Group *group);
 
-            Group *getGroup(const std::string &name);
+    protected:
+        bool load(config_setting_t *root);
 
-            Group *getGroup(int id);
+        bool save(config_setting_t *root);
 
-            std::vector<Group> *getGroups();
-
-        protected:
-
-            bool load(config_setting_t *root);
-
-            bool save(config_setting_t *root);
-
-        private:
-
-            std::string name;
-            std::vector<Group> groups;
-            std::vector<Option> options;
-            int id = 0;
-        };
-    }
+    private:
+        std::string m_name;
+        std::vector<Group> m_groups;
+        std::vector<Option> m_options;
+        int p_id = 0;
+    };
 }
 
 #endif //C2D_CONFIG_GROUP_H

@@ -12,125 +12,116 @@
 #include "cross2d/skeleton/sfml/Rect.hpp"
 #include "cross2d/skeleton/sfml/Color.hpp"
 
-namespace c2d {
-
-    namespace config {
-
-        class Option {
-
-        public:
-
-            enum class Type {
-                Integer,
-                String,
-                Float,
-                Vector2f,
-                FloatRect,
-                Color,
-                Choice
-            };
-
-            /// Constructors
-
-            Option(const std::string &name, const std::string &value, int id = -1);
-
-            Option(const std::string &name, int value, int id = -1);
-
-            Option(const std::string &name, float value, int id = -1);
-
-            Option(const std::string &name, const Vector2f &value, int id = -1);
-
-            Option(const std::string &name, const FloatRect &value, int id = -1);
-
-            Option(const std::string &name, const Color &value, int id = -1);
-
-            Option(const std::string &name, const std::vector<std::string> &values, int index, int id = -1);
-
-            /// Type::String
-
-            std::string getString() const;
-
-            void setString(const std::string &value);
-
-            /// Type::Integer
-
-            int getInteger();
-
-            void setInteger(int value);
-
-            /// Type::Float
-
-            float getFloat();
-
-            void setFloat(float value);
-
-            /// Type::Vector2f
-
-            Vector2f getVector2f();
-
-            void setVector2f(const Vector2f &value);
-
-            /// Type::FloatRect
-
-            FloatRect getFloatRect();
-
-            void setFloatRect(const FloatRect &value);
-
-            /// Type::Color
-
-            Color getColor();
-
-            void setColor(const Color &color);
-
-            /// Type::Choice
-
-            int getChoiceIndex();
-
-            void setChoicesIndex(int index);
-
-            void setChoicesIndex(const std::string &choice);
-
-            std::vector<std::string> getChoices();
-
-            void setChoices(const std::vector<std::string> &values, int index);
-
-            /// ...
-
-            std::string getName() const;
-
-            void setName(const std::string &name);
-
-            int getId() const;
-
-            void setId(int id);
-
-            std::string getComment() const;
-
-            void setComment(const std::string &info);
-
-            Type getType() const;
-
-            void setType(Option::Type type);
-
-            void *getUserData();
-
-            void setUserData(void *data);
-
-        private:
-
-            std::string string;
-            int integer;
-            FloatRect floatRect;
-            std::vector<std::string> choices;
-            int choices_index;
-
-            std::string name;
-            std::string info;
-            Type type;
-            int id = -1;
-            void *user_data = nullptr;
+namespace c2d::config {
+    class Option {
+    public:
+        enum class Type {
+            Integer,
+            String,
+            Float,
+            Vector2f,
+            FloatRect,
+            Color,
+            Choice
         };
-    }
+
+        /// Constructors
+        Option(const std::string &name, const std::string &value,
+               int id = -1, const std::string &comment = "");
+
+        Option(const std::string &name, int value,
+               int id = -1, const std::string &comment = "");
+
+        Option(const std::string &name, float value,
+               int id = -1, const std::string &comment = "");
+
+        Option(const std::string &name, const Vector2f &value,
+               int id = -1, const std::string &comment = "");
+
+        Option(const std::string &name, const FloatRect &value,
+               int id = -1, const std::string &comment = "");
+
+        Option(const std::string &name, const Color &value,
+               int id = -1, const std::string &comment = "");
+
+        Option(const std::string &name, const std::vector<std::string> &values,
+               int index = 0, int id = -1, const std::string &comment = "");
+
+        /// Type::String
+        std::string getString() const;
+
+        void setString(const std::string &value);
+
+        /// Type::Integer
+        int getInteger();
+
+        void setInteger(int value);
+
+        /// Type::Float
+        float getFloat();
+
+        void setFloat(float value);
+
+        /// Type::Vector2f
+        Vector2f getVector2f();
+
+        void setVector2f(const Vector2f &value);
+
+        /// Type::FloatRect
+        FloatRect getFloatRect();
+
+        void setFloatRect(const FloatRect &value);
+
+        /// Type::Color
+        Color getColor();
+
+        void setColor(const Color &color);
+
+        /// Type::Choice
+        int getChoiceIndex();
+
+        void setChoicesIndex(int index);
+
+        void setChoicesIndex(const std::string &choice);
+
+        std::vector<std::string> getChoices();
+
+        void setChoices(const std::vector<std::string> &values, int index);
+
+        /// ...
+        std::string getName() const;
+
+        void setName(const std::string &name);
+
+        int getId() const;
+
+        void setId(int id);
+
+        std::string getComment() const;
+
+        void setComment(const std::string &info);
+
+        Type getType() const;
+
+        void setType(Option::Type type);
+
+        void *getUserData();
+
+        void setUserData(void *data);
+
+    private:
+        std::string string;
+        int integer;
+        FloatRect floatRect;
+        std::vector<std::string> choices;
+        int choices_index;
+
+        std::string name;
+        std::string info;
+        Type type;
+        int id = -1;
+        void *user_data = nullptr;
+    };
 }
 
 #endif //C2D_CONFIG_OPTION_H

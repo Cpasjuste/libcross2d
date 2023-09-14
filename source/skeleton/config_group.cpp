@@ -9,37 +9,34 @@ using namespace c2d::config;
 
 Group::Group(const std::string &name, int id) {
 
-    this->name = name;
-    this->id = id;
+    m_name = name;
+    p_id = id;
 }
 
 std::string Group::getName() const {
-
-    return name;
+    return m_name;
 }
 
 int Group::getId() const {
-    return id;
+    return p_id;
 }
 
 void Group::setId(int i) {
-    id = i;
+    p_id = i;
 }
 
 /// childs options
 void Group::addOption(const Option &option) {
-
-    options.push_back(option);
+    m_options.push_back(option);
 }
 
 bool Group::removeOption(const std::string &n) {
-
-    auto found = std::find_if(options.begin(), options.end(), [&n](Option const &option) {
+    auto found = std::find_if(m_options.begin(), m_options.end(), [&n](Option const &option) {
         return n == option.getName();
     });
 
-    if (found != options.end()) {
-        options.erase(found);
+    if (found != m_options.end()) {
+        m_options.erase(found);
         return true;
     }
 
@@ -47,13 +44,12 @@ bool Group::removeOption(const std::string &n) {
 }
 
 bool Group::removeOption(int i) {
-
-    auto found = std::find_if(options.begin(), options.end(), [&i](Option const &option) {
+    auto found = std::find_if(m_options.begin(), m_options.end(), [&i](Option const &option) {
         return i == option.getId();
     });
 
-    if (found != options.end()) {
-        options.erase(found);
+    if (found != m_options.end()) {
+        m_options.erase(found);
         return true;
     }
 
@@ -61,22 +57,30 @@ bool Group::removeOption(int i) {
 }
 
 Option *Group::getOption(const std::string &n) {
-
-    for (Option &option: options) {
+    for (Option &option: m_options) {
         if (option.getName() == n) {
             return &option;
         }
+    }
+
+    for (Group &group: m_groups) {
+        Option *opt = group.getOption(n);
+        if (opt) return opt;
     }
 
     return nullptr;
 }
 
 Option *Group::getOption(int i) {
-
-    for (Option &option: options) {
+    for (Option &option: m_options) {
         if (option.getId() == i) {
             return &option;
         }
+    }
+
+    for (Group &group: m_groups) {
+        Option *opt = group.getOption(i);
+        if (opt) return opt;
     }
 
     return nullptr;
@@ -99,24 +103,21 @@ Option *Group::getOption(int groupId, int optionId) {
 }
 
 std::vector<Option> *Group::getOptions() {
-
-    return &options;
+    return &m_options;
 }
 
 /// childs group
 void Group::addGroup(const Group &group) {
-
-    groups.push_back(group);
+    m_groups.push_back(group);
 }
 
 bool Group::removeGroup(const std::string &n) {
-
-    auto found = std::find_if(groups.begin(), groups.end(), [&n](Group const &group) {
+    auto found = std::find_if(m_groups.begin(), m_groups.end(), [&n](Group const &group) {
         return n == group.getName();
     });
 
-    if (found != groups.end()) {
-        groups.erase(found);
+    if (found != m_groups.end()) {
+        m_groups.erase(found);
         return true;
     }
 
@@ -124,13 +125,12 @@ bool Group::removeGroup(const std::string &n) {
 }
 
 bool Group::removeGroup(int i) {
-
-    auto found = std::find_if(groups.begin(), groups.end(), [&i](Group const &group) {
+    auto found = std::find_if(m_groups.begin(), m_groups.end(), [&i](Group const &group) {
         return i == group.getId();
     });
 
-    if (found != groups.end()) {
-        groups.erase(found);
+    if (found != m_groups.end()) {
+        m_groups.erase(found);
         return true;
     }
 
@@ -138,13 +138,12 @@ bool Group::removeGroup(int i) {
 }
 
 Group *Group::getGroup(const std::string &name) {
-
-    if (name == this->name) {
+    if (name == m_name) {
         // used for recursive lookup
         return this;
     }
 
-    for (Group &group: groups) {
+    for (Group &group: m_groups) {
         Group *s = group.getGroup(name);
         if (s != nullptr) {
             return s;
@@ -155,13 +154,12 @@ Group *Group::getGroup(const std::string &name) {
 }
 
 Group *Group::getGroup(int id) {
-
-    if (id == this->id) {
+    if (id == p_id) {
         // used for recursive lookup
         return this;
     }
 
-    for (Group &group: groups) {
+    for (Group &group: m_groups) {
         Group *s = group.getGroup(id);
         if (s != nullptr) {
             return s;
@@ -172,8 +170,7 @@ Group *Group::getGroup(int id) {
 }
 
 std::vector<Group> *Group::getGroups() {
-
-    return &groups;
+    return &m_groups;
 }
 
 ///
@@ -181,17 +178,17 @@ std::vector<Group> *Group::getGroups() {
 ///
 bool Group::load(config_setting_t *parent) {
     if (!parent) {
-        printf("Config::Group::load: could not find root config: %s\n", name.c_str());
+        printf("Config::Group::load: could not find root config: %s\n", m_name.c_str());
         return false;
     }
 
-    config_setting_t *settings = config_setting_lookup(parent, name.c_str());
+    config_setting_t *settings = config_setting_lookup(parent, m_name.c_str());
     if (!settings) {
-        printf("Config::Group::load: group not found, skipping: %s\n", name.c_str());
+        printf("Config::Group::load: group not found, skipping: %s\n", m_name.c_str());
         return false;
     }
 
-    for (auto &option: options) {
+    for (auto &option: m_options) {
         bool found = false;
 
         if (option.getType() == Option::Type::String) {
@@ -245,8 +242,8 @@ bool Group::load(config_setting_t *parent) {
                 found = true;
             }
         } else if (option.getType() == Option::Type::Choice) {
-            int value = 0;
-            if (config_setting_lookup_int(settings, option.getName().c_str(), &value)) {
+            const char *value;
+            if (config_setting_lookup_string(settings, option.getName().c_str(), &value)) {
                 option.setChoicesIndex(value);
                 found = true;
             }
@@ -264,8 +261,8 @@ bool Group::load(config_setting_t *parent) {
         }
     }
 
-    // load childs, if any
-    for (Group &group: groups) {
+    // load children, if any
+    for (Group &group: m_groups) {
         group.load(settings);
     }
 
@@ -274,13 +271,17 @@ bool Group::load(config_setting_t *parent) {
 
 bool Group::save(config_setting_t *parent) {
     if (!parent) {
-        //printf("Config::Group::save: could not save group (%s), no parent\n", name.c_str());
+        printf("Config::Group::save: could not save group (%s), no parent\n", m_name.c_str());
         return false;
     }
 
-    config_setting_t *root = config_setting_add(parent, name.c_str(), CONFIG_TYPE_GROUP);
-    for (Option &option: options) {
+    config_setting_t *root = config_setting_add(parent, m_name.c_str(), CONFIG_TYPE_GROUP);
+    if (!root) {
+        printf("Config::Group::save: config_setting_add failed (%s)\n", m_name.c_str());
+        return false;
+    }
 
+    for (Option &option: m_options) {
         if (option.getType() == Option::Type::String) {
             config_setting_t *setting = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_STRING);
             config_setting_set_string(setting, option.getString().c_str());
@@ -317,16 +318,24 @@ bool Group::save(config_setting_t *parent) {
             subset = config_setting_add(array, nullptr, CONFIG_TYPE_INT);
             config_setting_set_int(subset, (int) option.getFloatRect().height);
         } else if (option.getType() == Option::Type::Choice) {
-            config_setting_t *setting = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_INT);
-            config_setting_set_int(setting, option.getChoiceIndex());
+            config_setting_t *setting = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_STRING);
+            config_setting_set_string(setting, option.getString().c_str());
         }
     }
 
     // save childs, if any
-    for (Group &group: groups) {
+    for (Group &group: m_groups) {
         group.save(root);
     }
 
     return true;
 }
 
+void Group::copy(Group *group) {
+    if (!group) return;
+
+    group->m_name = m_name;
+    group->m_groups = m_groups;
+    group->m_options = m_options;
+    group->p_id = p_id;
+}
