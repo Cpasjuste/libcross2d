@@ -96,29 +96,29 @@ config::Option *ConfigBox::navigate(const ConfigBox::Navigation &navigation) {
         listBoxRight->setSelection(index);
     } else if (navigation == Navigation::Left) {
         selection = getSelection();
-        if (selection != nullptr && selection->getType() == Option::Type::Choice) {
-            int count = selection->getChoices().size();
-            int idx = selection->getChoiceIndex();
+        if (selection != nullptr && selection->getType() == Option::Type::Array) {
+            int count = selection->getArray().size();
+            int idx = selection->getArrayIndex();
             if (loop_choices || idx > 0) {
                 idx--;
                 if (idx < 0) {
                     idx = count - 1;
                 }
-                selection->setChoicesIndex(idx);
+                selection->setArrayIndex(idx);
                 listBoxRight->getFiles().at(index)->name = selection->getString();
             }
         }
     } else if (navigation == Navigation::Right) {
         selection = getSelection();
-        if (selection != nullptr && selection->getType() == Option::Type::Choice) {
-            int count = selection->getChoices().size();
-            int idx = selection->getChoiceIndex();
+        if (selection != nullptr && selection->getType() == Option::Type::Array) {
+            int count = selection->getArray().size();
+            int idx = selection->getArrayIndex();
             if (loop_choices || idx < count - 1) {
                 idx++;
                 if (idx >= count) {
                     idx = 0;
                 }
-                selection->setChoicesIndex(idx);
+                selection->setArrayIndex(idx);
                 listBoxRight->getFiles().at(index)->name = selection->getString();
             }
         }

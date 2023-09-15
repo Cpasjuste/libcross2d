@@ -65,9 +65,9 @@ Option::Option(const std::string &name, const std::vector<std::string> &values, 
                const std::string &comment) {
     setName(name);
     setId(id);
-    setChoices(values, index);
+    setArray(values, index);
     setComment(comment);
-    setType(Type::Choice);
+    setType(Type::Array);
 }
 
 std::string Option::getName() const {
@@ -146,8 +146,8 @@ std::string Option::getString() const {
     } else if (type == Type::Color) {
         return std::to_string((int) floatRect.left) + ", " + std::to_string((int) floatRect.top) + ", "
                + std::to_string((int) floatRect.width) + ", " + std::to_string((int) floatRect.height);
-    } else if (type == Type::Choice) {
-        return choices[choices_index];
+    } else if (type == Type::Array) {
+        return array[array_index];
     }
 #endif
 
@@ -203,29 +203,42 @@ void Option::setColor(const Color &color) {
     floatRect.height = color.a;
 }
 
-int Option::getChoiceIndex() {
-    return choices_index;
+int Option::getArrayIndex() {
+    return array_index;
 }
 
-void Option::setChoicesIndex(int index) {
-    choices_index = index;
+void Option::setArrayIndex(int index) {
+    if (index < (int) array.size()) array_index = index;
 }
 
-void Option::setChoicesIndex(const std::string &selection) {
-    for (size_t i = 0; i < choices.size(); i++) {
-        if (choices.at(i) == selection) {
-            choices_index = i;
+void Option::setArrayIndex(const std::string &value) {
+    for (size_t i = 0; i < array.size(); i++) {
+        if (array.at(i) == value) {
+            array_index = (int) i;
             break;
         }
     }
 }
 
-std::vector<std::string> Option::getChoices() {
-    return choices;
+std::vector<std::string> Option::getArray() {
+    return array;
 }
 
-void Option::setChoices(const std::vector<std::string> &values, int index) {
-    choices = values;
-    choices_index = index;
+void Option::setArray(const std::vector<std::string> &values, int index) {
+    array = values;
+    array_index = index;
 }
 
+void Option::setArrayMoveNext() {
+    array_index++;
+    if (array_index >= (int) array.size()) {
+        array_index = 0;
+    }
+}
+
+void Option::setArrayMovePrev() {
+    array_index--;
+    if (array_index < 0) {
+        array_index = (int) array.size() - 1;
+    }
+}

@@ -22,7 +22,7 @@ namespace c2d::config {
             Vector2f,
             FloatRect,
             Color,
-            Choice
+            Array
         };
 
         /// Constructors
@@ -77,16 +77,20 @@ namespace c2d::config {
 
         void setColor(const Color &color);
 
-        /// Type::Choice
-        int getChoiceIndex();
+        /// Type::Array
+        int getArrayIndex();
 
-        void setChoicesIndex(int index);
+        void setArrayIndex(int index);
 
-        void setChoicesIndex(const std::string &choice);
+        void setArrayIndex(const std::string &value);
 
-        std::vector<std::string> getChoices();
+        std::vector<std::string> getArray();
 
-        void setChoices(const std::vector<std::string> &values, int index);
+        void setArray(const std::vector<std::string> &values, int index);
+
+        void setArrayMoveNext();
+
+        void setArrayMovePrev();
 
         /// ...
         std::string getName() const;
@@ -113,8 +117,8 @@ namespace c2d::config {
         std::string string;
         int integer;
         FloatRect floatRect;
-        std::vector<std::string> choices;
-        int choices_index;
+        std::vector<std::string> array;
+        int array_index;
 
         std::string name;
         std::string info;

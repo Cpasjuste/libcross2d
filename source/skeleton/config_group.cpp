@@ -241,10 +241,10 @@ bool Group::load(config_setting_t *parent) {
                 option.setColor({values[0], values[1], values[2], values[3]});
                 found = true;
             }
-        } else if (option.getType() == Option::Type::Choice) {
+        } else if (option.getType() == Option::Type::Array) {
             const char *value;
             if (config_setting_lookup_string(settings, option.getName().c_str(), &value)) {
-                option.setChoicesIndex(value);
+                option.setArrayIndex(value);
                 found = true;
             }
         }
@@ -317,7 +317,7 @@ bool Group::save(config_setting_t *parent) {
             config_setting_set_int(subset, (int) option.getFloatRect().width);
             subset = config_setting_add(array, nullptr, CONFIG_TYPE_INT);
             config_setting_set_int(subset, (int) option.getFloatRect().height);
-        } else if (option.getType() == Option::Type::Choice) {
+        } else if (option.getType() == Option::Type::Array) {
             config_setting_t *setting = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_STRING);
             config_setting_set_string(setting, option.getString().c_str());
         }
