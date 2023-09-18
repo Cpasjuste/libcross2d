@@ -18,7 +18,6 @@ Config::Config(const std::string &name, const std::string &path, int version) : 
 
 bool Config::load(const std::string &overridePath) {
     std::string p = overridePath.empty() ? m_path : overridePath;
-
     printf("Config::load: %s\n", p.c_str());
     if (config_read_file(&m_config, p.c_str()) == CONFIG_FALSE) {
         printf("Config::load: file not found: %s\n", p.c_str());

@@ -48,7 +48,7 @@ namespace c2d::config {
                int index = 0, int id = -1, const std::string &comment = "");
 
         /// Type::String
-        std::string getString() const;
+        [[nodiscard]] std::string getString() const;
 
         void setString(const std::string &value);
 
@@ -93,21 +93,25 @@ namespace c2d::config {
         void setArrayMovePrev();
 
         /// ...
-        std::string getName() const;
+        [[nodiscard]] std::string getName() const;
 
         void setName(const std::string &name);
 
-        int getId() const;
+        [[nodiscard]] int getId() const;
 
         void setId(int id);
 
-        std::string getComment() const;
+        [[nodiscard]] std::string getComment() const;
 
         void setComment(const std::string &info);
 
-        Type getType() const;
+        [[nodiscard]] Type getType() const;
 
         void setType(Option::Type type);
+
+        [[nodiscard]] unsigned int getFlags() const { return m_flags; }
+
+        void setFlags(unsigned int flags) { m_flags = flags; }
 
         void *getUserData();
 
@@ -115,7 +119,7 @@ namespace c2d::config {
 
     private:
         std::string string;
-        int integer;
+        int integer = 0;
         FloatRect floatRect;
         std::vector<std::string> array;
         int array_index;
@@ -124,6 +128,7 @@ namespace c2d::config {
         std::string info;
         Type type;
         int id = -1;
+        unsigned int m_flags = 0;
         void *user_data = nullptr;
     };
 }

@@ -9,6 +9,7 @@
 #endif
 
 #include "cross2d/skeleton/config_option.h"
+#include "cross2d/skeleton/utility.h"
 
 using namespace c2d;
 using namespace c2d::config;
@@ -159,6 +160,14 @@ void Option::setString(const std::string &value) {
 }
 
 int Option::getInteger() {
+    if (type == Type::Array) {
+        if (array[array_index] == "OFF") return 0;
+        else if (array[array_index] == "ON") return 1;
+        else {
+            return Utility::parseInt(string, 0);
+        }
+    }
+
     return integer;
 }
 

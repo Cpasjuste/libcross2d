@@ -8,7 +8,6 @@
 using namespace c2d::config;
 
 Group::Group(const std::string &name, int id) {
-
     m_name = name;
     p_id = id;
 }
@@ -26,8 +25,9 @@ void Group::setId(int i) {
 }
 
 /// childs options
-void Group::addOption(const Option &option) {
+Option *Group::addOption(const Option &option) {
     m_options.push_back(option);
+    return (Option *) &m_options.at(m_options.size() - 1);
 }
 
 bool Group::removeOption(const std::string &n) {

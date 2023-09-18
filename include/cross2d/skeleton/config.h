@@ -30,10 +30,9 @@ namespace c2d::config {
 
         std::string getPath();
 
-        config_t m_config{};
     private:
         std::string m_path;
-        //config_t m_config{};
+        config_t m_config{};
         int m_version = 0;
     };
 }

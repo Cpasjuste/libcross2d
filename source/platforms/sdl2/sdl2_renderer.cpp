@@ -105,7 +105,6 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 }
 
 void SDL2Renderer::flip(bool draw, bool inputs) {
-
     // call base class (draw childs)
     GLRenderer::flip(draw, inputs);
 
@@ -114,7 +113,6 @@ void SDL2Renderer::flip(bool draw, bool inputs) {
 }
 
 void SDL2Renderer::delay(unsigned int ms) {
-
     SDL_Delay(ms);
 }
 
@@ -127,7 +125,6 @@ SDL_GLContext SDL2Renderer::getContext() {
 }
 
 void SDL2Renderer::exitCallback() {
-
     if (context != nullptr) {
         SDL_GL_DeleteContext(context);
     }

@@ -23,7 +23,7 @@ namespace c2d::config {
         void setId(int id);
 
         // child options
-        void addOption(const Option &option);
+        Option *addOption(const Option &option);
 
         bool removeOption(const std::string &name);
 
