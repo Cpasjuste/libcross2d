@@ -164,7 +164,7 @@ int Option::getInteger() {
         if (array[array_index] == "OFF") return 0;
         else if (array[array_index] == "ON") return 1;
         else {
-            return Utility::parseInt(string, 0);
+            return Utility::parseInt(array[array_index], 0);
         }
     }
 
