@@ -86,7 +86,7 @@ namespace c2d::config {
 
         std::vector<std::string> getArray();
 
-        void setArray(const std::vector<std::string> &values, int index);
+        void setArray(const std::vector<std::string> &values, int index = -1);
 
         void setArrayMoveNext();
 

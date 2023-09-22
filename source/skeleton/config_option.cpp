@@ -148,7 +148,7 @@ std::string Option::getString() const {
         return std::to_string((int) floatRect.left) + ", " + std::to_string((int) floatRect.top) + ", "
                + std::to_string((int) floatRect.width) + ", " + std::to_string((int) floatRect.height);
     } else if (type == Type::Array) {
-        return array[array_index];
+        return array_index < (int) array.size() ? array[array_index] : "";
     }
 #endif
 
@@ -224,9 +224,10 @@ void Option::setArrayIndex(const std::string &value) {
     for (size_t i = 0; i < array.size(); i++) {
         if (array.at(i) == value) {
             array_index = (int) i;
-            break;
+            return;
         }
     }
+    array_index = 0;
 }
 
 std::vector<std::string> Option::getArray() {
@@ -234,8 +235,12 @@ std::vector<std::string> Option::getArray() {
 }
 
 void Option::setArray(const std::vector<std::string> &values, int index) {
+    std::string current = getString();
     array = values;
     array_index = index;
+    if (array_index < 0) {
+        setArrayIndex(current);
+    }
 }
 
 void Option::setArrayMoveNext() {
