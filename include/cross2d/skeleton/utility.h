@@ -23,6 +23,8 @@ namespace c2d {
 
         static int parseInt(const std::string &str, int defValue = 0);
 
+        static unsigned int parseHex(const std::string &str, int defValue = 0);
+
         static float parseFloat(const std::string &str);
 
         static std::string toString(int value);

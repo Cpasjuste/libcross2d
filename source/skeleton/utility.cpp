@@ -146,6 +146,15 @@ int Utility::parseInt(const std::string &str, int defValue) {
     return defValue;
 }
 
+unsigned int Utility::parseHex(const std::string &str, int defValue) {
+    size_t pos;
+    auto i = std::stoul(str, &pos, 16);
+    if (pos) {
+        return (int) i;
+    }
+    return defValue;
+}
+
 float Utility::parseFloat(const std::string &str) {
     char *end = nullptr;
     double d = strtod(str.c_str(), &end);
