@@ -16,19 +16,25 @@ namespace c2d::config {
     public:
         Config(const std::string &name, const std::string &path, int version = 1);
 
-        ~Config();
+        virtual ~Config();
 
-        bool load(const std::string &overridePath = {});
+        virtual bool load(const std::string &overridePath = {});
 
-        bool loadFromString(const std::string &str);
+        virtual bool loadString(const std::string &str);
 
-        bool save();
+        virtual bool save();
 
         int getConfigVersion();
 
         int getAppVersion();
 
         std::string getPath();
+
+        config_t *libConfigGetInstance() { return &m_config; };
+
+        static config_setting_t *libConfigGetOrAdd(config_setting_t *setting, const std::string &name, int type);
+
+        static config_setting_t *libConfigAddOrGet(config_setting_t *setting, const std::string &name, int type);
 
     private:
         std::string m_path;

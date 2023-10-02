@@ -3,6 +3,7 @@
 //
 
 #include <algorithm>
+#include "cross2d/skeleton/config.h"
 #include "cross2d/skeleton/config_group.h"
 
 using namespace c2d::config;
@@ -275,50 +276,50 @@ bool Group::save(config_setting_t *parent) {
         return false;
     }
 
-    config_setting_t *root = config_setting_add(parent, m_name.c_str(), CONFIG_TYPE_GROUP);
+    config_setting_t *root = Config::libConfigGetOrAdd(parent, m_name, CONFIG_TYPE_GROUP);
     if (!root) {
-        printf("Config::Group::save: config_setting_add failed (%s)\n", m_name.c_str());
+        printf("Config::Group::save: config_setting_get_or_add failed (%s)\n", m_name.c_str());
         return false;
     }
 
     for (Option &option: m_options) {
         if (option.getType() == Option::Type::String) {
-            config_setting_t *setting = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_STRING);
+            config_setting_t *setting = Config::libConfigGetOrAdd(root, option.getName(), CONFIG_TYPE_STRING);
             config_setting_set_string(setting, option.getString().c_str());
         } else if (option.getType() == Option::Type::Integer) {
-            config_setting_t *setting = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_INT);
+            config_setting_t *setting = Config::libConfigGetOrAdd(root, option.getName(), CONFIG_TYPE_INT);
             config_setting_set_int(setting, option.getInteger());
         } else if (option.getType() == Option::Type::Float) {
-            config_setting_t *setting = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_FLOAT);
+            config_setting_t *setting = Config::libConfigGetOrAdd(root, option.getName(), CONFIG_TYPE_FLOAT);
             config_setting_set_float(setting, (double) option.getFloat());
         } else if (option.getType() == Option::Type::Vector2f) {
-            config_setting_t *array = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_ARRAY);
-            config_setting_t *subset = config_setting_add(array, nullptr, CONFIG_TYPE_FLOAT);
+            config_setting_t *array = Config::libConfigGetOrAdd(root, option.getName(), CONFIG_TYPE_ARRAY);
+            config_setting_t *subset = Config::libConfigGetOrAdd(array, "", CONFIG_TYPE_FLOAT);
             config_setting_set_float(subset, option.getVector2f().x);
-            subset = config_setting_add(array, nullptr, CONFIG_TYPE_FLOAT);
+            subset = Config::libConfigGetOrAdd(array, "", CONFIG_TYPE_FLOAT);
             config_setting_set_float(subset, option.getVector2f().y);
         } else if (option.getType() == Option::Type::FloatRect) {
-            config_setting_t *array = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_ARRAY);
-            config_setting_t *subset = config_setting_add(array, nullptr, CONFIG_TYPE_FLOAT);
+            config_setting_t *array = Config::libConfigGetOrAdd(root, option.getName(), CONFIG_TYPE_ARRAY);
+            config_setting_t *subset = Config::libConfigGetOrAdd(array, "", CONFIG_TYPE_FLOAT);
             config_setting_set_float(subset, option.getFloatRect().left);
-            subset = config_setting_add(array, nullptr, CONFIG_TYPE_FLOAT);
+            subset = Config::libConfigGetOrAdd(array, "", CONFIG_TYPE_FLOAT);
             config_setting_set_float(subset, option.getFloatRect().top);
-            subset = config_setting_add(array, nullptr, CONFIG_TYPE_FLOAT);
+            subset = Config::libConfigGetOrAdd(array, "", CONFIG_TYPE_FLOAT);
             config_setting_set_float(subset, option.getFloatRect().width);
-            subset = config_setting_add(array, nullptr, CONFIG_TYPE_FLOAT);
+            subset = Config::libConfigGetOrAdd(array, "", CONFIG_TYPE_FLOAT);
             config_setting_set_float(subset, option.getFloatRect().height);
         } else if (option.getType() == Option::Type::Color) {
-            config_setting_t *array = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_ARRAY);
-            config_setting_t *subset = config_setting_add(array, nullptr, CONFIG_TYPE_INT);
+            config_setting_t *array = Config::libConfigGetOrAdd(root, option.getName(), CONFIG_TYPE_ARRAY);
+            config_setting_t *subset = Config::libConfigGetOrAdd(array, "", CONFIG_TYPE_INT);
             config_setting_set_int(subset, (int) option.getFloatRect().left);
-            subset = config_setting_add(array, nullptr, CONFIG_TYPE_INT);
+            subset = Config::libConfigGetOrAdd(array, "", CONFIG_TYPE_INT);
             config_setting_set_int(subset, (int) option.getFloatRect().top);
-            subset = config_setting_add(array, nullptr, CONFIG_TYPE_INT);
+            subset = Config::libConfigGetOrAdd(array, "", CONFIG_TYPE_INT);
             config_setting_set_int(subset, (int) option.getFloatRect().width);
-            subset = config_setting_add(array, nullptr, CONFIG_TYPE_INT);
+            subset = Config::libConfigGetOrAdd(array, "", CONFIG_TYPE_INT);
             config_setting_set_int(subset, (int) option.getFloatRect().height);
         } else if (option.getType() == Option::Type::Array) {
-            config_setting_t *setting = config_setting_add(root, option.getName().c_str(), CONFIG_TYPE_STRING);
+            config_setting_t *setting = Config::libConfigGetOrAdd(root, option.getName(), CONFIG_TYPE_STRING);
             config_setting_set_string(setting, option.getString().c_str());
         }
     }
