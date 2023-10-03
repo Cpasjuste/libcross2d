@@ -3,8 +3,8 @@
 //
 
 #include <SDL2/SDL.h>
-#include <psp2/display.h>
 #include <psp2/kernel/threadmgr.h>
+#include <psp2/power.h>
 
 #include "cross2d/platforms/psp2/psp2_renderer.h"
 #include "cross2d/platforms/psp2/psp2_texture.h"
@@ -30,6 +30,11 @@ PSP2Renderer::PSP2Renderer(const Vector2f &size) : Renderer(size) {
     if (size.x == 0 || size.y == 0) {
         Renderer::setSize(960, 544);
     }
+
+    scePowerSetArmClockFrequency(444);
+    scePowerSetBusClockFrequency(222);
+    scePowerSetGpuClockFrequency(222);
+    scePowerSetGpuXbarClockFrequency(166);
 
     if ((SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE)) < 0) {
         printf("Couldn't init sdl: %s\n", SDL_GetError());
@@ -200,4 +205,9 @@ void PSP2Renderer::setWaitRendering(bool wait) {
 PSP2Renderer::~PSP2Renderer() {
     vita2d_wait_rendering_done();
     vita2d_fini();
+
+    scePowerSetArmClockFrequency(266);
+    scePowerSetBusClockFrequency(166);
+    scePowerSetGpuClockFrequency(166);
+    scePowerSetGpuXbarClockFrequency(111);
 }
