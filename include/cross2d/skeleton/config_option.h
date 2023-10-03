@@ -118,15 +118,15 @@ namespace c2d::config {
         void setUserData(void *data);
 
     private:
-        std::string string;
+        std::string string{};
         int integer = 0;
-        FloatRect floatRect;
-        std::vector<std::string> array;
-        int array_index;
+        FloatRect floatRect{};
+        std::vector<std::string> array{};
+        int array_index = 0;
 
-        std::string name;
-        std::string info;
-        Type type;
+        std::string name{};
+        std::string info{};
+        Type type{};
         int id = -1;
         unsigned int m_flags = 0;
         void *user_data = nullptr;
