@@ -8,17 +8,15 @@
 #include "ctr_sys.h"
 
 #ifndef NDEBUG
-
 #include <malloc.h>
 #include <sys/unistd.h>
-
 #define SOC_ALIGN       0x1000
 #define SOC_BUFFER_SIZE 0x100000
 #endif
 
 using namespace c2d;
 
-CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
+CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer({400, 240}) {
     osSetSpeedupEnable(true);
     gfxInitDefault();
     gfxSet3D(false);
@@ -50,7 +48,7 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     BufInfo_Add(&ctx.bufInfo, ctx.vtxBuf, sizeof(C2Di_Vertex), 4, 0x3210);
 
     // Cache these common projection matrices
-    Mtx_OrthoTilt(&s_projTop, 0.0f, 400.0f, 240.0f, 0.0f, 1.0f, -1.0f, true);
+    Mtx_OrthoTilt(&s_projTop, 0.0f, m_size.x, m_size.y, 0.0f, 1.0f, -1.0f, true);
 
     // Prepare proctex
     C3D_ProcTexInit(&ctx.ptBlend, 0, 1);
@@ -97,7 +95,7 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
     // Don't cull anything
     C3D_CullFace(GPU_CULL_NONE);
 
-    m_top = C3D_RenderTargetCreate((int) size.y, (int) size.x, GPU_RB_RGBA8, GPU_RB_DEPTH16);
+    m_top = C3D_RenderTargetCreate((int) m_size.y, (int) m_size.x, GPU_RB_RGBA8, GPU_RB_DEPTH16);
     if (m_top) {
         C3D_RenderTargetSetOutput(m_top, GFX_TOP, GFX_LEFT,
                                   GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) |
@@ -119,14 +117,16 @@ CTRRenderer::CTRRenderer(const Vector2f &size) : Renderer(size) {
 
 #ifndef NDEBUG
     //consoleInit(GFX_BOTTOM, nullptr);
-    //consoleDebugInit(debugDevice_SVC);
-    //stdout = stderr;
-    u32 *buffer = (u32 *) memalign(SOC_ALIGN, SOC_BUFFER_SIZE);
-    socInit(buffer, SOC_BUFFER_SIZE);
-    link_sock = link3dsStdio();
+    consoleDebugInit(debugDevice_SVC);
+    stdout = stderr;
+    //u32 *buffer = (u32 *) memalign(SOC_ALIGN, SOC_BUFFER_SIZE);
+    //socInit(buffer, SOC_BUFFER_SIZE);
+    //link_sock = link3dsStdio();
 
     printf(">> heap: %lu\n", ctr_get_heap_space());
 #endif
+
+    printf("CTRRenderer(%ix%i)\n", (int) m_size.x, (int) m_size.y);
 
     available = true;
 }
@@ -199,7 +199,7 @@ void CTRRenderer::flip(bool draw, bool inputs) {
 
         // call base class (draw childs)
         Transform trans = Transform::Identity;
-        Rectangle::onDraw(trans, draw);
+        Renderer::onDraw(trans, draw);
 
         ctx.vtxBufPos = 0;
         vtxBufLastPos = 0;

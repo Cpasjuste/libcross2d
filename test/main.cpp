@@ -12,8 +12,7 @@ int main(int argc, char *argv[]) {
     renderer->setPrintStats(true);
     renderer->setClearColor(Color::GrayLight);
 
-    auto border = new C2DRectangle({2, 2,
-                                    renderer->getSize().x - 4, renderer->getSize().y - 4});
+    auto border = new C2DRectangle({2, 2, renderer->getSize().x - 4, renderer->getSize().y - 4});
     border->setFillColor(Color::Transparent);
     border->setOutlineColor(Color::Red);
     border->setOutlineThickness(2);
