@@ -2,7 +2,7 @@
 // Created by cpasjuste on 17/10/18.
 //
 
-#include "cross2d/skeleton/config.h"
+#include "cross2d/c2d.h"
 
 using namespace c2d::config;
 

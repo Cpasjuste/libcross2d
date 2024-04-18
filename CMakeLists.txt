@@ -236,14 +236,17 @@ if (PLATFORM_VITA)
             source/platforms/posix/posix_io.cpp
             source/platforms/psp2/*.c*
     )
-    list(REMOVE_ITEM C2D_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/sdl2/sdl2_renderer.cpp)
+    list(REMOVE_ITEM C2D_SOURCES
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/sdl2/sdl2_renderer.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/sdl2/sdl2_device.cpp
+    )
     list(APPEND C2D_LDFLAGS
             ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/vita-shader-collection/lib/libvitashaders.a
             vita2d box2d SceGxm_stub ScePower_stub
     )
     list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
             -mtune=cortex-a9 -march=armv7-a -mfpu=neon -mfloat-abi=hard
-            -ffast-math -fsingle-precision-constant
+            #-ffast-math -fsingle-precision-constant
     )
 elseif (PLATFORM_PS4)
     #####################

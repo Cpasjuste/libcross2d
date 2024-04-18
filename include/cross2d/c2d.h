@@ -99,6 +99,11 @@ extern c2d::Renderer *c2d_renderer;
 
 #define printf sceClibPrintf
 
+#include "platforms/psp2/psp2_device.h"
+
+#undef C2DDevice
+#define C2DDevice PSP2Device
+
 #include "platforms/psp2/psp2_renderer.h"
 #include "platforms/psp2/psp2_texture.h"
 #include "platforms/psp2/psp2_io.h"
@@ -108,7 +113,6 @@ extern c2d::Renderer *c2d_renderer;
 #include "platforms/sdl2/sdl2_thread.h"
 #include "platforms/sdl2/sdl2_mutex.h"
 #include "platforms/sdl2/sdl2_cond.h"
-#include "platforms/sdl2/sdl2_device.h"
 
 #define C2DRenderer PSP2Renderer
 #define C2DTexture PSP2Texture

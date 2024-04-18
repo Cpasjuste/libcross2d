@@ -187,7 +187,7 @@ std::string Utility::getSizeString(size_t size) {
     const char *suffix[] = {"B", "KB", "MB", "GB", "TB"};
     char length = sizeof(suffix) / sizeof(suffix[0]);
     auto dblBytes = (double) size;
-    int i;
+    int i = 0;
 
     if (size <= 0) {
         return "0 B";

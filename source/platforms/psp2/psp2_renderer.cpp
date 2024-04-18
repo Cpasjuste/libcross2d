@@ -10,10 +10,13 @@
 #include "cross2d/platforms/psp2/psp2_texture.h"
 #include "cross2d/platforms/psp2/psp2_shaders.h"
 
+#include <psp2/kernel/clib.h>
+
+#define printf sceClibPrintf
+
 using namespace c2d;
 
-unsigned int sceLibcHeapSize = 5 * 1024 * 1024;
-int _newlib_heap_size_user = 160 * 1024 * 1024;
+int _newlib_heap_size_user = 256 * 1024 * 1024;
 
 extern "C" {
 extern float _vita2d_ortho_matrix[4 * 4];
@@ -52,8 +55,8 @@ void PSP2Renderer::draw(VertexArray *vertexArray, const Transform &transform, Te
     Vertex *vertices;
     size_t vertexCount;
 
-    if (!vertexArray || vertexArray->getVertexCount() < 1) {
-        printf("PSP2Renderer::draw: no vertices\n");
+    if (!vertexArray || !vertexArray->getVertexCount()) {
+        //printf("PSP2Renderer::draw: no vertices\n");
         return;
     }
 
