@@ -72,8 +72,8 @@ if (PLATFORM_SWITCH)
             DEPENDS ${PROJECT_NAME}
             DEPENDS ${PROJECT_NAME}.data
             COMMAND ${DEVKITPRO}/tools/bin/nacptool --create "${PROJECT_NAME}" "${PROJECT_AUTHOR}" "${VERSION_MAJOR}.${VERSION_MINOR}" ${PROJECT_NAME}.nacp
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/data_romfs
-            COMMAND ${DEVKITPRO}/tools/bin/elf2nro ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.nro --icon=${CMAKE_CURRENT_SOURCE_DIR}/data/${TARGET_PLATFORM}/icon.jpg --nacp=${PROJECT_NAME}.nacp --romfsdir=${CMAKE_CURRENT_BINARY_DIR}/data_romfs)
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/data_romfs"
+            COMMAND ${DEVKITPRO}/tools/bin/elf2nro "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}" "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.nro" "--icon=${CMAKE_CURRENT_SOURCE_DIR}/data/${TARGET_PLATFORM}/icon.jpg" "--nacp=${PROJECT_NAME}.nacp" "--romfsdir=${CMAKE_CURRENT_BINARY_DIR}/data_romfs")
     add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
             DEPENDS ${PROJECT_NAME}.nro
             COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip
@@ -94,7 +94,7 @@ if (PLATFORM_3DS)
             DEPENDS ${PROJECT_NAME}.data
             COMMAND ${DEVKITPRO}/tools/bin/smdhtool --create "${PROJECT_NAME}" "${PROJECT_NAME}" "${PROJECT_AUTHOR}" "${CMAKE_CURRENT_SOURCE_DIR}/data/${TARGET_PLATFORM}/icon.png" "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.smdh"
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/data_romfs
-            COMMAND ${DEVKITPRO}/tools/bin/3dsxtool "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.elf" "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.3dsx" --smdh="${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.smdh" --romfs="${CMAKE_CURRENT_BINARY_DIR}/data_romfs")
+            COMMAND ${DEVKITPRO}/tools/bin/3dsxtool "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_EXECUTABLE_SUFFIX}" "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.3dsx" "--smdh=${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.smdh" "--romfs=${CMAKE_CURRENT_BINARY_DIR}/data_romfs")
     add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
             DEPENDS ${PROJECT_NAME}.3dsx
             COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip
