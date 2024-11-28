@@ -194,11 +194,16 @@ if (OPTION_RENDER_GL1 OR OPTION_RENDER_GL2 OR OPTION_RENDER_GLES2)
         list(APPEND C2D_CFLAGS -D__GLEW__ -DGLEW_STATIC)
         list(APPEND C2D_LDFLAGS glew32)
     elseif (OPTION_LOADER_GLAD)
-        set(GLAD_NO_LOADER ON CACHE BOOL "No loader")
-        add_subdirectory(source/platforms/glad EXCLUDE_FROM_ALL)
-        list(APPEND PLATFORM_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/source/platforms/glad/include)
+        if (OPTION_RENDER_GL1 OR OPTION_RENDER_GL2)
+            message(FATAL_ERROR "TODO: OPTION_LOADER_GLAD/OPTION_RENDER_GL1/2")
+        elseif (OPTION_RENDER_GLES2)
+            list(APPEND C2D_SOURCES
+                    source/platforms/glad/gles2/src/egl.c
+                    source/platforms/glad/gles2/src/gles2.c
+            )
+            list(APPEND C2D_INCLUDES source/platforms/glad/gles2/include)
+        endif ()
         list(APPEND C2D_CFLAGS -D__GLAD__)
-        list(APPEND C2D_LDFLAGS glad)
     endif ()
 endif ()
 

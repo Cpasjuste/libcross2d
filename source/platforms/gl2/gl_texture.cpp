@@ -31,6 +31,7 @@ int GLTexture::createTexture() {
             .format = GL_RGBA,
             .type = GL_UNSIGNED_BYTE
         };
+#ifndef __GLES2__
     } else if (m_format == Format::ARGB8) {
         m_pixelFormat = {
             .internalFormat = GL_RGBA8,
@@ -49,6 +50,14 @@ int GLTexture::createTexture() {
             .format = GL_BGRA,
             .type = GL_UNSIGNED_BYTE
         };
+#else
+    } else if (m_format == Format::XRGB8 || m_format == Format::XBGR8) {
+        m_pixelFormat = {
+            .internalFormat = GL_RGBA8,
+            .format = GL_RGBA,
+            .type = GL_UNSIGNED_BYTE
+        };
+#endif
     } else {
         m_pixelFormat = {
             .internalFormat = GL_RGB565,
@@ -66,6 +75,16 @@ int GLTexture::createTexture() {
                  0, m_pixelFormat.format, m_pixelFormat.type, m_pixels);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+#ifdef __GLES2__
+    if (m_format == Format::XRGB8 || m_format == Format::XBGR8) {
+        if (m_format == Format::XBGR8) {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, GL_BLUE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_GREEN);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_RED);
+        }
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_ONE);
+    }
+#endif
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return 0;
@@ -158,6 +177,11 @@ void GLTexture::setFilter(Filter f) {
     glBindTexture(GL_TEXTURE_2D, m_texID);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_filter == Filter::Linear ? GL_LINEAR : GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_filter == Filter::Linear ? GL_LINEAR : GL_NEAREST);
+#ifdef __GLES2__
+    if (m_format == Format::XRGB8) {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_ONE);
+    }
+#endif
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 

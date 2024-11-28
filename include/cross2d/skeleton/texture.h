@@ -13,7 +13,10 @@ namespace c2d {
     class Texture : public RectangleShape {
     public:
         enum class Format : int {
-            RGB565, RGBA8, ARGB8, BGRA8, XRGB8
+            RGB565, RGBA8, XRGB8, XBGR8
+#ifndef __GLES2__
+            ARGB8, BGRA8
+#endif
         };
 
         enum class Filter : int {

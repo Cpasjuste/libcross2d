@@ -6,8 +6,9 @@
 #define C2D_GL2_H
 
 #if __GLAD__
-
-#include "glad/glad.h"
+#if defined(__GLES2__)
+#include "glad/gles2.h"
+#endif
 
 #elif __GLEW__
 
@@ -30,12 +31,12 @@
 #endif
 
 #endif
-// ?!
-#undef GL_RGBA8
+#ifndef  GL_RGBA8
 #define GL_RGBA8 GL_RGBA
-#undef GL_RGB565
+#endif
+#ifndef  GL_RGB565
 #define GL_RGB565 GL_RGB
-// ?!
+#endif
 #ifndef GL_QUADS
 #define GL_QUADS 0x0006
 #endif

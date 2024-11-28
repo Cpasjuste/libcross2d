@@ -28,7 +28,8 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
     Vector2i size = {(int) Renderer::getSize().x, (int) Renderer::getSize().y};
     Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 #ifndef ANDROID
-    if (size.x <= 0 || size.y <= 0) { // force fullscreen if window size == 0
+    if (size.x <= 0 || size.y <= 0) {
+        // force fullscreen if window size == 0
         flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
 #else
@@ -60,8 +61,8 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
 
     window = SDL_CreateWindow(
-            "CROSS2D_SDL2_GL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            size.x, size.y, flags);
+        "CROSS2D_SDL2_GL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        size.x, size.y, flags);
     if (!window) {
         printf("Couldn't SDL_CreateWindow: %s\n", SDL_GetError());
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s\n", SDL_GetError());
@@ -84,9 +85,13 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
     SDL_GL_SetSwapInterval(1);
 
 #if __GLAD__
-    // amdgpu proprietary driver 19.30 and SDL2 getproc bug
-    // it's seems safer to also use glad on linux (nintendo switch also use this)
-    gladLoadGLLoader(SDL_GL_GetProcAddress);
+    // amdgpu proprietary driver 19.30 and SDL2 "getproc" bug
+    // it seems safer to also use glad on linux (nintendo switch also use this)
+#if defined(__GLES2__)
+    gladLoadGLES2(reinterpret_cast<GLADloadfunc>(SDL_GL_GetProcAddress));
+#else
+#error "TODO: gladLoadGL"
+#endif
 #elif __GLEW__
     glewInit();
 #endif
