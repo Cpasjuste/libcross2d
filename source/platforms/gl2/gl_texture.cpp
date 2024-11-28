@@ -16,7 +16,7 @@ GLTexture::GLTexture(const unsigned char *buffer, int bufferSize) : Texture(buff
     available = createTexture() == 0;
 }
 
-GLTexture::GLTexture(const Vector2i &size, Texture::Format format) : Texture(size, format) {
+GLTexture::GLTexture(const Vector2i &size, Format format) : Texture(size, format) {
     available = createTexture() == 0;
 }
 
@@ -25,18 +25,45 @@ int GLTexture::createTexture() {
         return -1;
     }
 
+    if (m_format == Format::RGBA8) {
+        m_pixelFormat = {
+            .internalFormat = GL_RGBA8,
+            .format = GL_RGBA,
+            .type = GL_UNSIGNED_BYTE
+        };
+    } else if (m_format == Format::ARGB8) {
+        m_pixelFormat = {
+            .internalFormat = GL_RGBA8,
+            .format = GL_BGRA,
+            .type = GL_UNSIGNED_INT_8_8_8_8
+        };
+    } else if (m_format == Format::BGRA8) {
+        m_pixelFormat = {
+            .internalFormat = GL_RGBA8,
+            .format = GL_BGRA,
+            .type = GL_UNSIGNED_INT_8_8_8_8_REV
+        };
+    } else if (m_format == Format::XRGB8) {
+        m_pixelFormat = {
+            .internalFormat = GL_RGB,
+            .format = GL_BGRA,
+            .type = GL_UNSIGNED_BYTE
+        };
+    } else {
+        m_pixelFormat = {
+            .internalFormat = GL_RGB565,
+            .format = GL_RGB,
+            .type = GL_UNSIGNED_SHORT_5_6_5
+        };
+    }
+
     glGenTextures(1, &m_texID);
     glBindTexture(GL_TEXTURE_2D, m_texID);
 #ifdef GL_UNPACK_ROW_LENGTH
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 #endif
-    if (m_format == Format::RGBA8) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_tex_size_pot.x, m_tex_size_pot.y,
-                     0, GL_RGBA, GL_UNSIGNED_BYTE, m_pixels);
-    } else {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, m_tex_size_pot.x, m_tex_size_pot.y,
-                     0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, m_pixels);
-    }
+    glTexImage2D(GL_TEXTURE_2D, 0, m_pixelFormat.internalFormat, m_tex_size_pot.x, m_tex_size_pot.y,
+                 0, m_pixelFormat.format, m_pixelFormat.type, m_pixels);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -79,15 +106,10 @@ int GLTexture::resize(const Vector2i &size, bool keepPixels) {
 #ifdef GL_UNPACK_ROW_LENGTH
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 #endif
-    if (m_format == Format::RGBA8) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size.x, size.y,
-                     0, GL_RGBA, GL_UNSIGNED_BYTE, m_pixels);
-    } else {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, 0, 0, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, nullptr);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, size.x, size.y,
-                     0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, m_pixels);
-    }
+    glTexImage2D(GL_TEXTURE_2D, 0, m_pixelFormat.internalFormat, 0, 0, 0,
+                 m_pixelFormat.format, m_pixelFormat.type, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, m_pixelFormat.internalFormat, size.x, size.y,
+                 0, m_pixelFormat.format, m_pixelFormat.type, m_pixels);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     // update texture information
@@ -120,15 +142,9 @@ void GLTexture::unlock(uint8_t *pixels) {
     glPixelStorei(GL_UNPACK_ROW_LENGTH, m_unpack_row_length);
 #endif
 
-    if (m_format == Format::RGBA8) {
-        glTexSubImage2D(GL_TEXTURE_2D, 0,
-                        m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height,
-                        GL_RGBA, GL_UNSIGNED_BYTE, data);
-    } else {
-        glTexSubImage2D(GL_TEXTURE_2D, 0,
-                        m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height,
-                        GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data);
-    }
+    glTexSubImage2D(GL_TEXTURE_2D, 0,
+                    m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height,
+                    m_pixelFormat.format, m_pixelFormat.type, data);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 

@@ -2,21 +2,18 @@
 // Created by cpasjuste on 01/12/16.
 //
 
-#ifndef _TEXTURE_H_
-#define _TEXTURE_H_
+#ifndef C2D_TEXTURE_H_
+#define C2D_TEXTURE_H_
 
 #include "object.h"
 #include "shader_list.h"
 #include "cross2d/skeleton/sfml/RectangleShape.hpp"
 
 namespace c2d {
-
     class Texture : public RectangleShape {
-
     public:
-
         enum class Format : int {
-            RGB565, RGBA8
+            RGB565, RGBA8, ARGB8, BGRA8, XRGB8
         };
 
         enum class Filter : int {
@@ -33,7 +30,8 @@ namespace c2d {
 
         virtual int lock(uint8_t **pixels, int *pitch = nullptr, IntRect rect = IntRect());
 
-        virtual void unlock(uint8_t *pixels = nullptr) {};
+        virtual void unlock(uint8_t *pixels = nullptr) {
+        };
 
         virtual int resize(const Vector2i &size, bool keepPixels = false) { return -1; };
 
@@ -41,7 +39,8 @@ namespace c2d {
 
         virtual void setFilter(Filter filter) { m_filter = filter; };
 
-        virtual void applyShader() {};
+        virtual void applyShader() {
+        };
 
         virtual void setShader(int shaderIndex);
 
@@ -85,4 +84,4 @@ namespace c2d {
     };
 }
 
-#endif //_TEXTURE_H_
+#endif //C2D_TEXTURE_H_

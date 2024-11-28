@@ -8,9 +8,7 @@
 #include "cross2d/skeleton/texture.h"
 
 namespace c2d {
-
     class GLTexture : public Texture {
-
     public:
         explicit GLTexture(const std::string &path);
 
@@ -29,6 +27,14 @@ namespace c2d {
         unsigned int m_texID = 0;
 
     private:
+        struct PixelFormat {
+            GLint internalFormat;
+            GLenum format;
+            GLenum type;
+        };
+
+        PixelFormat m_pixelFormat{};
+
         int createTexture();
     };
 }
