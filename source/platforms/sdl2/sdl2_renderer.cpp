@@ -40,17 +40,18 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#elif __GLES3__
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-#ifdef __SWITCH__
+#ifdef __GL2__
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 #elif __GL1__
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-#elif __GL2__
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 #endif
 #endif
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -87,16 +88,16 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
 #if __GLAD__
     // amdgpu proprietary driver 19.30 and SDL2 "getproc" bug
     // it seems safer to also use glad on linux (nintendo switch also use this)
-#if defined(__GLES2__)
+#if defined(__GLES2__) || defined(__GLES3__)
     gladLoadGLES2(reinterpret_cast<GLADloadfunc>(SDL_GL_GetProcAddress));
 #else
-#error "TODO: gladLoadGL"
+    gladLoadGL(reinterpret_cast<GLADloadfunc>(SDL_GL_GetProcAddress));
 #endif
 #elif __GLEW__
     glewInit();
 #endif
 
-    GLRenderer::initGL();
+    initGL();
 
     // we need to delete gl context after all resources are freed by C2DObject destructor
     std::atexit(exitCallback);

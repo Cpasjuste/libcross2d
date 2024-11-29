@@ -13,9 +13,9 @@ namespace c2d {
     class Texture : public RectangleShape {
     public:
         enum class Format : int {
-            RGB565, RGBA8, XRGB8, XBGR8
-#ifndef __GLES2__
-            ARGB8, BGRA8
+            RGB565, RGBA8,
+#if defined(__GL2__) && !defined(__GLES2__) // GL2 / GLES3 only
+            BGRA8, ARGB8, ABGR8, XRGB8, XBGR8,
 #endif
         };
 

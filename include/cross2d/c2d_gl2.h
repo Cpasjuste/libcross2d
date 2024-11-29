@@ -6,8 +6,10 @@
 #define C2D_GL2_H
 
 #if __GLAD__
-#if defined(__GLES2__)
+#if defined(__GLES2__) || defined(__GLES3__)
 #include "glad/gles2.h"
+#else
+#include "glad/gl.h"
 #endif
 
 #elif __GLEW__
@@ -16,7 +18,7 @@
 
 #endif
 
-#if defined(__SDL2__) && defined(__GLES2__)
+#if defined(__SDL2__) && (defined(__GLES2__) || defined(__GLES3__))
 #ifndef __GLAD__
 
 #define GL_GLEXT_PROTOTYPES

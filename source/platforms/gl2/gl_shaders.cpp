@@ -59,7 +59,7 @@ static GLuint compile(GLenum type, const char *source, int size = 0) {
 
 GLShader::GLShader(const std::string &n, const char *vertex, const char *fragment,
                    int vertexSize, int fragmentSize, const std::string &version)
-        : ShaderList::Shader(n) {
+    : ShaderList::Shader(n) {
     GLuint vsh, fsh;
     std::string v, f;
     GLint link_result;
@@ -225,7 +225,7 @@ GLShaderList::GLShaderList() : ShaderList() {
 #endif
 #endif
 
-#ifndef __GLES2__
+#if !defined(__GLES2__) && !defined(__GLES3__)
     const char *glsl = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
     if (glsl && strlen(glsl) > 0) {
         char v[16];
@@ -382,7 +382,6 @@ GLShaderList::~GLShaderList() {
 #ifdef GL_DUMP_SHADERS
     delete (shaderDumper);
 #endif
-
 }
 
 #endif // __GL2__
