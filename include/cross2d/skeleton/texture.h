@@ -33,7 +33,7 @@ namespace c2d {
 
         virtual int lock(uint8_t **pixels, int *pitch = nullptr, IntRect rect = IntRect());
 
-        virtual void unlock(uint8_t *pixels = nullptr) {
+        virtual void unlock(const uint8_t *pixels = nullptr) {
         };
 
         virtual int resize(const Vector2i &size, bool keepPixels = false) { return -1; };
@@ -77,7 +77,6 @@ namespace c2d {
 
         Vector2i m_tex_size;
         Vector2i m_tex_size_pot;
-        IntRect m_unlock_rect = IntRect();
         int m_unpack_row_length = 0;
 #ifdef __3DS__
         bool m_pot = true;

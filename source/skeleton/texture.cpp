@@ -47,7 +47,7 @@ Texture::Texture(const std::string &p) : RectangleShape({0, 0}) {
     // set texture parameters
     m_pitch = m_tex_size_pot.x * m_bpp;
     m_tex_size = {w, h};
-    m_unlock_rect = {0, 0, w, h};
+    m_tex_rect = {0, 0, w, h};
     Texture::setSize((float) w, (float) h);
     Texture::setTexture(this);
     Texture::setFillColor(Color::White);
@@ -80,7 +80,7 @@ Texture::Texture(const unsigned char *buffer, int bufferSize) : RectangleShape({
     // set texture parameters
     m_pitch = m_tex_size_pot.x * m_bpp;
     m_tex_size = {w, h};
-    m_unlock_rect = {0, 0, w, h};
+    m_tex_rect = {0, 0, w, h};
     Texture::setSize((float) w, (float) h);
     Texture::setTexture(this);
     Texture::setFillColor(Color::White);
@@ -112,7 +112,7 @@ Texture::Texture(const Vector2i &size, Format format) : RectangleShape(Vector2f{
     // set texture parameters
     m_pitch = m_tex_size_pot.x * m_bpp;
     m_tex_size = {size.x, size.y};
-    m_unlock_rect = {0, 0, size.x, size.y};
+    m_tex_rect = {0, 0, size.x, size.y};
     Texture::setSize((float) size.x, (float) size.y);
     Texture::setTexture(this);
     Texture::setFillColor(Color::White);
@@ -124,17 +124,15 @@ Texture::Texture(const Vector2i &size, Format format) : RectangleShape(Vector2f{
 }
 
 int Texture::lock(uint8_t **pixels, int *pitch, IntRect rect) {
-    if (rect == IntRect()) {
-        m_unlock_rect = m_tex_rect;
-    } else {
-        m_unlock_rect = rect;
+    if (rect != IntRect()) {
+        m_tex_rect = rect;
     }
 
     if (pitch) {
         *pitch = m_pitch;
     }
 
-    *pixels = m_pixels + m_unlock_rect.top * m_pitch + m_unlock_rect.left * m_bpp;
+    *pixels = m_pixels + m_tex_rect.top * m_pitch + m_tex_rect.left * m_bpp;
 
     //printf("Texture::lock(%p): rect: {%i, %i, %i, %i}, pixels: %p\n",
     //     this, m_unlock_rect.left, m_unlock_rect.top, m_unlock_rect.width, m_unlock_rect.height, *pixels);
