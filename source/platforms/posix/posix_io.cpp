@@ -50,7 +50,6 @@ std::string POSIXIo::getDataPath() {
 }
 
 Io::File POSIXIo::getFile(const std::string &path) {
-
     File file{};
     struct stat st{};
 
@@ -98,7 +97,6 @@ bool POSIXIo::removeFile(const std::string &path) {
 }
 
 bool POSIXIo::removeDir(const std::string &path) {
-
     struct dirent *ent;
     DIR *dir;
 
@@ -109,7 +107,6 @@ bool POSIXIo::removeDir(const std::string &path) {
 
     if ((dir = opendir(file.path.c_str())) != nullptr) {
         while ((ent = readdir(dir)) != nullptr) {
-
             if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
                 continue;
 
@@ -154,7 +151,6 @@ Io::Type POSIXIo::getType(const std::string &file) {
 }
 
 size_t POSIXIo::read(const std::string &file, char **out, size_t size, size_t offset) {
-
     FILE *fp;
     size_t file_size;
     size_t read_size;
@@ -198,7 +194,6 @@ size_t POSIXIo::read(const std::string &file, char **out, size_t size, size_t of
 }
 
 bool POSIXIo::write(const std::string &file, const char *data, size_t size) {
-
     FILE *fp;
 
     fp = fopen(file.c_str(), "wb+");
@@ -213,7 +208,6 @@ bool POSIXIo::write(const std::string &file, const char *data, size_t size) {
 }
 
 std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bool showHidden) {
-
     std::vector<Io::File> files;
     struct dirent *ent;
     DIR *dir;
@@ -221,18 +215,16 @@ std::vector<Io::File> POSIXIo::getDirList(const std::string &path, bool sort, bo
     if (!path.empty()) {
         if ((dir = opendir(path.c_str())) != nullptr) {
             while ((ent = readdir(dir)) != nullptr) {
-
                 //printf("getDirList: %s\n", ent->d_name);
 
                 // skip "."
                 if ((path == "/" || strlen(ent->d_name) == 1) && ent->d_name[0] == '.') {
                     continue;
                 }
+
                 // skip "hidden" files
                 if (!showHidden && ent->d_name[0] == '.') {
-                    if (strlen(ent->d_name) != 2 && ent->d_name[1] != '.') {
-                        continue;
-                    }
+                    continue;
                 }
 
                 File file;
@@ -296,7 +288,8 @@ std::vector<Io::File> POSIXIo::findFiles(const std::string &path, const std::vec
                     }
 #endif
                     files.emplace_back(file);
-                    if (stopOnFirst) break; else continue;
+                    if (stopOnFirst) break;
+                    else continue;
                 }
             }
         }
@@ -308,7 +301,6 @@ std::vector<Io::File> POSIXIo::findFiles(const std::string &path, const std::vec
 
 bool POSIXIo::copy(const std::string &src, const std::string &dst,
                    const std::function<void(File, File, float)> &callback) {
-
     bool res = _copy(src, dst, callback);
 
     if (callback != nullptr) {
@@ -320,7 +312,6 @@ bool POSIXIo::copy(const std::string &src, const std::string &dst,
 
 bool POSIXIo::_copy(const std::string &src, const std::string &dst,
                     const std::function<void(File, File, float)> &callback) {
-
     File srcFile;
     File dstFile;
     struct dirent *ent;
@@ -369,7 +360,6 @@ bool POSIXIo::_copy(const std::string &src, const std::string &dst,
 
     if ((dir = opendir(srcFile.path.c_str())) != nullptr) {
         while ((ent = readdir(dir)) != nullptr) {
-
             if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
                 continue;
 
@@ -382,7 +372,7 @@ bool POSIXIo::_copy(const std::string &src, const std::string &dst,
 
             if (newSrcFile.type == Type::File) {
                 newDstFile.path += (Utility::endsWith(dstFile.path, "/") ? "" : "/") +
-                                   std::string(ent->d_name);
+                        std::string(ent->d_name);
                 bool success = _copyFile(newSrcFile, newDstFile, callback);
                 if (!success) {
                     if (callback != nullptr) {
@@ -412,7 +402,6 @@ bool POSIXIo::_copy(const std::string &src, const std::string &dst,
 
 bool POSIXIo::_copyFile(const File &src, const File &dst,
                         const std::function<void(File, File, float)> &callback) {
-
     if (src.path == dst.path) {
         if (callback != nullptr) {
             callback(src, dst, -1);
@@ -487,5 +476,3 @@ bool POSIXIo::_copyFile(const File &src, const File &dst,
 
     return true;
 }
-
-
