@@ -135,11 +135,11 @@ void GLTexture::unlock(const uint8_t *pixels) {
     glBindTexture(GL_TEXTURE_2D, m_texID);
 
 #ifndef GL_UNPACK_ROW_LENGTH
-    IntRect rect = m_unlock_rect;
+    IntRect rect = m_tex_rect;
     if (m_unpack_row_length > 0) {
         // fix missing GL_UNPACK_ROW_LENGTH support on ps4, used for fonts
         data = pixels ? pixels : m_pixels;
-        m_unlock_rect = {0, 0, m_tex_size.x, m_tex_size.y};
+        m_tex_rect = {0, 0, m_tex_size.x, m_tex_size.y};
     }
 #else
     glPixelStorei(GL_UNPACK_ROW_LENGTH, m_unpack_row_length);
@@ -152,7 +152,7 @@ void GLTexture::unlock(const uint8_t *pixels) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
 #ifndef GL_UNPACK_ROW_LENGTH
-    m_unlock_rect = rect;
+    m_tex_rect = rect;
 #endif
 }
 
