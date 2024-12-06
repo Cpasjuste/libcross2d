@@ -106,7 +106,7 @@ int GLTexture::resize(const Vector2i &size, bool keepPixels) {
 
     // update texture
     glBindTexture(GL_TEXTURE_2D, m_texID);
-#ifdef GL_UNPACK_ROW_LENGTH
+#if defined(GL_UNPACK_ROW_LENGTH)
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 #endif
     glTexImage2D(GL_TEXTURE_2D, 0, m_pixelFormat.internalFormat, 0, 0, 0,
@@ -134,15 +134,16 @@ void GLTexture::unlock(const uint8_t *pixels) {
 
     glBindTexture(GL_TEXTURE_2D, m_texID);
 
-#ifndef GL_UNPACK_ROW_LENGTH
-    IntRect rect = m_tex_rect;
+#if defined(GL_UNPACK_ROW_LENGTH)
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, m_unpack_row_length);
+#else
+    // "fix" missing GL_UNPACK_ROW_LENGTH support on ps4, used for fonts
+    const IntRect rect = m_tex_rect;
     if (m_unpack_row_length > 0) {
         // fix missing GL_UNPACK_ROW_LENGTH support on ps4, used for fonts
         data = pixels ? pixels : m_pixels;
         m_tex_rect = {0, 0, m_tex_size.x, m_tex_size.y};
     }
-#else
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, m_unpack_row_length);
 #endif
 
     glTexSubImage2D(GL_TEXTURE_2D, 0,
@@ -151,7 +152,7 @@ void GLTexture::unlock(const uint8_t *pixels) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-#ifndef GL_UNPACK_ROW_LENGTH
+#if !defined(GL_UNPACK_ROW_LENGTH)
     m_tex_rect = rect;
 #endif
 }

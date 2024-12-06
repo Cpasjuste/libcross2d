@@ -8,6 +8,9 @@
 #if __GLAD__
 #if defined(__GLES2__) || defined(__GLES3__)
 #include "glad/gles2.h"
+#if defined(GL_UNPACK_ROW_LENGTH_EXT) && !defined(GL_UNPACK_ROW_LENGTH)
+#define GL_UNPACK_ROW_LENGTH GL_UNPACK_ROW_LENGTH_EXT
+#endif
 #else
 #include "glad/gl.h"
 #endif
