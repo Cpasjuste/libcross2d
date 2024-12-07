@@ -27,10 +27,12 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
         return;
     }
 
-#if ANDROID
+    printf("SDL2Audio: available audio drivers:\n");
     for (int i = 0; i < SDL_GetNumAudioDrivers(); ++i) {
-        printf("SDL2Audio: available audio drivers %d: %s\n", i, SDL_GetAudioDriver(i));
+        printf("\t%d - %s\n", i, SDL_GetAudioDriver(i));
     }
+
+#if ANDROID
     //SDL_setenv("SDL_AUDIODRIVER", "AAudio", 1);
     //SDL_setenv("SDL_AUDIODRIVER", "openslES", 1);
     //SDL_setenv("SDL_AUDIODRIVER", "android", 1);
@@ -42,6 +44,11 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
             available = false;
             return;
         }
+    }
+
+    printf("SDL2Audio: available audio devices\n");
+    for (int i = 0; i < SDL_GetNumAudioDevices(0); ++i) {
+        printf("\t%d - %s\n", i, SDL_GetAudioDeviceName(i, 0));
     }
 
     SDL_AudioSpec wanted, obtained;
@@ -71,9 +78,7 @@ SDL2Audio::SDL2Audio(int freq, int samples, C2DAudioCallback cb) : Audio(freq, s
         return;
     }
 
-#if ANDROID
     printf("SDL2Audio: driver: %s\n", SDL_GetCurrentAudioDriver());
-#endif
     printf("SDL2Audio: format %d (wanted: %d)\n", obtained.format, wanted.format);
     printf("SDL2Audio: frequency %d (wanted: %d)\n", obtained.freq, wanted.freq);
     printf("SDL2Audio: samples %d (wanted: %d)\n", obtained.samples, samples);
