@@ -27,6 +27,8 @@ std::string POSIXIo::getRomFsPath() {
 }
 
 std::string POSIXIo::getDataPath() {
+    if (!m_data_path.empty()) return m_data_path;
+
 #if defined(__PSP2__)
     return getDataPath();
 #else

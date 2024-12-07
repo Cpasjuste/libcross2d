@@ -8,9 +8,7 @@
 #include "cross2d/skeleton/io.h"
 
 namespace c2d {
-
     class POSIXIo : public Io {
-
     public:
         File getFile(const std::string &path) override;
 
@@ -43,7 +41,6 @@ namespace c2d {
         std::string getRomFsPath() override;
 
     private:
-
         bool _copy(const std::string &src, const std::string &dst,
                    const std::function<void(File, File, float)> &callback = nullptr);
 

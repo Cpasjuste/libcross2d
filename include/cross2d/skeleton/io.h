@@ -14,11 +14,8 @@
 #define C2D_IO_COPY_BUFFER_SIZE (256 * 1024)
 
 namespace c2d {
-
     class Io {
-
     public:
-
         enum class Type {
             Unknown = 0,
             File = 1,
@@ -60,7 +57,12 @@ namespace c2d {
         ///
         /// \return read write data path
         virtual std::string getDataPath() {
+            if (!m_data_path.empty()) return m_data_path;
             return "./";
+        }
+
+        virtual void setDataPath(const std::string &path) {
+            m_data_path = path;
         }
 
         virtual File getFile(const std::string &path) {
@@ -122,6 +124,9 @@ namespace c2d {
             }
             return Utility::toLower(a.name) < Utility::toLower(b.name);
         }
+
+    protected:
+        std::string m_data_path{};
     };
 }
 
