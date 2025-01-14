@@ -54,12 +54,21 @@ SDL2Renderer::SDL2Renderer(const Vector2f &s) : GLRenderer(s) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 #endif
 #endif
+#ifdef __SDL2_RGB565__ // for 16 bits displays (retropico)
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 6);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 0);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+#else
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+#endif
 
     window = SDL_CreateWindow(
         "CROSS2D_SDL2_GL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,

@@ -22,6 +22,7 @@ include(cmake/toolchain.cmake)
 ####################
 option(OPTION_SDL1 "SDL1 support" OFF)
 option(OPTION_SDL2 "SDL2 support" OFF)
+option(OPTION_SDL2_RGB565 "SDL2 with rgb565 support (retropico)" OFF)
 option(OPTION_RENDER_GL1 "OpenGL 1.2 rendering" OFF)
 option(OPTION_RENDER_GL2 "OpenGL 4.3 rendering" OFF)
 option(OPTION_RENDER_GLES2 "OpenGLES 2.0 rendering" OFF)
@@ -152,6 +153,9 @@ if (OPTION_SDL2)
     list(APPEND C2D_LDFLAGS ${SDL2_LIBRARIES})
     file(GLOB SDL2_SRC source/platforms/sdl2/*.c*)
     list(APPEND C2D_SOURCES ${SDL2_SRC})
+    if (OPTION_SDL2_RGB565)
+        list(APPEND C2D_CFLAGS -D__SDL2_RGB565__)
+    endif ()
 endif ()
 
 # gl2 / gles2
