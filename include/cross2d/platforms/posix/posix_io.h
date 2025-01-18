@@ -32,7 +32,7 @@ namespace c2d {
         std::vector<File> findFiles(const std::string &path, const std::vector<std::string> &whitelist,
                                     const std::string &blacklist = "", bool stopOnFirst = true) override;
 
-        size_t read(const std::string &file, char **out, size_t size = 0, size_t offset = 0) override;
+        size_t read(const std::string &file, char *out, size_t size = 0, size_t offset = 0) override;
 
         bool write(const std::string &file, const char *data, size_t size) override;
 

@@ -152,20 +152,15 @@ Io::Type POSIXIo::getType(const std::string &file) {
     return S_ISDIR(st.st_mode) ? Type::Directory : Type::File;
 }
 
-size_t POSIXIo::read(const std::string &file, char **out, size_t size, size_t offset) {
-    FILE *fp;
-    size_t file_size;
-    size_t read_size;
-
-    fp = fopen(file.c_str(), "rb");
+size_t POSIXIo::read(const std::string &file, char *out, size_t size, const size_t offset) {
+    FILE *fp = fopen(file.c_str(), "rb");
     if (fp == nullptr) {
         printf("POSIXIo::read: can't open %s\n", file.c_str());
-        *out = nullptr;
         return -1;
     }
 
     fseek(fp, 0L, SEEK_END);
-    file_size = ftell(fp);
+    const size_t file_size = ftell(fp);
     fseek(fp, 0L, SEEK_SET);
 
     if (size <= 0) {
@@ -177,15 +172,13 @@ size_t POSIXIo::read(const std::string &file, char **out, size_t size, size_t of
     }
 
     if (offset > 0) {
-        fseek(fp, offset, SEEK_SET);
+        fseek(fp, static_cast<long int>(offset), SEEK_SET);
     }
 
-    *out = (char *) malloc(size);
-    read_size = fread(*out, 1, size, fp);
+    //*out = (char *) malloc(size);
+    const size_t read_size = fread(out, 1, size, fp);
     if (read_size != size) {
         fclose(fp);
-        free(*out);
-        *out = nullptr;
         printf("POSIXIo::read: can't read %s\n", file.c_str());
         return -1;
     }

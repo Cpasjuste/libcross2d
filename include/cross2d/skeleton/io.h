@@ -107,7 +107,7 @@ namespace c2d {
             return {};
         }
 
-        virtual size_t read(const std::string &file, char **out, size_t size = 0, size_t offset = 0) {
+        virtual size_t read(const std::string &file, char *out, size_t size = 0, size_t offset = 0) {
             return -1;
         }
 

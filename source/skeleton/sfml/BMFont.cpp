@@ -29,8 +29,7 @@
 #include "cross2d/skeleton/sfml/BMFont.hpp"
 
 namespace c2d {
-
-////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     BMFont::~BMFont() {
         BMFont::cleanup();
     }
@@ -44,10 +43,11 @@ namespace c2d {
         }
     }
 
-////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     bool BMFont::loadFromFile(const std::string &fntPath) {
-        char *data = nullptr;
-        size_t len = c2d_renderer->getIo()->read(fntPath, &data);
+        size_t size = c2d_renderer->getIo()->getSize(fntPath);
+        const auto data = static_cast<char *>(malloc(size));
+        const size_t len = c2d_renderer->getIo()->read(fntPath, data);
         if (!data || len < 4) {
             printf("BMFont::loadFromFile(%s): could not read font file...\n", fntPath.c_str());
             if (data) {
@@ -56,9 +56,10 @@ namespace c2d {
             return false;
         }
 
-        char *texData = nullptr;
-        std::string texPath = Utility::removeExt(fntPath) + "_0.png";
-        size_t texSize = c2d_renderer->getIo()->read(texPath, &texData);
+        const std::string texPath = Utility::removeExt(fntPath) + "_0.png";
+        size = c2d_renderer->getIo()->getSize(fntPath);
+        const auto texData = static_cast<char *>(malloc(size));
+        const size_t texSize = c2d_renderer->getIo()->read(texPath, texData);
         if (!texData || texSize < 4) {
             printf("BMFont::loadFromFile(%s): could not read texture file...\n", texPath.c_str());
             free(data);
@@ -74,7 +75,7 @@ namespace c2d {
         return ret;
     }
 
-////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     bool BMFont::loadFromMemory(const char *fontData, size_t fontDataSize,
                                 const char *texData, size_t texDataSize) {
         if (!fontData || fontDataSize < 4) {
@@ -158,19 +159,19 @@ namespace c2d {
                         bmfChar.chnl = stream.getU8();
                         // create glyph
                         Glyph glyph = {
-                                // advance
-                                (float) bmfChar.xadvance,
-                                // bounds
-                                {
-                                        (float) (bmfChar.xoffset + m_bmfont.info.outline),
-                                        (float) (bmfChar.yoffset - m_bmfont.common.base + m_bmfont.info.outline),
-                                        bmfChar.width,
-                                        bmfChar.height
-                                },
-                                // texture rect
-                                {
-                                        bmfChar.x, bmfChar.y, bmfChar.width, bmfChar.height
-                                }
+                            // advance
+                            (float) bmfChar.xadvance,
+                            // bounds
+                            {
+                                (float) (bmfChar.xoffset + m_bmfont.info.outline),
+                                (float) (bmfChar.yoffset - m_bmfont.common.base + m_bmfont.info.outline),
+                                bmfChar.width,
+                                bmfChar.height
+                            },
+                            // texture rect
+                            {
+                                bmfChar.x, bmfChar.y, bmfChar.width, bmfChar.height
+                            }
                         };
                         m_bmfont.glyphs.insert(std::map<int, Glyph>::value_type(bmfChar.id, glyph));
                     }
@@ -204,7 +205,7 @@ namespace c2d {
     // TODO: fixme
     static Glyph s_glyph;
 
-////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     const Glyph &BMFont::getGlyph(uint32_t codePoint, unsigned int characterSize,
                                   bool bold, float outlineThickness) const {
         if (m_bmfont.glyphs.count((int) codePoint)) {
@@ -227,7 +228,7 @@ namespace c2d {
         return m_bmfont.glyphs.begin()->second;
     }
 
-////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     float BMFont::getKerning(uint32_t first, uint32_t second, unsigned int characterSize, bool bold) const {
         if (first == 0 || second == 0) return 0;
         if (m_bmfont.kerningPairs.empty()) return 0;
@@ -244,26 +245,26 @@ namespace c2d {
         return 0;
     }
 
-////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     float BMFont::getLineSpacing(unsigned int characterSize) const {
         float scaling = (float) characterSize / (float) m_bmfont.info.fontSize;
         return (float) m_bmfont.common.lineHeight * scaling;
     }
 
 
-////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     float BMFont::getUnderlinePosition(unsigned int characterSize) const {
         return 0;
     }
 
 
-////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     float BMFont::getUnderlineThickness(unsigned int characterSize) const {
         return 0;
     }
 
 
-////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     Texture *BMFont::getTexture(unsigned int characterSize) {
         return m_texture;
     }
@@ -273,5 +274,4 @@ namespace c2d {
             m_texture->setFilter(filter);
         }
     }
-
 } // namespace c2d
