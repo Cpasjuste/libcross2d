@@ -25,7 +25,7 @@ add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}.data)
 ########################
 # Linux/Windows targets
 ########################
-if (PLATFORM_LINUX OR PLATFORM_WINDOWS)
+if (PLATFORM_LINUX OR PLATFORM_WINDOWS OR PLATFORM_PS5)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
     if (PLATFORM_WINDOWS)
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
