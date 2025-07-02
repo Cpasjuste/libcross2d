@@ -312,6 +312,7 @@ int gladLoadEGL(EGLDisplay display, GLADloadfunc load) {
 
 #ifdef GLAD_EGL
 
+#ifndef __SWITCH__
 #ifndef GLAD_LOADER_LIBRARY_C_
 #define GLAD_LOADER_LIBRARY_C_
 
@@ -452,6 +453,7 @@ void gladLoaderUnloadEGL(void) {
     }
 }
 
+#endif /* __SWITCH__ */
 #endif /* GLAD_EGL */
 
 #ifdef __cplusplus

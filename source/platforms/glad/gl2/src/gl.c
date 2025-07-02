@@ -5757,6 +5757,8 @@ int gladLoadGL( GLADloadfunc load) {
 
 #ifdef GLAD_GL
 
+#ifndef __SWITCH__
+
 #ifndef GLAD_LOADER_LIBRARY_C_
 #define GLAD_LOADER_LIBRARY_C_
 
@@ -5920,6 +5922,7 @@ void gladLoaderUnloadGL(void) {
     }
 }
 
+#endif /* __SWITCH__ */
 #endif /* GLAD_GL */
 
 #ifdef __cplusplus
