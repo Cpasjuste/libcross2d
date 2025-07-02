@@ -25,7 +25,7 @@ add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}.data)
 ########################
 # Linux/Windows targets
 ########################
-if (PLATFORM_LINUX OR PLATFORM_WINDOWS OR PLATFORM_PS5)
+if (PLATFORM_LINUX OR PLATFORM_WINDOWS)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
     if (PLATFORM_WINDOWS)
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -153,6 +153,20 @@ if (PLATFORM_PS4)
             COMMAND cd ${CMAKE_BINARY_DIR}/release && ${ZIP} -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip ${PROJECT_NAME}
     )
 endif (PLATFORM_PS4)
+
+if (PLATFORM_PS5)
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
+    add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
+            DEPENDS ${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E make_directory   ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}" ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
+            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_datadir -D DST=${CMAKE_BINARY_DIR}/release/${PROJECT_NAME} -P ${CMAKE_CURRENT_LIST_DIR}/copy_custom.cmake
+            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_romfs   -D DST=${CMAKE_BINARY_DIR}/release/${PROJECT_NAME} -P ${CMAKE_CURRENT_LIST_DIR}/copy_custom.cmake
+            COMMAND cd ${CMAKE_BINARY_DIR}/release && ${ZIP} -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip ${PROJECT_NAME}
+    )
+endif (PLATFORM_PS5)
 
 ###########################
 # Sony ps3 target
