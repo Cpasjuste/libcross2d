@@ -7,6 +7,7 @@
 
 #if !defined(NDEBUG) && !defined(__DEBUG_SVC__)
 static int sock = -1;
+void deinitNxLink();
 #endif
 
 void initNxLink() {
@@ -19,7 +20,10 @@ void initNxLink() {
     sock = nxlinkStdio();
     if (sock < 0) {
         socketExit();
+        return;
     }
+
+    std::atexit(deinitNxLink);
 #endif
 #endif
 }

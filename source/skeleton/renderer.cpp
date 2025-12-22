@@ -12,8 +12,6 @@ Renderer *c2d_renderer = nullptr;
 
 void initNxLink();
 
-void deinitNxLink();
-
 #endif
 
 Renderer::Renderer(const Vector2f &size) : Rectangle(size) {
@@ -118,8 +116,4 @@ Renderer::~Renderer() {
     if (m_shaderList) {
         delete (m_shaderList);
     }
-
-#ifdef __SWITCH__
-    deinitNxLink();
-#endif
 }
