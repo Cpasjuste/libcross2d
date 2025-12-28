@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <cmath>
 #include "cross2d/c2d.h"
+#include "cross2d/skeleton/sfml/Utf.hpp"
 
 using namespace c2d;
 
@@ -266,12 +267,6 @@ namespace c2d {
         if (m_font == nullptr)
             return {};
 
-        // Adjust the index if it's out of range
-        //if (index > m_string.getSize())
-        //    index = m_string.getSize();
-        if (index > m_string.length())
-            index = m_string.length();
-
         // Precompute the variables needed by the algorithm
         bool bold = (m_style & Bold) != 0;
         auto hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
@@ -280,8 +275,16 @@ namespace c2d {
         // Compute the position
         Vector2f position;
         uint32_t prevChar = 0;
-        for (std::size_t i = 0; i < index; ++i) {
-            auto curChar = (uint32_t) m_string[i];
+        
+        // Iterate through UTF-8 characters
+        auto it = m_string.begin();
+        auto end = m_string.end();
+        std::size_t currentIndex = 0;
+        
+        while (it < end && currentIndex < index) {
+            Uint32 curChar = 0;
+            it = Utf<8>::decode(it, end, curChar);
+            currentIndex++;
 
             // Apply the kerning offset
             position.x += static_cast<float>(m_font->getKerning(prevChar, curChar, m_characterSize, bold));
@@ -298,8 +301,6 @@ namespace c2d {
                 case '\n':
                     position.y += vspace;
                     position.x = 0;
-                    continue;
-                default:
                     continue;
             }
 
@@ -515,8 +516,13 @@ namespace c2d {
                 auto width = (float) (words[i].size() * m_characterSize);
 #else
                 float width = 0;
-                for (auto &c: words[i]) {
-                    const Glyph &g = m_font->getGlyph(c, m_characterSize, bold, m_outlineThickness);
+                // Decode UTF-8 to calculate word width correctly
+                auto wordIt = words[i].begin();
+                auto wordEnd = words[i].end();
+                while (wordIt < wordEnd) {
+                    Uint32 codepoint = 0;
+                    wordIt = Utf<8>::decode(wordIt, wordEnd, codepoint);
+                    const Glyph &g = m_font->getGlyph(codepoint, m_characterSize, bold, m_outlineThickness);
                     width += g.bounds.width;
                 }
 #endif
@@ -531,8 +537,12 @@ namespace c2d {
                 words[i] += " ";
             }
 
-            for (std::size_t j = 0; j < words[i].length(); j++) {
-                auto curChar = (uint32_t) words[i][j];
+            // Decode UTF-8 characters properly
+            auto it = words[i].begin();
+            auto end = words[i].end();
+            while (it < end) {
+                Uint32 curChar = 0;
+                it = Utf<8>::decode(it, end, curChar);
 
                 // Apply the kerning offset
                 x += m_font->getKerning(prevChar, curChar, m_characterSize, bold);
