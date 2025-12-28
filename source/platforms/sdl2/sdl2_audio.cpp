@@ -2,7 +2,7 @@
 // Created by cpasjuste on 12/12/16.
 //
 
-#include <malloc.h>
+#include <stdlib.h>
 #include "cross2d/c2d.h"
 
 using namespace c2d;

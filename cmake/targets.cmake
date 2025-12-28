@@ -154,6 +154,21 @@ if (PLATFORM_PS4)
     )
 endif (PLATFORM_PS4)
 
+if (PLATFORM_PS5)
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
+    add_custom_target(${PROJECT_NAME}_${TARGET_PLATFORM}_release
+            DEPENDS ${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E make_directory   ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}" ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
+            COMMAND ${CMAKE_COMMAND} -E copy "${PS5_PAYLOAD_SDK}/target/user/homebrew/lib/libOSMesa.so.8" ${CMAKE_BINARY_DIR}/release/${PROJECT_NAME}/
+            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_datadir -D DST=${CMAKE_BINARY_DIR}/release/${PROJECT_NAME} -P ${CMAKE_CURRENT_LIST_DIR}/copy_custom.cmake
+            COMMAND ${CMAKE_COMMAND} -D SRC=${CMAKE_CURRENT_BINARY_DIR}/data_romfs   -D DST=${CMAKE_BINARY_DIR}/release/${PROJECT_NAME} -P ${CMAKE_CURRENT_LIST_DIR}/copy_custom.cmake
+            COMMAND cd ${CMAKE_BINARY_DIR}/release && ${ZIP} -r ../${PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}_${TARGET_PLATFORM}.zip ${PROJECT_NAME}
+    )
+endif (PLATFORM_PS5)
+
 ###########################
 # Sony ps3 target
 ###########################

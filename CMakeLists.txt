@@ -9,6 +9,7 @@ option(PLATFORM_WINDOWS "Windows target platform (msys/mingw64)" OFF)
 option(PLATFORM_SWITCH "Nintendo Switch target platform" OFF)
 option(PLATFORM_3DS "Nintendo 3DS target platform" OFF)
 option(PLATFORM_VITA "Sony PS Vita target platform" OFF)
+option(PLATFORM_PS5 "Sony PS5 target platform" OFF)
 option(PLATFORM_PS4 "Sony PS4 target platform" OFF)
 option(PLATFORM_PS3 "Sony PS3 target platform" OFF)
 option(PLATFORM_DREAMCAST "Sega Dreamcast platform target" OFF)
@@ -74,6 +75,12 @@ if (PLATFORM_VITA)
     message(STATUS "C2D: Ps Vita with Gxm support enabled")
     set(OPTION_SDL2 ON CACHE BOOL "SDL2 support" FORCE)
     #set(OPTION_BOX2D ON CACHE BOOL "Build with box2d support" FORCE)
+endif ()
+
+if (PLATFORM_PS5)
+    message(STATUS "C2D: SDL2 OpenGL 4.3 support enabled")
+    set(OPTION_SDL2 ON CACHE BOOL "SDL2 support" FORCE)
+    set(OPTION_RENDER_GL2 ON CACHE BOOL "OpenGL 4.3 rendering" FORCE)
 endif ()
 
 if (PLATFORM_PS4)
@@ -277,6 +284,8 @@ if (PLATFORM_VITA)
             -mtune=cortex-a9 -march=armv7-a -mfpu=neon -mfloat-abi=hard
             #-ffast-math -fsingle-precision-constant
     )
+elseif (PLATFORM_PS5)
+    file(GLOB PLATFORM_SOURCES source/platforms/posix/*.c*)
 elseif (PLATFORM_PS4)
     #####################
     # PS4 PLATORM

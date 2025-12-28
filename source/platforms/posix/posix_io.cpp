@@ -19,7 +19,7 @@
 using namespace c2d;
 
 std::string POSIXIo::getRomFsPath() {
-#if defined(__WINDOWS__) || defined(__LINUX__)
+#if defined(__WINDOWS__) || defined(__LINUX__) || defined(__PROSPERO__)
     return getDataPath() + "data_romfs/";
 #else
     return Io::getRomFsPath();
