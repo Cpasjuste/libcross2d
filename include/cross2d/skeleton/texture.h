@@ -77,6 +77,7 @@ namespace c2d {
 
         Vector2i m_tex_size;
         Vector2i m_tex_size_pot;
+        IntRect m_unlock_rect = IntRect();
         int m_unpack_row_length = 0;
 #ifdef __3DS__
         bool m_pot = true;
