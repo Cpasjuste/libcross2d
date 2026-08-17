@@ -134,9 +134,14 @@ if (OPTION_BUILTIN_LIBCONFIG)
     list(APPEND LIBCONFIG_INCLUDES source/skeleton/libconfig)
     file(GLOB LIBCONFIG_SOURCES source/skeleton/libconfig/*.c)
 else ()
-    pkg_search_module(LIBCONFIG REQUIRED libconfig)
-    list(APPEND C2D_INCLUDES ${LIBCONFIG_INCLUDE_DIRS})
-    list(APPEND C2D_LDFLAGS ${LIBCONFIG_LIBRARIES})
+    if (PLATFORM_VITA)
+        find_package(libconfig REQUIRED)
+        list(APPEND C2D_LDFLAGS ${LIBCONFIG_LIBRARIES} libconfig::config)
+    else ()
+        pkg_search_module(LIBCONFIG REQUIRED libconfig)
+        list(APPEND C2D_INCLUDES ${LIBCONFIG_INCLUDE_DIRS})
+        list(APPEND C2D_LDFLAGS ${LIBCONFIG_LIBRARIES})
+    endif ()
 endif ()
 
 if (OPTION_SDL1)
@@ -278,7 +283,7 @@ if (PLATFORM_VITA)
     )
     list(APPEND C2D_LDFLAGS
             ${CMAKE_CURRENT_SOURCE_DIR}/source/platforms/psp2/vita-shader-collection/lib/libvitashaders.a
-            vita2d box2d SceGxm_stub ScePower_stub
+            vita2d SceGxm_stub ScePower_stub
     )
     list(APPEND C2D_CFLAGS -D__PSP2__ -DNO_KEYBOARD
             -mtune=cortex-a9 -march=armv7-a -mfpu=neon -mfloat-abi=hard
