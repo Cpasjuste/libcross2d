@@ -28,7 +28,10 @@ int GLTextureBuffer::createTexture(Texture::Format format) {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei) m_tex_size_pot.x, (GLsizei) m_tex_size_pot.y, 0,
                          GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
         } else {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565, (GLsizei) m_tex_size_pot.x, (GLsizei) m_tex_size_pot.y, 0,
+            // see gl_texture.cpp createTexture() for why this must be GL_RGB,
+            // not GL_RGB565 (GLES2 internalformat/format mismatch, rejected by
+            // PS4's Piglet GL validation)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (GLsizei) m_tex_size_pot.x, (GLsizei) m_tex_size_pot.y, 0,
                          GL_RGB, GL_UNSIGNED_SHORT_5_6_5, nullptr);
         }
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
