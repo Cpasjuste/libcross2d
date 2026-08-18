@@ -27,7 +27,15 @@ int GLTexture::createTexture() {
 
     if (m_format == Format::RGB565) {
         m_pixelFormat = {
-            .internalFormat = GL_RGB565,
+            // NOTE: GLES2 requires internalformat to match format exactly (both
+            // unsized enums) - the pixel packing is conveyed by `type` alone.
+            // Passing the sized GL_RGB565 token here as `internalformat` fails
+            // strict validation ("Invalid texture internalformat vs format pair")
+            // on PS4's Piglet GL shim, which silently aborts texture creation and
+            // makes every subsequent glTexSubImage2D update fail ("Invalid level")
+            // - i.e. a permanent black screen for any RGB565 texture (the video
+            // output of every pEMU core). Fix: use GL_RGB (matches `format`).
+            .internalFormat = GL_RGB,
             .format = GL_RGB,
             .type = GL_UNSIGNED_SHORT_5_6_5
         };
